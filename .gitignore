@@ -1,0 +1,7 @@
+/node_modules/
+/lib/
+/test/
+/build/
+/dist/
+yarn.lock
+/.vite/
