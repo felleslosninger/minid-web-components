@@ -5,3 +5,5 @@
 /dist/
 yarn.lock
 /.vite/
+
+*storybook.log
