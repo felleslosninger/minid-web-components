@@ -1,32 +1,36 @@
 import { html } from 'lit';
-import { styleMap } from 'lit/directives/style-map.js';
 
-import './button.css';
+import '../../src/lib/components/minid-countdown';
+import '../lib/components/button';
+import { ifDefined } from 'lit/directives/if-defined.js';
 
 export interface ButtonProps {
-  /** Is this the principal call to action on the page? */
-  primary?: boolean;
-  /** What background color to use */
-  backgroundColor?: string;
-  /** How large should the button be? */
+  variant?: 'primary' | 'secondary' | 'tertiary';
   size?: 'small' | 'medium' | 'large';
-  /** Button contents */
   label: string;
-  /** Optional click handler */
+  encapsulated: boolean;
   onClick?: () => void;
 }
-/** Primary UI component for user interaction */
-export const Button = ({ primary, backgroundColor, size, label, onClick }: ButtonProps) => {
-  const mode = primary ? 'storybook-button--primary' : 'storybook-button--secondary';
-
-  return html`
-    <button
-      type="button"
-      class=${['storybook-button', `storybook-button--${size || 'medium'}`, mode].join(' ')}
-      style=${styleMap({ backgroundColor })}
-      @click=${onClick}
-    >
-      ${label}
-    </button>
-  `;
+export const Button = ({
+  onClick,
+  variant,
+  size,
+  label,
+  encapsulated,
+}: ButtonProps) => {
+  return encapsulated
+    ? html`<mwc-button variant=${ifDefined(variant)}>${label}</mwc-button>`
+    : html`
+        <button
+          type="button"
+          class="${[
+            'btn',
+            `${size ? 'btn-' + size : ''}`,
+            `${variant ? 'btn-' + variant : ''}`,
+          ].join(' ')}"
+          @click=${onClick}
+        >
+          ${label}
+        </button>
+      `;
 };
