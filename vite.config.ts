@@ -1,9 +1,8 @@
 import { defineConfig } from 'vite';
-import postcssLit from 'rollup-plugin-postcss-lit';
 import { hmrPlugin, presets } from 'vite-plugin-web-components-hmr';
 // import basicSsl from '@vitejs/plugin-basic-ssl' // uncomment for HTTPS
 
-export default defineConfig(({ command, mode }) => {
+export default defineConfig(({ mode }) => {
   const server =
     mode === 'development'
       ? {
@@ -49,7 +48,6 @@ export default defineConfig(({ command, mode }) => {
         presets: [presets.lit],
       }),
       // basicSsl(), // uncomment for HTTPS
-      postcssLit(),
       {
         name: 'html-inject-nonce-into-script-tag',
         enforce: 'post',

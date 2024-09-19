@@ -13,11 +13,11 @@ const meta = {
   argTypes: {
     size: {
       control: { type: 'select' },
-      options: [undefined, 'small', 'medium', 'large'],
+      options: ['small', 'medium', 'large'],
     },
     variant: {
       control: { type: 'select' },
-      options: [undefined, 'primary', 'secondary', 'tertiary'],
+      options: ['primary', 'secondary', 'tertiary'],
     },
     encapsulated: {
       control: { type: 'boolean' },
@@ -26,7 +26,7 @@ const meta = {
   args: {
     onClick: fn(),
     encapsulated: false,
-    label: 'Button',
+    label: 'Knapp',
     size: 'medium',
     variant: 'primary',
   },
@@ -38,27 +38,35 @@ type Story = StoryObj<ButtonProps>;
 // More on writing stories with args: https://storybook.js.org/docs/writing-stories/args
 export const Primary: Story = {
   args: {
-    label: 'Button',
+    label: 'Knapp',
   },
 };
 
 export const Secondary: Story = {
   args: {
-    label: 'Button',
+    label: 'Knapp',
+    variant: 'secondary',
+  },
+};
+
+export const Tertiary: Story = {
+  args: {
+    label: 'Knapp',
+    variant: 'tertiary',
   },
 };
 
 export const Large: Story = {
   args: {
     size: 'large',
-    label: 'Button',
+    label: 'Knapp',
   },
 };
 
 export const Encapsulated: Story = {
   args: {
     size: 'small',
-    label: 'Button',
+    label: 'Knapp',
     encapsulated: true,
   },
 };
