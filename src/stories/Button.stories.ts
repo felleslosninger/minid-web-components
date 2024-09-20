@@ -66,6 +66,7 @@ export const Large: Story = {
 export const Encapsulated: Story = {
   args: {
     size: 'small',
+    variant: 'secondary',
     label: 'Knapp',
     encapsulated: true,
   },

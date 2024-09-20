@@ -1,5 +1,5 @@
 import { LitElement, unsafeCSS } from 'lit';
-import tailwindStyles from 'src/lib/tailwind.css?inline';
+import tailwindStyles from 'src/stories/tailwind.css?inline';
 import style from '@digdir/designsystemet-css?inline';
 import theme from '@digdir/designsystemet-theme?inline';
 

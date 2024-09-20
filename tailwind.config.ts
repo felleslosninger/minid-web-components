@@ -1,3 +1,7 @@
+import plugin from 'tailwindcss/plugin';
+import {minidWebComponents} from './src/lib/tailwind.plugin'
+import type { Config } from 'tailwindcss'
+
 const blue = {
   1: '#fefeff',
   2: '#edf5fa',
@@ -512,6 +516,13 @@ const focus = {
 
 /** @type {import("tailwindcss").Config} */
 export default {
+  plugins: [
+    minidWebComponents(),
+    plugin(({addComponents, config}) => {
+      config()
+    })
+
+  ],
   darkMode: 'class',
   content: ['./index.html', './src/**/*.{html,js,ts}'],
   theme: {
@@ -551,4 +562,4 @@ export default {
       },
     },
   },
-};
+} satisfies Config

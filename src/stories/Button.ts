@@ -20,6 +20,7 @@ export const Button = ({
   encapsulated,
 }: ButtonProps) => {
   const classes = {
+    'btn-primary': variant === 'primary',
     'btn-secondary': variant === 'secondary',
     'btn-tertiary': variant === 'tertiary',
     'btn-lg': size === 'large',
@@ -32,7 +33,7 @@ export const Button = ({
     : html`
         <button
           type="button"
-          class="btn ${classMap(classes)}"
+          class="fds-btn fds-btn--primary"
           @click=${onClick}
         >
           ${label}
