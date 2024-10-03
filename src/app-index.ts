@@ -1,7 +1,7 @@
 import { css, html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators.js';
 import '@digdir/designsystemet-css?inline';
-import './lib/components/button';
+import './lib/components/button.component';
 
 @customElement('app-index')
 export class AppIndex extends LitElement {

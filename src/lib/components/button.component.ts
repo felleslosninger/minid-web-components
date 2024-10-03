@@ -1,4 +1,4 @@
-import { html, unsafeCSS } from 'lit';
+import { html, LitElement, unsafeCSS } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
 import style from '@digdir/designsystemet-css?inline';
@@ -6,8 +6,8 @@ import theme from '@digdir/designsystemet-theme?inline';
 import { TailwindLitElement } from 'src/lib/mixins/tailwind.mixin';
 import { classMap } from 'lit/directives/class-map.js';
 
-@customElement('mwc-button')
-export class Button extends TailwindLitElement {
+@customElement('ds-button')
+export class DsButton extends LitElement {
   static override styles = [unsafeCSS(theme), unsafeCSS(style)];
 
   @property()

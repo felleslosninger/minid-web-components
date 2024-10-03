@@ -1,7 +1,7 @@
 import { html } from 'lit';
 
 import '../../src/lib/components/minid-countdown';
-import '../lib/components/button';
+import '../lib/components/button.component';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { classMap } from 'lit/directives/class-map.js';
 
@@ -29,12 +29,12 @@ export const Button = ({
     'btn-sm': size === 'sm',
   };
   return encapsulated
-    ? html`<mwc-button
+    ? html`<ds-button
         type="${type}"
         size=${ifDefined(size)}
         variant=${ifDefined(variant)}
         >${label}
-      </mwc-button>`
+      </ds-button>`
     : html`
         <button
           type="${type}"
