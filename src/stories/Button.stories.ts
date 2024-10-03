@@ -13,7 +13,7 @@ const meta = {
   argTypes: {
     size: {
       control: { type: 'select' },
-      options: ['small', 'medium', 'large'],
+      options: ['sm', 'md', 'lg'],
     },
     variant: {
       control: { type: 'select' },
@@ -22,13 +22,18 @@ const meta = {
     encapsulated: {
       control: { type: 'boolean' },
     },
+    type: {
+      control: { type: 'select' },
+      options: ['button', 'submit', 'reset'],
+    },
   },
   args: {
     onClick: fn(),
     encapsulated: false,
     label: 'Knapp',
-    size: 'medium',
+    size: 'md',
     variant: 'primary',
+    type: 'button',
   },
 } satisfies Meta<ButtonProps>;
 
@@ -58,14 +63,14 @@ export const Tertiary: Story = {
 
 export const Large: Story = {
   args: {
-    size: 'large',
+    size: 'lg',
     label: 'Knapp',
   },
 };
 
 export const Encapsulated: Story = {
   args: {
-    size: 'small',
+    size: 'sm',
     variant: 'secondary',
     label: 'Knapp',
     encapsulated: true,

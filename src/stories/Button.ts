@@ -7,7 +7,8 @@ import { classMap } from 'lit/directives/class-map.js';
 
 export interface ButtonProps {
   variant?: 'primary' | 'secondary' | 'tertiary';
-  size?: 'small' | 'medium' | 'large';
+  size?: 'sm' | 'md' | 'lg';
+  type: 'button' | 'submit' | 'reset';
   label: string;
   encapsulated: boolean;
   onClick?: () => void;
@@ -18,22 +19,26 @@ export const Button = ({
   size,
   label,
   encapsulated,
+  type,
 }: ButtonProps) => {
   const classes = {
     'btn-primary': variant === 'primary',
     'btn-secondary': variant === 'secondary',
     'btn-tertiary': variant === 'tertiary',
-    'btn-lg': size === 'large',
-    'btn-sm': size === 'small',
+    'btn-lg': size === 'lg',
+    'btn-sm': size === 'sm',
   };
   return encapsulated
-    ? html`<mwc-button type="submit" variant=${ifDefined(variant)}
-        >${label}</mwc-button
-      >`
+    ? html`<mwc-button
+        type="${type}"
+        size=${ifDefined(size)}
+        variant=${ifDefined(variant)}
+        >${label}
+      </mwc-button>`
     : html`
         <button
-          type="button"
-          class="fds-btn fds-btn--primary"
+          type="${type}"
+          class="btn ${classMap(classes)}"
           @click=${onClick}
         >
           ${label}

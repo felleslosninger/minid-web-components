@@ -66,6 +66,14 @@
     @apply hover:text-text-action-hover;
   }
 
+  .btn-sm {
+    @apply text-sm;
+  }
+
+  .btn-lg {
+    @apply text-xl;
+  }
+
   .page-card {
     @apply bg-background-neutral;
     @apply rounded-lg;
