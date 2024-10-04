@@ -2,7 +2,7 @@ import { MinidElement } from 'src/lib/mixins/tailwind.mixin';
 import { css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { live } from 'lit/directives/live.js';
-import { stringConverter } from 'src/lib/utils/string-converter';
+import { stringConverter } from 'src/lib/internal/string-converter';
 import { classMap } from 'lit/directives/class-map.js';
 
 @customElement('mid-textfield')

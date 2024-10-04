@@ -1,13 +1,13 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 
 import '../lib/components/button.component';
-import { Textfield, type TextfieldProps } from 'src/stories/Textfield';
+import { Dropdown, type DropdownProps } from 'src/stories/Dropdown';
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories
 const meta = {
-  title: 'Example/Textfield',
+  title: 'Example/Dropdown',
   tags: ['autodocs'],
-  render: (args) => Textfield(args),
+  render: (args) => Dropdown(args),
   argTypes: {
     size: {
       control: { type: 'select' },
@@ -24,10 +24,10 @@ const meta = {
       options: ['text'],
     },
   },
-} satisfies Meta<TextfieldProps>;
+} satisfies Meta<DropdownProps>;
 
 export default meta;
-type Story = StoryObj<TextfieldProps>;
+type Story = StoryObj<DropdownProps>;
 
 // More on writing stories with args: https://storybook.js.org/docs/writing-stories/args
 export const Simple: Story = {
