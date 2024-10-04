@@ -1,15 +1,13 @@
-import { html, LitElement, unsafeCSS } from 'lit';
+import { html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
-import style from '@digdir/designsystemet-css?inline';
-import theme from '@digdir/designsystemet-theme?inline';
-import { TailwindLitElement } from 'src/lib/mixins/tailwind.mixin';
+import { MinidElement } from 'src/lib/mixins/tailwind.mixin';
 import { classMap } from 'lit/directives/class-map.js';
 
-@customElement('ds-button')
-export class DsButton extends LitElement {
-  static override styles = [unsafeCSS(theme), unsafeCSS(style)];
+let nextInputId = 0;
 
+@customElement('mid-button')
+export class MinidButton extends MinidElement {
   @property()
   variant: 'primary' | 'secondary' | 'tertiary' = 'primary';
 
@@ -18,6 +16,9 @@ export class DsButton extends LitElement {
 
   @property()
   type: 'submit' | 'button' | 'reset' = 'button';
+
+  @property()
+  id = `'mid-button-${nextInputId++}`;
 
   override render() {
     const classes = {

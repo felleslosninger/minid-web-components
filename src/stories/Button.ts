@@ -29,12 +29,12 @@ export const Button = ({
     'btn-sm': size === 'sm',
   };
   return encapsulated
-    ? html`<ds-button
+    ? html`<mid-button
         type="${type}"
         size=${ifDefined(size)}
         variant=${ifDefined(variant)}
         >${label}
-      </ds-button>`
+      </mid-button>`
     : html`
         <button
           type="${type}"

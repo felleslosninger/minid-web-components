@@ -29,7 +29,7 @@ const meta = {
   },
   args: {
     onClick: fn(),
-    encapsulated: false,
+    encapsulated: true,
     label: 'Knapp',
     size: 'md',
     variant: 'primary',

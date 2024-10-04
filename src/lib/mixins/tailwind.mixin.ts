@@ -1,4 +1,4 @@
-import { LitElement, unsafeCSS } from 'lit';
+import { CSSResultArray, LitElement, unsafeCSS } from 'lit';
 import tailwindStyles from 'src/stories/tailwind.css?inline';
 import style from '@digdir/designsystemet-css?inline';
 import theme from '@digdir/designsystemet-theme?inline';
@@ -16,4 +16,11 @@ type Constructor<T = {}> = new (...args: any[]) => T;
 
 export class TailwindLitElement extends LitElement {
   static override styles = [tailwindCssStyles];
+}
+
+export class MinidElement extends LitElement {
+  static override styles = [
+    unsafeCSS(theme),
+    unsafeCSS(style),
+  ] as CSSResultArray;
 }
