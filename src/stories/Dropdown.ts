@@ -1,12 +1,10 @@
 import { html } from 'lit';
+import { property, state } from 'lit/decorators.js';
 import 'src/lib/components/dropdown.component';
 export interface DropdownProps {}
 
 export const Dropdown = (props: DropdownProps) => {
   return html`<mid-dropdown>
-    <mid-button @click=${() => (this.open = !this.open)} slot="anchor"
-      >hei hei
-    </mid-button>
     <ul class="fds-dropdownmenu fds-dropdownmenu--md">
       <li>Litt om meg</li>
       <li>Interessante ting</li>
