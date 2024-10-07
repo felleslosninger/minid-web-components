@@ -19,10 +19,15 @@ export class MinidDropdown extends MinidElement {
 
   override render() {
     return html`
-      <mid-popup distance=${20} placement="bottom" ?active=${this.open}>
-        <mid-button @click=${() => (this.open = !this.open)} slot="anchor"
-          >hei hei
-        </mid-button>
+      <mid-popup
+        distance=${4}
+        placement="bottom-end"
+        flip
+        shift
+        ?active=${this.open}
+      >
+        <slot slot="anchor" name="trigger"> </slot>
+
         <div>
           <slot part="panel"></slot>
         </div>
