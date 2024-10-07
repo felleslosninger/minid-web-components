@@ -7,18 +7,38 @@ const meta = {
   title: 'Example/Dropdown',
   tags: ['autodocs'],
   render: (args) => Dropdown(args),
-  component: 'mid-dropdown',
+  component: 'Dropdown',
   argTypes: {
     size: {
       control: { type: 'select' },
       options: ['sm', 'md', 'lg'],
     },
+    open: { type: 'boolean' },
+    placement: {
+      control: { type: 'select' },
+      options: [
+        'top',
+        'top-start',
+        'top-end',
+        'bottom',
+        'bottom-start',
+        'bottom-end',
+        'right',
+        'right-start',
+        'right-end',
+        'left',
+        'left-start',
+        'left-end',
+      ],
+    },
+    distance: { type: 'number' },
+    skidding: { type: 'number' },
+    hoist: { type: 'boolean' },
   },
 
   subcomponents: {
     Menu: 'mid-menu',
     MenuItem: 'mid-menu-item',
-    button: 'mid-button',
   },
 } satisfies Meta<DropdownProps>;
 
@@ -31,7 +51,7 @@ export const Simple: Story = {
     size: 'md',
     open: true,
   },
-  decorators: [(story) => html`<div class="m-56 mt-0">${story()}</div>`],
+  decorators: [(story) => html`<div class="m-56">${story()}</div>`],
   parameters: {
     layout: 'centered',
   },
