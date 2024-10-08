@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
-import { Dropdown, type DropdownProps } from 'src/stories/Dropdown';
+import { Dropdown, type DropdownProps } from './Dropdown';
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories
 const meta = {

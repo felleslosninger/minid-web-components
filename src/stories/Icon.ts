@@ -1,5 +1,5 @@
 import { html } from 'lit';
-import 'src/lib/components/icon.component';
+import '../../lib/components/icon.component';
 
 export interface IconProps {
   name: string;

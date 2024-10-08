@@ -3,7 +3,7 @@ import { fn } from '@storybook/test';
 import type { Meta, StoryObj } from '@storybook/web-components';
 
 import { Button, type ButtonProps } from './Button';
-import '../lib/components/button.component';
+import '../../lib/components/button.component';
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories
 const meta = {

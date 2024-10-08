@@ -1,5 +1,5 @@
 import { html } from 'lit';
-import '../lib/components/textfield.component';
+import '../../lib/components/textfield.component';
 import { ifDefined } from 'lit/directives/if-defined.js';
 
 export interface TextfieldProps {

@@ -1,6 +1,6 @@
 import { html } from 'lit';
 
-import '../lib/components/minid-countdown';
+import '../../lib/components/minid-countdown';
 
 export interface CountdownProps {
   expiry: number;

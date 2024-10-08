@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 
-import '../lib/components/button.component';
-import { Textfield, type TextfieldProps } from 'src/stories/Textfield';
+import '../../lib/components/button.component';
+import { Textfield, type TextfieldProps } from './Textfield';
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories
 const meta = {
