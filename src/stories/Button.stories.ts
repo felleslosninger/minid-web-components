@@ -7,7 +7,7 @@ import '../lib/components/button.component';
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories
 const meta = {
-  title: 'Example/Button',
+  title: 'Komponenter/Button',
   tags: ['autodocs'],
   render: (args) => Button(args),
   argTypes: {
