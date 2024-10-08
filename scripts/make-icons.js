@@ -9,8 +9,8 @@ const run = () => {
   const projectRoot = path.dirname(__filename) + '/..';
   const iconSrcFolder =
     projectRoot + '/node_modules/@navikt/aksel-icons/dist/svg';
-  const destination = projectRoot + '/src/lib/assets/icons';
-  const tsDestination = projectRoot + '/src/lib/types';
+  const destination = projectRoot + '/lib/assets/icons';
+  const tsDestination = projectRoot + '/lib/types';
   const tsFileName = tsDestination + '/icon-name.ts';
 
   fs.readdir(iconSrcFolder, { recursive: true }, (err, files) => {

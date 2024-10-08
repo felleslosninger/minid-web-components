@@ -1,9 +1,9 @@
 import { html } from 'lit';
-import 'src/lib/components/button.component';
-import 'src/lib/components/dropdown.component';
-import 'src/lib/components/menu.component';
-import 'src/lib/components/menu-item.component';
-import { MinidDropdown } from 'src/lib/components/dropdown.component';
+import 'lib/components/button.component';
+import 'lib/components/dropdown.component';
+import 'lib/components/menu.component';
+import 'lib/components/menu-item.component';
+import { MinidDropdown } from 'lib/components/dropdown.component';
 import { ifDefined } from 'lit/directives/if-defined.js';
 
 export interface DropdownProps {

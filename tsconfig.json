@@ -16,7 +16,6 @@
     "declaration": false,
     "typeRoots": ["./dist/index.d.ts"],
 
-
     /* Linting */
     "strict": true,
     "noUnusedLocals": true,
@@ -29,9 +28,9 @@
       "components/*": ["./lib/components/*"],
       "internal/*": ["./lib/internal/*"],
       "mixins/*": ["./lib/mixins/*"],
-      "css/*": ["./lib/css/*"],
+      "css/*": ["./lib/css/*"]
     }
   },
-  "include": ["src","lib"],
-  "references": [{"path":  "./tsconfig.node.json"}]
+  "include": ["src", "lib"],
+  "references": [{ "path": "./tsconfig.node.json" }]
 }
