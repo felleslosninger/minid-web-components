@@ -29,4 +29,4 @@ jobs:
           npm config set @digdir:registry=https://npm.pkg.github.com/digdir
 
       - name: Publish to GitHub Packages
-        run: npm publish --access restricted # Adjust access as needed
+        run: npm publish
