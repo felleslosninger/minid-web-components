@@ -1,0 +1,36 @@
+{
+  "compilerOptions": {
+    "target": "es2022",
+    "lib": ["es2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "experimentalDecorators": true,
+    "useDefineForClassFields": true,
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler", // bundler, nodenext, node
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "declaration": false,
+    "typeRoots": ["./dist/index.d.ts"],
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "types": ["vite/client"],
+    "baseUrl": ".",
+    "paths": {
+      "lib/*": ["./lib/*"],
+      "components/*": ["./lib/components/*"],
+      "internal/*": ["./lib/internal/*"],
+      "mixins/*": ["./lib/mixins/*"],
+      "css/*": ["./lib/css/*"]
+    }
+  },
+  "include": ["src", "lib"],
+  "references": [{ "path": "./tsconfig.node.json" }]
+}

@@ -1,0 +1,32 @@
+name: Build and Publish Web Components
+
+on:
+  push:
+    branches:
+      - main # Replace with your main branch name
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Build web components
+        run: yarn build
+
+      - name: Configure GitHub Package Registry
+        run: |
+          npm config set //npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}
+          npm config set @digdir:registry=https://npm.pkg.github.com/digdir
+
+      - name: Publish to GitHub Packages
+        run: npm publish --access restricted # Adjust access as needed
