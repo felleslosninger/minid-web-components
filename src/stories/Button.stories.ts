@@ -7,7 +7,7 @@ import '../lib/components/button.component';
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories
 const meta = {
-  title: 'Example/Button',
+  title: 'Komponenter/Button',
   tags: ['autodocs'],
   render: (args) => Button(args),
   argTypes: {
@@ -34,6 +34,7 @@ const meta = {
     size: 'md',
     variant: 'primary',
     type: 'button',
+    disabled: false,
   },
 } satisfies Meta<ButtonProps>;
 
@@ -73,6 +74,15 @@ export const Encapsulated: Story = {
     size: 'sm',
     variant: 'secondary',
     label: 'Knapp',
+    fullWidth: true,
     encapsulated: true,
+  },
+};
+
+export const Link: Story = {
+  args: {
+    label: 'Link',
+    href: 'https://www.google.com',
+    variant: 'tertiary',
   },
 };

@@ -10,6 +10,9 @@ export interface ButtonProps {
   label: string;
   encapsulated: boolean;
   onClick?: () => void;
+  href?: string;
+  fullWidth?: boolean;
+  disabled?: boolean;
 }
 export const Button = ({
   onClick,
@@ -18,6 +21,9 @@ export const Button = ({
   label,
   encapsulated,
   type,
+  href,
+  fullWidth,
+  disabled,
 }: ButtonProps) => {
   const classes = {
     'btn-primary': variant === 'primary',
@@ -31,6 +37,9 @@ export const Button = ({
         type="${type}"
         size=${ifDefined(size)}
         variant=${ifDefined(variant)}
+        href=${ifDefined(href)}
+        ?fullwidth=${fullWidth}
+        ?disabled=${disabled}
         >${label}
       </mid-button>`
     : html`

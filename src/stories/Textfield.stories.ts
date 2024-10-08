@@ -5,7 +5,7 @@ import { Textfield, type TextfieldProps } from 'src/stories/Textfield';
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories
 const meta = {
-  title: 'Example/Textfield',
+  title: 'Komponenter/Textfield',
   tags: ['autodocs'],
   render: (args) => Textfield(args),
   argTypes: {
