@@ -10,12 +10,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '20.x'
 
       - name: Install dependencies
         run: yarn install
@@ -26,7 +26,6 @@ jobs:
       - name: Configure GitHub Package Registry
         run: |
           npm config set //npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}
-          npm config set @digdir:registry=https://npm.pkg.github.com/digdir
-
+          npm config set @felleslosninger:registry=https://npm.pkg.github.com/
       - name: Publish to GitHub Packages
         run: npm publish

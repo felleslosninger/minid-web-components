@@ -1,5 +1,5 @@
 {
-  "name": "@digdir/minid-elements",
+  "name": "@felleslosninger/minid-elements",
   "version": "0.0.1",
   "type": "module",
   "files": [
@@ -17,6 +17,10 @@
   "sideEffects": [
     "**/*.css"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/felleslosninger/minid-web-components.git"
+  },
   "scripts": {
     "dev": "rimraf node_modules/.vite/ && vite --force",
     "make-icons": "node ./scripts/make-icons.js",
