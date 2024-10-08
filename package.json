@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "rimraf node_modules/.vite/ && vite --force",
     "build": "yarn locale:deploy && rimraf dist && tsc && vite build",
+    "make-icons": "node ./scripts/make-icons.js",
     "locale:deploy": "yarn locale:extract && yarn locale:build",
     "locale:extract": "lit-localize extract",
     "locale:build": "lit-localize build",
@@ -28,6 +29,7 @@
     "@chromatic-com/storybook": "^1.9.0",
     "@lit/localize-tools": "^0.7.1",
     "@material/web": "^1.2.0",
+    "@navikt/aksel-icons": "^7.1.2",
     "@open-wc/testing": "^4.0.0",
     "@storybook/addon-essentials": "^8.3.1",
     "@storybook/addon-links": "^8.3.1",
