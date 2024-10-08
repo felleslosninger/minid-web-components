@@ -4,12 +4,14 @@ import { resolve } from 'path';
 import dts from 'vite-plugin-dts';
 import tailwindcss from 'tailwindcss';
 
+
 export default defineConfig(({}) => {
 
   return {
     build: {
       target: 'esnext',
       rollupOptions: {
+        //       external: [...Object.keys(peerDependencies)], // Defines external dependencies for Rollup bundling.  //  import { peerDependencies } from './package.json';
         external: ['lit', 'tailwindcss'],
         output: {
           globals: {
@@ -21,7 +23,7 @@ export default defineConfig(({}) => {
       sourcemap: true,
       emptyOutDir: true,
       lib: {
-        entry: resolve(__dirname, 'lib/index.ts'),
+        entry: resolve(__dirname, 'src/index.ts'),
         name: 'MinID-Elements',
         formats: ['es'],
         fileName: 'minid-elements',
@@ -41,11 +43,11 @@ export default defineConfig(({}) => {
     },
     resolve: {
       alias: {
-        src: '/lib',
-        components: '/lib/components',
-        internal: '/lib/internal',
-        mixins: '/lib/mixins',
-        css: '/lib/css',
+        src: '/src',
+        components: '/src/components',
+        internal: '/src/internal',
+        mixins: '/src/mixins',
+        css: '/src/css',
       },
     },
   };

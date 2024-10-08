@@ -19,12 +19,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/felleslosninger/minid-web-components.git"
+    "url": "git+https://github.com/felleslosninger/minid-web-components.git"
   },
   "scripts": {
     "dev": "rimraf node_modules/.vite/ && vite --force",
     "make-icons": "node ./scripts/make-icons.js",
-    "build": "rimraf dist && tsc --p ./tsconfig-build.json && vite build",
+    "build": "rimraf dist && tsc && vite build",
     "storybook": "storybook dev -p 6006",
     "storybook:build": "tsc && storybook build",
     "prepublishOnly": "yarn run build",

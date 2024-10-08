@@ -24,13 +24,13 @@
     "types": ["vite/client"],
     "baseUrl": ".",
     "paths": {
-      "lib/*": ["./lib/*"],
-      "components/*": ["./lib/components/*"],
-      "internal/*": ["./lib/internal/*"],
-      "mixins/*": ["./lib/mixins/*"],
-      "css/*": ["./lib/css/*"]
+      "src/*": ["./src/*"],
+      "components/*": ["./src/components/*"],
+      "internal/*": ["./src/internal/*"],
+      "mixins/*": ["./src/mixins/*"],
+      "css/*": ["./src/css/*"]
     }
   },
-  "include": ["src", "lib"],
+  "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
