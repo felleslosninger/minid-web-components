@@ -6,6 +6,9 @@ export {MinidButton};
 import {MinidDropdown} from 'components/dropdown.component.ts';
 export {MinidDropdown};
 
+import {MinidIcon} from  'components/icon.component.ts';
+export {MinidIcon};
+
 import {MinidMenu} from 'components/menu.component.ts';
 export {MinidMenu};
 
