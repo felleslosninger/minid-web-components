@@ -23,7 +23,6 @@ const run = () => {
           .toLowerCase();
         tsContent += "  '" + kebabCase + "',\n";
 
-        console.log(iconSrcFolder + '/' + file, destination);
         fs.copyFile(
           iconSrcFolder + '/' + file,
           destination + '/' + kebabCase + '.svg',
