@@ -1,7 +1,7 @@
 import { css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { MinidElement } from 'src/lib/mixins/tailwind.mixin';
-import 'src/lib/components/popup.component';
+import { MinidElement } from 'mixins/tailwind.mixin';
+import 'components/popup.component';
 import { ifDefined } from 'lit/directives/if-defined.js';
 
 @customElement('mid-dropdown')

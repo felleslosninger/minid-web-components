@@ -11,7 +11,7 @@ import {
 import { classMap } from 'lit/directives/class-map.js';
 import { css, html } from 'lit';
 import { customElement, property, query } from 'lit/decorators.js';
-import { MinidElement } from 'src/lib/mixins/tailwind.mixin';
+import { MinidElement } from 'mixins/tailwind.mixin';
 import { offsetParent } from 'composed-offset-position';
 
 export interface VirtualElement {

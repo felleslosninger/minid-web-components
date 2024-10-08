@@ -1,6 +1,6 @@
 import { html } from 'lit';
 import { customElement } from 'lit/decorators.js';
-import { MinidElement } from 'src/lib/mixins/tailwind.mixin';
+import { MinidElement } from 'mixins/tailwind.mixin';
 
 @customElement('mid-menu')
 export class MinidMenu extends MinidElement {

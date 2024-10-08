@@ -1,76 +1,51 @@
 import { defineConfig } from 'vite';
 import { hmrPlugin, presets } from 'vite-plugin-web-components-hmr';
-// import basicSsl from '@vitejs/plugin-basic-ssl' // uncomment for HTTPS
+import { resolve } from 'path';
+import dts from 'vite-plugin-dts';
+import tailwindcss from 'tailwindcss';
 
-export default defineConfig(({ mode }) => {
-  const server =
-    mode === 'development'
-      ? {
-          server: {
-            host: '0.0.0.0',
-            headers: {
-              'Content-Security-Policy': `style-src 'nonce-rand0m' 'self'`,
-            },
-          },
-        }
-      : {};
-
-  const build =
-    mode === 'development'
-      ? {
-          build: {
-            minify: false,
-            cssCodeSplit: true,
-            cssMinify: false,
-          },
-        }
-      : {
-          build: {
-            target: 'esnext',
-          },
-        };
-
-  const test = {
-    test: {
-      globals: true,
-      environment: 'happy-dom', // happy-dom is a lighter alternative to jsdom
-      // include additional test configurations here if needed
-    },
-  };
+export default defineConfig(({}) => {
 
   return {
-    ...build,
-    ...server,
-    ...test, // Add the test configuration here
+    build: {
+      target: 'esnext',
+      rollupOptions: {
+        external: ['lit', 'tailwindcss'],
+        output: {
+          globals: {
+            lit: 'Lit',
+            tailwindcss: 'tailwindcss',
+          },
+        },
+      },
+      sourcemap: true,
+      emptyOutDir: true,
+      lib: {
+        entry: resolve(__dirname, 'lib/index.ts'),
+        name: 'MinID-Elements',
+        formats: ['es'],
+        fileName: 'minid-elements',
+      },
+    },
     plugins: [
+      //dts({ rollupTypes: true }), // mixins and errors... TS4094: Property '__enqueueUpdate' of exported anonymous class type may not be private or protected.
       hmrPlugin({
         include: ['./src/**/*.ts'],
         presets: [presets.lit],
       }),
-      // basicSsl(), // uncomment for HTTPS
-      {
-        name: 'html-inject-nonce-into-script-tag',
-        enforce: 'post',
-        transformIndexHtml(html) {
-          const regex = /<(link|style|script)(.*?)/gi;
-          const replacement =
-            mode === 'development'
-              ? '<$1 nonce="rand0m"$2'
-              : '<$1 nonce="{{cspNonce}}"$2';
-          const htmlWithTags = html.replace(regex, replacement);
-          return mode === 'development'
-            ? htmlWithTags.replace(/({{cspNonce}})/gi, 'rand0m')
-            : htmlWithTags;
-        },
-      },
     ],
+    css: {
+      postcss: {
+        plugins: [tailwindcss],
+      },
+    },
     resolve: {
       alias: {
-        src: '/src',
-        components: '/src/common/components',
-        stores: '/src/stores',
-        utils: '/src/common/utils',
-        layouts: '/src/common/layouts',
+        src: '/lib',
+        components: '/lib/components',
+        internal: '/lib/internal',
+        mixins: '/lib/mixins',
+        css: '/lib/css',
       },
     },
   };

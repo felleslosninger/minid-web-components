@@ -1,5 +1,4 @@
-import plugin from 'tailwindcss/plugin';
-import { minidWebComponents } from './src/lib/tailwind.plugin';
+// import { minidWebComponents } from 'src/tailwind.plugin';
 import type { Config } from 'tailwindcss';
 
 const blue = {
@@ -516,9 +515,9 @@ const focus = {
 
 /** @type {import("tailwindcss").Config} */
 export default {
-  plugins: [minidWebComponents()],
+  // plugins: [minidWebComponents()],
   darkMode: 'class',
-  content: ['./index.html', './src/**/*.{html,js,ts}'],
+  content: ["./lib/**/*.ts"],
   theme: {
     fontFamily: {
       sans: ['inter', 'Arial', 'sans-serif'],

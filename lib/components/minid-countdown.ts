@@ -1,7 +1,7 @@
 import { customElement, property, state } from 'lit/decorators.js';
 
 import { css, html, LitElement } from 'lit';
-import { tailwind } from 'src/lib/mixins/tailwind.mixin';
+import { tailwind } from 'mixins/tailwind.mixin';
 
 @customElement('minid-countdown')
 export class MinidCountDown extends tailwind(LitElement) {
