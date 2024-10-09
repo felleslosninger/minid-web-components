@@ -1,6 +1,6 @@
 {
   "name": "@felleslosninger/minid-elements",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "type": "module",
   "files": [
     "dist"
@@ -27,7 +27,7 @@
     "build": "rimraf dist && tsc && npm run analyze && vite build",
     "storybook": "storybook dev -p 6006",
     "storybook-dev": "concurrently --kill-others \"npm run analyze -- --watch\" \"npm run storybook\"",
-    "build-storybook": "storybook build",
+    "build-storybook": "npm run analyze && storybook build",
     "analyze": "custom-elements-manifest analyze"
   },
   "peerDependencies": {
