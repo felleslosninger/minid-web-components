@@ -1,8 +1,8 @@
 import plugin from 'tailwindcss/plugin';
-import { html, LitElement, unsafeCSS } from 'lit';
-import styles from '@digdir/designsystemet-css?inline';
-import { CSSObject } from 'storybook/internal/theming';
-import { CSSRuleObject } from 'tailwindcss/types/config';
+// import { html, LitElement, unsafeCSS } from 'lit';
+// import styles from '@digdir/designsystemet-css?inline';
+// import { CSSObject } from 'storybook/internal/theming';
+// import { CSSRuleObject } from 'tailwindcss/types/config';
 
 // TODO should we use Tailwind
 // plugin(({ addBase, addUtilities, addComponents, e, addVariant, theme }) => {

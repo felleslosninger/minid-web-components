@@ -1,5 +1,3 @@
-import 'vendor.css';
-
 import { MinidButton } from 'components/button.component.ts';
 export { MinidButton };
 
