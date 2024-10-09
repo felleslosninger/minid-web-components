@@ -12,7 +12,7 @@ export class CountdownComponent extends tailwind(LitElement) {
       :host {
         display: inline-block;
         margin: auto;
-      }
+      } 
     `,
   ];
 

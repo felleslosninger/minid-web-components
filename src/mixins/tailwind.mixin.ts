@@ -10,10 +10,10 @@ export const dsCssTheme = unsafeCSS(dsTheme);
 export const tailwind = <T extends Constructor<LitElement>>(superClass: T) =>
   class extends superClass {
     static styles = [
-      tailwindStyles,
-      dsStyles,
-      dsTheme
-    ];
+      tailwindCssStyles,
+      dsCssStyles,
+      dsCssTheme
+    ] as CSSResultArray;
   };
 
 type Constructor<T = {}> = new (...args: any[]) => T;
