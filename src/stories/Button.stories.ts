@@ -1,7 +1,7 @@
 import { fn } from '@storybook/test';
 
 import type { Meta, StoryObj } from '@storybook/web-components';
-
+import '../components/button.component';
 import { Button, type ButtonProps } from './Button';
 // import 'components/button.component';
 
@@ -9,6 +9,7 @@ import { Button, type ButtonProps } from './Button';
 const meta = {
   title: 'Komponenter/Button',
   tags: ['autodocs'],
+  component: 'mid-button',
   render: (args) => Button(args),
   argTypes: {
     size: {
@@ -28,8 +29,6 @@ const meta = {
     },
   },
   args: {
-    onClick: fn(),
-    encapsulated: true,
     label: 'Knapp',
     size: 'md',
     variant: 'primary',

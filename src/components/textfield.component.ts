@@ -4,9 +4,12 @@ import { customElement, property } from 'lit/decorators.js';
 import { live } from 'lit/directives/live.js';
 import { stringConverter } from 'internal/string-converter';
 import { classMap } from 'lit/directives/class-map.js';
+import styles from '@digdir/designsystemet-css?inline';
+import theme from '@digdir/designsystemet-theme?inline';
+import { LitElement, unsafeCSS } from 'lit';
 
 @customElement('mid-textfield')
-export class MinidTextfield extends MinidElement {
+export class MinidTextfield extends LitElement {
   @property()
   label = '';
 
@@ -20,7 +23,8 @@ export class MinidTextfield extends MinidElement {
   placeholder = '';
 
   static override styles = [
-    MinidElement.styles,
+    unsafeCSS(styles),
+    unsafeCSS(theme),
     css`
       :host {
         display: flex;

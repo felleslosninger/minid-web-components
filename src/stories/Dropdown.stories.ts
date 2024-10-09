@@ -7,7 +7,7 @@ const meta = {
   title: 'Komponenter/Dropdown',
   tags: ['autodocs'],
   render: (args) => Dropdown(args),
-  component: 'Dropdown',
+  component: 'mid-dropdown',
   argTypes: {
     size: {
       control: { type: 'select' },

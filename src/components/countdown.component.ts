@@ -3,8 +3,10 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { css, html, LitElement } from 'lit';
 import { tailwind } from 'mixins/tailwind.mixin';
 
-@customElement('minid-countdown')
-export class MinidCountDown extends tailwind(LitElement) {
+import './spinner.component';
+
+@customElement('mid-countdown')
+export class CountdownComponent extends tailwind(LitElement) {
   static override styles = [
     css`
       :host {
@@ -26,6 +28,9 @@ export class MinidCountDown extends tailwind(LitElement) {
   @property({ type: String })
   size: string = '150';
 
+  @property({type: Boolean})
+  ding: boolean = false;
+
   @state()
   showSpinner = false;
 
@@ -33,7 +38,7 @@ export class MinidCountDown extends tailwind(LitElement) {
   @property({ attribute: false })
   callback?: () => void;
 
-  dingUrl = new URL('../../static/audio/ding-126626.mp3', import.meta.url);
+  dingUrl = new URL('../assets/audio/ding-126626.mp3', import.meta.url);
 
   firstUpdated() {
     const canvas = <HTMLCanvasElement>this.shadowRoot!.querySelector('canvas');
@@ -93,9 +98,11 @@ export class MinidCountDown extends tailwind(LitElement) {
         requestAnimationFrame(drawCountdown);
       } else {
         this.showSpinner = true;
-        const audio = new Audio(this.dingUrl.href);
-        audio.volume = 0.5;
-        audio.play();
+        if(this.ding) {
+          const audio = new Audio(this.dingUrl.href);
+          audio.volume = 0.5;
+          audio.play();
+        }
         this.dispatchEvent(
           new CustomEvent('countdown-expired', {
             bubbles: true,
@@ -111,7 +118,7 @@ export class MinidCountDown extends tailwind(LitElement) {
   override render() {
     return this.showSpinner
       ? html`<div class="flex items-center justify-center">
-          <minid-spinner width="150px"></minid-spinner>
+          <mid-spinner width="150px"></mid-spinner>
         </div>`
       : html`<canvas></canvas>`;
   }
