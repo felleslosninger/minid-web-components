@@ -15,8 +15,8 @@ export {MinidMenu};
 import {MinidMenuItem} from 'components/menu-item.component.ts';
 export {MinidMenuItem};
 
-import {MinidCountDown} from 'components/minid-countdown.ts';
-export {MinidCountDown};
+import {CountdownComponent} from 'components/countdown.component.ts';
+export {CountdownComponent};
 
 import {MinidPopup} from 'components/popup.component.ts';
 export {MinidPopup};
