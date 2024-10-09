@@ -1,14 +1,17 @@
-import { css, html } from 'lit';
+import { css, html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { MinidElement } from 'mixins/tailwind.mixin';
+import styles from '@digdir/designsystemet-css?inline';
+import theme from '@digdir/designsystemet-theme?inline';
+import { unsafeCSS } from 'lit';
 
 @customElement('mid-menu-item')
-export class MinidMenuItem extends MinidElement {
+export class MinidMenuItem extends LitElement {
   @property()
   href = '';
 
   static styles = [
-    MinidElement.styles,
+    unsafeCSS(styles),
+    unsafeCSS(theme),
     css`
       .fds-dropdownmenu__item {
         display: flex;

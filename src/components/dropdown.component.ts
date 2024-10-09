@@ -1,11 +1,13 @@
-import { css, html } from 'lit';
+import { css, html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { MinidElement } from 'mixins/tailwind.mixin';
 import 'components/popup.component';
 import { ifDefined } from 'lit/directives/if-defined.js';
+import styles from '@digdir/designsystemet-css?inline';
+import theme from '@digdir/designsystemet-theme?inline';
+import { unsafeCSS } from 'lit';
 
 @customElement('mid-dropdown')
-export class MinidDropdown extends MinidElement {
+export class MinidDropdown extends LitElement {
   @property({ type: Boolean, reflect: true })
   open = false;
 
@@ -62,7 +64,8 @@ export class MinidDropdown extends MinidElement {
   }
 
   static override styles = [
-    MinidElement.styles,
+    unsafeCSS(styles),
+    unsafeCSS(theme),
     css`
       :host {
         display: flex;
