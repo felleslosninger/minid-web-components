@@ -4,7 +4,7 @@
     "lib": ["es2022", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "experimentalDecorators": true,
-    "useDefineForClassFields": true,
+    "useDefineForClassFields": false,
     "skipLibCheck": true,
 
     /* Bundler mode */
@@ -31,6 +31,7 @@
       "css/*": ["./src/css/*"]
     }
   },
-  "include": ["src"],
+  "include": ["src/**/*.ts"],
+  "exclude": ["src/**/*.stories.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

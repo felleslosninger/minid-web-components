@@ -21,7 +21,7 @@ export class MinidCountDown extends tailwind(LitElement) {
   expiry!: number; // future timestamp in ms
 
   /**
-   * Size of the countdown circle
+   * Size in pixels of the countdown circle
    */
   @property({ type: String })
   size: string = '150';
