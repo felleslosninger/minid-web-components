@@ -1,6 +1,6 @@
 {
   "name": "@felleslosninger/minid-elements",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "type": "module",
   "files": [
     "dist"
@@ -21,7 +21,7 @@
     "type": "git",
     "url": "git+https://github.com/felleslosninger/minid-web-components.git"
   },
-  "customElements": "dist/custom-elements.json",
+  "customElements": "custom-elements.json",
   "scripts": {
     "make-icons": "node ./scripts/make-icons.js",
     "build": "rimraf dist && tsc && npm run analyze && vite build",
