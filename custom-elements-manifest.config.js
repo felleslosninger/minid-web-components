@@ -3,7 +3,7 @@
 export default {
   globs: ['src/**/*.ts'],
   exclude: ['src/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
-  outdir: 'dist',
+  outdir: './',
   dev: false,
   watch: false,
   dependencies: false,
