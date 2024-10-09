@@ -8,16 +8,16 @@ import { LitElement, unsafeCSS } from 'lit';
 
 @customElement('mid-button')
 export class MinidButton extends LitElement {
-  @property()
+  @property({type: String})
   variant: 'primary' | 'secondary' | 'tertiary' = 'primary';
 
-  @property()
+  @property({type: String})
   size: 'md' | 'lg' | 'sm' = 'md';
 
-  @property()
+  @property({type: String})
   type: 'submit' | 'button' | 'reset' = 'button';
 
-  @property()
+  @property({type: String})
   href = '';
 
   @property({ type: Boolean })
