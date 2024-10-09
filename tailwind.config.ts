@@ -517,7 +517,7 @@ const focus = {
 export default {
   // plugins: [minidWebComponents()],
   darkMode: 'class',
-  content: ["./lib/**/*.ts"],
+  content: ["./src/**/*.ts"],
   theme: {
     fontFamily: {
       sans: ['inter', 'Arial', 'sans-serif'],

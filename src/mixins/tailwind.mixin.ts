@@ -1,5 +1,5 @@
 import { CSSResultArray, LitElement, unsafeCSS } from 'lit';
-import tailwindStyles from '../css/tailwind.css?inline';
+import tailwindStyles from '../tailwind.css?inline';
 
 export const tailwindCssStyles = unsafeCSS(tailwindStyles);
 

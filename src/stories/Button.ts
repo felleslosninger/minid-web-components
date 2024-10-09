@@ -1,5 +1,5 @@
 import { html } from 'lit';
-import '../../lib/components/button.component';
+import '../components/button.component';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { classMap } from 'lit/directives/class-map.js';
 

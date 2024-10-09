@@ -1,4 +1,4 @@
-import 'css/tailwind.css';
+//import 'tailwind.css';
 
 import {MinidButton} from 'components/button.component.ts';
 export {MinidButton};
@@ -23,3 +23,5 @@ export {MinidPopup};
 
 import {MinidTextfield} from 'components/textfield.component.ts';
 export {MinidTextfield};
+
+//export * from './components'; // This will export all components from the 'components' folder

@@ -1,6 +1,6 @@
 {
   "name": "@felleslosninger/minid-elements",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "type": "module",
   "files": [
     "dist"
@@ -19,34 +19,34 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/felleslosninger/minid-web-components.git"
+    "url": "git+https://github.com/felleslosninger/minid-web-components.git"
   },
+  "customElements": "dist/custom-elements.json",
   "scripts": {
-    "dev": "rimraf node_modules/.vite/ && vite --force",
     "make-icons": "node ./scripts/make-icons.js",
-    "build": "rimraf dist && tsc --p ./tsconfig-build.json && vite build",
+    "build": "rimraf dist && tsc && npm run analyze && vite build",
     "storybook": "storybook dev -p 6006",
-    "storybook:build": "tsc && storybook build",
-    "prepublishOnly": "yarn run build",
-    "build-storybook": "storybook build"
+    "storybook-dev": "concurrently --kill-others \"npm run analyze -- --watch\" \"npm run storybook\"",
+    "build-storybook": "storybook build",
+    "analyze": "custom-elements-manifest analyze"
   },
   "peerDependencies": {
     "@digdir/designsystemet-css": "^0.10.0",
     "@digdir/designsystemet-theme": "^0.15.3",
     "@floating-ui/dom": "^1.6.10",
     "composed-offset-position": "^0.0.6",
-    "element-internals-polyfill": "^1.3.10",
-    "lit": "^3.1.2"
+    "element-internals-polyfill": "^1.3.10"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^1.9.0",
+    "@custom-elements-manifest/analyzer": "^0.10.3",
+    "@digdir/designsystemet-css": "^0.10.0",
+    "@digdir/designsystemet-theme": "^0.15.3",
+    "@floating-ui/dom": "^1.6.10",
     "@lit/localize-tools": "^0.7.1",
     "@material/web": "^1.2.0",
     "@navikt/aksel-icons": "^7.1.2",
     "@open-wc/testing": "^4.0.0",
-    "@digdir/designsystemet-css": "^0.10.0",
-    "@digdir/designsystemet-theme": "^0.15.3",
-    "@floating-ui/dom": "^1.6.10",
     "@storybook/addon-docs": "^8.3.5",
     "@storybook/addon-essentials": "^8.3.1",
     "@storybook/addon-links": "^8.3.1",
@@ -61,6 +61,7 @@
     "@vitejs/plugin-legacy": "^5.3.1",
     "autoprefixer": "^10.4.16",
     "composed-offset-position": "^0.0.6",
+    "concurrently": "^9.0.1",
     "element-internals-polyfill": "^1.3.10",
     "eslint": "^8.52.0",
     "eslint-plugin-storybook": "^0.8.0",

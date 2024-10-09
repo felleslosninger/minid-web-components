@@ -14,15 +14,22 @@ export class MinidCountDown extends tailwind(LitElement) {
     `,
   ];
 
+  /**
+   * Timestamp in ms for when the countdown should expire
+   */
   @property({ type: Number })
   expiry!: number; // future timestamp in ms
 
+  /**
+   * Size in pixels of the countdown circle
+   */
   @property({ type: String })
   size: string = '150';
 
   @state()
   showSpinner = false;
 
+  // TODO: add event emitter for countdown expired
   @property({ attribute: false })
   callback?: () => void;
 

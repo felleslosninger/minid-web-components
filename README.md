@@ -12,6 +12,7 @@
 
 Enable dev mode by adding `?mode=dev` to the url e.g 'http://localhost:5173/?mode=dev
 
+
 ## Locale
 
 Change locale by adding `?locale=en` to the url e.g 'http://localhost:5173/?locale=en'

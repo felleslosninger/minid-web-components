@@ -9,8 +9,8 @@ const run = () => {
   const projectRoot = path.dirname(__filename) + '/..';
   const iconSrcFolder =
     projectRoot + '/node_modules/@navikt/aksel-icons/dist/svg';
-  const destination = projectRoot + '/lib/assets/icons';
-  const tsDestination = projectRoot + '/lib/types';
+  const destination = projectRoot + '/src/assets/icons';
+  const tsDestination = projectRoot + '/src/types';
   const tsFileName = tsDestination + '/icon-name.ts';
 
   fs.readdir(iconSrcFolder, { recursive: true }, (err, files) => {
@@ -23,7 +23,6 @@ const run = () => {
           .toLowerCase();
         tsContent += "  '" + kebabCase + "',\n";
 
-        console.log(iconSrcFolder + '/' + file, destination);
         fs.copyFile(
           iconSrcFolder + '/' + file,
           destination + '/' + kebabCase + '.svg',
