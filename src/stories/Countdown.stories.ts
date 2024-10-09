@@ -5,9 +5,7 @@ import '../components/countdown.component';
 
 const meta: Meta = {
   title: 'Komponenter/Countdown',
-  tags: ['autodocs'],
   component: 'mid-countdown',
-  decorators: [(story) => html`<div style="margin: 3em">${story()}</div>`],
 };
 
 export default meta;
