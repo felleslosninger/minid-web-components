@@ -21,13 +21,14 @@
     "type": "git",
     "url": "git+https://github.com/felleslosninger/minid-web-components.git"
   },
+  "customElements": "dist/custom-elements.json",
   "scripts": {
     "make-icons": "node ./scripts/make-icons.js",
-    "build": "rimraf dist && tsc && analyze && vite build",
+    "build": "rimraf dist && tsc && npm run analyze && vite build",
     "storybook": "storybook dev -p 6006",
-    "storybook-dev": "concurrently --kill-others \"npm run analyze\" \"npm run storybook\"",
+    "storybook-dev": "concurrently --kill-others \"npm run analyze -- --watch\" \"npm run storybook\"",
     "build-storybook": "storybook build",
-    "analyze": "custom-elements-manifest analyze --watch"
+    "analyze": "custom-elements-manifest analyze"
   },
   "peerDependencies": {
     "@digdir/designsystemet-css": "^0.10.0",
@@ -82,6 +83,5 @@
     "vite-plugin-dts": "^4.2.3",
     "vite-plugin-web-components-hmr": "^0.1.3",
     "vitest": "^1.1.3"
-  },
-  "customElements": "custom-elements.json"
+  }
 }

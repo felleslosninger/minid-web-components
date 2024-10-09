@@ -30,7 +30,7 @@ export default defineConfig(({}) => {
       },
     },
     plugins: [
-      dts({ rollupTypes: true }), // mixins and errors... TS4094: Property '__enqueueUpdate' of exported anonymous class type may not be private or protected.
+      //dts({ rollupTypes: true }), // mixins and errors... TS4094: Property '__enqueueUpdate' of exported anonymous class type may not be private or protected.
       hmrPlugin({
         include: ['./src/**/*.ts'],
         presets: [presets.lit],

@@ -1,4 +1,4 @@
-import 'tailwind.css';
+//import 'tailwind.css';
 
 import {MinidButton} from 'components/button.component.ts';
 export {MinidButton};
