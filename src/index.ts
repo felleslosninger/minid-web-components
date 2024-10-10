@@ -1,6 +1,9 @@
 import { MinidButton } from 'components/button.component.ts';
 export { MinidButton };
 
+import { MinidCheckbox } from 'components/checkbox.component';
+export { MinidCheckbox };
+
 import { MinidDropdown } from 'components/dropdown.component.ts';
 export { MinidDropdown };
 
