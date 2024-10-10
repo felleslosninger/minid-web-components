@@ -8,7 +8,6 @@ import plugin from 'tailwindcss/plugin';
 // plugin(({ addBase, addUtilities, addComponents, e, addVariant, theme }) => {
 export const minidWebComponents = () =>
   plugin(() => {
-    console.log('hello!');
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     // addComponents(require(styles));
   });
