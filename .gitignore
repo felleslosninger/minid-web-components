@@ -7,3 +7,4 @@ yarn.lock
 /.idea/
 *storybook.log
 storybook-static/
+custom-elements.json
