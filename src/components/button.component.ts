@@ -6,18 +6,22 @@ import styles from '@digdir/designsystemet-css?inline';
 import theme from '@digdir/designsystemet-theme?inline';
 import { LitElement, unsafeCSS } from 'lit';
 
+/**
+ * This is a button all about how
+ * my life got flipped, turned upside down
+ */
 @customElement('mid-button')
 export class MinidButton extends LitElement {
-  @property({type: String})
+  @property({ type: String })
   variant: 'primary' | 'secondary' | 'tertiary' = 'primary';
 
-  @property({type: String})
+  @property({ type: String })
   size: 'md' | 'lg' | 'sm' = 'md';
 
-  @property({type: String})
+  @property({ type: String })
   type: 'submit' | 'button' | 'reset' = 'button';
 
-  @property({type: String})
+  @property({ type: String })
   href = '';
 
   @property({ type: Boolean })
@@ -26,7 +30,7 @@ export class MinidButton extends LitElement {
   @property({ type: Boolean })
   disabled = false;
 
-  get isLink() {
+  private get isLink() {
     return !!this.href;
   }
 
