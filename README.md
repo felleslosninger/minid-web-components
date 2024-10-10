@@ -10,6 +10,14 @@
 - `yarn build`
 - `yarn deploy`
 
+
+registry = https://npm.pkg.github.com/felleslosninger
+//npm.pkg.github.com/:_authToken=[TOKEN] (edited)
+
+yarn add @felleslosninger/minid-elements@0.0.1
+
+
+
 Enable dev mode by adding `?mode=dev` to the url e.g 'http://localhost:5173/?mode=dev
 
 

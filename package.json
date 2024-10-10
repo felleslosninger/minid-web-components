@@ -3,7 +3,8 @@
   "version": "0.0.6",
   "type": "module",
   "files": [
-    "dist"
+    "/dist",
+    "/public"
   ],
   "types": "dist/index.d.ts",
   "module": "./dist/index.js",
@@ -12,7 +13,8 @@
       "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
     },
-    "./dist/style.css": "./dist/style.css"
+    "./dist/style.css": "./dist/style.css",
+    "./assets": "./public/assets"
   },
   "sideEffects": [
     "**/*.css"
@@ -47,6 +49,7 @@
     "@material/web": "^1.2.0",
     "@navikt/aksel-icons": "^7.1.2",
     "@open-wc/testing": "^4.0.0",
+    "@storybook/addon-controls": "^8.3.5",
     "@storybook/addon-docs": "^8.3.5",
     "@storybook/addon-essentials": "^8.3.1",
     "@storybook/addon-links": "^8.3.1",
