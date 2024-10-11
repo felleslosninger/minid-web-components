@@ -6,7 +6,7 @@ import { MinidElement } from 'mixins/tailwind.mixin';
 @customElement('mid-spinner')
 export class SpinnerComponent extends MinidElement {
 
-    spinner = new URL("../../public/assets/images/CircleBroken_black.svg", import.meta.url);
+    spinner = new URL("./CircleBroken_black.svg", import.meta.url);
 
     @property({type: String})
     width = '150px';

@@ -9,7 +9,7 @@ export class AppIndex extends LitElement {
   override render() {
     return html`<div>hei hei hei</div>
     <mid-countdown expiry=${Date.now() + 2 * 1000}></mid-countdown>
-    <hr/>
+   <hr/>
     <mid-button  @click=${() => {console.log("You clicked?")}}>Klikk meg...</mid-button>
     <hr/>
     <mid-spinner></mid-spinner>

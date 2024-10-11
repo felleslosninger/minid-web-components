@@ -1,7 +1,7 @@
 import { customElement, property, state } from 'lit/decorators.js';
 import { css, html } from 'lit';
 import { MinidElement } from 'mixins/tailwind.mixin.ts';
-import './spinner.component';
+import '../spinner/spinner.component';
 
 @customElement('mid-countdown')
 export class CountdownComponent extends MinidElement { // MinidElement {
@@ -37,7 +37,7 @@ export class CountdownComponent extends MinidElement { // MinidElement {
   @property({ attribute: false })
   callback?: () => void;
 
-  dingUrl = new URL('../../public/assets/audio/ding-126626.mp3', import.meta.url);
+  dingUrl = new URL('./ding-126626.mp3', import.meta.url);
 
   firstUpdated() {
     const canvas = <HTMLCanvasElement>this.shadowRoot!.querySelector('canvas');
@@ -115,7 +115,7 @@ export class CountdownComponent extends MinidElement { // MinidElement {
   }
 
   override render() {
-    return this.showSpinner // TODO: remove debugging stuff (ie border)
+    return this.showSpinner // TODO: remove css debugging stuff (ie border)
       ? html`<div class="flex items-center justify-center border-2 rounded">
           <mid-spinner width="150px"></mid-spinner>
         </div>`

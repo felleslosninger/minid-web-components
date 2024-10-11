@@ -1,7 +1,7 @@
-import { CountdownComponent } from 'components/countdown.component.ts';
+import { CountdownComponent } from 'components/countdown/countdown.component.ts';
 export { CountdownComponent };
 
-import { SpinnerComponent } from 'components/spinner.component.ts';
+import { SpinnerComponent } from 'components/spinner/spinner.component.ts';
 export { SpinnerComponent };
 
 import { MinidButton } from 'components/button.component.ts';
