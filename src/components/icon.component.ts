@@ -1,5 +1,5 @@
 import { customElement, property } from 'lit/decorators.js';
-import { html } from 'lit';
+import { css, html } from 'lit';
 import { MidIconName } from 'src/types/icon-name.ts';
 import { createRef, ref, Ref } from 'lit/directives/ref.js';
 import { until } from 'lit/directives/until.js';
@@ -50,11 +50,14 @@ export class MinidIcon extends MinidElement {
     return html` <div ${ref(this.placeholderRef)}></div> `;
   }
 
-  // static override styles = css`
-    //:host {
-    //  display: inline-flex;
-    //}
-  // `;
+  static override styles = [css`
+    :host {
+     display: inline-flex;
+    },
+    
+  `,
+    super.styles
+  ];
 
   protected render() {
     const importedIcon = import(
