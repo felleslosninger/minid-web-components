@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 
-import '../components/countdown.component';
+import '../components/countdown/countdown.component';
 
 const meta: Meta = {
   title: 'Komponenter/Countdown',
