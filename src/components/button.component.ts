@@ -1,17 +1,18 @@
 import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
-import { literal, html } from 'lit/static-html.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
-import styles from '@digdir/designsystemet-css?inline';
-import theme from '@digdir/designsystemet-theme?inline';
-import { LitElement, unsafeCSS } from 'lit';
+// import styles from '@digdir/designsystemet-css?inline';
+// import theme from '@digdir/designsystemet-theme?inline';
+// import { LitElement, unsafeCSS } from 'lit';
+import { MinidElement } from 'mixins/tailwind.mixin.ts';
+import {  html, literal } from 'lit/static-html.js';
 
 /**
  * This is a button all about how
  * my life got flipped, turned upside down
  */
 @customElement('mid-button')
-export class MinidButton extends LitElement {
+export class MinidButton extends MinidElement {
   @property({ type: String })
   variant: 'primary' | 'secondary' | 'tertiary' = 'primary';
 
@@ -34,7 +35,7 @@ export class MinidButton extends LitElement {
     return !!this.href;
   }
 
-  static override styles = [unsafeCSS(styles), unsafeCSS(theme)];
+  // static override styles = [unsafeCSS(styles), unsafeCSS(theme)];
 
   override render() {
     const tag = this.isLink ? literal`a` : literal`button`;

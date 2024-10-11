@@ -1,3 +1,9 @@
+import { CountdownComponent } from 'components/countdown.component.ts';
+export { CountdownComponent };
+
+import { SpinnerComponent } from 'components/spinner.component.ts';
+export { SpinnerComponent };
+
 import { MinidButton } from 'components/button.component.ts';
 export { MinidButton };
 
@@ -13,13 +19,8 @@ export { MinidMenu };
 import { MinidMenuItem } from 'components/menu-item.component.ts';
 export { MinidMenuItem };
 
-import { CountdownComponent } from 'components/countdown.component.ts';
-export { CountdownComponent };
-
 import { MinidPopup } from 'components/popup.component.ts';
 export { MinidPopup };
 
 import { MinidTextfield } from 'components/textfield.component.ts';
 export { MinidTextfield };
-
-//export * from './components'; // This will export all components from the 'components' folder

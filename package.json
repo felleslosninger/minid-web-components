@@ -7,6 +7,7 @@
     "/public"
   ],
   "types": "dist/index.d.ts",
+  "main": "./dist/index.js",
   "module": "./dist/index.js",
   "exports": {
     ".": {
@@ -27,6 +28,7 @@
   "scripts": {
     "make-icons": "node ./scripts/make-icons.js",
     "build": "rimraf dist && tsc && npm run analyze && vite build",
+    "build2": "rimraf dist && tsc && vite build",
     "storybook": "storybook dev -p 6006",
     "storybook-dev": "concurrently --kill-others \"npm run analyze -- --watch\" \"npm run storybook\"",
     "build-storybook": "npm run analyze && storybook build",
@@ -37,7 +39,9 @@
     "@digdir/designsystemet-theme": "^0.15.3",
     "@floating-ui/dom": "^1.6.10",
     "composed-offset-position": "^0.0.6",
-    "element-internals-polyfill": "^1.3.10"
+    "element-internals-polyfill": "^1.3.10",
+    "lit": "^3.1.2",
+    "lit-html": "^3.2.0"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^1.9.0",
@@ -69,7 +73,6 @@
     "element-internals-polyfill": "^1.3.10",
     "eslint": "^8.52.0",
     "eslint-plugin-storybook": "^0.8.0",
-    "lit": "^3.1.2",
     "postcss": "^8.4.31",
     "postcss-nested": "^6.0.1",
     "postcss-nesting": "^12.0.1",
@@ -87,5 +90,8 @@
     "vite-plugin-dts": "^4.2.3",
     "vite-plugin-web-components-hmr": "^0.1.3",
     "vitest": "^1.1.3"
+  },
+  "dependencies": {
+    "vite-plugin-externalize-deps": "^0.8.0"
   }
 }

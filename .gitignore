@@ -9,3 +9,6 @@ yarn.lock
 *storybook.log
 storybook-static/
 custom-elements.json
+/demo/package-lock.json
+/demo/yarn-error.log
+/yarn-error.log

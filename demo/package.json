@@ -8,8 +8,8 @@
     "build": "rimraf dist && tsc && vite build"
   },
   "dependencies": {
-    "@felleslosninger/minid-elements": "file:../dist",
-    "lit": "^3.1.2"
+    "lit": "^3.1.2",
+    "@felleslosninger/minid-elements": "../"
   },
   "devDependencies": {
     "rimraf": "^5.0.5",
