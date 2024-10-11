@@ -15,7 +15,7 @@ type Story = StoryObj;
 export const Primary: Story = {
   render: (args) => html`
     <mid-button variant="${args.variant}">
-      <slot>Click me!</slot> 
+      <slot>Click me!</slot>
     </mid-button>
   `,
   args: {
@@ -24,6 +24,5 @@ export const Primary: Story = {
 };
 
 export const WithProp: Story = {
-  render: () => html`
-    <mid-button variant="primary">Hello World!</mid-button>`,
+  render: () => html` <mid-button variant="primary">Hello World!</mid-button>`,
 };

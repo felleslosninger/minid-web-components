@@ -20,10 +20,7 @@ export const Primary: Story = {
 };
 
 export const WithProp: Story = {
-  render: () => html`
-    <mid-countdown 
-      expiry=${Date.now() + 100 * 1000} 
-      size="350"
-    >
+  render: () =>
+    html` <mid-countdown expiry=${Date.now() + 100 * 1000} size="350">
     </mid-countdown>`,
 };

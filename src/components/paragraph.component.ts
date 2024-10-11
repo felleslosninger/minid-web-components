@@ -1,5 +1,6 @@
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
+import { classMap } from 'lit/directives/class-map.js';
 import { tailwind } from 'src/mixins/tailwind.mixin';
 
 /**
@@ -20,37 +21,17 @@ export class MinidParagraph extends tailwind(LitElement) {
   spacing = true;
 
   override render() {
-    return html` <slot></slot> `;
-  }
-
-  attributeChangedCallback(
-    name: string,
-    _old: string | null,
-    value: string | null
-  ): void {
-    console.log(name, value);
-
-    this.className = '';
-    this.classList.add('fds-paragraph');
-
-    if (name === 'spacing' && value !== null) {
-      this.classList.add('fds-paragraph--spacing');
-    }
-
-    if (value === 'xs') {
-      this.classList.add('fds-paragraph--xs');
-    }
-
-    if (value === 'sm') {
-      this.classList.add('fds-paragraph--sm');
-    }
-
-    if (value === 'md') {
-      this.classList.add('fds-paragraph--md');
-    }
-
-    if (value === 'lg') {
-      this.classList.add('fds-paragraph--lg');
-    }
+    return html`<p
+      class="${classMap({
+        'fd-paragraph': true,
+        'fds-paragraph--spacing': this.spacing,
+        'fds-paragraph--xs': this.size === 'xs',
+        'fds-paragraph--sm': this.size === 'sm',
+        'fds-paragraph--md': this.size === 'md',
+        'fds-paragraph--lg': this.size === 'lg',
+      })}"
+    >
+      <slot></slot>
+    </p> `;
   }
 }

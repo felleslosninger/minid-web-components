@@ -12,7 +12,7 @@ export const tailwind = <T extends Constructor<LitElement>>(superClass: T) =>
     static styles = [
       tailwindCssStyles,
       dsCssStyles,
-      dsCssTheme
+      dsCssTheme,
     ] as CSSResultArray;
   };
 
@@ -22,6 +22,6 @@ export class MinidElement extends LitElement {
   static override styles = [
     tailwindCssStyles,
     dsCssStyles,
-    dsCssTheme
+    dsCssTheme,
   ] as CSSResultArray;
 }
