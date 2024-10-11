@@ -1,4 +1,4 @@
-import plugin from 'tailwindcss/plugin';
+// import plugin from 'tailwindcss/plugin';
 // import { html, LitElement, unsafeCSS } from 'lit';
 // import styles from '@digdir/designsystemet-css?inline';
 // import { CSSObject } from 'storybook/internal/theming';
@@ -6,11 +6,11 @@ import plugin from 'tailwindcss/plugin';
 
 // TODO should we use Tailwind
 // plugin(({ addBase, addUtilities, addComponents, e, addVariant, theme }) => {
-export const minidWebComponents = () =>
-  plugin(() => {
+// export const minidWebComponents = () =>
+  // plugin(() => {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     // addComponents(require(styles));
-  });
+  // });
 
 // '.fds-btn': {
 //   '--fds-btn-padding': 'var(--fds-spacing-2) var(--fds-spacing-4)',
