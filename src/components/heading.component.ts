@@ -20,10 +20,10 @@ export class MinidHeading extends tailwind(LitElement) {
 
   /**
    *
-   * @default true
+   * @default false
    */
   @property({ type: Boolean })
-  spacing = true;
+  spacing = false;
 
   override render() {
     const tag =

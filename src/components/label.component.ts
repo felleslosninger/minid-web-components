@@ -1,6 +1,7 @@
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
+import { ifDefined } from 'lit/directives/if-defined.js';
 import { tailwind } from 'src/mixins/tailwind.mixin';
 
 @customElement('mid-label')
@@ -11,6 +12,9 @@ export class MinidLabel extends tailwind(LitElement) {
    */
   @property()
   size: 'xs' | 'sm' | 'md' | 'lg' = 'md';
+
+  @property()
+  for?: string;
 
   /**
    * Add margin below element
@@ -29,6 +33,7 @@ export class MinidLabel extends tailwind(LitElement) {
   override render() {
     return html`
       <label
+        for=${ifDefined(this.for)}
         class=${classMap({
           'fds-label': true,
           'fds-label--spacing': this.spacing,

@@ -9,8 +9,9 @@ import { tailwind } from 'src/mixins/tailwind.mixin';
 @customElement('mid-paragraph')
 export class MinidParagraph extends tailwind(LitElement) {
   /**
-   * `'md' = 18px`
+   * `'xs' = 14px`
    * `'sm' = 16px`
+   * `'md' = 18px`
    * `'lg' = 21px`
    * @default 'md'
    */

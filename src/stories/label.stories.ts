@@ -5,7 +5,7 @@ import '../components/label.component';
 import type { MinidLabel } from '../components/label.component';
 
 const meta: Meta = {
-  title: 'Typografi/label',
+  title: 'Typografi/Label',
   component: 'mid-label',
   argTypes: {
     size: {
