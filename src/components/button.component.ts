@@ -33,7 +33,7 @@ export class MinidButton extends MinidElement  {
    * The href of the button. If set, the button will be rendered as an anchor tag
    */
   @property({ type: String })
-  href = '';
+  href: string | undefined;
 
   /**
    * Whether the button should be full width

@@ -13,21 +13,23 @@ const meta: Meta = {
       control: { type: 'radio' },
     },
     size: {
-      options: ['md', 'ld', 'sm'],
+      options: ['md', 'lg', 'sm'],
       control: { type: 'radio' },
     },
     type: {
       options: ['submit', 'button', 'reset'],
       control: { type: 'select' },
     },
-    href: {control: 'text'},
-    isLink: {table: {disable: true}},
+    href: { control: 'text' },
+    isLink: { table: { disable: true } },
   },
 
   args: {
     variant: 'primary',
     size: 'md',
     type: 'button',
+    label: 'Knapp',
+    args: '',
   },
 
 };
@@ -38,8 +40,8 @@ type Story = StoryObj;
 
 export const Primary: Story = {
   render: (args) => html`
-    <mid-button variant="${args.variant}">
-      <slot>Click me!</slot> 
+    <mid-button variant="${args.variant}" size=${args.size} href=${args.href} type=${args.type}>
+      <slot>${args.label}</slot>
     </mid-button>
   `,
 
@@ -48,21 +50,22 @@ export const Primary: Story = {
 export const Secondary: Story = {
   render: (args) => html`
     <mid-button variant="${args.variant}">
-      <slot>Click me!</slot> 
+      <slot>${args.label}</slot>
     </mid-button>
   `,
   args: {
-    variant: "secondary",
-  }
+    variant: 'secondary',
+  },
 };
 
 export const Link: Story = {
   render: (args) => html`
-    <mid-button href="${args.href}">
-      <slot>Click me!</slot> 
+    <mid-button href="${args.href}" variant=${args.variant}>
+      <slot>${args.href}</slot>
     </mid-button>
   `,
   args: {
-    href: "https://digdir.no/",
-  }
+    href: 'https://digdir.no/',
+    variant: 'tertiary',
+  },
 };
