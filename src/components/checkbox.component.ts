@@ -36,6 +36,10 @@ export class MinidCheckbox extends tailwind(LitElement) {
   @queryAssignedNodes({ slot: 'description', flatten: true })
   descriptionNodes?: NodeListOf<HTMLElement>;
 
+  handleChange(event: Event) {
+    this.checked = (event.target as HTMLInputElement).checked;
+  }
+
   handleClick(event: Event) {
     if (this.readonly) {
       event.preventDefault();
@@ -50,7 +54,6 @@ export class MinidCheckbox extends tailwind(LitElement) {
   }
 
   protected firstUpdated() {
-    // const hiddenDescription = !this.descriptionNodes?.length;
     this.updateDescriptionHidden();
   }
 
@@ -77,6 +80,7 @@ export class MinidCheckbox extends tailwind(LitElement) {
           id="${this.checkboxId}"
           class="fds-checkbox__input"
           type="checkbox"
+          @change=${this.handleChange}
           @click=${this.handleClick}
           ?disabled=${this.disabled}
           ?checked=${this.checked}
