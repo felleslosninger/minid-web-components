@@ -17,13 +17,17 @@ export class MinidParagraph extends tailwind(LitElement) {
   @property()
   size: 'xs' | 'sm' | 'md' | 'lg' = 'md';
 
+  /**
+   * Add margin below element
+   * @default false
+   */
   @property({ type: Boolean })
-  spacing = true;
+  spacing = false;
 
   override render() {
     return html`<p
       class="${classMap({
-        'fd-paragraph': true,
+        'fds-paragraph': true,
         'fds-paragraph--spacing': this.spacing,
         'fds-paragraph--xs': this.size === 'xs',
         'fds-paragraph--sm': this.size === 'sm',

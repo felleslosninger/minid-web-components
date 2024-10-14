@@ -1,7 +1,7 @@
 import { customElement, property } from 'lit/decorators.js';
 import { css, html, LitElement } from 'lit';
-import { MidIconName } from 'src/types/icon-name.ts';
-import { createRef, ref, Ref } from 'lit/directives/ref.js';
+import type { MidIconName } from 'src/types/icon-name.ts';
+import { createRef, ref, type Ref } from 'lit/directives/ref.js';
 import { until } from 'lit/directives/until.js';
 
 @customElement('mid-icon')
