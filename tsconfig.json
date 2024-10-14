@@ -1,19 +1,22 @@
 {
   "compilerOptions": {
-    "target": "es2022",
-    "lib": ["es2022", "DOM", "DOM.Iterable"],
-    "module": "ESNext",
+    "target": "es2021",
+    "lib": ["es2021", "dom"],
+    "module": "es2020",
     "experimentalDecorators": true,
     "useDefineForClassFields": false,
     "skipLibCheck": true,
 
+    "allowSyntheticDefaultImports": true,
+
     /* Bundler mode */
-    "moduleResolution": "bundler", // bundler, nodenext, node
+    "moduleResolution": "node",
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "declaration": false,
+    "declaration": true,
+    "declarationMap": true,
     "typeRoots": ["./dist/index.d.ts"],
 
     /* Linting */
@@ -32,6 +35,6 @@
     }
   },
   "include": ["src/**/*.ts"],
-  "exclude": ["src/**/*.stories.ts"],
+  "exclude": ["src/**/*.stories.ts", "src/stories"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

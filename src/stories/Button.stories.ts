@@ -1,14 +1,9 @@
-import { fn } from '@storybook/test';
-
 import type { Meta, StoryObj } from '@storybook/web-components';
-import '../components/button.component';
 import { Button, type ButtonProps } from './Button';
-// import 'components/button.component';
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories
 const meta = {
   title: 'Komponenter/Button',
-  tags: ['autodocs'],
   component: 'mid-button',
   render: (args) => Button(args),
   argTypes: {
@@ -19,9 +14,6 @@ const meta = {
     variant: {
       control: { type: 'select' },
       options: ['primary', 'secondary', 'tertiary'],
-    },
-    encapsulated: {
-      control: { type: 'boolean' },
     },
     type: {
       control: { type: 'select' },
@@ -74,7 +66,6 @@ export const Encapsulated: Story = {
     variant: 'secondary',
     label: 'Knapp',
     fullWidth: true,
-    encapsulated: true,
   },
 };
 

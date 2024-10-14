@@ -1,12 +1,12 @@
 import { customElement, property } from 'lit/decorators.js';
 
-import { html, LitElement } from 'lit';
-import { tailwind } from 'mixins/tailwind.mixin';
+import { html } from 'lit';
+import { MinidElement } from 'mixins/tailwind.mixin';
 
 @customElement('mid-spinner')
-export class SpinnerComponent extends tailwind(LitElement) {
+export class SpinnerComponent extends MinidElement {
 
-    spinner = new URL("../assets/images/CircleBroken_black.svg", import.meta.url);
+    spinner = new URL("./CircleBroken_black.svg", import.meta.url);
 
     @property({type: String})
     width = '150px';

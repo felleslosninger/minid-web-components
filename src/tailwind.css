@@ -1,88 +1,95 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@layer tw-base, ds, tw-rest;
 
-@layer base {
-  *:focus-visible {
-    @apply ring;
-    @apply ring-focus;
-    @apply ring-opacity-100;
-    @apply outline-3;
-    @apply outline-focus-yellow;
-    @apply outline-offset-3;
+@layer tw-base {
+  @tailwind base;
+
+  @layer base {
+    *:focus-visible {
+      @apply ring;
+      @apply ring-focus;
+      @apply ring-opacity-100;
+      @apply outline-3;
+      @apply outline-focus-yellow;
+      @apply outline-offset-3;
+    }
   }
 }
 
-@layer components {
-  .link {
-    @apply inline-flex;
-    @apply items-center;
-    @apply gap-1;
-    @apply text-text-action;
-    @apply underline;
-    @apply decoration-1;
-    @apply underline-offset-4;
-    @apply visited:text-text-visited;
-    @apply hover:text-surface-action-hover;
-  }
+@layer tw-rest {
+  @tailwind components;
+  @tailwind utilities;
 
-  .btn {
-    @apply flex;
-    @apply place-items-center;
-    @apply gap-1;
-    @apply rounded;
-    @apply border;
-    @apply border-transparent;
-    @apply bg-surface-action;
-    @apply px-4;
-    @apply py-2;
-    @apply text-lg;
-    @apply text-white;
-    @apply hover:bg-surface-action-hover;
-    @apply disabled:cursor-not-allowed;
-    @apply disabled:border-transparent;
-    @apply disabled:bg-surface-action/50;
-  }
+  @layer components {
+    .link {
+      @apply inline-flex;
+      @apply items-center;
+      @apply gap-1;
+      @apply text-text-action;
+      @apply underline;
+      @apply decoration-1;
+      @apply underline-offset-4;
+      @apply visited:text-text-visited;
+      @apply hover:text-surface-action-hover;
+    }
 
-  .btn-primary {
-  }
+    .btn {
+      @apply flex;
+      @apply place-items-center;
+      @apply gap-1;
+      @apply rounded;
+      @apply border;
+      @apply border-transparent;
+      @apply bg-surface-action;
+      @apply px-4;
+      @apply py-2;
+      @apply text-lg;
+      @apply text-white;
+      @apply hover:bg-surface-action-hover;
+      @apply disabled:cursor-not-allowed;
+      @apply disabled:border-transparent;
+      @apply disabled:bg-surface-action/50;
+    }
 
-  .btn-secondary {
-    @apply bg-transparent;
-    @apply hover:bg-transparent;
-    @apply border;
-    @apply border-border-action;
-    @apply text-text-action;
-    @apply hover:text-text-action-hover;
-    @apply hover:bg-background-accent-subtle;
-  }
+    .btn-primary {
+    }
 
-  .btn-tertiary {
-    @apply text-text-action;
-    @apply bg-transparent;
-    @apply active:bg-surface-accent-hover;
-    @apply active:text-text-action-active;
-    @apply hover:bg-background-action-subtle;
-    @apply hover:text-text-action-hover;
-  }
+    .btn-secondary {
+      @apply bg-transparent;
+      @apply hover:bg-transparent;
+      @apply border;
+      @apply border-border-action;
+      @apply text-text-action;
+      @apply hover:text-text-action-hover;
+      @apply hover:bg-background-accent-subtle;
+    }
 
-  .btn-sm {
-    @apply text-sm;
-  }
+    .btn-tertiary {
+      @apply text-text-action;
+      @apply bg-transparent;
+      @apply active:bg-surface-accent-hover;
+      @apply active:text-text-action-active;
+      @apply hover:bg-background-action-subtle;
+      @apply hover:text-text-action-hover;
+    }
 
-  .btn-lg {
-    @apply text-xl;
-  }
+    .btn-sm {
+      @apply text-sm;
+    }
 
-  .page-card {
-    @apply bg-background-neutral;
-    @apply rounded-lg;
-    @apply border;
-    @apply border-border-neutral-subtle/60;
-    @apply md:shadow-lg;
-    @apply px-6;
-    @apply py-6;
-    @apply md:px-14;
-    @apply md:py-14;
+    .btn-lg {
+      @apply text-xl;
+    }
+
+    .page-card {
+      @apply bg-background-neutral;
+      @apply rounded-lg;
+      @apply border;
+      @apply border-border-neutral-subtle/60;
+      @apply md:shadow-lg;
+      @apply px-6;
+      @apply py-6;
+      @apply md:px-14;
+      @apply md:py-14;
+    }
   }
 }

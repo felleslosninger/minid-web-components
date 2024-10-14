@@ -1,44 +1,37 @@
 import { customElement, property, state } from 'lit/decorators.js';
-
-import { css, html, LitElement } from 'lit';
-import { tailwind } from 'mixins/tailwind.mixin';
-
-import './spinner.component';
+import { css, html } from 'lit';
+import { MinidElement } from 'mixins/tailwind.mixin.ts';
 
 @customElement('mid-countdown')
-export class CountdownComponent extends tailwind(LitElement) {
+export class CountdownComponent extends MinidElement { // MinidElement {
   static override styles = [
     css`
       :host {
         display: inline-block;
         margin: auto;
-      } 
+      }
     `,
+    super.styles
   ];
 
   /**
    * Timestamp in ms for when the countdown should expire
    */
   @property({ type: Number })
-  expiry!: number; // future timestamp in ms
+  expiry: number = Date.now() + 30 * 1000; // future timestamp in ms
 
   /**
-   * Size in pixels of the countdown circle
+   * Diameter of circle in pixels
    */
   @property({ type: String })
   size: string = '150';
 
-  @property({type: Boolean})
-  ding: boolean = false;
-
   @state()
-  showSpinner = false;
+  private expired = false;
 
   // TODO: add event emitter for countdown expired
   @property({ attribute: false })
   callback?: () => void;
-
-  dingUrl = new URL('../assets/audio/ding-126626.mp3', import.meta.url);
 
   firstUpdated() {
     const canvas = <HTMLCanvasElement>this.shadowRoot!.querySelector('canvas');
@@ -97,12 +90,7 @@ export class CountdownComponent extends tailwind(LitElement) {
 
         requestAnimationFrame(drawCountdown);
       } else {
-        this.showSpinner = true;
-        if(this.ding) {
-          const audio = new Audio(this.dingUrl.href);
-          audio.volume = 0.5;
-          audio.play();
-        }
+        this.expired = true;
         this.dispatchEvent(
           new CustomEvent('countdown-expired', {
             bubbles: true,
@@ -116,10 +104,8 @@ export class CountdownComponent extends tailwind(LitElement) {
   }
 
   override render() {
-    return this.showSpinner
-      ? html`<div class="flex items-center justify-center">
-          <mid-spinner width="150px"></mid-spinner>
-        </div>`
+    return this.expired
+      ? html`<div>counter expired...</div>`
       : html`<canvas></canvas>`;
   }
 }

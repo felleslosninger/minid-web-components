@@ -1,14 +1,15 @@
-import { css, html } from 'lit';
+import {  html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { live } from 'lit/directives/live.js';
 import { stringConverter } from 'internal/string-converter';
 import { classMap } from 'lit/directives/class-map.js';
-import styles from '@digdir/designsystemet-css?inline';
-import theme from '@digdir/designsystemet-theme?inline';
-import { LitElement, unsafeCSS } from 'lit';
+// import styles from '@digdir/designsystemet-css?inline';
+// import theme from '@digdir/designsystemet-theme?inline';
+// import { LitElement, unsafeCSS } from 'lit';
+import { MinidElement } from 'mixins/tailwind.mixin.ts';
 
 @customElement('mid-textfield')
-export class MinidTextfield extends LitElement {
+export class MinidTextfield extends MinidElement {
   @property()
   label = '';
 
@@ -21,15 +22,15 @@ export class MinidTextfield extends LitElement {
   @property({ attribute: true, converter: stringConverter })
   placeholder = '';
 
-  static override styles = [
-    unsafeCSS(styles),
-    unsafeCSS(theme),
-    css`
-      :host {
-        display: flex;
-      }
-    `,
-  ];
+  // static override styles = [
+  //   unsafeCSS(styles),
+  //   unsafeCSS(theme),
+  //   css`
+  //     :host {
+  //       display: flex;
+  //     }
+  //   `,
+  // ];
 
   override render() {
     const lg = this.size === 'lg';

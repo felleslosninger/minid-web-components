@@ -3,23 +3,18 @@ import { hmrPlugin, presets } from 'vite-plugin-web-components-hmr';
 import { resolve } from 'path';
 import dts from 'vite-plugin-dts';
 import tailwindcss from 'tailwindcss';
-
+import { externalizeDeps } from 'vite-plugin-externalize-deps'
 
 export default defineConfig(({}) => {
 
   return {
     build: {
-      target: 'esnext',
-      rollupOptions: {
-        //       external: [...Object.keys(peerDependencies)], // Defines external dependencies for Rollup bundling.  //  import { peerDependencies } from './package.json';
-        external: ['lit', 'tailwindcss'],
-        output: {
-          globals: {
-            lit: 'Lit',
-            tailwindcss: 'tailwindcss',
-          },
-        },
-      },
+
+      minify: false,
+      cssCodeSplit: true,
+      cssMinify: false,
+
+      target: 'es2021',
       sourcemap: true,
       emptyOutDir: true,
       lib: {
@@ -29,8 +24,12 @@ export default defineConfig(({}) => {
         fileName: 'index',
       },
     },
+    rollupOptions: {
+      // external: ['^lit$'],
+    },
     plugins: [
-      //dts({ rollupTypes: true }), // mixins and errors... TS4094: Property '__enqueueUpdate' of exported anonymous class type may not be private or protected.
+      externalizeDeps(),
+      dts({rollupTypes: true,}),
       hmrPlugin({
         include: ['./src/**/*.ts'],
         presets: [presets.lit],

@@ -1,40 +1,55 @@
 import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
-import { literal, html } from 'lit/static-html.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
-import styles from '@digdir/designsystemet-css?inline';
-import theme from '@digdir/designsystemet-theme?inline';
-import { LitElement, unsafeCSS } from 'lit';
+import {  html, literal } from 'lit/static-html.js';
+import { MinidElement } from 'mixins/tailwind.mixin.ts';
 
 /**
  * This is a button all about how
  * my life got flipped, turned upside down
  */
 @customElement('mid-button')
-export class MinidButton extends LitElement {
+export class MinidButton extends MinidElement  {
+
+  /**
+   * The variant of the button
+   */
   @property({ type: String })
   variant: 'primary' | 'secondary' | 'tertiary' = 'primary';
 
+  /**
+   * The size of the button. Defaults to 'md'
+   */
   @property({ type: String })
   size: 'md' | 'lg' | 'sm' = 'md';
 
+  /**
+   * The type of the button. Defaults to normal 'button'
+   */
   @property({ type: String })
   type: 'submit' | 'button' | 'reset' = 'button';
 
+  /**
+   * The href of the button. If set, the button will be rendered as an anchor tag
+   */
   @property({ type: String })
-  href = '';
+  href: string | undefined;
 
+  /**
+   * Whether the button should be full width
+   */
   @property({ type: Boolean })
   fullWidth = false;
 
+  /**
+   * Whether the button is disabled
+   */
   @property({ type: Boolean })
   disabled = false;
 
   private get isLink() {
     return !!this.href;
   }
-
-  static override styles = [unsafeCSS(styles), unsafeCSS(theme)];
 
   override render() {
     const tag = this.isLink ? literal`a` : literal`button`;
