@@ -14,13 +14,12 @@
   "scripts": {
     "make-icons": "node ./scripts/make-icons.js",
     "build": "rimraf dist && tsc && npm run analyze && vite build",
-    "build2": "rimraf dist && tsc && vite build",
     "storybook": "storybook dev -p 6006",
     "storybook-dev": "concurrently --kill-others \"npm run analyze -- --watch\" \"npm run storybook\"",
     "build-storybook": "npm run build && rimraf storybook-static && npm run analyze && storybook build",
     "analyze": "custom-elements-manifest analyze"
   },
-  "peerDependencies": {
+  "dependencies": {
     "@digdir/designsystemet-css": "^0.10.0",
     "@digdir/designsystemet-theme": "^0.15.3",
     "@floating-ui/dom": "^1.6.10",
@@ -70,9 +69,7 @@
     "typescript": "^5.0.2",
     "vite": "^5.1.4",
     "vite-plugin-dts": "^4.2.3",
-    "vite-plugin-web-components-hmr": "^0.1.3"
-  },
-  "dependencies": {
+    "vite-plugin-web-components-hmr": "^0.1.3",
     "vite-plugin-externalize-deps": "^0.8.0"
   }
 }
