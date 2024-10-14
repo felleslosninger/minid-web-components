@@ -3,41 +3,66 @@ import { html } from 'lit';
 
 import '../components/button.component';
 
-import { MinidButton } from '../components/button.component';
-
-const meta: Meta<typeof MinidButton> = {
+const meta: Meta = {
   title: 'Komponenter/Button2',
   component: 'mid-button',
 
-  args: {
-    variant: 'primary',
-  },
-
   argTypes: {
     variant: {
-      options: ['primary', 'secondary'],
+      options: ['primary', 'secondary', 'tertiary'],
       control: { type: 'radio' },
     },
+    size: {
+      options: ['md', 'ld', 'sm'],
+      control: { type: 'radio' },
+    },
+    type: {
+      options: ['submit', 'button', 'reset'],
+      control: { type: 'select' },
+    },
+    href: {control: 'text'},
+    isLink: {table: {disable: true}},
+  },
+
+  args: {
+    variant: 'primary',
+    size: 'md',
+    type: 'button',
   },
 
 };
 
 export default meta;
 
-type Story = StoryObj<typeof MinidButton>;
+type Story = StoryObj;
 
 export const Primary: Story = {
-
   render: (args) => html`
     <mid-button variant="${args.variant}">
       <slot>Click me!</slot> 
     </mid-button>
   `,
 
-
 };
 
-export const WithProp: Story = {
-  render: () => html`
-    <mid-button variant="primary">Hello World!</mid-button>`,
+export const Secondary: Story = {
+  render: (args) => html`
+    <mid-button variant="${args.variant}">
+      <slot>Click me!</slot> 
+    </mid-button>
+  `,
+  args: {
+    variant: "secondary",
+  }
+};
+
+export const Link: Story = {
+  render: (args) => html`
+    <mid-button href="${args.href}">
+      <slot>Click me!</slot> 
+    </mid-button>
+  `,
+  args: {
+    href: "https://digdir.no/",
+  }
 };

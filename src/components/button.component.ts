@@ -11,21 +11,39 @@ import { MinidElement } from 'mixins/tailwind.mixin.ts';
 @customElement('mid-button')
 export class MinidButton extends MinidElement  {
 
+  /**
+   * The variant of the button
+   */
   @property({ type: String })
   variant: 'primary' | 'secondary' | 'tertiary' = 'primary';
 
+  /**
+   * The size of the button. Defaults to 'md'
+   */
   @property({ type: String })
   size: 'md' | 'lg' | 'sm' = 'md';
 
+  /**
+   * The type of the button. Defaults to normal 'button'
+   */
   @property({ type: String })
   type: 'submit' | 'button' | 'reset' = 'button';
 
+  /**
+   * The href of the button. If set, the button will be rendered as an anchor tag
+   */
   @property({ type: String })
   href = '';
 
+  /**
+   * Whether the button should be full width
+   */
   @property({ type: Boolean })
   fullWidth = false;
 
+  /**
+   * Whether the button is disabled
+   */
   @property({ type: Boolean })
   disabled = false;
 

@@ -1,24 +1,11 @@
 {
   "name": "@felleslosninger/minid-elements",
-  "version": "0.0.5",
+  "version": "0.0.8",
+
   "type": "module",
-  "files": [
-    "/dist",
-    "/public"
-  ],
   "types": "dist/index.d.ts",
   "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "exports": {
-    ".": {
-      "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
-    },
-    "./assets": "./public/assets"
-  },
-  "sideEffects": [
-    "**/*.css"
-  ],
+
   "repository": {
     "type": "git",
     "url": "git+https://github.com/felleslosninger/minid-web-components.git"
@@ -30,7 +17,7 @@
     "build2": "rimraf dist && tsc && vite build",
     "storybook": "storybook dev -p 6006",
     "storybook-dev": "concurrently --kill-others \"npm run analyze -- --watch\" \"npm run storybook\"",
-    "build-storybook": "npm run analyze && storybook build",
+    "build-storybook": "npm run build && rimraf storybook-static && npm run analyze && storybook build",
     "analyze": "custom-elements-manifest analyze"
   },
   "peerDependencies": {

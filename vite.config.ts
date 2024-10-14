@@ -24,6 +24,9 @@ export default defineConfig(({}) => {
         fileName: 'index',
       },
     },
+    rollupOptions: {
+      // external: ['^lit$'],
+    },
     plugins: [
       externalizeDeps(),
       dts({rollupTypes: true,}),

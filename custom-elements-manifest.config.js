@@ -8,5 +8,4 @@ export default {
   watch: false,
   dependencies: false,
   litelement: true,
-
 }
