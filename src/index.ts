@@ -29,3 +29,12 @@ export { MinidPopup };
 
 import { MinidTextfield } from 'components/textfield.component.ts';
 export { MinidTextfield };
+
+import { MinidParagraph } from 'components/paragraph.component.ts';
+export { MinidParagraph };
+
+import { MinidLabel} from 'components/label.component.ts';
+export { MinidLabel };
+
+import { MinidHeading } from 'components/heading.component.ts';
+export { MinidHeading };
