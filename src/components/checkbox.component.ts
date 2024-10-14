@@ -30,9 +30,6 @@ export class MinidCheckbox extends tailwind(LitElement) {
   @property({ type: String })
   size: 'sm' | 'md' | 'lg' = 'md';
 
-  @property({ type: String, attribute: 'checkbox-position' })
-  checkboxPosition: 'left' | 'right' = 'left';
-
   @query('.fds-checkbox__description')
   checkboxDescriptionElement!: HTMLDivElement;
 

@@ -12,17 +12,12 @@ type CheckboxProps = {
   size?: MinidCheckbox['size'];
   label?: string;
   description?: string;
-  'checkbox-position'?: MinidCheckbox['checkboxPosition'];
 };
 
 const meta: Meta = {
   title: 'Komponenter/Checkbox',
   component: 'mid-checkbox',
   argTypes: {
-    'checkbox-position': {
-      control: { type: 'radio' },
-      options: ['right', 'left'],
-    },
     size: { control: { type: 'radio' }, options: ['sm', 'md', 'lg'] },
     'checkbox-id': { control: { type: 'text' } },
   },
@@ -51,8 +46,6 @@ export const Primary: Story = {
       ?readonly=${readonly}
       ?disabled=${disabled}
       size=${ifDefined(size)}
-      description=${ifDefined(description)}
-      checkbox-position=${ifDefined(rest['checkbox-position'])}
       checkbox-id=${ifDefined(rest['checkbox-id'])}
     >
       ${label}
