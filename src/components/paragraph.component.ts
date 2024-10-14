@@ -1,13 +1,13 @@
-import { html, LitElement } from 'lit';
+import { html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
-import { tailwind } from 'src/mixins/tailwind.mixin';
+import { MinidElement } from 'src/mixins/tailwind.mixin';
 
 /**
  * A paragraph
  */
 @customElement('mid-paragraph')
-export class MinidParagraph extends tailwind(LitElement) {
+export class MinidParagraph extends MinidElement {
   /**
    * `'xs' = 14px`
    * `'sm' = 16px`

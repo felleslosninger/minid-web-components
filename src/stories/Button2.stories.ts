@@ -40,8 +40,17 @@ type Story = StoryObj;
 
 export const Primary: Story = {
   render: (args) => html`
+    <mid-button variant="${args.variant}" size=${args.size} href=${args.href} type=${args.type}>
+      <slot>${args.label}</slot>
+    </mid-button>
+  `,
+
+};
+
+export const Secondary: Story = {
+  render: (args) => html`
     <mid-button variant="${args.variant}">
-      <slot>${args.label}</slot> 
+      <slot>${args.label}</slot>
     </mid-button>
   `,
   args: {

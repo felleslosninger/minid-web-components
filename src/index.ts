@@ -1,8 +1,5 @@
 import './vendor.css';
 
-import { CountdownComponent } from 'components/countdown.component.ts';
-export { CountdownComponent };
-
 import { SpinnerComponent } from 'components/spinner/spinner.component.ts';
 export { SpinnerComponent };
 
@@ -11,6 +8,9 @@ export { MinidCheckbox };
 
 import { MinidButton } from 'components/button.component.ts';
 export { MinidButton };
+
+import { CountdownComponent } from 'components/countdown.component.ts';
+export { CountdownComponent };
 
 import { MinidDropdown } from 'components/dropdown.component.ts';
 export { MinidDropdown };

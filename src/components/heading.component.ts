@@ -1,11 +1,10 @@
-import { LitElement } from 'lit';
 import { html, literal } from 'lit/static-html.js';
 import { customElement, property } from 'lit/decorators.js';
-import { tailwind } from 'src/mixins/tailwind.mixin';
+import { MinidElement } from 'src/mixins/tailwind.mixin';
 import { classMap } from 'lit/directives/class-map.js';
 
 @customElement('mid-heading')
-export class MinidHeading extends tailwind(LitElement) {
+export class MinidHeading extends MinidElement {
   /**
    * @default 1
    */

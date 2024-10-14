@@ -1,4 +1,4 @@
-import { html, LitElement } from 'lit';
+import { html } from 'lit';
 import {
   customElement,
   property,
@@ -6,12 +6,12 @@ import {
   queryAssignedNodes,
 } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
-import { tailwind } from 'src/mixins/tailwind.mixin';
+import { MinidElement } from 'src/mixins/tailwind.mixin';
 
 let nextUniqueId = 0;
 
 @customElement('mid-checkbox')
-export class MinidCheckbox extends tailwind(LitElement) {
+export class MinidCheckbox extends MinidElement{
   @property({ type: Boolean })
   checked = false;
 
