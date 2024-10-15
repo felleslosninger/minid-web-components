@@ -13,3 +13,4 @@ custom-elements.json
 /demo/yarn-error.log
 /yarn-error.log
 /minimal/
+/package-lock.json

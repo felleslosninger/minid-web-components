@@ -23,6 +23,7 @@ export default meta;
 type Story = StoryObj;
 
 export const Primary: Story = {
+  render: (args) => html`<mid-countdown expiry=${args.expiry} size=${args.size}></mid-countdown>`,
 };
 
 export const WithSizeProp: Story = {
