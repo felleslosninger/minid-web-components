@@ -8,7 +8,7 @@ import { ifDefined } from 'lit/directives/if-defined.js';
 import { MinidElement } from 'mixins/tailwind.mixin.ts';
 
 @customElement('mid-dropdown')
-export class MinidDropdown  extends MinidElement {
+export class MinidDropdown extends MinidElement {
   @property({ type: Boolean, reflect: true })
   open = false;
 

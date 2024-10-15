@@ -11,7 +11,7 @@ import { MinidElement } from 'src/mixins/tailwind.mixin';
 let nextUniqueId = 0;
 
 @customElement('mid-checkbox')
-export class MinidCheckbox extends MinidElement{
+export class MinidCheckbox extends MinidElement {
   @property({ type: Boolean })
   checked = false;
 
@@ -38,6 +38,7 @@ export class MinidCheckbox extends MinidElement{
 
   handleChange(event: Event) {
     this.checked = (event.target as HTMLInputElement).checked;
+    this.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
   }
 
   handleClick(event: Event) {

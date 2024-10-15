@@ -1,7 +1,7 @@
 import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
-import {  html, literal } from 'lit/static-html.js';
+import { html, literal } from 'lit/static-html.js';
 import { MinidElement } from 'mixins/tailwind.mixin.ts';
 
 /**
@@ -9,8 +9,7 @@ import { MinidElement } from 'mixins/tailwind.mixin.ts';
  * my life got flipped, turned upside down
  */
 @customElement('mid-button')
-export class MinidButton extends MinidElement  {
-
+export class MinidButton extends MinidElement {
   /**
    * The variant of the button
    */
