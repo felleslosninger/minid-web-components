@@ -35,15 +35,25 @@ export class MinidDropdown extends styled(LitElement, styles) {
     | 'left-start'
     | 'left-end' = 'bottom-end';
 
+  /**
+   * Sync the dropdown panel size with the trigger element
+   */
   @property({ reflect: true })
   sync?: 'width' | 'height' | 'both';
 
   @property({ type: Number })
   distance = 4;
 
+  /**
+   * Nudge the dropdown panel position. Accepts a negative or positive number.
+   */
   @property({ type: Number })
   skidding = 0;
 
+  /**
+   * Choose if position is `fixed` or `absolute`. `absolute` is more performant,
+   * but `fixed` can solve issues with overflow clipping
+   */
   @property({ type: Boolean })
   hoist = false;
 

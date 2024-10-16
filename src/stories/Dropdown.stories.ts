@@ -11,6 +11,7 @@ export interface DropdownProps {
   open?: boolean;
   size?: MinidDropdown['size'];
   placement?: MinidDropdown['placement'];
+  sync?: MinidDropdown['sync'];
   distance?: number;
   skidding?: number;
   hoist?: boolean;
@@ -23,7 +24,7 @@ const meta = {
   component: 'mid-dropdown',
   argTypes: {
     size: {
-      control: { type: 'select' },
+      control: { type: 'radio' },
       options: ['sm', 'md', 'lg'],
     },
     open: { type: 'boolean' },
@@ -46,7 +47,12 @@ const meta = {
     },
     distance: { type: 'number' },
     skidding: { type: 'number' },
-    hoist: { type: 'boolean' },
+    sync: {
+      control: {
+        type: 'select',
+      },
+      options: ['width', 'height', 'both'],
+    },
   },
 
   subcomponents: {
@@ -59,7 +65,7 @@ export default meta;
 type Story = StoryObj<DropdownProps>;
 
 // More on writing stories with args: https://storybook.js.org/docs/writing-stories/args
-export const Simple: Story = {
+export const Main: Story = {
   args: {
     open: true,
   },
@@ -74,6 +80,7 @@ export const Simple: Story = {
     placement,
     size,
     skidding,
+    sync,
   }: DropdownProps) =>
     html`<mid-dropdown
       ?open=${open}
@@ -82,6 +89,7 @@ export const Simple: Story = {
       placement=${ifDefined(placement)}
       size=${ifDefined(size)}
       skidding=${ifDefined(skidding)}
+      sync=${ifDefined(sync)}
     >
       <mid-button slot="trigger"> Nedtrekk </mid-button>
       <mid-menu>

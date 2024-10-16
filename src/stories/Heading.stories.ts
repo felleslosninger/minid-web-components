@@ -1,15 +1,21 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
-
 import '../components/heading.component';
 import { MinidHeading } from '../components/heading.component';
+import { ifDefined } from 'lit/directives/if-defined.js';
+
+type HeadingProps = {
+  size?: MinidHeading['size'];
+  spacing?: boolean;
+  level?: MinidHeading['level'];
+};
 
 const meta: Meta = {
   title: 'Typografi/Heading',
   component: 'mid-heading',
   argTypes: {
     size: {
-      control: { type: 'select' },
+      control: { type: 'radio' },
       options: ['2xs', 'xs', 'sm', 'md', 'lg', 'xl', '2xl'],
     },
     level: {
@@ -20,27 +26,15 @@ const meta: Meta = {
 
 export default meta;
 
-type HeadingProps = {
-  size: MinidHeading['size'];
-  spacing: boolean;
-  level: MinidHeading['level'];
-};
-
 type Story = StoryObj<HeadingProps>;
 
-export const Primary: Story = {
-  render: (args) => Heading(args),
-  args: {
-    level: 1,
-    size: 'md',
-    spacing: true,
-  },
-};
-
-const Heading = ({ size, spacing, level }: HeadingProps) => {
-  return html`
-    <mid-heading level=${level} size="${size}" ?spacing=${spacing}
+export const Main: Story = {
+  render: ({ size, spacing, level }: HeadingProps) => html`
+    <mid-heading
+      level=${ifDefined(level)}
+      size="${ifDefined(size)}"
+      ?spacing=${spacing}
       >En Viktig Overskrift
     </mid-heading>
-  `;
+  `,
 };

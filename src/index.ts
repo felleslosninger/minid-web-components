@@ -38,3 +38,10 @@ export { MinidLabel };
 
 import { MinidHeading } from 'components/heading.component.ts';
 export { MinidHeading };
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'mid-icon': MinidIcon;
+    'mid-button': MinidButton;
+  }
+}
