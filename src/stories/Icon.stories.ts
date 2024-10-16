@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
-import { MidIconName, MidIconNameArray } from '../types/icon-name';
+import { MidIconName } from '../types/icon-name';
 import { html } from 'lit';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import '../components/icon.component';
@@ -18,8 +18,7 @@ const meta = {
   component: 'mid-icon',
   argTypes: {
     name: {
-      control: { type: 'select' },
-      options: MidIconNameArray,
+      control: { type: 'text' },
     },
     size: {
       control: { type: 'text' },

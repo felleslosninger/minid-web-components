@@ -57,13 +57,13 @@ export class MinidDropdown extends styled(LitElement, styles) {
   @property({ type: Boolean })
   hoist = false;
 
-  handleClickOutside = (event: Event) => {
+  #handleClickOutside = (event: Event) => {
     if (!event.composedPath().includes(this)) {
-      this.toggleDropdownOpen(event, false);
+      this.#toggleDropdownOpen(event, false);
     }
   };
 
-  toggleDropdownOpen(event: Event, open?: boolean) {
+  #toggleDropdownOpen(event: Event, open?: boolean) {
     event.stopPropagation();
 
     if (open !== undefined) {
@@ -73,9 +73,9 @@ export class MinidDropdown extends styled(LitElement, styles) {
     }
 
     if (this.open) {
-      addEventListener('click', this.handleClickOutside);
+      addEventListener('click', this.#handleClickOutside);
     } else {
-      removeEventListener('click', this.handleClickOutside);
+      removeEventListener('click', this.#handleClickOutside);
     }
   }
 
@@ -93,7 +93,7 @@ export class MinidDropdown extends styled(LitElement, styles) {
         auto-size-padding="10"
         sync=${ifDefined(this.sync)}
         ?active=${this.open}
-        @click=${this.toggleDropdownOpen}
+        @click=${this.#toggleDropdownOpen}
       >
         <slot slot="anchor" name="trigger"> </slot>
         <div

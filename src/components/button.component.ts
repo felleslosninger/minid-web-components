@@ -43,7 +43,7 @@ export class MinidButton extends styled(LitElement, styles) {
    * Whether the button should be full width
    */
   @property({ type: Boolean, attribute: 'full-width' })
-  fullWidth = false;
+  'full-width' = false;
 
   /**
    * Whether the button is disabled
@@ -51,12 +51,12 @@ export class MinidButton extends styled(LitElement, styles) {
   @property({ type: Boolean })
   disabled = false;
 
-  private get isLink() {
+  get #isLink() {
     return !!this.href;
   }
 
   override render() {
-    const tag = this.isLink ? literal`a` : literal`button`;
+    const tag = this.#isLink ? literal`a` : literal`button`;
 
     return html`<${tag}
       part="base"
@@ -64,7 +64,7 @@ export class MinidButton extends styled(LitElement, styles) {
         'fds-focus': true,
         'fds-btn': true,
         'fds-btn--first': true,
-        'fds-btn--full-width': this.fullWidth,
+        'fds-btn--full-width': this['full-width'],
         'fds-btn--primary': this.variant === 'primary',
         'fds-btn--secondary': this.variant === 'secondary',
         'fds-btn--tertiary': this.variant === 'tertiary',

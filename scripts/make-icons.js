@@ -14,14 +14,14 @@ const run = () => {
   const tsFileName = tsDestination + '/icon-name.ts';
 
   fs.readdir(iconSrcFolder, { recursive: true }, (err, files) => {
-    let tsContent = 'export const MidIconNameArray = [\n';
+    let tsContent = 'export type MidIconName = \n\t|';
     files.forEach((file) => {
       if (file.endsWith('.svg')) {
         const fileName = file.substring(0, file.indexOf('.svg'));
         const kebabCase = fileName
           .replace(/([a-z0–9])([A-Z])/g, '$1-$2')
           .toLowerCase();
-        tsContent += "  '" + kebabCase + "',\n";
+        tsContent += " '" + kebabCase + "'\n\t|";
 
         fs.copyFile(
           iconSrcFolder + '/' + file,
@@ -32,7 +32,6 @@ const run = () => {
             } else {
               // Get the current filenames
               // after the function
-
               console.log('\nCopied file:', kebabCase + '.svg');
             }
           }
@@ -40,13 +39,11 @@ const run = () => {
       }
     });
 
-    if (tsContent.endsWith(',')) {
+    if (tsContent.endsWith('|')) {
       tsContent = tsContent.substring(0, tsContent.length - 1);
     }
 
-    tsContent +=
-      '] as const;\n' +
-      'export declare type MidIconName = (typeof MidIconNameArray)[number];\n';
+    tsContent += '\n';
 
     fs.writeFile(tsFileName, tsContent, { encoding: 'utf-8' }, (error) => {
       if (error) {
