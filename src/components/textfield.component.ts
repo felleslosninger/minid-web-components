@@ -1,15 +1,20 @@
-import {  html } from 'lit';
+import { css, html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { live } from 'lit/directives/live.js';
 import { stringConverter } from 'internal/string-converter';
 import { classMap } from 'lit/directives/class-map.js';
-// import styles from '@digdir/designsystemet-css?inline';
-// import theme from '@digdir/designsystemet-theme?inline';
-// import { LitElement, unsafeCSS } from 'lit';
-import { MinidElement } from 'mixins/tailwind.mixin.ts';
+import { styled } from 'mixins/tailwind.mixin.ts';
+
+const styles = [
+  css`
+    :host {
+      display: flex;
+    }
+  `,
+];
 
 @customElement('mid-textfield')
-export class MinidTextfield extends MinidElement {
+export class MinidTextfield extends styled(LitElement, styles) {
   @property()
   label = '';
 
@@ -22,16 +27,6 @@ export class MinidTextfield extends MinidElement {
   @property({ attribute: true, converter: stringConverter })
   placeholder = '';
 
-  // static override styles = [
-  //   unsafeCSS(styles),
-  //   unsafeCSS(theme),
-  //   css`
-  //     :host {
-  //       display: flex;
-  //     }
-  //   `,
-  // ];
-
   override render() {
     const lg = this.size === 'lg';
     const md = this.size === 'md';
@@ -40,20 +35,25 @@ export class MinidTextfield extends MinidElement {
     return html`
       <div
         class="${classMap({
+          'fds-paragraph': true,
+          'fds-textfield': true,
           'fds-paragraph--sm': sm,
           'fds-paragraph--md': md,
           'fds-paragraph--lg': lg,
           'fds-textfield--sm': sm,
           'fds-textfield--md': md,
           'fds-textfield--lg': lg,
-        })} fds-paragraph fds-textfield"
+        })}"
       >
         <label
           class="${classMap({
+            'fds-label': true,
+            'fds-label--medium-weight': true,
+            'fds-textfield__label': true,
             'fds-label--sm': sm,
             'fds-label--md': md,
             'fds-label--lg': lg,
-          })} fds-label fds-label--medium-weight fds-textfield__label"
+          })}"
         >
           ${this.label}
         </label>

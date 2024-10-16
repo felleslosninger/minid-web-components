@@ -3,14 +3,23 @@ import { css, html, LitElement } from 'lit';
 import type { MidIconName } from 'src/types/icon-name.ts';
 import { createRef, ref, type Ref } from 'lit/directives/ref.js';
 import { until } from 'lit/directives/until.js';
+import { styled } from 'src/mixins/tailwind.mixin';
+
+const styles = [
+  css`
+    :host {
+      display: inline-flex;
+    }
+  `,
+];
 
 @customElement('mid-icon')
-export class MinidIcon extends LitElement {
+export class MinidIcon extends styled(LitElement, styles) {
   @property({ type: String })
   name!: MidIconName;
 
   /**
-   * Accepts a css property like `100px` or `40rem`
+   * Accepts a css property like `100px` or `40rem` or number of pixels like `68`
    */
   @property({ type: String })
   size?: string;
@@ -49,17 +58,12 @@ export class MinidIcon extends LitElement {
     return html` <div ${ref(this.placeholderRef)}></div> `;
   }
 
-  static override styles = css`
-    :host {
-      display: inline-flex;
-    }
-  `;
-
   protected render() {
     const importedIcon = import(
       `../../src/assets/icons/${this.name}.svg?raw`
     ).then((iconModule) => {
       const svgElement = this.createSvgFromString(iconModule.default);
+      svgElement.role = 'img';
 
       if (this.size) {
         svgElement.setAttribute('width', `${this.size}`);

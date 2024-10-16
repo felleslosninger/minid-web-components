@@ -1,14 +1,19 @@
-import { html } from 'lit';
+import { css, html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import 'components/popup.component';
 import { ifDefined } from 'lit/directives/if-defined.js';
-// import styles from '@digdir/designsystemet-css?inline';
-// import theme from '@digdir/designsystemet-theme?inline';
-// import { unsafeCSS } from 'lit';
-import { MinidElement } from 'mixins/tailwind.mixin.ts';
+import { styled } from 'mixins/tailwind.mixin.ts';
+
+const styles = [
+  css`
+    :host {
+      display: flex;
+    }
+  `,
+];
 
 @customElement('mid-dropdown')
-export class MinidDropdown extends MinidElement {
+export class MinidDropdown extends styled(LitElement, styles) {
   @property({ type: Boolean, reflect: true })
   open = false;
 
@@ -63,16 +68,6 @@ export class MinidDropdown extends MinidElement {
       removeEventListener('click', this.handleClickOutside);
     }
   }
-
-  // static override styles = [
-  //   unsafeCSS(styles),
-  //   unsafeCSS(theme),
-  //   css`
-  //     :host {
-  //       display: flex;
-  //     }
-  //   `,
-  // ];
 
   override render() {
     return html`

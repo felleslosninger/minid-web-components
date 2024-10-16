@@ -18,16 +18,20 @@ const meta: Meta = {
   title: 'Komponenter/Checkbox',
   component: 'mid-checkbox',
   argTypes: {
-    size: { control: { type: 'radio' }, options: ['sm', 'md', 'lg'] },
-    'checkbox-id': { control: { type: 'text' } },
+    size: {
+      control: { type: 'radio' },
+      options: ['sm', 'md', 'lg'],
+    },
+    'checkbox-id': {
+      control: { type: 'text' },
+    },
   },
 } satisfies Meta<CheckboxProps>;
 
 export default meta;
-
 type Story = StoryObj<CheckboxProps>;
 
-export const Primary: Story = {
+export const Main: Story = {
   args: {
     label: 'Godkjenn deling av dine personlige bankdata?',
     description: 'Obs! Obs! Dette kan ikke reverseres',

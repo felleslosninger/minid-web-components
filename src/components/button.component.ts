@@ -1,15 +1,20 @@
+import { css, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { html, literal } from 'lit/static-html.js';
-import { MinidElement } from 'mixins/tailwind.mixin.ts';
+import { styled } from 'mixins/tailwind.mixin.ts';
 
-/**
- * This is a button all about how
- * my life got flipped, turned upside down
- */
+const styles = [
+  css`
+    :host {
+      display: flex;
+    }
+  `,
+];
+
 @customElement('mid-button')
-export class MinidButton extends MinidElement {
+export class MinidButton extends styled(LitElement, styles) {
   /**
    * The variant of the button
    */
@@ -37,7 +42,7 @@ export class MinidButton extends MinidElement {
   /**
    * Whether the button should be full width
    */
-  @property({ type: Boolean })
+  @property({ type: Boolean, attribute: 'full-width' })
   fullWidth = false;
 
   /**

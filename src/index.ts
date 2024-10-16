@@ -1,6 +1,6 @@
 import './vendor.css';
 
-import { SpinnerComponent } from 'components/spinner/spinner.component.ts';
+import { SpinnerComponent } from 'src/components/spinner.component';
 export { SpinnerComponent };
 
 import { MinidCheckbox } from 'components/checkbox.component';
@@ -33,7 +33,7 @@ export { MinidTextfield };
 import { MinidParagraph } from 'components/paragraph.component.ts';
 export { MinidParagraph };
 
-import { MinidLabel} from 'components/label.component.ts';
+import { MinidLabel } from 'components/label.component.ts';
 export { MinidLabel };
 
 import { MinidHeading } from 'components/heading.component.ts';

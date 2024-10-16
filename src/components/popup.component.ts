@@ -9,7 +9,7 @@ import {
   size,
 } from '@floating-ui/dom';
 import { classMap } from 'lit/directives/class-map.js';
-import { css, html } from 'lit';
+import { css, html, LitElement } from 'lit';
 import { customElement, property, query } from 'lit/decorators.js';
 import { MinidElement } from 'mixins/tailwind.mixin';
 import { offsetParent } from 'composed-offset-position';
@@ -59,7 +59,7 @@ function isVirtualElement(e: unknown): e is VirtualElement {
  */
 
 @customElement('mid-popup')
-export class MinidPopup extends MinidElement {
+export class MinidPopup extends LitElement {
   private anchorEl: Element | VirtualElement | null = null;
   private cleanup?: ReturnType<typeof autoUpdate>;
 
