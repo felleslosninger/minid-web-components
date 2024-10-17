@@ -41,6 +41,7 @@ export class MinidHeading extends styled(LitElement) {
 
     return html`<${tag} class="${classMap({
       'fds-heading': true,
+      'fds-heading--spacing': this.spacing,
       'fds-heading--2xs': this.size === '2xs',
       'fds-heading--xs': this.size === 'xs',
       'fds-heading--sm': this.size === 'sm',
