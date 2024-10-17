@@ -1,14 +1,19 @@
-import { html } from 'lit';
+import { css, html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import 'components/popup.component';
 import { ifDefined } from 'lit/directives/if-defined.js';
-// import styles from '@digdir/designsystemet-css?inline';
-// import theme from '@digdir/designsystemet-theme?inline';
-// import { unsafeCSS } from 'lit';
-import { MinidElement } from 'mixins/tailwind.mixin.ts';
+import { styled } from 'mixins/tailwind.mixin.ts';
+
+const styles = [
+  css`
+    :host {
+      display: flex;
+    }
+  `,
+];
 
 @customElement('mid-dropdown')
-export class MinidDropdown  extends MinidElement {
+export class MinidDropdown extends styled(LitElement, styles) {
   @property({ type: Boolean, reflect: true })
   open = false;
 
@@ -30,25 +35,35 @@ export class MinidDropdown  extends MinidElement {
     | 'left-start'
     | 'left-end' = 'bottom-end';
 
+  /**
+   * Sync the dropdown panel size with the trigger element
+   */
   @property({ reflect: true })
   sync?: 'width' | 'height' | 'both';
 
   @property({ type: Number })
   distance = 4;
 
+  /**
+   * Nudge the dropdown panel position. Accepts a negative or positive number.
+   */
   @property({ type: Number })
   skidding = 0;
 
+  /**
+   * Choose if position is `fixed` or `absolute`. `absolute` is more performant,
+   * but `fixed` can solve issues with overflow clipping
+   */
   @property({ type: Boolean })
   hoist = false;
 
-  handleClickOutside = (event: Event) => {
+  #handleClickOutside = (event: Event) => {
     if (!event.composedPath().includes(this)) {
-      this.toggleDropdownOpen(event, false);
+      this.#toggleDropdownOpen(event, false);
     }
   };
 
-  toggleDropdownOpen(event: Event, open?: boolean) {
+  #toggleDropdownOpen(event: Event, open?: boolean) {
     event.stopPropagation();
 
     if (open !== undefined) {
@@ -58,21 +73,11 @@ export class MinidDropdown  extends MinidElement {
     }
 
     if (this.open) {
-      addEventListener('click', this.handleClickOutside);
+      addEventListener('click', this.#handleClickOutside);
     } else {
-      removeEventListener('click', this.handleClickOutside);
+      removeEventListener('click', this.#handleClickOutside);
     }
   }
-
-  // static override styles = [
-  //   unsafeCSS(styles),
-  //   unsafeCSS(theme),
-  //   css`
-  //     :host {
-  //       display: flex;
-  //     }
-  //   `,
-  // ];
 
   override render() {
     return html`
@@ -88,7 +93,7 @@ export class MinidDropdown  extends MinidElement {
         auto-size-padding="10"
         sync=${ifDefined(this.sync)}
         ?active=${this.open}
-        @click=${this.toggleDropdownOpen}
+        @click=${this.#toggleDropdownOpen}
       >
         <slot slot="anchor" name="trigger"> </slot>
         <div

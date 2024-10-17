@@ -1,9 +1,9 @@
 import { customElement, property, state } from 'lit/decorators.js';
-import { css, html } from 'lit';
-import { MinidElement } from 'mixins/tailwind.mixin.ts';
+import { css, html, LitElement } from 'lit';
+import { styled } from 'mixins/tailwind.mixin.ts';
 
 @customElement('mid-countdown')
-export class CountdownComponent extends MinidElement { // MinidElement {
+export class CountdownComponent extends styled(LitElement) {
   static override styles = [
     css`
       :host {
@@ -11,7 +11,6 @@ export class CountdownComponent extends MinidElement { // MinidElement {
         margin: auto;
       }
     `,
-    super.styles
   ];
 
   /**

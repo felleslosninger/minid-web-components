@@ -3,6 +3,13 @@ import { html } from 'lit';
 
 import '../components/label.component';
 import type { MinidLabel } from '../components/label.component';
+import { ifDefined } from 'lit/directives/if-defined.js';
+
+type labelProps = {
+  size?: MinidLabel['size'];
+  weight?: MinidLabel['weight'];
+  spacing?: boolean;
+};
 
 const meta: Meta = {
   title: 'Typografi/Label',
@@ -21,15 +28,9 @@ const meta: Meta = {
 
 export default meta;
 
-type labelProps = {
-  size: MinidLabel['size'];
-  weight: MinidLabel['weight'];
-  spacing: boolean;
-};
-
 type Story = StoryObj<labelProps>;
 
-export const Primary: Story = {
+export const Main: Story = {
   render: (args) => label(args),
   args: {
     size: 'md',
@@ -39,7 +40,10 @@ export const Primary: Story = {
 
 const label = ({ size, spacing, weight }: labelProps) => {
   return html`
-    <mid-label size="${size}" ?spacing=${spacing} weight=${weight}
+    <mid-label
+      size="${ifDefined(size)}"
+      ?spacing=${spacing}
+      weight=${ifDefined(weight)}
       >Vennligst skriv inn kontonummer og pin-kode
     </mid-label>
   `;

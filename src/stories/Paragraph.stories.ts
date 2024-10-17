@@ -3,6 +3,12 @@ import { html } from 'lit';
 
 import '../components/paragraph.component';
 import { MinidParagraph } from '../components/paragraph.component';
+import { ifDefined } from 'lit/directives/if-defined.js';
+
+type ParagraphProps = {
+  size?: MinidParagraph['size'];
+  spacing?: boolean;
+};
 
 const meta: Meta = {
   title: 'Typografi/Paragraph',
@@ -17,20 +23,11 @@ const meta: Meta = {
 
 export default meta;
 
-type ParagraphProps = {
-  size: MinidParagraph['size'];
-  spacing: boolean;
-};
-
 type Story = StoryObj<ParagraphProps>;
 
-export const Primary: Story = {
-  args: {
-    size: 'md',
-    spacing: false,
-  },
+export const Main: Story = {
   render: ({ size, spacing }: ParagraphProps) => html`
-    <mid-paragraph size="${size}" ?spacing=${spacing}>
+    <mid-paragraph size="${ifDefined(size)}" ?spacing=${spacing}>
       I et forsøk på å optimalisere ressursbruken, vil det bli iverksatt tiltak
       for å styrke den offentlige sektors bærekraftige utvikling. Gjennom
       implementering av strategiske handlingsplaner og evaluering av
@@ -41,7 +38,7 @@ export const Primary: Story = {
       transparent system som sikrer innbyggernes rettigheter og tilgang til
       informasjon, i samsvar med offentlighetsloven.
     </mid-paragraph>
-    <mid-paragraph size="${size}" ?spacing=${spacing}>
+    <mid-paragraph size="${ifDefined(size)}" ?spacing=${spacing}>
       I et forsøk på å optimalisere ressursbruken, vil det bli iverksatt tiltak
       for å styrke den offentlige sektors bærekraftige utvikling. Gjennom
       implementering av strategiske handlingsplaner og evaluering av

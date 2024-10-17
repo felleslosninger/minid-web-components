@@ -1,4 +1,4 @@
-import { html } from 'lit';
+import { html, LitElement } from 'lit';
 import {
   customElement,
   property,
@@ -6,12 +6,12 @@ import {
   queryAssignedNodes,
 } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
-import { MinidElement } from 'src/mixins/tailwind.mixin';
+import { styled } from 'src/mixins/tailwind.mixin';
 
 let nextUniqueId = 0;
 
 @customElement('mid-checkbox')
-export class MinidCheckbox extends MinidElement{
+export class MinidCheckbox extends styled(LitElement) {
   @property({ type: Boolean })
   checked = false;
 
@@ -36,17 +36,18 @@ export class MinidCheckbox extends MinidElement{
   @queryAssignedNodes({ slot: 'description', flatten: true })
   descriptionNodes?: NodeListOf<HTMLElement>;
 
-  handleChange(event: Event) {
+  #handleChange(event: Event) {
     this.checked = (event.target as HTMLInputElement).checked;
+    this.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
   }
 
-  handleClick(event: Event) {
+  #handleClick(event: Event) {
     if (this.readonly) {
       event.preventDefault();
     }
   }
 
-  updateDescriptionHidden() {
+  #updateDescriptionHidden() {
     this.checkboxDescriptionElement.style.display = !this.descriptionNodes
       ?.length
       ? 'none'
@@ -54,7 +55,7 @@ export class MinidCheckbox extends MinidElement{
   }
 
   protected firstUpdated() {
-    this.updateDescriptionHidden();
+    this.#updateDescriptionHidden();
   }
 
   override render() {
@@ -80,8 +81,8 @@ export class MinidCheckbox extends MinidElement{
           id="${this.checkboxId}"
           class="fds-checkbox__input"
           type="checkbox"
-          @change=${this.handleChange}
-          @click=${this.handleClick}
+          @change=${this.#handleChange}
+          @click=${this.#handleClick}
           ?disabled=${this.disabled}
           ?checked=${this.checked}
           ?readonly=${this.readonly}
@@ -110,7 +111,7 @@ export class MinidCheckbox extends MinidElement{
         >
           <slot
             name="description"
-            @slotchange=${this.updateDescriptionHidden}
+            @slotchange=${this.#updateDescriptionHidden}
           ></slot>
         </div>
       </div>

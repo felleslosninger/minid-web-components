@@ -3,13 +3,11 @@ import { hmrPlugin, presets } from 'vite-plugin-web-components-hmr';
 import { resolve } from 'path';
 import dts from 'vite-plugin-dts';
 import tailwindcss from 'tailwindcss';
-import { externalizeDeps } from 'vite-plugin-externalize-deps'
+import { externalizeDeps } from 'vite-plugin-externalize-deps';
 
 export default defineConfig(({}) => {
-
   return {
     build: {
-
       minify: false,
       cssCodeSplit: true,
       cssMinify: false,
@@ -29,7 +27,7 @@ export default defineConfig(({}) => {
     },
     plugins: [
       externalizeDeps(),
-      dts({rollupTypes: true,}),
+      dts({ rollupTypes: true }),
       hmrPlugin({
         include: ['./src/**/*.ts'],
         presets: [presets.lit],

@@ -1,31 +1,39 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
-import { Button, type ButtonProps } from './Button';
+import { html } from 'lit';
+import { ifDefined } from 'lit/directives/if-defined.js';
+import '../components/button.component';
+import { MinidButton } from '../components/button.component';
+
+type ButtonProps = {
+  variant?: MinidButton['variant'];
+  size?: MinidButton['size'];
+  type?: MinidButton['type'];
+  label: string;
+  href?: string;
+  'full-width'?: boolean;
+  disabled?: boolean;
+};
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories
 const meta = {
   title: 'Komponenter/Button',
   component: 'mid-button',
-  render: (args) => Button(args),
   argTypes: {
     size: {
-      control: { type: 'select' },
+      control: { type: 'radio' },
       options: ['sm', 'md', 'lg'],
     },
     variant: {
-      control: { type: 'select' },
+      control: { type: 'radio' },
       options: ['primary', 'secondary', 'tertiary'],
     },
     type: {
-      control: { type: 'select' },
+      control: { type: 'radio' },
       options: ['button', 'submit', 'reset'],
     },
-  },
-  args: {
-    label: 'Knapp',
-    size: 'md',
-    variant: 'primary',
-    type: 'button',
-    disabled: false,
+    href: {
+      control: { type: 'text' },
+    },
   },
 } satisfies Meta<ButtonProps>;
 
@@ -33,46 +41,29 @@ export default meta;
 type Story = StoryObj<ButtonProps>;
 
 // More on writing stories with args: https://storybook.js.org/docs/writing-stories/args
-export const Primary: Story = {
+
+export const Main: Story = {
   args: {
     label: 'Knapp',
   },
-};
-
-export const Secondary: Story = {
-  args: {
-    label: 'Knapp',
-    variant: 'secondary',
-  },
-};
-
-export const Tertiary: Story = {
-  args: {
-    label: 'Knapp',
-    variant: 'tertiary',
-  },
-};
-
-export const Large: Story = {
-  args: {
-    size: 'lg',
-    label: 'Knapp',
-  },
-};
-
-export const Encapsulated: Story = {
-  args: {
-    size: 'sm',
-    variant: 'secondary',
-    label: 'Knapp',
-    fullWidth: true,
-  },
-};
-
-export const Link: Story = {
-  args: {
-    label: 'Link',
-    href: 'https://www.google.com',
-    variant: 'tertiary',
+  render: ({
+    variant,
+    size,
+    label,
+    type,
+    href,
+    disabled,
+    ...rest
+  }: ButtonProps) => {
+    return html`<mid-button
+      @click=${onclick}
+      type="${ifDefined(type)}"
+      size=${ifDefined(size)}
+      variant=${ifDefined(variant)}
+      href=${ifDefined(href)}
+      ?full-width=${rest['full-width']}
+      ?disabled=${disabled}
+      >${label}
+    </mid-button>`;
   },
 };

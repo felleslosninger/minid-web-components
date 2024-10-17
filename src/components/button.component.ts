@@ -1,16 +1,20 @@
+import { css, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
-import {  html, literal } from 'lit/static-html.js';
-import { MinidElement } from 'mixins/tailwind.mixin.ts';
+import { html, literal } from 'lit/static-html.js';
+import { styled } from 'mixins/tailwind.mixin.ts';
 
-/**
- * This is a button all about how
- * my life got flipped, turned upside down
- */
+const styles = [
+  css`
+    :host {
+      display: flex;
+    }
+  `,
+];
+
 @customElement('mid-button')
-export class MinidButton extends MinidElement  {
-
+export class MinidButton extends styled(LitElement, styles) {
   /**
    * The variant of the button
    */
@@ -38,8 +42,8 @@ export class MinidButton extends MinidElement  {
   /**
    * Whether the button should be full width
    */
-  @property({ type: Boolean })
-  fullWidth = false;
+  @property({ type: Boolean, attribute: 'full-width' })
+  'full-width' = false;
 
   /**
    * Whether the button is disabled
@@ -47,12 +51,12 @@ export class MinidButton extends MinidElement  {
   @property({ type: Boolean })
   disabled = false;
 
-  private get isLink() {
+  get #isLink() {
     return !!this.href;
   }
 
   override render() {
-    const tag = this.isLink ? literal`a` : literal`button`;
+    const tag = this.#isLink ? literal`a` : literal`button`;
 
     return html`<${tag}
       part="base"
@@ -60,7 +64,7 @@ export class MinidButton extends MinidElement  {
         'fds-focus': true,
         'fds-btn': true,
         'fds-btn--first': true,
-        'fds-btn--full-width': this.fullWidth,
+        'fds-btn--full-width': this['full-width'],
         'fds-btn--primary': this.variant === 'primary',
         'fds-btn--secondary': this.variant === 'secondary',
         'fds-btn--tertiary': this.variant === 'tertiary',

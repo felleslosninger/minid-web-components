@@ -1,11 +1,11 @@
-import { html } from 'lit';
+import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
-import { MinidElement } from 'src/mixins/tailwind.mixin';
+import { styled } from 'src/mixins/tailwind.mixin';
 
 @customElement('mid-label')
-export class MinidLabel extends MinidElement {
+export class MinidLabel extends styled(LitElement) {
   /**
    * Font size
    * @default 'md'
