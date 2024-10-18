@@ -57,6 +57,9 @@ export class MinidButton extends styled(LitElement, styles) {
   @property({ type: Boolean })
   icon = false;
 
+  /**
+   * @ignore
+   */
   get #isLink() {
     return !!this.href;
   }

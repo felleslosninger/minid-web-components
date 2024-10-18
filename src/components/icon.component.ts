@@ -35,7 +35,11 @@ export class MinidIcon extends styled(LitElement, styles) {
     this._whenSettled();
   }
 
+  /**
+   * @ignore
+   */
   #placeholderRef: Ref<HTMLElement> = createRef();
+
   async _whenSettled() {
     await this.updateComplete;
     if (this.size != null) {
