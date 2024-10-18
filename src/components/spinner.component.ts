@@ -1,7 +1,7 @@
 import { customElement, property } from 'lit/decorators.js';
 import { html, LitElement } from 'lit';
 import { styled } from 'mixins/tailwind.mixin';
-import './icon.component';
+import './icon/icon.component';
 
 @customElement('mid-spinner')
 export class MinidSpinner extends styled(LitElement) {

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/web-components';
 import { MidIconName } from '../types/icon-name';
 import { html } from 'lit';
 import { ifDefined } from 'lit/directives/if-defined.js';
-import '../components/icon.component';
+import '../components/icon/icon.component';
 
 export interface IconProps {
   name: MidIconName;
