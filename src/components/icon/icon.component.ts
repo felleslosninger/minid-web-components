@@ -1,7 +1,5 @@
 import { customElement, property, state } from 'lit/decorators.js';
-import { css, html, HTMLTemplateResult, LitElement } from 'lit';
-// import type { MidIconName } from '../../types/icon-name.ts';
-import { createRef, ref, type Ref } from 'lit/directives/ref.js';
+import { css, HTMLTemplateResult, LitElement } from 'lit';
 import { styled } from 'src/mixins/tailwind.mixin';
 import { watch } from 'src/internal/watch.ts';
 import {
@@ -35,14 +33,55 @@ interface IconSource {
   fromLibrary: boolean;
 }
 
+/**
+ * @event mid-load - Emitted when the icon has loaded
+ * @event mid-error - Emitted when the icon fails to load
+ */
 @customElement('mid-icon')
 export class MinidIcon extends styled(LitElement, styles) {
+  /**
+   * @ignore
+   */
+  @state()
+  private svg: SVGElement | HTMLTemplateResult | null = null;
+
+  /**
+   * The name of the icon to draw. Available names depend on the icon library being used.
+   */
+  @property({ reflect: true })
+  name?: string;
+
+  /**
+   * An external URL of an SVG file. Be sure you trust the content you are including, as it will be executed as code and
+   * can result in XSS attacks.
+   */
+  @property()
+  src?: string;
+
+  /**
+   * An alternate description to use for assistive devices. If omitted, the icon will be considered presentational and
+   * ignored by assistive devices.
+   */
+  @property()
+  alt = '';
+
+  /**
+   * The name of a registered custom icon library.
+   *  @default nav-aksel
+   */
+  @property({ reflect: true })
+  library = 'nav-aksel';
+
+  /**
+   * @ignore
+   */
   #initialRender = false;
 
-  /** Given a URL, this function returns the resulting SVG element or an appropriate error symbol. */
+  /**
+   * Given a URL, this function returns the resulting SVG element or an appropriate error symbol.
+   */
   private async resolveIcon(url: string): Promise<SVGResult> {
     let fileData: Response;
-    console.log('resolve', url);
     try {
       fileData = await fetch(url, { mode: 'cors' });
       if (!fileData.ok)
@@ -77,44 +116,8 @@ export class MinidIcon extends styled(LitElement, styles) {
     }
   }
 
-  @state() private svg: SVGElement | HTMLTemplateResult | null = null;
-
-  /** The name of the icon to draw. Available names depend on the icon library being used. */
-  @property({ reflect: true }) name?: string;
-
-  /**
-   * An external URL of an SVG file. Be sure you trust the content you are including, as it will be executed as code and
-   * can result in XSS attacks.
-   */
-  @property() src?: string;
-
-  /**
-   * An alternate description to use for assistive devices. If omitted, the icon will be considered presentational and
-   * ignored by assistive devices.
-   */
-  @property() label = '';
-
-  /** The name of a registered custom icon library.
-   *  @default nav-aksel
-   *
-   */
-  @property({ reflect: true }) library = 'nav-aksel';
-
-  /**
-   * Accepts a css property like `100px` or `40rem` or number of pixels like `68`
-   */
-  @property({ type: String })
-  size?: string;
-
-  @property({ type: String })
-  fill?: string;
-
-  @property({ type: String })
-  stroke?: string;
-
   connectedCallback() {
     super.connectedCallback();
-    this._whenSettled();
     watchIcon(this);
   }
 
@@ -128,36 +131,8 @@ export class MinidIcon extends styled(LitElement, styles) {
     unwatchIcon(this);
   }
 
-  /**
-   * @ignore
-   */
-  #placeholderRef: Ref<HTMLElement> = createRef();
-
-  async _whenSettled() {
-    await this.updateComplete;
-    if (this.size != null) {
-      this.#placeholderRef.value?.style.setProperty('width', this.size);
-      this.#placeholderRef.value?.style.setProperty('height', this.size);
-    }
-  }
-
-  #createSvgFromString(svgString: string): SVGElement {
-    const div = document.createElement('div');
-    div.innerHTML = svgString;
-
-    return (
-      div.querySelector('svg') ??
-      document.createElementNS('http://www.w3.org/2000/svg', 'path')
-    );
-  }
-
-  #placeholder() {
-    return html` <div ${ref(this.#placeholderRef)}></div> `;
-  }
-
   private getIconSource(): IconSource {
     const library = getIconLibrary(this.library);
-    console.log('get icon source', this.name, library, this.src);
 
     if (this.name && library) {
       return {
@@ -172,10 +147,24 @@ export class MinidIcon extends styled(LitElement, styles) {
     };
   }
 
+  @watch('label')
+  handleLabelChange() {
+    const hasLabel = typeof this.alt === 'string' && this.alt.length > 0;
+
+    if (hasLabel) {
+      this.setAttribute('role', 'img');
+      this.setAttribute('aria-label', this.alt);
+      this.removeAttribute('aria-hidden');
+    } else {
+      this.removeAttribute('role');
+      this.removeAttribute('aria-label');
+      this.setAttribute('aria-hidden', 'true');
+    }
+  }
+
   @watch(['name', 'src', 'library'])
   async setIcon() {
     const { url, fromLibrary } = this.getIconSource();
-    console.log('setting icon', url, fromLibrary, this.library);
     const library = fromLibrary ? getIconLibrary(this.library) : undefined;
 
     if (!url) {
@@ -184,7 +173,6 @@ export class MinidIcon extends styled(LitElement, styles) {
     }
 
     let iconResolver = iconCache.get(url);
-    console.log(iconResolver);
 
     if (!iconResolver) {
       iconResolver = this.resolveIcon(url);
@@ -229,56 +217,20 @@ export class MinidIcon extends styled(LitElement, styles) {
       case RETRYABLE_ERROR:
       case CACHEABLE_ERROR:
         this.svg = null;
-        // this.emit('mid-error');
+        this.dispatchEvent(
+          new Event('mid-error', { bubbles: true, composed: true })
+        );
         break;
       default:
         this.svg = svg.cloneNode(true) as SVGElement;
         library?.mutator?.(this.svg);
-      // this.emit('mid-load');
+        this.dispatchEvent(
+          new Event('mid-load', { bubbles: true, composed: true })
+        );
     }
   }
 
   protected render() {
-    // const importedIcon = import(
-    //   `../../../src/assets/icons/${this.name}.svg?raw`
-    // )
-    //   .catch((error) => {
-    //     console.error(
-    //       `👻 Caught an error while importing an icon named '${this.name}', did you remember to add it to assets? `
-    //     );
-    //     throw error;
-    //   })
-    //   .then((iconModule) => {
-    //     const svgElement = this.#createSvgFromString(iconModule.default);
-    //     svgElement.role = 'img';
-
-    //     if (this.size) {
-    //       svgElement.setAttribute('width', `${this.size}`);
-    //       svgElement.setAttribute('height', `${this.size}`);
-    //     }
-
-    //     if (this.fill) {
-    //       svgElement.setAttribute('fill', this.fill);
-    //       svgElement.childNodes.forEach((node) => {
-    //         if (node instanceof SVGElement) {
-    //           node.removeAttribute('fill');
-    //         }
-    //       });
-    //     }
-
-    //     if (this.stroke) {
-    //       svgElement.setAttribute('stroke', this.stroke);
-    //       svgElement.childNodes.forEach((node) => {
-    //         if (node instanceof SVGElement) {
-    //           node.removeAttribute('stroke');
-    //         }
-    //       });
-    //     }
-
-    //     return html`${svgElement}`;
-    //   });
-
-    // return until(importedIcon, this.#placeholder());
     return this.svg;
   }
 }

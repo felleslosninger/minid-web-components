@@ -1,14 +1,17 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { MidIconName } from '../types/icon-name';
 import { html } from 'lit';
-import { ifDefined } from 'lit/directives/if-defined.js';
 import '../components/icon/icon.component';
+import { styleMap } from 'lit/directives/style-map.js';
+import { ifDefined } from 'lit/directives/if-defined.js';
 
 export interface IconProps {
   name: MidIconName;
   size?: string;
-  fill?: string;
-  stroke?: string;
+  color?: string;
+  alt?: string;
+  'mid-error'?: unknown;
+  'mid-load'?: unknown;
 }
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories
@@ -23,8 +26,9 @@ const meta = {
     size: {
       control: { type: 'text' },
     },
-    fill: { control: { type: 'color' } },
-    stroke: { control: { type: 'color' } },
+    color: { control: { type: 'color' } },
+    'mid-error': { control: { disable: true } },
+    'mid-load': { control: { disable: true } },
   },
 } satisfies Meta<IconProps>;
 
@@ -37,12 +41,13 @@ export const Main: Story = {
     name: 'books-fill',
     size: '4rem',
   },
-  render: ({ name, size, fill, stroke }: IconProps) =>
+  render: ({ name, size, color, alt }: IconProps) =>
     html`<mid-icon
-      style="color: #f0f; font-size: 30px"
-      fill=${ifDefined(fill)}
-      stroke=${ifDefined(stroke)}
-      size=${ifDefined(size)}
+      style="${styleMap({
+        color: color,
+        'font-size': size,
+      })}"
       name=${name}
+      alt=${ifDefined(alt)}
     ></mid-icon>`,
 };
