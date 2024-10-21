@@ -15,8 +15,13 @@ export { CountdownComponent };
 import { MinidDropdown } from './components/dropdown.component.ts';
 export { MinidDropdown };
 
-import { MinidIcon } from './components/icon.component.ts';
+import { MinidIcon } from './components/icon/icon.component.ts';
 export { MinidIcon };
+
+export {
+  registerIconLibrary,
+  unregisterIconLibrary,
+} from './components/icon/icon-library.ts';
 
 import { MinidMenu } from './components/menu.component.ts';
 export { MinidMenu };

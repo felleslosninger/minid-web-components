@@ -1,7 +1,7 @@
 import { customElement, property } from 'lit/decorators.js';
 import { html, LitElement } from 'lit';
 import { styled } from 'mixins/tailwind.mixin';
-import './icon.component';
+import './icon/icon.component';
 
 @customElement('mid-spinner')
 export class MinidSpinner extends styled(LitElement) {
@@ -16,6 +16,7 @@ export class MinidSpinner extends styled(LitElement) {
     return html`
       <mid-icon
         size=${this.size}
+        library="system"
         name="circle-broken"
         class="animate-spin"
       ></mid-icon>

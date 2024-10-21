@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/web-components';
 import '../components/spinner.component';
 import { html } from 'lit';
 import { ifDefined } from 'lit/directives/if-defined.js';
+import { styleMap } from 'lit/directives/style-map.js';
 
 type SpinnerProps = {
   size?: string;
@@ -20,5 +21,12 @@ type Story = StoryObj<SpinnerProps>;
 // More on writing stories with args: https://storybook.js.org/docs/writing-stories/args
 export const Main: Story = {
   render: ({ size }: SpinnerProps) =>
-    html`<mid-spinner size=${ifDefined(size)}></mid-spinner>`,
+    html`<mid-spinner
+      style=${ifDefined(
+        styleMap({
+          'font-size': size,
+        })
+      )}
+      size=${ifDefined(size)}
+    ></mid-spinner>`,
 };

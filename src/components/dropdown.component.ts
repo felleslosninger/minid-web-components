@@ -12,6 +12,10 @@ const styles = [
   `,
 ];
 
+/**
+ * @part panel - Select the dropdown panel host element
+ * @slot trigger - Used for the button element that will be used to open the dropdown menu
+ */
 @customElement('mid-dropdown')
 export class MinidDropdown extends styled(LitElement, styles) {
   @property({ type: Boolean, reflect: true })
@@ -41,6 +45,9 @@ export class MinidDropdown extends styled(LitElement, styles) {
   @property({ reflect: true })
   sync?: 'width' | 'height' | 'both';
 
+  /**
+   * Distance between trigger and dropdown panel
+   */
   @property({ type: Number })
   distance = 4;
 
@@ -57,6 +64,10 @@ export class MinidDropdown extends styled(LitElement, styles) {
   @property({ type: Boolean })
   hoist = false;
 
+  /**
+   *
+   * @ignore
+   */
   #handleClickOutside = (event: Event) => {
     if (!event.composedPath().includes(this)) {
       this.#toggleDropdownOpen(event, false);

@@ -15,6 +15,8 @@ export interface DropdownProps {
   distance?: number;
   skidding?: number;
   hoist?: boolean;
+  trigger?: unknown;
+  panel?: unknown;
 }
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories
@@ -53,6 +55,8 @@ const meta = {
       },
       options: ['width', 'height', 'both'],
     },
+    trigger: { control: { disable: true } },
+    panel: { control: { disable: true } },
   },
 
   subcomponents: {
