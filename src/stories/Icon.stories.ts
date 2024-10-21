@@ -39,6 +39,7 @@ export const Main: Story = {
   },
   render: ({ name, size, fill, stroke }: IconProps) =>
     html`<mid-icon
+      style="color: #f0f; font-size: 30px"
       fill=${ifDefined(fill)}
       stroke=${ifDefined(stroke)}
       size=${ifDefined(size)}

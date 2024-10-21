@@ -2,7 +2,6 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { css, html, HTMLTemplateResult, LitElement } from 'lit';
 // import type { MidIconName } from '../../types/icon-name.ts';
 import { createRef, ref, type Ref } from 'lit/directives/ref.js';
-import { until } from 'lit/directives/until.js';
 import { styled } from 'src/mixins/tailwind.mixin';
 import { watch } from 'src/internal/watch.ts';
 import {
@@ -43,7 +42,7 @@ export class MinidIcon extends styled(LitElement, styles) {
   /** Given a URL, this function returns the resulting SVG element or an appropriate error symbol. */
   private async resolveIcon(url: string): Promise<SVGResult> {
     let fileData: Response;
-
+    console.log('resolve', url);
     try {
       fileData = await fetch(url, { mode: 'cors' });
       if (!fileData.ok)
@@ -95,8 +94,11 @@ export class MinidIcon extends styled(LitElement, styles) {
    */
   @property() label = '';
 
-  /** The name of a registered custom icon library. */
-  @property({ reflect: true }) library = 'default';
+  /** The name of a registered custom icon library.
+   *  @default nav-aksel
+   *
+   */
+  @property({ reflect: true }) library = 'nav-aksel';
 
   /**
    * Accepts a css property like `100px` or `40rem` or number of pixels like `68`
@@ -155,6 +157,8 @@ export class MinidIcon extends styled(LitElement, styles) {
 
   private getIconSource(): IconSource {
     const library = getIconLibrary(this.library);
+    console.log('get icon source', this.name, library, this.src);
+
     if (this.name && library) {
       return {
         url: library.resolver(this.name),
@@ -171,6 +175,7 @@ export class MinidIcon extends styled(LitElement, styles) {
   @watch(['name', 'src', 'library'])
   async setIcon() {
     const { url, fromLibrary } = this.getIconSource();
+    console.log('setting icon', url, fromLibrary, this.library);
     const library = fromLibrary ? getIconLibrary(this.library) : undefined;
 
     if (!url) {
@@ -179,6 +184,8 @@ export class MinidIcon extends styled(LitElement, styles) {
     }
 
     let iconResolver = iconCache.get(url);
+    console.log(iconResolver);
+
     if (!iconResolver) {
       iconResolver = this.resolveIcon(url);
       iconCache.set(url, iconResolver);
