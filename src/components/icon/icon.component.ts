@@ -8,6 +8,7 @@ import {
   watchIcon,
 } from 'src/components/icon/icon-library.ts';
 import { isTemplateResult } from 'lit/directive-helpers.js';
+import { MidIconName } from '../../types/icon-name';
 
 const styles = [
   css`
@@ -47,9 +48,10 @@ export class MinidIcon extends styled(LitElement, styles) {
 
   /**
    * The name of the icon to draw. Available names depend on the icon library being used.
+   * Preview default icons [here](https://aksel.nav.no/ikoner)
    */
   @property({ reflect: true })
-  name?: string;
+  name?: MidIconName | (string & {}); // weird typing makes sure we have both intellisense and ability to input any string
 
   /**
    * An external URL of an SVG file. Be sure you trust the content you are including, as it will be executed as code and
@@ -75,7 +77,7 @@ export class MinidIcon extends styled(LitElement, styles) {
   /**
    * @ignore
    */
-  #initialRender = false;
+  #hasRendered = false;
 
   /**
    * Given a URL, this function returns the resulting SVG element or an appropriate error symbol.
@@ -122,7 +124,7 @@ export class MinidIcon extends styled(LitElement, styles) {
   }
 
   firstUpdated() {
-    this.#initialRender = true;
+    this.#hasRendered = true;
     this.setIcon();
   }
 
@@ -180,7 +182,7 @@ export class MinidIcon extends styled(LitElement, styles) {
     }
 
     // If we haven't rendered yet, exit early. This avoids unnecessary work due to watching multiple props.
-    if (!this.#initialRender) {
+    if (!this.#hasRendered) {
       return;
     }
 
