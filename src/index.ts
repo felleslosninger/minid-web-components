@@ -17,7 +17,11 @@ export { MinidDropdown };
 
 import { MinidIcon } from './components/icon/icon.component.ts';
 export { MinidIcon };
-import './components/icon/icon-library.ts';
+
+export {
+  registerIconLibrary,
+  unregisterIconLibrary,
+} from './components/icon/icon-library.ts';
 
 import { MinidMenu } from './components/menu.component.ts';
 export { MinidMenu };
