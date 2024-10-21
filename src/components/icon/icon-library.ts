@@ -13,22 +13,30 @@ export interface IconLibrary<T = any> {
 let registry: IconLibrary[] = [defaultLibrary, systemLibrary];
 let watchedIcons: MinidIcon[] = [];
 
-/** Adds an icon to the list of watched icons. */
+/**
+ *  Adds an icon to the list of watched icons.
+ */
 export function watchIcon(icon: MinidIcon) {
   watchedIcons.push(icon);
 }
 
-/** Removes an icon from the list of watched icons. */
+/**
+ * Removes an icon from the list of watched icons.
+ */
 export function unwatchIcon(icon: MinidIcon) {
   watchedIcons = watchedIcons.filter((el) => el !== icon);
 }
 
-/** Returns a library from the registry. */
+/**
+ *  Returns a library from the registry.
+ */
 export function getIconLibrary(name?: string) {
   return registry.find((lib) => lib.name === name);
 }
 
-/** Adds an icon library to the registry, or overrides an existing one. */
+/**
+ *  Adds an icon library to the registry, or overrides an existing one.
+ */
 export function registerIconLibrary(
   name: string,
   options: Omit<IconLibrary, 'name'>
@@ -48,7 +56,9 @@ export function registerIconLibrary(
   });
 }
 
-/** Removes an icon library from the registry. */
+/**
+ *  Removes an icon library from the registry.
+ */
 export function unregisterIconLibrary(name: string) {
   registry = registry.filter((lib) => lib.name !== name);
 }
