@@ -169,6 +169,7 @@ export class MinidIcon extends styled(LitElement, styles) {
     const { url, fromLibrary } = this.getIconSource();
     const library = fromLibrary ? getIconLibrary(this.library) : undefined;
 
+    console.log(url);
     if (!url) {
       this.svg = null;
       return;
