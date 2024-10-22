@@ -135,7 +135,6 @@ export class MinidIcon extends styled(LitElement, styles) {
 
   private getIconSource(): IconSource {
     const library = getIconLibrary(this.library);
-
     if (this.name && library) {
       return {
         url: library.resolver(this.name),
