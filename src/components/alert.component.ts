@@ -1,7 +1,7 @@
 import { css, html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
-import { styled } from 'src/mixins/tailwind.mixin.js';
+import { styled } from 'src/mixins/tailwind.mixin.ts';
 import './icon/icon.component';
 import { ifDefined } from 'lit/directives/if-defined.js';
 
