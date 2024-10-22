@@ -1,5 +1,8 @@
 import './vendor.css';
 
+import { MinidAlert } from 'src/components/alert.component.ts';
+export { MinidAlert };
+
 import { MinidSpinner } from './components/spinner.component';
 export { MinidSpinner };
 
@@ -43,6 +46,7 @@ export { MinidHeading };
 declare global {
   interface HTMLElementTagNameMap {
     'countdown-component': CountdownComponent;
+    'mid-alert': MinidAlert;
     'mid-button': MinidButton;
     'mid-checkbox': MinidCheckbox;
     'mid-dropdown': MinidDropdown;
