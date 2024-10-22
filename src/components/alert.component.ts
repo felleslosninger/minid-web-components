@@ -3,22 +3,12 @@ import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { styled } from 'src/mixins/tailwind.mixin.js';
 import './icon/icon.component';
+import { ifDefined } from 'lit/directives/if-defined.js';
 
 const styles = [
   css`
-    :host {
-      display: grid;
-      grid-template-columns: auto 1fr;
-      gap: 0.375rem;
-    }
-
-    :host > * {
-      grid-column: 2/3;
-    }
-
-    .icon {
-      grid-column: 1/2;
-      grid-row: 1/-1;
+    .fds-alert__icon {
+      font-size: var(--fds-alert-icon-size);
     }
   `,
 ];
@@ -27,6 +17,18 @@ const styles = [
 export class MinidAlert extends styled(LitElement, styles) {
   @property({ type: String })
   severity: 'warning' | 'info' | 'danger' | 'success' = 'info';
+
+  @property({ type: String })
+  size: 'sm' | 'md' | 'lg' = 'md';
+
+  /**
+   * Adds a shadow to elevate the component
+   */
+  @property({ type: Boolean })
+  elevated = false;
+
+  @property({ type: String })
+  iconlabel?: string;
 
   override render() {
     const danger = this.severity === 'danger';
@@ -38,43 +40,40 @@ export class MinidAlert extends styled(LitElement, styles) {
       (warning && 'exclamationmark-triangle-fill') ||
       (success && 'checkmark-circle-fill') ||
       'information-square-fill';
-
-    const iconColor = {
-      'text-base-danger': danger,
-      'text-base-warning': warning,
-      'text-base-info': info,
-      'text-base-success': success,
-    };
-
-    const cardColor = {
-      'bg-surface-danger': danger,
-      'bg-background-warning-subtle': warning,
-      'bg-surface-info': info,
-      'bg-surface-success': success,
-      'border-border-danger': danger,
-      'border-border-warning': warning,
-      'border-border-info': info,
-      'border-border-success': success,
-    };
+    this.iconlabel ??=
+      (danger && 'Feil') ||
+      (warning && 'Advarsel') ||
+      (success && 'Suksess') ||
+      'Informasjon';
 
     return html`
       <output
         class="${classMap({
           'fds-alert': true,
-          'fds-alert--md': true,
+          'fds-alert--sm': this.size === 'sm',
+          'fds-alert--md': this.size === 'md',
+          'fds-alert--lg': this.size === 'lg',
           'fds-alert--warning': warning,
           'fds-alert--success': success,
           'fds-alert--info': info,
           'fds-alert--danger': danger,
-          'fds-alert--elevated': true,
+          'fds-alert--elevated': this.elevated,
         })}"
       >
         <mid-icon
+          class="fds-alert__icon"
           name="${iconName}"
           library="system"
-          class="${classMap(iconColor)} icon p-0.5 text-2xl"
+          alt=${ifDefined(this.iconlabel)}
         ></mid-icon>
-        <div>
+        <div
+          class=${classMap({
+            'fds-paragraph': true,
+            'fds-paragraph--sm': this.size === 'sm',
+            'fds-paragraph--md': this.size === 'md',
+            'fds-paragraph--lg': this.size === 'lg',
+          })}
+        >
           <slot></slot>
         </div>
       </output>

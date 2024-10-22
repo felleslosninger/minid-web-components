@@ -65,7 +65,7 @@ export class MinidIcon extends styled(LitElement, styles) {
    * ignored by assistive devices.
    */
   @property()
-  alt = '';
+  alt?: string;
 
   /**
    * The name of a registered custom icon library.
@@ -149,11 +149,9 @@ export class MinidIcon extends styled(LitElement, styles) {
     };
   }
 
-  @watch('label')
+  @watch('alt')
   handleLabelChange() {
-    const hasLabel = typeof this.alt === 'string' && this.alt.length > 0;
-
-    if (hasLabel) {
+    if (typeof this.alt === 'string' && this.alt.length > 0) {
       this.setAttribute('role', 'img');
       this.setAttribute('aria-label', this.alt);
       this.removeAttribute('aria-hidden');
