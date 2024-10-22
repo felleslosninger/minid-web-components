@@ -15,9 +15,15 @@ const styles = [
 
 @customElement('mid-alert')
 export class MinidAlert extends styled(LitElement, styles) {
+  /**
+   * Sets color and icon according to severity
+   */
   @property({ type: String })
   severity: 'warning' | 'info' | 'danger' | 'success' = 'info';
 
+  /**
+   * Sets size of icon, padding and font-size.
+   */
   @property({ type: String })
   size: 'sm' | 'md' | 'lg' = 'md';
 
@@ -27,6 +33,10 @@ export class MinidAlert extends styled(LitElement, styles) {
   @property({ type: Boolean })
   elevated = false;
 
+  /**
+   * Sets the `aria-label` on the icon
+   * Use this to inform screenreaders of severity. Defaults to Norwegian.
+   */
   @property({ type: String })
   iconlabel?: string;
 
@@ -47,7 +57,7 @@ export class MinidAlert extends styled(LitElement, styles) {
       'Informasjon';
 
     return html`
-      <output
+      <div
         class="${classMap({
           'fds-alert': true,
           'fds-alert--sm': this.size === 'sm',
@@ -76,7 +86,7 @@ export class MinidAlert extends styled(LitElement, styles) {
         >
           <slot></slot>
         </div>
-      </output>
+      </div>
     `;
   }
 }
