@@ -9,11 +9,12 @@ import {
   animateTo,
   parseDuration,
   stopAnimations,
-} from 'src/internal/animate.js';
+} from '../internal/animate.js';
 import {
   getAnimation,
   setDefaultAnimation,
-} from 'src/components/utilities/animation-registry.js';
+} from '../components/utilities/animation-registry.js';
+import { waitForEvent } from '../internal/event.js';
 
 const styles = [
   css`
@@ -26,15 +27,39 @@ const styles = [
     ::part(arrow) {
       background-color: var(--fds-semantic-surface-neutral-inverted);
     }
+
     .tooltip__body {
       width: max-content;
       max-width: var(--max-width);
+    }
+
+    .tooltip::part(popup) {
+      z-index: 1000;
+    }
+
+    .tooltip[placement^='top']::part(popup) {
+      transform-origin: bottom;
+    }
+
+    .tooltip[placement^='bottom']::part(popup) {
+      transform-origin: top;
+    }
+
+    .tooltip[placement^='left']::part(popup) {
+      transform-origin: right;
+    }
+
+    .tooltip[placement^='right']::part(popup) {
+      transform-origin: left;
     }
   `,
 ];
 
 /**
+ * @slot -- The default slot is for the trigger element
  * @slot content - The content to render in the tooltip. Alternatively, you can use the `content` attribute.
+ *
+ * @part base - The component base wrapper. `<mid-popup> element
  */
 @customElement('mid-tooltip')
 export class MinidTooltip extends styled(LitElement, styles) {
@@ -293,7 +318,7 @@ export class MinidTooltip extends styled(LitElement, styles) {
     }
 
     this.open = true;
-    // return waitForEvent(this, 'sl-after-show');
+    return waitForEvent(this, 'mid-after-show');
   }
 
   /**
@@ -305,7 +330,7 @@ export class MinidTooltip extends styled(LitElement, styles) {
     }
 
     this.open = false;
-    // return waitForEvent(this, 'sl-after-hide');
+    return waitForEvent(this, 'mid-after-hide');
   }
 
   override render() {

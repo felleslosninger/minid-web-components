@@ -36,7 +36,6 @@
     "lit": "^3.1.2"
   },
   "devDependencies": {
-    "@chromatic-com/storybook": "^2.0.2",
     "@custom-elements-manifest/analyzer": "^0.10.3",
     "@digdir/designsystemet-css": "^0.10.0",
     "@digdir/designsystemet-theme": "^0.15.3",
