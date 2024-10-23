@@ -5,69 +5,79 @@ import './popup.component';
 import { classMap } from 'lit/directives/class-map.js';
 import { MinidPopup } from './popup.component';
 import { watch } from '../internal/watch.js';
-
-type TriggerType = 'hover' | 'focus' | 'manual' | 'click';
-
-interface CloseWatcher extends EventTarget {
-  // eslint-disable-next-line @typescript-eslint/no-misused-new
-  new (options?: CloseWatcherOptions): CloseWatcher;
-  requestClose(): void;
-  close(): void;
-  destroy(): void;
-
-  oncancel: (event: Event) => void | null;
-  onclose: (event: Event) => void | null;
-}
-
-declare const CloseWatcher: CloseWatcher;
-
-interface CloseWatcherOptions {
-  signal: AbortSignal;
-}
-
-declare interface Window {
-  CloseWatcher?: CloseWatcher;
-}
+import {
+  animateTo,
+  parseDuration,
+  stopAnimations,
+} from 'src/internal/animate.js';
+import {
+  getAnimation,
+  setDefaultAnimation,
+} from 'src/components/utilities/animation-registry.js';
 
 const styles = [
   css`
+    :host {
+      --max-width: 20rem;
+      --hide-delay: 0ms;
+      --show-delay: 250ms;
+    }
+
     ::part(arrow) {
       background-color: var(--fds-semantic-surface-neutral-inverted);
     }
-    .fds-tooltip {
+    .tooltip__body {
       width: max-content;
+      max-width: var(--max-width);
     }
   `,
 ];
 
+/**
+ * @slot content - The content to render in the tooltip. Alternatively, you can use the `content` attribute.
+ */
 @customElement('mid-tooltip')
 export class MinidTooltip extends styled(LitElement, styles) {
+  /**
+   * @ignore
+   */
   private hoverTimeout?: number;
+  /**
+   * @ignore
+   */
   private closeWatcher: CloseWatcher | null = null;
 
+  /**
+   * @ignore
+   */
   @query('slot:not([name])')
   defaultSlot!: HTMLSlotElement;
 
+  /**
+   * @ignore
+   */
   @query('.tooltip__body')
   body!: HTMLElement;
 
-  @query('sl-popup')
+  /**
+   * @ignore
+   */
+  @query('mid-popup')
   popup!: MinidPopup;
 
+  /**
+   * The text to render in the tooltip. If you need HTML you can use the content slot
+   */
   @property()
   content = '';
 
   /**
-   * Controls how the tooltip is activated. Possible options include `click`, `hover`, `focus`, and `manual`. Multiple
-   * options can be passed by separating them with a space. When manual is used, the tooltip must be activated
+   * Controls how the tooltip is activated. When manual is used, the tooltip must be activated
    * programmatically.
-   * @type hover | focus | click | manual
    */
   @property({ type: String })
-  trigger:
-    | TriggerType
-    | `${TriggerType} ${TriggerType}`
-    | `${TriggerType} ${TriggerType} ${TriggerType}` = 'hover focus';
+  trigger: 'focus hover' | 'hover' | 'focus' | 'manual' | 'click' =
+    'focus hover';
 
   @property() placement:
     | 'top'
@@ -140,12 +150,18 @@ export class MinidTooltip extends styled(LitElement, styles) {
     }
   }
 
+  /**
+   * @ignore
+   */
   private handleBlur = () => {
     if (this.hasTrigger('focus')) {
       this.hide();
     }
   };
 
+  /**
+   * @ignore
+   */
   private handleClick = () => {
     if (this.hasTrigger('click')) {
       if (this.open) {
@@ -156,12 +172,18 @@ export class MinidTooltip extends styled(LitElement, styles) {
     }
   };
 
+  /**
+   * @ignore
+   */
   private handleFocus = () => {
     if (this.hasTrigger('focus')) {
       this.show();
     }
   };
 
+  /**
+   * @ignore
+   */
   private handleDocumentKeyDown = (event: KeyboardEvent) => {
     // Pressing escape when a tooltip is open should dismiss it
     if (event.key === 'Escape') {
@@ -170,31 +192,81 @@ export class MinidTooltip extends styled(LitElement, styles) {
     }
   };
 
+  /**
+   * @ignore
+   */
   private handleMouseOver = () => {
     if (this.hasTrigger('hover')) {
-      this.show();
-      //   const delay = parseDuration(
-      //     getComputedStyle(this).getPropertyValue('--show-delay')
-      //   );
-      //   clearTimeout(this.hoverTimeout);
-      //   this.hoverTimeout = window.setTimeout(() => this.show(), delay);
+      const delay = parseDuration(
+        getComputedStyle(this).getPropertyValue('--show-delay')
+      );
+      clearTimeout(this.hoverTimeout);
+      this.hoverTimeout = window.setTimeout(() => this.show(), delay);
     }
   };
 
+  /**
+   * @ignore
+   */
   private handleMouseOut = () => {
     if (this.hasTrigger('hover')) {
-      this.hide();
-      //   const delay = parseDuration(
-      //     getComputedStyle(this).getPropertyValue('--hide-delay')
-      //   );
-      //   clearTimeout(this.hoverTimeout);
-      //   this.hoverTimeout = window.setTimeout(() => this.hide(), delay);
+      const delay = parseDuration(
+        getComputedStyle(this).getPropertyValue('--hide-delay')
+      );
+      clearTimeout(this.hoverTimeout);
+      this.hoverTimeout = window.setTimeout(() => this.hide(), delay);
     }
   };
 
+  /**
+   * @ignore
+   */
   private hasTrigger(triggerType: string) {
     const triggers = this.trigger.split(' ');
     return triggers.includes(triggerType);
+  }
+
+  @watch('open', { waitUntilFirstUpdate: true })
+  async handleOpenChange() {
+    if (this.open) {
+      if (this.disabled) {
+        return;
+      }
+
+      // Show
+      // this.emit('sl-show');
+      if ('CloseWatcher' in window) {
+        this.closeWatcher?.destroy();
+        this.closeWatcher = new CloseWatcher();
+        this.closeWatcher.onclose = () => {
+          this.hide();
+        };
+      } else {
+        document.addEventListener('keydown', this.handleDocumentKeyDown);
+      }
+
+      await stopAnimations(this.body);
+      this.body.hidden = false;
+      this.popup.active = true;
+      const { keyframes, options } = getAnimation(this, 'tooltip.show');
+      await animateTo(this.popup.popup, keyframes, options);
+      this.popup.reposition();
+
+      // this.emit('sl-after-show');
+    } else {
+      // Hide
+      // this.emit('sl-hide');
+      this.closeWatcher?.destroy();
+      document.removeEventListener('keydown', this.handleDocumentKeyDown);
+
+      await stopAnimations(this.body);
+      const { keyframes, options } = getAnimation(this, 'tooltip.hide');
+      await animateTo(this.popup.popup, keyframes, options);
+      this.popup.active = false;
+      this.body.hidden = true;
+
+      // this.emit('sl-after-hide');
+    }
   }
 
   @watch(['content', 'distance', 'hoist', 'placement', 'skidding'])
@@ -212,7 +284,9 @@ export class MinidTooltip extends styled(LitElement, styles) {
     }
   }
 
-  /** Shows the tooltip. */
+  /**
+   * Shows the tooltip.
+   */
   async show() {
     if (this.open) {
       return undefined;
@@ -222,7 +296,9 @@ export class MinidTooltip extends styled(LitElement, styles) {
     // return waitForEvent(this, 'sl-after-show');
   }
 
-  /** Hides the tooltip */
+  /**
+   * Hides the tooltip
+   */
   async hide() {
     if (!this.open) {
       return undefined;
@@ -259,7 +335,7 @@ export class MinidTooltip extends styled(LitElement, styles) {
         <div
           part="body"
           id="tooltip"
-          class="fds-tooltip"
+          class="fds-tooltip tooltip__body"
           role="tooltip"
           aria-live=${this.open ? 'polite' : 'off'}
         >
@@ -269,3 +345,19 @@ export class MinidTooltip extends styled(LitElement, styles) {
     `;
   }
 }
+
+setDefaultAnimation('tooltip.show', {
+  keyframes: [
+    { opacity: 0, scale: 0.8 },
+    { opacity: 1, scale: 1 },
+  ],
+  options: { duration: 150, easing: 'ease' },
+});
+
+setDefaultAnimation('tooltip.hide', {
+  keyframes: [
+    { opacity: 1, scale: 1 },
+    { opacity: 0, scale: 0.8 },
+  ],
+  options: { duration: 150, easing: 'ease' },
+});

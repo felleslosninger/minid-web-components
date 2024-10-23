@@ -10,6 +10,7 @@ export interface IconProps {
   size?: string;
   color?: string;
   alt?: string;
+  src?: string;
   'mid-error'?: unknown;
   'mid-load'?: unknown;
 }
@@ -26,6 +27,13 @@ const meta = {
     size: {
       control: { type: 'text' },
     },
+    alt: {
+      control: { type: 'text' },
+    },
+    src: {
+      control: { type: 'text' },
+    },
+
     color: { control: { type: 'color' } },
     'mid-error': { control: { disable: true } },
     'mid-load': { control: { disable: true } },

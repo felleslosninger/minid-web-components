@@ -49,6 +49,7 @@ export class MinidIcon extends styled(LitElement, styles) {
   /**
    * The name of the icon to draw. Available names depend on the icon library being used.
    * Preview default icons [here](https://aksel.nav.no/ikoner)
+   * @type string
    */
   @property({ reflect: true })
   name?: MidIconName | (string & {}); // weird typing makes sure we have both intellisense and ability to input any string
