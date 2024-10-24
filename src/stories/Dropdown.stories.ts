@@ -17,6 +17,7 @@ export interface DropdownProps {
   hoist?: boolean;
   trigger?: unknown;
   panel?: unknown;
+  '--'?: unknown;
 }
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories
@@ -57,6 +58,7 @@ const meta = {
     },
     trigger: { control: { disable: true } },
     panel: { control: { disable: true } },
+    '--': { name: '-', control: { disable: true } },
   },
 
   subcomponents: {

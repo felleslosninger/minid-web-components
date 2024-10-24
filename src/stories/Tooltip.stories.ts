@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
-import { html } from 'lit';
+import { html, nothing } from 'lit';
 import '../components/tooltip.component';
 import '../components/button.component';
 import '../components/icon/icon.component';
@@ -74,7 +74,7 @@ const meta = {
       type: 'string',
     },
     content: {
-      control: { disable: true },
+      type: 'string',
     },
     base: {
       control: { disable: true },
@@ -109,7 +109,7 @@ export const Main: Story = {
   args: {
     open: true,
     contentString:
-      'Her er en liten tekst som liksom skal poppe opp når du tar musa di over trigger objektet',
+      'Her er en liten tekst som liksom skal poppe opp hvis du har musa di over trigger objektet',
   },
   parameters: {
     layout: 'centered',
@@ -118,6 +118,7 @@ export const Main: Story = {
   render: ({
     open,
     contentString,
+    content,
     hoist,
     inverted,
     trigger,
@@ -139,11 +140,13 @@ export const Main: Story = {
       ?inverted=${inverted}
       trigger=${ifDefined(trigger)}
       placement=${ifDefined(placement)}
-      content=${ifDefined(contentString)}
+      content=${ifDefined(content ? undefined : contentString)}
       distance=${ifDefined(distance)}
       skidding=${ifDefined(skidding)}
     >
       <mid-button variant="secondary"> Trigger </mid-button>
+
+      ${!content ? nothing : html`<span slot="content">${content}</span>`}
     </mid-tooltip>`;
   },
 };

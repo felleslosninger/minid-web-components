@@ -2,6 +2,7 @@ import { customElement, property } from 'lit/decorators.js';
 import { html, LitElement } from 'lit';
 import { styled } from 'mixins/tailwind.mixin';
 import './icon/icon.component';
+import { styleMap } from 'lit/directives/style-map.js';
 
 @customElement('mid-spinner')
 export class MinidSpinner extends styled(LitElement) {
@@ -15,10 +16,12 @@ export class MinidSpinner extends styled(LitElement) {
   override render() {
     return html`
       <mid-icon
-        size=${this.size}
+        class="animate-spin"
         library="system"
         name="circle-broken"
-        class="animate-spin"
+        style="${styleMap({
+          'font-size': this.size,
+        })}"
       ></mid-icon>
     `;
   }
