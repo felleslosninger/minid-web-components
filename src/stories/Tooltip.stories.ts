@@ -5,6 +5,7 @@ import '../components/button.component';
 import '../components/icon/icon.component';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { MinidTooltip } from '../components/tooltip.component';
+import { styleMap } from 'lit/directives/style-map.js';
 
 type TooltipProps = {
   trigger?: MinidTooltip['trigger'];
@@ -18,8 +19,15 @@ type TooltipProps = {
   skidding?: number;
   content: unknown;
   base: unknown;
+  body: unknown;
+  'mid-show': unknown;
+  'mid-hide': unknown;
+  'mid-after-show': unknown;
+  'mid-after-hide': unknown;
   '--': unknown;
-  '--max-width': unknown;
+  '--max-width': string;
+  '--hide-delay': string;
+  '--show-delay': string;
 };
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories
@@ -56,10 +64,34 @@ const meta = {
         'left-end',
       ],
     },
+    '--max-width': {
+      type: 'string',
+    },
+    '--hide-delay': {
+      type: 'string',
+    },
+    '--show-delay': {
+      type: 'string',
+    },
     content: {
       control: { disable: true },
     },
     base: {
+      control: { disable: true },
+    },
+    body: {
+      control: { disable: true },
+    },
+    'mid-after-hide': {
+      control: { disable: true },
+    },
+    'mid-hide': {
+      control: { disable: true },
+    },
+    'mid-show': {
+      control: { disable: true },
+    },
+    'mid-after-show': {
       control: { disable: true },
     },
     '--': {
@@ -93,8 +125,14 @@ export const Main: Story = {
     disabled,
     distance,
     skidding,
+    ...rest
   }: TooltipProps) => {
     return html`<mid-tooltip
+      style="${styleMap({
+        '--max-width': rest['--max-width'],
+        '--show-delay': rest['--show-delay'],
+        '--hide-delay': rest['--hide-delay'],
+      })}"
       ?open=${open}
       ?hoist=${hoist}
       ?disabled=${disabled}

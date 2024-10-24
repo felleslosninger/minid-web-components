@@ -57,16 +57,20 @@ const styles = [
 ];
 
 /**
+ * @event mid-show - Emitted when open is set to `true`
+ * @event mid-hide - Emitted when open is set to `false`
+ * @event mid-after-show - Emitted after the tooltip has shown an all animations are complete
+ * @event mid-after-hide - Emitted after the tooltip has hidden an all animations are complete
+ *
  * @slot -- The default slot is for the trigger element
  * @slot content - The content to render in the tooltip. Alternatively, you can use the `content` attribute.
  *
  * @csspart base - The component base wrapper. `<mid-popup> element
+ * @csspart body - The tooltip body, where the content is rendered
  *
  * @cssproperty [--max-width=20rem] - Max width of the tooltip content
  * @cssproperty [--hide-delay=0ms] - Delay for hiding the tooltip
  * @cssproperty [--show-delay=150ms] - Delay for showing the tooltip
- * @method show
- * @method hide
  */
 @customElement('mid-tooltip')
 export class MinidTooltip extends styled(LitElement, styles) {
