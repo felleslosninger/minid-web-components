@@ -55,7 +55,7 @@ export class MinidButton extends styled(LitElement, styles) {
    * Toggle icon only styling
    */
   @property({ type: Boolean })
-  icon = false;
+  iconstyled = false;
 
   /**
    * @ignore
@@ -74,7 +74,7 @@ export class MinidButton extends styled(LitElement, styles) {
         'fds-btn': true,
         'fds-btn--first': true,
         'fds-btn--full-width': this['full-width'],
-        'fds-btn--icon-only': this.icon,
+        'fds-btn--icon-only': this.iconstyled,
         'fds-btn--primary': this.variant === 'primary',
         'fds-btn--secondary': this.variant === 'secondary',
         'fds-btn--tertiary': this.variant === 'tertiary',

@@ -1,52 +1,59 @@
 import './vendor.css';
 
-import { MinidSpinner } from './components/spinner.component';
-export { MinidSpinner };
-
-import { MinidCheckbox } from './components/checkbox.component';
-export { MinidCheckbox };
-
-import { MinidButton } from './components/button.component.ts';
-export { MinidButton };
-
-import { CountdownComponent } from './components/countdown.component.ts';
-export { CountdownComponent };
-
-import { MinidDropdown } from './components/dropdown.component.ts';
-export { MinidDropdown };
-
-import { MinidIcon } from './components/icon/icon.component.ts';
-export { MinidIcon };
-
 export {
   registerIconLibrary,
   unregisterIconLibrary,
 } from './components/icon/icon-library.ts';
 
-import { MinidMenu } from './components/menu.component.ts';
-export { MinidMenu };
+import { CountdownComponent } from './components/countdown.component.ts';
+export { CountdownComponent };
 
-import { MinidMenuItem } from './components/menu-item.component.ts';
-export { MinidMenuItem };
+import { MinidAlert } from './components/alert.component.ts';
+export { MinidAlert };
 
-import { MinidPopup } from './components/popup.component.ts';
-export { MinidPopup };
+import { MinidButton } from './components/button.component.ts';
+export { MinidButton };
 
-import { MinidTextfield } from './components/textfield.component.ts';
-export { MinidTextfield };
+import { MinidCheckbox } from './components/checkbox.component';
+export { MinidCheckbox };
 
-import { MinidParagraph } from './components/paragraph.component.ts';
-export { MinidParagraph };
-
-import { MinidLabel } from './components/label.component.ts';
-export { MinidLabel };
+import { MinidDropdown } from './components/dropdown.component.ts';
+export { MinidDropdown };
 
 import { MinidHeading } from './components/heading.component.ts';
 export { MinidHeading };
 
+import { MinidIcon } from './components/icon/icon.component.ts';
+export { MinidIcon };
+
+import { MinidLabel } from './components/label.component.ts';
+export { MinidLabel };
+
+import { MinidMenuItem } from './components/menu-item.component.ts';
+export { MinidMenuItem };
+
+import { MinidMenu } from './components/menu.component.ts';
+export { MinidMenu };
+
+import { MinidParagraph } from './components/paragraph.component.ts';
+export { MinidParagraph };
+
+import { MinidPopup } from './components/popup.component.ts';
+export { MinidPopup };
+
+import { MinidSpinner } from './components/spinner.component';
+export { MinidSpinner };
+
+import { MinidTextfield } from './components/textfield.component.ts';
+export { MinidTextfield };
+
+import { MinidTooltip } from './components/tooltip.component.ts';
+export { MinidTooltip };
+
 declare global {
   interface HTMLElementTagNameMap {
     'countdown-component': CountdownComponent;
+    'mid-alert': MinidAlert;
     'mid-button': MinidButton;
     'mid-checkbox': MinidCheckbox;
     'mid-dropdown': MinidDropdown;
@@ -59,5 +66,6 @@ declare global {
     'mid-popup': MinidPopup;
     'mid-spinner': MinidSpinner;
     'mid-textfield': MinidTextfield;
+    'mid-tooltip': MinidTooltip;
   }
 }

@@ -14,7 +14,7 @@ type CheckboxProps = {
   description?: string;
 };
 
-const meta: Meta = {
+const meta = {
   title: 'Komponenter/Checkbox',
   component: 'mid-checkbox',
   argTypes: {

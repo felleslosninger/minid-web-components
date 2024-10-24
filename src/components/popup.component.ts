@@ -1,3 +1,15 @@
+/*
+
+Copyright (c) 2020 A Beautiful Site, LLC
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+*/
+
 import {
   arrow,
   autoUpdate,
@@ -34,7 +46,7 @@ function isVirtualElement(e: unknown): e is VirtualElement {
  * @status stable
  * @since 2.0
  *
- * @event sl-reposition - Emitted when the popup is repositioned. This event can fire a lot, so avoid putting expensive
+ * @event mid-reposition - Emitted when the popup is repositioned. This event can fire a lot, so avoid putting expensive
  *  operations in your listener or consider debouncing it.
  *
  * @slot - The popup's content.
@@ -63,28 +75,36 @@ export class MinidPopup extends LitElement {
   private anchorEl: Element | VirtualElement | null = null;
   private cleanup?: ReturnType<typeof autoUpdate>;
 
-  /** A reference to the internal popup container. Useful for animating and styling the popup with JavaScript. */
-  @query('.popup') popup!: HTMLElement;
-  @query('.popup__arrow') private arrowEl!: HTMLElement;
+  /**
+   * A reference to the internal popup container. Useful for animating and styling the popup with JavaScript.
+   */
+  @query('.popup')
+  popup!: HTMLElement;
+
+  @query('.popup__arrow')
+  private arrowEl!: HTMLElement;
 
   /**
    * The element the popup will be anchored to. If the anchor lives outside of the popup, you can provide the anchor
    * element `id`, a DOM element reference, or a `VirtualElement`. If the anchor lives inside the popup, use the
    * `anchor` slot instead.
    */
-  @property() anchor: Element | string | VirtualElement = '';
+  @property()
+  anchor: Element | string | VirtualElement = '';
 
   /**
    * Activates the positioning logic and shows the popup. When this attribute is removed, the positioning logic is torn
    * down and the popup will be hidden.
    */
-  @property({ type: Boolean, reflect: true }) active = false;
+  @property({ type: Boolean, reflect: true })
+  active = false;
 
   /**
    * The preferred placement of the popup. Note that the actual placement will vary as configured to keep the
    * panel inside of the viewport.
    */
-  @property({ reflect: true }) placement:
+  @property({ reflect: true })
+  placement:
     | 'top'
     | 'top-start'
     | 'top-end'
@@ -102,49 +122,56 @@ export class MinidPopup extends LitElement {
    * Determines how the popup is positioned. The `absolute` strategy works well in most cases, but if overflow is
    * clipped, using a `fixed` position strategy can often workaround it.
    */
-  @property({ reflect: true }) strategy: 'absolute' | 'fixed' = 'absolute';
+  @property({ reflect: true })
+  strategy: 'absolute' | 'fixed' = 'absolute';
 
-  /** The distance in pixels from which to offset the panel away from its anchor. */
-  @property({ type: Number }) distance = 0;
+  /**
+   * The distance in pixels from which to offset the panel away from its anchor.
+   */
+  @property({ type: Number })
+  distance = 0;
 
-  /** The distance in pixels from which to offset the panel along its anchor. */
-  @property({ type: Number }) skidding = 0;
+  /**
+   * The distance in pixels from which to offset the panel along its anchor.
+   */
+  @property({ type: Number })
+  skidding = 0;
 
   /**
    * Attaches an arrow to the popup. The arrow's size and color can be customized using the `--arrow-size` and
    * `--arrow-color` custom properties. For additional customizations, you can also target the arrow using
    * `::part(arrow)` in your stylesheet.
    */
-  @property({ type: Boolean }) arrow = false;
+  @property({ type: Boolean })
+  arrow = false;
 
   /**
    * The placement of the arrow. The default is `anchor`, which will align the arrow as close to the center of the
    * anchor as possible, considering available space and `arrow-padding`. A value of `start`, `end`, or `center` will
    * align the arrow to the start, end, or center of the popover instead.
    */
-  @property({ attribute: 'arrow-placement' }) arrowPlacement:
-    | 'start'
-    | 'end'
-    | 'center'
-    | 'anchor' = 'anchor';
+  @property({ attribute: 'arrow-placement' })
+  arrowPlacement: 'start' | 'end' | 'center' | 'anchor' = 'anchor';
 
   /**
    * The amount of padding between the arrow and the edges of the popup. If the popup has a border-radius, for example,
    * this will prevent it from overflowing the corners.
    */
-  @property({ attribute: 'arrow-padding', type: Number }) arrowPadding = 10;
+  @property({ attribute: 'arrow-padding', type: Number })
+  arrowPadding = 10;
 
   /**
    * When set, placement of the popup will flip to the opposite site to keep it in view. You can use
    * `flipFallbackPlacements` to further configure how the fallback placement is determined.
    */
-  @property({ type: Boolean }) flip = false;
+  @property({ type: Boolean })
+  flip = false;
 
   /**
    * If the preferred placement doesn't fit, popup will be tested in these fallback placements until one fits. Must be a
    * string of any number of placements separated by a space, e.g. "top bottom left". If no placement fits, the flip
    * fallback strategy will be used instead.
-   * */
+   */
   @property({
     attribute: 'flip-fallback-placements',
     converter: {
@@ -166,32 +193,42 @@ export class MinidPopup extends LitElement {
    * the popup should be positioned using the best available fit based on available space or as it was initially
    * preferred.
    */
-  @property({ attribute: 'flip-fallback-strategy' }) flipFallbackStrategy:
-    | 'best-fit'
-    | 'initial' = 'best-fit';
+  @property({ attribute: 'flip-fallback-strategy' })
+  flipFallbackStrategy: 'best-fit' | 'initial' = 'best-fit';
 
   /**
    * The flip boundary describes clipping element(s) that overflow will be checked relative to when flipping. By
    * default, the boundary includes overflow ancestors that will cause the element to be clipped. If needed, you can
    * change the boundary by passing a reference to one or more elements to this property.
    */
-  @property({ type: Object }) flipBoundary?: Element | Element[];
+  @property({ type: Object })
+  flipBoundary?: Element | Element[];
 
-  /** The amount of padding, in pixels, to exceed before the flip behavior will occur. */
-  @property({ attribute: 'flip-padding', type: Number }) flipPadding = 0;
+  /**
+   * The amount of padding, in pixels, to exceed before the flip behavior will occur.
+   */
+  @property({ attribute: 'flip-padding', type: Number })
+  flipPadding = 0;
 
-  /** Moves the popup along the axis to keep it in view when clipped. */
-  @property({ type: Boolean }) shift = false;
+  /**
+   * Moves the popup along the axis to keep it in view when clipped.
+   */
+  @property({ type: Boolean })
+  shift = false;
 
   /**
    * The shift boundary describes clipping element(s) that overflow will be checked relative to when shifting. By
    * default, the boundary includes overflow ancestors that will cause the element to be clipped. If needed, you can
    * change the boundary by passing a reference to one or more elements to this property.
    */
-  @property({ type: Object }) shiftBoundary?: Element | Element[];
+  @property({ type: Object })
+  shiftBoundary?: Element | Element[];
 
-  /** The amount of padding, in pixels, to exceed before the shift behavior will occur. */
-  @property({ attribute: 'shift-padding', type: Number }) shiftPadding = 0;
+  /**
+   * The amount of padding, in pixels, to exceed before the shift behavior will occur.
+   */
+  @property({ attribute: 'shift-padding', type: Number })
+  shiftPadding = 0;
 
   /** When set, this will cause the popup to automatically resize itself to prevent it from overflowing. */
   @property({ attribute: 'auto-size' }) autoSize?:
@@ -199,17 +236,23 @@ export class MinidPopup extends LitElement {
     | 'vertical'
     | 'both';
 
-  /** Syncs the popup's width or height to that of the anchor element. */
-  @property() sync?: 'width' | 'height' | 'both';
+  /**
+   * Syncs the popup's width or height to that of the anchor element.
+   */
+  @property()
+  sync?: 'width' | 'height' | 'both';
 
   /**
    * The auto-size boundary describes clipping element(s) that overflow will be checked relative to when resizing. By
    * default, the boundary includes overflow ancestors that will cause the element to be clipped. If needed, you can
    * change the boundary by passing a reference to one or more elements to this property.
    */
-  @property({ type: Object }) autoSizeBoundary?: Element | Element[];
+  @property({ type: Object })
+  autoSizeBoundary?: Element | Element[];
 
-  /** The amount of padding, in pixels, to exceed before the auto-size behavior will occur. */
+  /**
+   * The amount of padding, in pixels, to exceed before the auto-size behavior will occur.
+   */
   @property({ attribute: 'auto-size-padding', type: Number }) autoSizePadding =
     0;
 

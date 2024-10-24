@@ -1,0 +1,152 @@
+import type { Meta, StoryObj } from '@storybook/web-components';
+import { html, nothing } from 'lit';
+import '../components/tooltip.component';
+import '../components/button.component';
+import '../components/icon/icon.component';
+import { ifDefined } from 'lit/directives/if-defined.js';
+import { MinidTooltip } from '../components/tooltip.component';
+import { styleMap } from 'lit/directives/style-map.js';
+
+type TooltipProps = {
+  trigger?: MinidTooltip['trigger'];
+  contentString: string;
+  open: boolean;
+  hoist: boolean;
+  disabled?: boolean;
+  inverted: boolean;
+  placement?: MinidTooltip['placement'];
+  distance?: number;
+  skidding?: number;
+  content: unknown;
+  base: unknown;
+  body: unknown;
+  'mid-show': unknown;
+  'mid-hide': unknown;
+  'mid-after-show': unknown;
+  'mid-after-hide': unknown;
+  '--': unknown;
+  '--max-width': string;
+  '--hide-delay': string;
+  '--show-delay': string;
+};
+
+// More on how to set up stories at: https://storybook.js.org/docs/writing-stories
+const meta = {
+  title: 'Komponenter/Tooltip',
+  component: 'mid-tooltip',
+  argTypes: {
+    trigger: {
+      control: { type: 'select' },
+      options: ['focus hover', 'hover', 'focus', 'click', 'manual'],
+    },
+    contentString: {
+      name: 'content',
+      description:
+        'The text to render in the tooltip. If you need HTML you can use the content slot',
+      control: { type: 'text' },
+      table: { category: 'attributes' },
+    },
+
+    placement: {
+      control: { type: 'select' },
+      options: [
+        'top',
+        'top-start',
+        'top-end',
+        'right',
+        'right-start',
+        'right-end',
+        'bottom',
+        'bottom-start',
+        'bottom-end',
+        'left',
+        'left-start',
+        'left-end',
+      ],
+    },
+    '--max-width': {
+      type: 'string',
+    },
+    '--hide-delay': {
+      type: 'string',
+    },
+    '--show-delay': {
+      type: 'string',
+    },
+    content: {
+      type: 'string',
+    },
+    base: {
+      control: { disable: true },
+    },
+    body: {
+      control: { disable: true },
+    },
+    'mid-after-hide': {
+      control: { disable: true },
+    },
+    'mid-hide': {
+      control: { disable: true },
+    },
+    'mid-show': {
+      control: { disable: true },
+    },
+    'mid-after-show': {
+      control: { disable: true },
+    },
+    '--': {
+      name: '-',
+      control: { disable: true },
+    },
+  },
+} satisfies Meta<TooltipProps>;
+
+export default meta;
+type Story = StoryObj<TooltipProps>;
+
+// More on writing stories with args: https://storybook.js.org/docs/writing-stories/args
+export const Main: Story = {
+  args: {
+    open: true,
+    contentString:
+      'Her er en liten tekst som liksom skal poppe opp hvis du har musa di over trigger objektet',
+  },
+  parameters: {
+    layout: 'centered',
+  },
+  decorators: (story) => html`<div class="m-24 flex">${story()}</div>`,
+  render: ({
+    open,
+    contentString,
+    content,
+    hoist,
+    inverted,
+    trigger,
+    placement,
+    disabled,
+    distance,
+    skidding,
+    ...rest
+  }: TooltipProps) => {
+    return html`<mid-tooltip
+      style="${styleMap({
+        '--max-width': rest['--max-width'],
+        '--show-delay': rest['--show-delay'],
+        '--hide-delay': rest['--hide-delay'],
+      })}"
+      ?open=${open}
+      ?hoist=${hoist}
+      ?disabled=${disabled}
+      ?inverted=${inverted}
+      trigger=${ifDefined(trigger)}
+      placement=${ifDefined(placement)}
+      content=${ifDefined(content ? undefined : contentString)}
+      distance=${ifDefined(distance)}
+      skidding=${ifDefined(skidding)}
+    >
+      <mid-button variant="secondary"> Trigger </mid-button>
+
+      ${!content ? nothing : html`<span slot="content">${content}</span>`}
+    </mid-tooltip>`;
+  },
+};

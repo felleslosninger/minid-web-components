@@ -13,8 +13,9 @@ const styles = [
 ];
 
 /**
- * @part panel - Select the dropdown panel host element
+ * @slot -- Default slot for content of the dropdown panel
  * @slot trigger - Used for the button element that will be used to open the dropdown menu
+ * @part panel - Select the dropdown panel host element
  */
 @customElement('mid-dropdown')
 export class MinidDropdown extends styled(LitElement, styles) {

@@ -14,6 +14,12 @@ const preview: Preview = {
         date: /Date$/i,
       },
     },
+    docs: {
+      source: {
+        excludeDecorators: true,
+        transform: (source) => source.replace(/=\"\"/g, ''), // Remove ="" on boolean attributes
+      },
+    },
   },
   tags: ['autodocs'],
 };
