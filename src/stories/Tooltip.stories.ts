@@ -9,12 +9,17 @@ import { MinidTooltip } from '../components/tooltip.component';
 type TooltipProps = {
   trigger?: MinidTooltip['trigger'];
   contentString: string;
-  content: unknown;
   open: boolean;
   hoist: boolean;
-  placement?: MinidTooltip['placement'];
   disabled?: boolean;
+  inverted: boolean;
+  placement?: MinidTooltip['placement'];
+  distance?: number;
+  skidding?: number;
+  content: unknown;
   base: unknown;
+  '--': unknown;
+  '--max-width': unknown;
 };
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories
@@ -57,6 +62,10 @@ const meta = {
     base: {
       control: { disable: true },
     },
+    '--': {
+      name: '-',
+      control: { disable: true },
+    },
   },
 } satisfies Meta<TooltipProps>;
 
@@ -70,27 +79,33 @@ export const Main: Story = {
     contentString:
       'Her er en liten tekst som liksom skal poppe opp når du tar musa di over trigger objektet',
   },
-  parameters: { layout: 'centered' },
+  parameters: {
+    layout: 'centered',
+  },
   decorators: (story) => html`<div class="m-24 flex">${story()}</div>`,
   render: ({
     open,
     contentString,
     hoist,
+    inverted,
     trigger,
     placement,
     disabled,
+    distance,
+    skidding,
   }: TooltipProps) => {
     return html`<mid-tooltip
       ?open=${open}
       ?hoist=${hoist}
       ?disabled=${disabled}
+      ?inverted=${inverted}
       trigger=${ifDefined(trigger)}
       placement=${ifDefined(placement)}
       content=${ifDefined(contentString)}
+      distance=${ifDefined(distance)}
+      skidding=${ifDefined(skidding)}
     >
-      <mid-button variant="tertiary" iconstyled>
-        <mid-icon class="text-2xl" name="information-square"></mid-icon>
-      </mid-button>
+      <mid-button variant="secondary"> Trigger </mid-button>
     </mid-tooltip>`;
   },
 };

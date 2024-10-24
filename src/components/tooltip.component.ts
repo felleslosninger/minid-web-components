@@ -24,17 +24,18 @@ const styles = [
       --show-delay: 250ms;
     }
 
-    ::part(arrow) {
-      background-color: var(--fds-semantic-surface-neutral-inverted);
-    }
-
     .tooltip__body {
       width: max-content;
       max-width: var(--max-width);
     }
 
     .tooltip::part(popup) {
+      --arrow-color: var(--fds-semantic-surface-neutral-inverted);
       z-index: 1000;
+    }
+
+    .tooltip.inverted::part(popup) {
+      --arrow-color: var(--fds-semantic-surface-neutral-subtle);
     }
 
     .tooltip[placement^='top']::part(popup) {
@@ -59,7 +60,13 @@ const styles = [
  * @slot -- The default slot is for the trigger element
  * @slot content - The content to render in the tooltip. Alternatively, you can use the `content` attribute.
  *
- * @part base - The component base wrapper. `<mid-popup> element
+ * @csspart base - The component base wrapper. `<mid-popup> element
+ *
+ * @cssproperty [--max-width=20rem] - Max width of the tooltip content
+ * @cssproperty [--hide-delay=0ms] - Delay for hiding the tooltip
+ * @cssproperty [--show-delay=150ms] - Delay for showing the tooltip
+ * @method show
+ * @method hide
  */
 @customElement('mid-tooltip')
 export class MinidTooltip extends styled(LitElement, styles) {
@@ -149,6 +156,12 @@ export class MinidTooltip extends styled(LitElement, styles) {
    */
   @property({ type: Boolean })
   hoist = false;
+
+  /**
+   * Inverts the color of the tooltip. Use this on dark backgrounds.
+   */
+  @property({ type: Boolean })
+  inverted = false;
 
   constructor() {
     super();
@@ -259,7 +272,9 @@ export class MinidTooltip extends styled(LitElement, styles) {
       }
 
       // Show
-      // this.emit('sl-show');
+      this.dispatchEvent(
+        new Event('mid-show', { bubbles: true, composed: true })
+      );
       if ('CloseWatcher' in window) {
         this.closeWatcher?.destroy();
         this.closeWatcher = new CloseWatcher();
@@ -277,10 +292,14 @@ export class MinidTooltip extends styled(LitElement, styles) {
       await animateTo(this.popup.popup, keyframes, options);
       this.popup.reposition();
 
-      // this.emit('sl-after-show');
+      this.dispatchEvent(
+        new Event('mid-after-show', { bubbles: true, composed: true })
+      );
     } else {
       // Hide
-      // this.emit('sl-hide');
+      this.dispatchEvent(
+        new Event('mid-hide', { bubbles: true, composed: true })
+      );
       this.closeWatcher?.destroy();
       document.removeEventListener('keydown', this.handleDocumentKeyDown);
 
@@ -290,7 +309,9 @@ export class MinidTooltip extends styled(LitElement, styles) {
       this.popup.active = false;
       this.body.hidden = true;
 
-      // this.emit('sl-after-hide');
+      this.dispatchEvent(
+        new Event('mid-after-hide', { bubbles: true, composed: true })
+      );
     }
   }
 
@@ -345,6 +366,7 @@ export class MinidTooltip extends styled(LitElement, styles) {
         "
         class=${classMap({
           tooltip: true,
+          inverted: this.inverted,
           'tooltip--open': this.open,
         })}
         placement=${this.placement}
@@ -360,7 +382,11 @@ export class MinidTooltip extends styled(LitElement, styles) {
         <div
           part="body"
           id="tooltip"
-          class="fds-tooltip tooltip__body"
+          class="${classMap({
+            'fds-tooltip': true,
+            tooltip__body: true,
+            'fds-tooltip--inverted': this.inverted,
+          })}"
           role="tooltip"
           aria-live=${this.open ? 'polite' : 'off'}
         >
