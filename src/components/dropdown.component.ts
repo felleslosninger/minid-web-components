@@ -27,7 +27,19 @@ export class MinidDropdown extends styled(LitElement, styles) {
   size: 'sm' | 'md' | 'lg' = 'md';
 
   @property({ reflect: true })
-  placement: MinidPopup['placement'] = 'bottom-end';
+  placement:
+    | 'top'
+    | 'top-start'
+    | 'top-end'
+    | 'bottom'
+    | 'bottom-start'
+    | 'bottom-end'
+    | 'right'
+    | 'right-start'
+    | 'right-end'
+    | 'left'
+    | 'left-start'
+    | 'left-end' = 'bottom-end';
 
   /**
    * Sync the dropdown panel size with the trigger element

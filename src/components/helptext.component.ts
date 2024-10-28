@@ -81,7 +81,22 @@ export class MinidHelptext extends styled(LitElement, styles) {
   @property({ type: Boolean, reflect: true })
   open = false;
 
-  @property() placement: MinidPopup['placement'] = 'right';
+  /**
+   * @typedef {pla}
+   */
+  @property() placement:
+    | 'top'
+    | 'top-start'
+    | 'top-end'
+    | 'bottom'
+    | 'bottom-start'
+    | 'bottom-end'
+    | 'right'
+    | 'right-start'
+    | 'right-end'
+    | 'left'
+    | 'left-start'
+    | 'left-end' = 'right';
 
   /**
    * The distance in pixels from which to offset the tooltip away from its target.
