@@ -3,6 +3,7 @@ import { customElement, property } from 'lit/decorators.js';
 import 'components/popup.component';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { styled } from 'mixins/tailwind.mixin.ts';
+import { MinidPopup } from 'components/popup.component';
 
 const styles = [
   css`
@@ -26,19 +27,7 @@ export class MinidDropdown extends styled(LitElement, styles) {
   size: 'sm' | 'md' | 'lg' = 'md';
 
   @property({ reflect: true })
-  placement:
-    | 'top'
-    | 'top-start'
-    | 'top-end'
-    | 'bottom'
-    | 'bottom-start'
-    | 'bottom-end'
-    | 'right'
-    | 'right-start'
-    | 'right-end'
-    | 'left'
-    | 'left-start'
-    | 'left-end' = 'bottom-end';
+  placement: MinidPopup['placement'] = 'bottom-end';
 
   /**
    * Sync the dropdown panel size with the trigger element
