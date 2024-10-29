@@ -23,6 +23,7 @@ const styles = [
 
     mid-icon {
       font-size: var(--icon-size);
+      color: var(--fds-semantic-text-action-default);
     }
 
     .fds-helptext--md {
@@ -34,13 +35,32 @@ const styles = [
       max-width: var(--max-width);
     }
 
-    .popup::part(popup) {
-      --arrow-color: var(--fds-semantic-surface-neutral-inverted);
-      z-index: 1000;
+    .popup::part(arrow) {
+      border: 1px solid var(--fds-semantic-border-info-default);
+      border-left: 0;
+      border-top: 0;
+      z-index: 1001;
     }
 
-    .popup.inverted::part(popup) {
-      --arrow-color: var(--fds-semantic-surface-neutral-subtle);
+    .popup[placement^='top']::part(arrow) {
+      transform: rotate(0deg);
+    }
+
+    .popup[placement^='bottom']::part(arrow) {
+      transform: rotate(180deg);
+    }
+
+    .popup[placement^='left']::part(arrow) {
+      transform: rotate(-90deg);
+    }
+
+    .popup[placement^='right']::part(arrow) {
+      transform: rotate(90deg);
+    }
+
+    .popup::part(popup) {
+      --arrow-color: var(--fds-semantic-surface-info-subtle);
+      z-index: 1000;
     }
 
     .popup[placement^='top']::part(popup) {
@@ -80,6 +100,9 @@ export class MinidHelptext extends styled(LitElement, styles) {
    */
   @property({ type: Boolean, reflect: true })
   open = false;
+
+  @property()
+  size: 'sm' | 'md' | 'lg' = 'md';
 
   /**
    * @typedef {pla}
@@ -121,11 +144,12 @@ export class MinidHelptext extends styled(LitElement, styles) {
   @state()
   filledIcon = false;
 
+  #animating = false;
+
   constructor() {
     super();
     this.addEventListener('blur', this.handleBlur, true);
     this.addEventListener('focus', this.handleFocus, true);
-
     this.addEventListener('mouseover', this.handleMouseOver);
     this.addEventListener('mouseout', this.handleMouseOut);
   }
@@ -141,7 +165,10 @@ export class MinidHelptext extends styled(LitElement, styles) {
    * @ignore
    */
   private handleClick = () => {
-    console.log('handling click', `open: ${this.open}`);
+    if (this.#animating) {
+      return;
+    }
+
     if (this.open) {
       this.hide();
     } else {
@@ -187,7 +214,6 @@ export class MinidHelptext extends styled(LitElement, styles) {
   async handleOpenChange() {
     if (this.open) {
       // Show
-      console.log('showing 👻');
       this.dispatchEvent(
         new Event('mid-show', { bubbles: true, composed: true })
       );
@@ -197,8 +223,11 @@ export class MinidHelptext extends styled(LitElement, styles) {
       await stopAnimations(this.body);
       this.body.hidden = false;
       this.popup.active = true;
+      this.filledIcon = true;
+      this.#animating = true;
       const { keyframes, options } = getAnimation(this, 'helptext.show');
       await animateTo(this.popup.popup, keyframes, options);
+      this.#animating = false;
       this.popup.reposition();
 
       this.dispatchEvent(
@@ -206,7 +235,6 @@ export class MinidHelptext extends styled(LitElement, styles) {
       );
     } else {
       // Hide
-      console.log('hiding 🙈');
       this.dispatchEvent(
         new Event('mid-hide', { bubbles: true, composed: true })
       );
@@ -214,10 +242,13 @@ export class MinidHelptext extends styled(LitElement, styles) {
       document.removeEventListener('keydown', this.handleDocumentKeyDown);
 
       await stopAnimations(this.body);
+      this.#animating = true;
       const { keyframes, options } = getAnimation(this, 'helptext.hide');
       await animateTo(this.popup.popup, keyframes, options);
       this.popup.active = false;
       this.body.hidden = true;
+      this.filledIcon = false;
+      this.#animating = false;
 
       this.dispatchEvent(
         new Event('mid-after-hide', { bubbles: true, composed: true })
@@ -233,8 +264,6 @@ export class MinidHelptext extends styled(LitElement, styles) {
       return undefined;
     }
 
-    console.log('show');
-    this.filledIcon = true;
     this.open = true;
     return waitForEvent(this, 'mid-after-show');
   }
@@ -247,9 +276,6 @@ export class MinidHelptext extends styled(LitElement, styles) {
       return undefined;
     }
 
-    console.log('hide');
-
-    this.filledIcon = false;
     this.open = false;
     return waitForEvent(this, 'mid-after-hide');
   }
@@ -290,7 +316,10 @@ export class MinidHelptext extends styled(LitElement, styles) {
             })}"
           ></mid-icon>
         </button>
-        <div class="helptext__body fds-helptext__content">
+
+        <div
+          class="helptext__body fds-paragraph fds-paragraph--md fds-popover fds-popover--info fds-popover--md fds-helptext__content"
+        >
           <slot></slot>
         </div>
       </mid-popup>

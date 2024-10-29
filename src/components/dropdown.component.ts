@@ -3,7 +3,6 @@ import { customElement, property } from 'lit/decorators.js';
 import 'components/popup.component';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { styled } from 'mixins/tailwind.mixin.ts';
-import { MinidPopup } from 'components/popup.component';
 
 const styles = [
   css`

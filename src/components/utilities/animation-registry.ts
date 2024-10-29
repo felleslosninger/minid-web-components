@@ -1,4 +1,4 @@
-import { AnimationName } from 'src/types/tooltip-name';
+import { AnimationName } from 'src/types/animation-name';
 
 export interface ElementAnimation {
   keyframes: Keyframe[];

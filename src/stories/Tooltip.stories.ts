@@ -37,7 +37,14 @@ const meta = {
   argTypes: {
     trigger: {
       control: { type: 'select' },
-      options: ['focus hover', 'hover', 'focus', 'click', 'manual'],
+      options: [
+        'focus hover',
+        'focus click',
+        'hover',
+        'focus',
+        'click',
+        'manual',
+      ],
     },
     contentString: {
       name: 'content',
@@ -107,7 +114,6 @@ type Story = StoryObj<TooltipProps>;
 // More on writing stories with args: https://storybook.js.org/docs/writing-stories/args
 export const Main: Story = {
   args: {
-    open: true,
     contentString:
       'Her er en liten tekst som liksom skal poppe opp hvis du har musa di over trigger objektet',
   },
@@ -145,7 +151,6 @@ export const Main: Story = {
       skidding=${ifDefined(skidding)}
     >
       <mid-button variant="secondary"> Trigger </mid-button>
-
       ${!content ? nothing : html`<span slot="content">${content}</span>`}
     </mid-tooltip>`;
   },
