@@ -17,17 +17,24 @@ import { stopAnimations, animateTo } from 'src/internal/animate.js';
 const styles = [
   css`
     :host {
-      --icon-size: 1.75rem;
       --max-width: 20rem;
     }
 
-    mid-icon {
+    .icon {
       font-size: var(--icon-size);
       color: var(--fds-semantic-text-action-default);
     }
 
-    .fds-helptext--md {
-      --icon-size: 3rem;
+    .icon.sm {
+      --icon-size: 1.5rem;
+    }
+
+    .icon.md {
+      --icon-size: 1.75rem;
+    }
+
+    .icon.lg {
+      --icon-size: 2rem;
     }
 
     .helptext__body {
@@ -81,6 +88,16 @@ const styles = [
   `,
 ];
 
+/**
+ * @event mid-show - Emitted when open is set to `true`
+ * @event mid-hide - Emitted when open is set to `false`
+ * @event mid-after-show - Emitted after the helptext has shown an all animations are complete
+ * @event mid-after-hide - Emitted after the helptext has hidden an all animations are complete
+ *
+ * @slot -- The default slot is for helptext content
+ *
+ * @cssproperty [--max-width=20rem] - Max width of the helptext content
+ */
 @customElement('mid-helptext')
 export class MinidHelptext extends styled(LitElement, styles) {
   /**
@@ -96,16 +113,19 @@ export class MinidHelptext extends styled(LitElement, styles) {
   popup!: MinidPopup;
 
   /**
-   * Indicates whether or not the tooltip is open. You can use this in lieu of the show/hide methods.
+   * Indicates whether or not the helptext is open. You can use this in lieu of the show/hide methods.
    */
   @property({ type: Boolean, reflect: true })
   open = false;
 
+  /**
+   * Size of the icon
+   */
   @property()
   size: 'sm' | 'md' | 'lg' = 'md';
 
   /**
-   * @typedef {pla}
+   * Placement of the popup
    */
   @property() placement:
     | 'top'
@@ -122,19 +142,19 @@ export class MinidHelptext extends styled(LitElement, styles) {
     | 'left-end' = 'right';
 
   /**
-   * The distance in pixels from which to offset the tooltip away from its target.
+   * The distance in pixels from which to offset the helptext away from its target.
    */
   @property({ type: Number })
   distance = 8;
 
   /**
-   * The distance in pixels from which to offset the tooltip along its target.
+   * The distance in pixels from which to offset the helptext along its target.
    */
   @property({ type: Number })
   skidding = 0;
 
   /**
-   * Enable this option to prevent the tooltip from being clipped when the component is placed inside a container with
+   * Enable this option to prevent the helptext from being clipped when the component is placed inside a container with
    * `overflow: auto|hidden|scroll`. Hoisting uses a fixed positioning strategy that works in many, but not all,
    * scenarios.
    */
@@ -144,8 +164,6 @@ export class MinidHelptext extends styled(LitElement, styles) {
   @state()
   filledIcon = false;
 
-  #animating = false;
-
   constructor() {
     super();
     this.addEventListener('blur', this.handleBlur, true);
@@ -154,21 +172,35 @@ export class MinidHelptext extends styled(LitElement, styles) {
     this.addEventListener('mouseout', this.handleMouseOut);
   }
 
+  disconnectedCallback() {
+    // Cleanup this event in case the helptext is removed while open
+    document.removeEventListener('keydown', this.handleDocumentKeyDown);
+  }
+
+  firstUpdated() {
+    this.body.hidden = !this.open;
+
+    // If the helptext is visible on init, update its position
+    if (this.open) {
+      this.popup.active = true;
+      this.filledIcon = true;
+      this.popup.reposition();
+    }
+  }
+
   /**
    * @ignore
    */
   private handleBlur = () => {
-    this.hide();
+    if (!this.open) {
+      this.filledIcon = false;
+    }
   };
 
   /**
    * @ignore
    */
   private handleClick = () => {
-    if (this.#animating) {
-      return;
-    }
-
     if (this.open) {
       this.hide();
     } else {
@@ -180,14 +212,14 @@ export class MinidHelptext extends styled(LitElement, styles) {
    * @ignore
    */
   private handleFocus = () => {
-    this.show();
+    this.filledIcon = true;
   };
 
   /**
    * @ignore
    */
   private handleDocumentKeyDown = (event: KeyboardEvent) => {
-    // Pressing escape when a tooltip is open should dismiss it
+    // Pressing escape when a helptext is open should dismiss it
     if (event.key === 'Escape') {
       event.stopPropagation();
       this.hide();
@@ -224,10 +256,8 @@ export class MinidHelptext extends styled(LitElement, styles) {
       this.body.hidden = false;
       this.popup.active = true;
       this.filledIcon = true;
-      this.#animating = true;
       const { keyframes, options } = getAnimation(this, 'helptext.show');
       await animateTo(this.popup.popup, keyframes, options);
-      this.#animating = false;
       this.popup.reposition();
 
       this.dispatchEvent(
@@ -241,14 +271,12 @@ export class MinidHelptext extends styled(LitElement, styles) {
 
       document.removeEventListener('keydown', this.handleDocumentKeyDown);
 
+      this.filledIcon = false;
       await stopAnimations(this.body);
-      this.#animating = true;
       const { keyframes, options } = getAnimation(this, 'helptext.hide');
       await animateTo(this.popup.popup, keyframes, options);
       this.popup.active = false;
       this.body.hidden = true;
-      this.filledIcon = false;
-      this.#animating = false;
 
       this.dispatchEvent(
         new Event('mid-after-hide', { bubbles: true, composed: true })
@@ -305,14 +333,22 @@ export class MinidHelptext extends styled(LitElement, styles) {
             name="questionmark-circle"
             library="system"
             class="${classMap({
+              icon: true,
               hidden: this.filledIcon,
+              sm: this.size === 'sm',
+              md: this.size === 'md',
+              lg: this.size === 'lg',
             })}"
           ></mid-icon>
           <mid-icon
             name="questionmark-circle-fill"
             library="system"
             class="${classMap({
+              icon: true,
               hidden: !this.filledIcon,
+              sm: this.size === 'sm',
+              md: this.size === 'md',
+              lg: this.size === 'lg',
             })}"
           ></mid-icon>
         </button>

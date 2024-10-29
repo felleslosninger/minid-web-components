@@ -3,12 +3,22 @@ import { html } from 'lit';
 import '../components/helptext.component';
 import { MinidHelptext } from '../components/helptext.component';
 import { ifDefined } from 'lit/directives/if-defined.js';
+import { styleMap } from 'lit/directives/style-map.js';
 
 type HelptextProps = {
   open?: boolean;
   content?: string;
   placement?: MinidHelptext['placement'];
   hoist?: boolean;
+  size?: MinidHelptext['size'];
+  skidding?: number;
+  distance?: number;
+  'mid-show': unknown;
+  'mid-hide': unknown;
+  'mid-after-show': unknown;
+  'mid-after-hide': unknown;
+  '--': Slottable;
+  '--max-width': string;
 };
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories
@@ -16,6 +26,12 @@ const meta = {
   title: 'Komponenter/Helptext',
   component: 'mid-helptext',
   argTypes: {
+    size: {
+      control: {
+        type: 'radio',
+      },
+      options: ['sm', 'md', 'lg'],
+    },
     placement: {
       control: {
         type: 'select',
@@ -35,6 +51,30 @@ const meta = {
         'left-end',
       ],
     },
+    '--max-width': {
+      type: 'string',
+    },
+    'mid-after-hide': {
+      control: { disable: true },
+    },
+    'mid-hide': {
+      control: { disable: true },
+    },
+    'mid-show': {
+      control: { disable: true },
+    },
+    'mid-after-show': {
+      control: { disable: true },
+    },
+    '--': {
+      name: '-',
+      control: { disable: true },
+    },
+  },
+  parameters: {
+    controls: {
+      exclude: ['filledIcon'],
+    },
   },
 } satisfies Meta<HelptextProps>;
 
@@ -45,17 +85,32 @@ type Story = StoryObj<HelptextProps>;
 export const Main: Story = {
   args: {
     content:
-      'Noen ganger i livet kan vi alle behøve litt hjelp. Da er det fint å ha en hjelpsom hjelpetekst til å forklarer hva det er som egentlig foregår.',
+      'Noen ganger kan vi alle behøve litt hjelp. Da er det fint å ha en hjelpsom hjelpetekst til å forklarer hva det er som egentlig foregår.',
   },
   parameters: {
     layout: 'centered',
   },
-  decorators: (story) => html`<div class="m-24 flex">${story()}</div>`,
-  render: ({ open, content, placement, hoist }: HelptextProps) => {
+  decorators: (story) => html`<div class="m-44 flex">${story()}</div>`,
+  render: ({
+    open,
+    content,
+    placement,
+    hoist,
+    size,
+    distance,
+    skidding,
+    ...rest
+  }: HelptextProps) => {
     return html`<mid-helptext
-      ?hoist=${hoist}
-      placement=${ifDefined(placement)}
+      style="${styleMap({
+        '--max-width': rest['--max-width'],
+      })}"
       ?open=${open}
+      ?hoist=${hoist}
+      size=${ifDefined(size)}
+      placement=${ifDefined(placement)}
+      distance=${ifDefined(distance)}
+      skidding=${ifDefined(skidding)}
       >${content}
     </mid-helptext>`;
   },
