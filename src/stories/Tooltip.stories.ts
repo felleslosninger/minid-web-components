@@ -114,6 +114,7 @@ type Story = StoryObj<TooltipProps>;
 // More on writing stories with args: https://storybook.js.org/docs/writing-stories/args
 export const Main: Story = {
   args: {
+    open: true,
     contentString:
       'Her er en liten tekst som liksom skal poppe opp hvis du har musa di over trigger objektet',
   },
