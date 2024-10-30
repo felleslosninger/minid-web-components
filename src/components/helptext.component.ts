@@ -49,19 +49,19 @@ const styles = [
       z-index: 1001;
     }
 
-    .popup[placement^='top']::part(arrow) {
+    .popup[data-current-placement^='top']::part(arrow) {
       transform: rotate(0deg);
     }
 
-    .popup[placement^='bottom']::part(arrow) {
+    .popup[data-current-placement^='bottom']::part(arrow) {
       transform: rotate(180deg);
     }
 
-    .popup[placement^='left']::part(arrow) {
+    .popup[data-current-placement^='left']::part(arrow) {
       transform: rotate(-90deg);
     }
 
-    .popup[placement^='right']::part(arrow) {
+    .popup[data-current-placement^='right']::part(arrow) {
       transform: rotate(90deg);
     }
 
@@ -70,19 +70,19 @@ const styles = [
       z-index: 1000;
     }
 
-    .popup[placement^='top']::part(popup) {
+    .popup[data-current-placement^='top']::part(popup) {
       transform-origin: bottom;
     }
 
-    .popup[placement^='bottom']::part(popup) {
+    .popup[data-current-placement^='bottom']::part(popup) {
       transform-origin: top;
     }
 
-    .popup[placement^='left']::part(popup) {
+    .popup[data-current-placement^='left']::part(popup) {
       transform-origin: right;
     }
 
-    .popup[placement^='right']::part(popup) {
+    .popup[data-current-placement^='right']::part(popup) {
       transform-origin: left;
     }
   `,
@@ -192,9 +192,7 @@ export class MinidHelptext extends styled(LitElement, styles) {
    * @ignore
    */
   private handleBlur = () => {
-    if (!this.open) {
-      this.filledIcon = false;
-    }
+    this.hide();
   };
 
   /**
@@ -311,21 +309,22 @@ export class MinidHelptext extends styled(LitElement, styles) {
   override render() {
     return html`
       <mid-popup
-        role="tooltip"
         class="popup"
         ?active=${this.open}
-        placement="right"
         placement=${this.placement}
         distance=${this.distance}
         skidding=${this.skidding}
         strategy=${this.hoist ? 'fixed' : 'absolute'}
+        flip-fallback-placements=${'top-end bottom-end'}
         flip
-        shift
         arrow
+        shift
         hover-bridge
       >
         <button
           slot="anchor"
+          aria-describedby="helptext-body"
+          aria-label="Hjelpetekst"
           class="fds-helptext--md fds-helptext__button fds-focus"
           @click="${this.handleClick}"
         >
@@ -354,7 +353,10 @@ export class MinidHelptext extends styled(LitElement, styles) {
         </button>
 
         <div
+          id="heptext-body"
           class="helptext__body fds-paragraph fds-paragraph--md fds-popover fds-popover--info fds-popover--md fds-helptext__content"
+          aria-live=${this.open ? 'polite' : 'off'}
+          role="status"
         >
           <slot></slot>
         </div>
