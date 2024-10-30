@@ -23,6 +23,9 @@ export { MinidDropdown };
 import { MinidHeading } from './components/heading.component.ts';
 export { MinidHeading };
 
+import { MinidHelptext } from 'src/components/helptext.component.ts';
+export { MinidHelptext };
+
 import { MinidIcon } from './components/icon/icon.component.ts';
 export { MinidIcon };
 
@@ -58,6 +61,7 @@ declare global {
     'mid-checkbox': MinidCheckbox;
     'mid-dropdown': MinidDropdown;
     'mid-heading': MinidHeading;
+    'mid-helptext': MinidHelptext;
     'mid-icon': MinidIcon;
     'mid-label': MinidLabel;
     'mid-menu-item': MinidMenuItem;

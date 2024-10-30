@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
-import { html, nothing } from 'lit';
+import { html, nothing, Part } from 'lit';
 import '../components/tooltip.component';
 import '../components/button.component';
 import '../components/icon/icon.component';
@@ -17,14 +17,14 @@ type TooltipProps = {
   placement?: MinidTooltip['placement'];
   distance?: number;
   skidding?: number;
-  content: unknown;
-  base: unknown;
-  body: unknown;
-  'mid-show': unknown;
-  'mid-hide': unknown;
-  'mid-after-show': unknown;
-  'mid-after-hide': unknown;
-  '--': unknown;
+  '--': Slottable;
+  content: Slottable;
+  base: Part;
+  body: Part;
+  'mid-show': Event;
+  'mid-hide': Event;
+  'mid-after-show': Event;
+  'mid-after-hide': Event;
   '--max-width': string;
   '--hide-delay': string;
   '--show-delay': string;
@@ -37,7 +37,14 @@ const meta = {
   argTypes: {
     trigger: {
       control: { type: 'select' },
-      options: ['focus hover', 'hover', 'focus', 'click', 'manual'],
+      options: [
+        'focus hover',
+        'focus click',
+        'hover',
+        'focus',
+        'click',
+        'manual',
+      ],
     },
     contentString: {
       name: 'content',
@@ -145,7 +152,6 @@ export const Main: Story = {
       skidding=${ifDefined(skidding)}
     >
       <mid-button variant="secondary"> Trigger </mid-button>
-
       ${!content ? nothing : html`<span slot="content">${content}</span>`}
     </mid-tooltip>`;
   },
