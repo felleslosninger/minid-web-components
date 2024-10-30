@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import '../components/textfield.component';
-import { html } from 'lit';
+import '../components/icon/icon.component';
+import { html, nothing } from 'lit';
 import { ifDefined } from 'lit/directives/if-defined.js';
 
 type TextfieldProps = {
@@ -9,6 +10,10 @@ type TextfieldProps = {
   placeholder?: string;
   type?: 'text';
   size?: 'sm' | 'md' | 'lg';
+  prefix?: string;
+  suffix?: string;
+  disabled?: boolean;
+  description?: string;
 };
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories
@@ -29,7 +34,12 @@ const meta = {
     },
     type: {
       control: { type: 'select' },
-      options: ['text'],
+      options: ['text', 'number'],
+    },
+  },
+  parameters: {
+    controls: {
+      exclude: ['input'],
     },
   },
 } satisfies Meta<TextfieldProps>;
@@ -41,15 +51,34 @@ type Story = StoryObj<TextfieldProps>;
 export const Main: Story = {
   args: {
     label: 'Tekst input',
-    value: 'great',
+
     type: 'text',
   },
-  render: ({ label, placeholder, size, type, value }: TextfieldProps) =>
+  render: ({
+    label,
+    placeholder,
+    size,
+    type,
+    value,
+    prefix,
+    suffix,
+    disabled,
+    description,
+  }: TextfieldProps) =>
     html`<mid-textfield
+      ?disabled=${disabled}
+      description=${ifDefined(description)}
       label="${ifDefined(label)}"
       value=${ifDefined(value)}
       placeholder=${ifDefined(placeholder)}
       type=${ifDefined(type)}
       size=${ifDefined(size)}
-    ></mid-textfield>`,
+    >
+      ${prefix
+        ? html`<span slot="prefix">${prefix}</span>`
+        : html`
+            <mid-icon class="text-3xl" slot="prefix" name="boat"></mid-icon>
+          `}
+      ${suffix ? html`<span slot="suffix">${suffix}</span>` : nothing}
+    </mid-textfield>`,
 };
