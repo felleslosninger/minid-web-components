@@ -35,6 +35,9 @@ interface IconSource {
 }
 
 /**
+ *
+ * Size and color can be adjusted with `font-size` and `color` css properties
+ *
  * @event mid-load - Emitted when the icon has loaded
  * @event mid-error - Emitted when the icon fails to load
  */
