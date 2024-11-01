@@ -10,10 +10,13 @@ type TextfieldProps = {
   placeholder?: string;
   type?: 'text';
   size?: 'sm' | 'md' | 'lg';
+  inputsize?: number;
   prefix?: string;
   suffix?: string;
   disabled?: boolean;
+  readonly?: boolean;
   description?: string;
+  clearable?: boolean;
 };
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories
@@ -51,34 +54,35 @@ type Story = StoryObj<TextfieldProps>;
 export const Main: Story = {
   args: {
     label: 'Tekst input',
-
     type: 'text',
   },
   render: ({
     label,
     placeholder,
     size,
+    inputsize,
     type,
     value,
     prefix,
     suffix,
     disabled,
+    clearable,
+    readonly,
     description,
   }: TextfieldProps) =>
     html`<mid-textfield
       ?disabled=${disabled}
+      ?clearable=${clearable}
+      ?readonly=${readonly}
       description=${ifDefined(description)}
       label="${ifDefined(label)}"
       value=${ifDefined(value)}
       placeholder=${ifDefined(placeholder)}
       type=${ifDefined(type)}
       size=${ifDefined(size)}
+      inputsize=${ifDefined(inputsize)}
     >
-      ${prefix
-        ? html`<span slot="prefix">${prefix}</span>`
-        : html`
-            <mid-icon class="text-3xl" slot="prefix" name="boat"></mid-icon>
-          `}
+      ${prefix ? html`<span slot="prefix">${prefix}</span>` : nothing}
       ${suffix ? html`<span slot="suffix">${suffix}</span>` : nothing}
     </mid-textfield>`,
 };
