@@ -8,12 +8,12 @@
     "build": "rimraf dist && tsc && vite build"
   },
   "dependencies": {
-    "lit": "^3.1.2",
     "@digdir/designsystemet-theme": "^0.15.3",
-    "@felleslosninger/minid-elements": "0.0.13"
+    "@felleslosninger/minid-elements": "../felleslosninger-minid-elements-v0.0.17.tgz",
+    "lit": "^3.1.2"
   },
   "devDependencies": {
-    "rimraf": "^5.0.5",
+    "rimraf": "^6.0.1",
     "rollup": "^4.2.0",
     "typescript": "^5.0.2",
     "vite": "^5.1.7"

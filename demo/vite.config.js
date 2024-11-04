@@ -5,11 +5,15 @@ import { defineConfig } from 'vite';
 export default defineConfig(({ command, mode }) => {
   const server = mode === "development"
     ? {
-        server: {
-          host: "0.0.0.0",
+      server: {
+        host: "0.0.0.0",
+        headers: {
+          'Content-Security-Policy': `style-src 'nonce-rand0m' 'self'`,
         }
       }
+    }
     : {};
+
 
   const build = mode === "development"
     ? {
@@ -30,6 +34,17 @@ export default defineConfig(({ command, mode }) => {
   return {
     ...build,
     ...server,
-    plugins: [],
+    plugins: [
+      {
+        name: "html-inject-nonce-into-script-tag",
+        enforce: "post",
+        transformIndexHtml(html) {
+          const regex = /<(link|style|script)(.*?)/gi;
+          const replacement = mode === "development" ? '<$1 nonce="rand0m"$2' : '<$1 nonce="{{cspNonce}}"$2';
+          const htmlWithTags =  html.replace(regex, replacement);
+          return mode === "development" ? htmlWithTags.replace(/({{cspNonce}})/gi, "rand0m") : htmlWithTags;
+        },
+      },
+    ],
   }
 })
