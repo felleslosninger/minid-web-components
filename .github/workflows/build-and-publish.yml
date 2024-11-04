@@ -17,6 +17,16 @@ jobs:
         with:
           node-version: '20.x'
 
+      - name: Increment version
+        run: |
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+          git config user.name "$GITHUB_ACTOR"
+          npm version patch -m  "[skip actions] Bump version to %s"
+          VERSION=$(node -p "require('./package.json').version")
+          echo "New version: $VERSION"
+          git tag ${VERSION}
+          git push "https://$GITHUB_ACTOR:${{ secrets.GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY.git" --follow-tags          
+
       - name: Install dependencies
         run: yarn install
 
@@ -27,5 +37,6 @@ jobs:
         run: |
           npm config set //npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}
           npm config set @felleslosninger:registry=https://npm.pkg.github.com/
+
       - name: Publish to GitHub Packages
         run: npm publish
