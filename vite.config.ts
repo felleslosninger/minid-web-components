@@ -18,7 +18,7 @@ export default defineConfig(({}) => {
       sourcemap: true,
       emptyOutDir: true,
       lib: {
-        entry: glob.sync(resolve(__dirname, 'src/**/*.component.ts')),
+        entry: glob.sync(resolve(__dirname, 'src/{**/\*.component.ts,index.ts}')),
         name: 'MinID-Elements',
         formats: ['es'],
         fileName: (format, entryName) => `${entryName}.js`,
