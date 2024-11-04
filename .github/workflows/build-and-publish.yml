@@ -3,7 +3,7 @@ name: Build and Publish Web Components
 on:
   push:
     branches:
-      - main # Replace with your main branch name
+      - main
 
 jobs:
   build-and-publish:

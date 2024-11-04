@@ -17,13 +17,21 @@ export default defineConfig(({}) => {
       emptyOutDir: true,
       lib: {
         entry: resolve(__dirname, 'src/index.ts'),
+        // entry: [
+        //   resolve(__dirname, 'src/components/button.component.ts'),
+        //   resolve(__dirname, 'src/components/checkbox.component.ts')
+        // ],
+
         name: 'MinID-Elements',
         formats: ['es'],
-        fileName: 'index',
+        // fileName: 'index',
       },
     },
     rollupOptions: {
       // external: ['^lit$'],
+      output: {
+        entryFileNames: '[name].js',
+      },
     },
     plugins: [
       externalizeDeps(),
