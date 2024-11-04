@@ -20,6 +20,8 @@ jobs:
 
       - name: Increment version
         run: |
+          git config user.email ""
+          git config user.name ""
           npm version patch -m  "[skip actions] Bump version to %s"
           VERSION=$(node -p "require('./package.json').version")
           echo "New version: $VERSION"
