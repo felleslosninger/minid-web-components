@@ -6,6 +6,7 @@ import './icon/icon.component';
 import './button.component';
 import { live } from 'lit/directives/live.js';
 import { MinidTextfield } from './textfield.component.ts';
+import { debounce } from 'src/internal/debounce.ts';
 
 @customElement('mid-search')
 export class MinidSearch extends styled(LitElement) {
@@ -24,9 +25,18 @@ export class MinidSearch extends styled(LitElement) {
   @property()
   value = '';
 
-  private handleInput() {
+  /**
+   * Debounce the `mid-input` event by a number of milliseconds
+   */
+  @property({ type: Number, reflect: true })
+  debounce = 0;
+
+  private handleInput = () => {
     this.value = this.textField.value;
-  }
+    this.dispatchEvent(
+      new Event('mid-input', { composed: true, bubbles: true })
+    );
+  };
 
   override render() {
     return html`
@@ -36,7 +46,9 @@ export class MinidSearch extends styled(LitElement) {
         size=${this.size}
         label=${this.label}
         placeholder=${this.placeholder}
-        @input=${this.handleInput}
+        @mid-input=${debounce(this.handleInput, this.debounce, {
+          stopPropagation: true,
+        })}
         clearable
       >
         <mid-icon

@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import '../components/textfield.component';
 import '../components/icon/icon.component';
-import { html, nothing } from 'lit';
+import { html, nothing, Part } from 'lit';
 import { ifDefined } from 'lit/directives/if-defined.js';
 
 type TextfieldProps = {
@@ -16,6 +16,11 @@ type TextfieldProps = {
   readonly?: boolean;
   description?: string;
   clearable?: boolean;
+  hidelabel?: boolean;
+  id?: string;
+  input: Part;
+  base: Part;
+  'form-control': Part;
   'mid-change'?: Event;
   'mid-input'?: Event;
   'mid-clear': Event;
@@ -39,15 +44,32 @@ const meta = {
     },
     type: {
       control: { type: 'select' },
-      options: ['text', 'number'],
+      options: [
+        'date',
+        'datetime-local',
+        'email',
+        'file',
+        'month',
+        'number',
+        'password',
+        'search',
+        'tel',
+        'text',
+        'time',
+        'url',
+        'week',
+      ],
     },
     'mid-change': { control: { disable: true } },
     'mid-input': { control: { disable: true } },
     'mid-clear': { control: { disable: true } },
+    'form-control': { control: { disable: true } },
+    input: { control: { disable: true } },
+    base: { control: { disable: true } },
   },
   parameters: {
     controls: {
-      exclude: ['input'],
+      exclude: [],
     },
   },
 } satisfies Meta<TextfieldProps>;
@@ -60,7 +82,6 @@ export const Main: Story = {
   args: {
     label: 'Tekst input',
     type: 'text',
-    clearable: true,
   },
   decorators: [(story) => html`<div class="w-80">${story()}</div>`],
   render: ({
@@ -73,6 +94,7 @@ export const Main: Story = {
     suffix,
     disabled,
     clearable,
+    hidelabel,
     readonly,
     description,
   }: TextfieldProps) =>
@@ -80,6 +102,7 @@ export const Main: Story = {
       ?disabled=${disabled}
       ?clearable=${clearable}
       ?readonly=${readonly}
+      ?hideLabel=${hidelabel}
       description=${ifDefined(description)}
       label="${ifDefined(label)}"
       value=${ifDefined(value)}

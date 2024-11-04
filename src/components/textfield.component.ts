@@ -52,6 +52,11 @@ const styles = [
       align-items: center;
       justify-content: center;
       width: calc(1em + 1rem * 2);
+      border-radius: 4px;
+    }
+
+    .fds-textfield__readonly__icon svg {
+      font-size: 1.2em;
     }
 
     .clear-button:not(:disabled, [aria-disabled]):hover mid-icon {
@@ -70,9 +75,13 @@ const styles = [
       font-size: 28px;
     }
 
-    .fds-focus:focus-within:not(
-        :has(.suffix:focus-within, .prefix:focus-within)
-      ) {
+    .fds-focus:not(
+        :has(
+            .suffix:focus-within,
+            .prefix:focus-within,
+            .clear-button:focus-within
+          )
+      ):focus-within {
       --fds-focus-border-width: 3px;
       outline: var(--fds-focus-border-width) solid
         var(--fds-semantic-border-focus-outline);
@@ -89,23 +98,13 @@ const styles = [
  * @event mid-input - Emitted when the input field recieves input
  * @event mid-clear - Emitted when the input field is cleared
  *
- * @slot prefix - Used to place icons or text to the left of the input
- * @slot suffix - Used to place icons or text to the right of the input
+ * @slot prefix - Used for decoration to the left of the input
+ * @slot suffix - Used for decoration to the right of the input
  *
  *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
+ * @csspart base - The fields's base wrapper.
+ * @csspart input - The internal `<input>` element.
+ * @csspart form-control - The form control that wraps the label, input, and help text.
  */
 @customElement('mid-textfield')
 export class MinidTextfield extends styled(LitElement, styles) {
@@ -128,7 +127,20 @@ export class MinidTextfield extends styled(LitElement, styles) {
   placeholder = '';
 
   @property()
-  type: 'text' | 'number' | 'search' = 'text';
+  type:
+    | 'date'
+    | 'datetime-local'
+    | 'email'
+    | 'file'
+    | 'month'
+    | 'number'
+    | 'password'
+    | 'search'
+    | 'tel'
+    | 'text'
+    | 'time'
+    | 'url'
+    | 'week' = 'text';
 
   /**
    * Adds a clear button when the input is not empty.
@@ -141,6 +153,12 @@ export class MinidTextfield extends styled(LitElement, styles) {
 
   @property({ type: Boolean, reflect: true })
   readonly = false;
+
+  /**
+   * Visually hides `label` and `description` (still available for screen readers)
+   */
+  @property({ type: Boolean })
+  hidelabel = false;
 
   private handleInput() {
     this.value = this.input.value;
@@ -179,10 +197,12 @@ export class MinidTextfield extends styled(LitElement, styles) {
 
     return html`
       <div
+        part="form-control"
         class="${classMap({
           'form-control': true,
           'fds-paragraph': true,
           'fds-textfield': true,
+          'fds-textfield--readonly': this.readonly,
           'fds-paragraph--sm': sm,
           'fds-paragraph--md': md,
           'fds-paragraph--lg': lg,
@@ -196,6 +216,7 @@ export class MinidTextfield extends styled(LitElement, styles) {
           : html`<label
               for="input"
               class="${classMap({
+                'sr-only': this.hidelabel,
                 'fds-label': true,
                 'fds-label--medium-weight': true,
                 'fds-textfield__label': true,
@@ -204,6 +225,13 @@ export class MinidTextfield extends styled(LitElement, styles) {
                 'fds-label--lg': lg,
               })}"
             >
+              ${!this.readonly
+                ? nothing
+                : html`<mid-icon
+                    class="fds-textfield__readonly__icon"
+                    library="system"
+                    name="padlock-locked-fill"
+                  ></mid-icon>`}
               ${this.label}
             </label>`}
         ${!this.description
@@ -211,10 +239,10 @@ export class MinidTextfield extends styled(LitElement, styles) {
           : html`
               <div
                 part="description"
-                id="description"
                 class="${classMap({
                   description: true,
                   'fds-paragraph': true,
+                  'sr-only': this.hidelabel,
                   'fds-paragraph--sm': sm,
                   'fds-paragraph--md': md,
                   'fds-paragraph--lg': lg,
@@ -224,15 +252,20 @@ export class MinidTextfield extends styled(LitElement, styles) {
                 ${this.description}
               </div>
             `}
-        <div class="field fds-textfield__field fds-textfield__input fds-focus">
+        <div
+          part="base"
+          class="field fds-textfield__field fds-textfield__input fds-focus"
+        >
           <span class="prefix">
             <slot name="prefix"></slot>
           </span>
           <input
-            id="input"
+            id="${this.id}"
             class="input"
+            part="input"
             .value=${live(this.value)}
             ?disabled=${this.disabled}
+            ?readonly=${this.readonly}
             type=${this.type}
             placeholder=${this.placeholder}
             @input=${this.handleInput}
@@ -250,7 +283,6 @@ export class MinidTextfield extends styled(LitElement, styles) {
                   type="button"
                   aria-label="Tøm"
                   @click=${this.handleClearClick}
-                  tabindex="-1"
                 >
                   <slot name="clear-icon">
                     <mid-icon name="xmark" library="system"></mid-icon>

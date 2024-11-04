@@ -8,18 +8,10 @@ import {
 import { classMap } from 'lit/directives/class-map.js';
 import { styled } from 'src/mixins/tailwind.mixin';
 
-let nextUniqueId = 0;
-
 @customElement('mid-checkbox')
 export class MinidCheckbox extends styled(LitElement) {
   @property({ type: Boolean })
   checked = false;
-
-  /**
-   * Override checkbox input element ID
-   */
-  @property({ type: String, attribute: 'checkbox-id' })
-  checkboxId = `mid-checkbox-${nextUniqueId++}`;
 
   @property({ type: Boolean })
   disabled = false;
@@ -78,7 +70,7 @@ export class MinidCheckbox extends styled(LitElement) {
         })}"
       >
         <input
-          id="${this.checkboxId}"
+          id="checkbox"
           class="fds-checkbox__input"
           type="checkbox"
           @change=${this.#handleChange}
@@ -88,7 +80,7 @@ export class MinidCheckbox extends styled(LitElement) {
           ?readonly=${this.readonly}
         />
         <label
-          for=${this.checkboxId}
+          for="checkbox"
           class=${classMap({
             'fds-label': true,
             'fds-checkbox__label': true,

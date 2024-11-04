@@ -6,7 +6,6 @@ import { ifDefined } from 'lit/directives/if-defined.js';
 
 type CheckboxProps = {
   checked?: boolean;
-  'checkbox-id'?: string;
   disabled?: boolean;
   readonly?: boolean;
   size?: MinidCheckbox['size'];
@@ -21,9 +20,6 @@ const meta = {
     size: {
       control: { type: 'radio' },
       options: ['sm', 'md', 'lg'],
-    },
-    'checkbox-id': {
-      control: { type: 'text' },
     },
   },
 } satisfies Meta<CheckboxProps>;
@@ -43,14 +39,12 @@ export const Main: Story = {
     label,
     readonly,
     size,
-    ...rest
   }: CheckboxProps) => html`
     <mid-checkbox
       ?checked=${checked}
       ?readonly=${readonly}
       ?disabled=${disabled}
       size=${ifDefined(size)}
-      checkbox-id=${ifDefined(rest['checkbox-id'])}
     >
       ${label}
       ${!description
