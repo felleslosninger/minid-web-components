@@ -13,67 +13,67 @@
       "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
     },
-    "./icon.component": {
+    "./icon": {
       "import": "./dist/icon.component.js",
       "types": "./dist/icon.component.d.ts"
     },
-    "./alert.component": {
+    "./alert": {
       "import": "./dist/alert.component.js",
       "types": "./dist/alert.component.d.ts"
     },
-    "./button.component": {
+    "./button": {
       "import": "./dist/button.component.js",
       "types": "./dist/button.component.d.ts"
     },
-    "./checkbox.component": {
+    "./checkbox": {
       "import": "./dist/checkbox.component.js",
       "types": "./dist/checkbox.component.d.ts"
     },
-    "./countdown.component": {
+    "./countdown": {
       "import": "./dist/countdown.component.js",
       "types": "./dist/countdown.component.d.ts"
     },
-    "./dropdown.component": {
+    "./dropdown": {
       "import": "./dist/dropdown.component.js",
       "types": "./dist/dropdown.component.d.ts"
     },
-    "./heading.component": {
+    "./heading": {
       "import": "./dist/heading.component.js",
       "types": "./dist/heading.component.d.ts"
     },
-    "./helptext.component": {
+    "./helptext": {
       "import": "./dist/helptext.component.js",
       "types": "./dist/helptext.component.d.ts"
     },
-    "./label.component": {
+    "./label": {
       "import": "./dist/label.component.js",
       "types": "./dist/label.component.d.ts"
     },
-    "./menu.component": {
+    "./menu": {
       "import": "./dist/menu.component.js",
       "types": "./dist/menu.component.d.ts"
     },
-    "./menu-item.component": {
+    "./menu-item": {
       "import": "./dist/menu-item.component.js",
       "types": "./dist/menu-item.component.d.ts"
     },
-    "./paragraph.component": {
+    "./paragraph": {
       "import": "./dist/paragraph.component.js",
       "types": "./dist/paragraph.component.d.ts"
     },
-    "./popup.component": {
+    "./popup": {
       "import": "./dist/popup.component.js",
       "types": "./dist/popup.component.d.ts"
     },
-    "./spinner.component": {
+    "./spinner": {
       "import": "./dist/spinner.component.js",
       "types": "./dist/spinner.component.d.ts"
     },
-    "./textfield.component": {
+    "./textfield": {
       "import": "./dist/textfield.component.js",
       "types": "./dist/textfield.component.d.ts"
     },
-    "./tooltip.component": {
+    "./tooltip": {
       "import": "./dist/tooltip.component.js",
       "types": "./dist/tooltip.component.d.ts"
     }
