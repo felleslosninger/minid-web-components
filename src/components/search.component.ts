@@ -37,6 +37,7 @@ export class MinidSearch extends styled(LitElement) {
         label=${this.label}
         placeholder=${this.placeholder}
         @input=${this.handleInput}
+        clearable
       >
         <mid-icon
           slot="prefix"
@@ -45,9 +46,6 @@ export class MinidSearch extends styled(LitElement) {
           name="magnifying-glass"
         >
         </mid-icon>
-        <button class="flex" slot="suffix">
-          <mid-icon class="text-2xl" library="system" name="xmark"></mid-icon>
-        </button>
       </mid-textfield>
     `;
   }

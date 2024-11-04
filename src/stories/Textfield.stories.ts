@@ -10,13 +10,15 @@ type TextfieldProps = {
   placeholder?: string;
   type?: 'text';
   size?: 'sm' | 'md' | 'lg';
-  inputsize?: number;
   prefix?: string;
   suffix?: string;
   disabled?: boolean;
   readonly?: boolean;
   description?: string;
   clearable?: boolean;
+  'mid-change'?: Event;
+  'mid-input'?: Event;
+  'mid-clear': Event;
 };
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories
@@ -39,6 +41,9 @@ const meta = {
       control: { type: 'select' },
       options: ['text', 'number'],
     },
+    'mid-change': { control: { disable: true } },
+    'mid-input': { control: { disable: true } },
+    'mid-clear': { control: { disable: true } },
   },
   parameters: {
     controls: {
@@ -55,12 +60,13 @@ export const Main: Story = {
   args: {
     label: 'Tekst input',
     type: 'text',
+    clearable: true,
   },
+  decorators: [(story) => html`<div class="w-80">${story()}</div>`],
   render: ({
     label,
     placeholder,
     size,
-    inputsize,
     type,
     value,
     prefix,
@@ -80,7 +86,6 @@ export const Main: Story = {
       placeholder=${ifDefined(placeholder)}
       type=${ifDefined(type)}
       size=${ifDefined(size)}
-      inputsize=${ifDefined(inputsize)}
     >
       ${prefix ? html`<span slot="prefix">${prefix}</span>` : nothing}
       ${suffix ? html`<span slot="suffix">${suffix}</span>` : nothing}

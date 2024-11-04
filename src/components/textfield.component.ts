@@ -8,7 +8,7 @@ import { styled } from 'mixins/tailwind.mixin.ts';
 const styles = [
   css`
     :host {
-      display: flex;
+      display: block;
     }
 
     .form-control:has(input:disabled) {
@@ -20,6 +20,7 @@ const styles = [
     }
 
     .input {
+      width: 100%;
       outline: none;
       box-shadow: none;
       background-color: transparent;
@@ -44,6 +45,29 @@ const styles = [
     .prefix ::slotted(*) {
       margin-inline-start: 1rem !important; // global style for button is margin: 0
       border-radius: 4px;
+    }
+
+    .clear-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: calc(1em + 1rem * 2);
+    }
+
+    .clear-button:not(:disabled, [aria-disabled]):hover mid-icon {
+      border-radius: 4px;
+      background: var(--fds-semantic-surface-action-subtle-hover);
+    }
+
+    .clear-button--sm {
+      font-size: 20px;
+    }
+
+    .clear-button--md {
+      font-size: 24px;
+    }
+    .clear-button--lg {
+      font-size: 28px;
     }
 
     .fds-focus:focus-within:not(
@@ -100,12 +124,6 @@ export class MinidTextfield extends styled(LitElement, styles) {
   @property()
   size: 'sm' | 'md' | 'lg' = 'md';
 
-  /**
-   * Number of characters to show in the input element
-   */
-  @property({ type: Number })
-  inputsize = 27;
-
   @property({ attribute: true, converter: stringConverter })
   placeholder = '';
 
@@ -126,6 +144,9 @@ export class MinidTextfield extends styled(LitElement, styles) {
 
   private handleInput() {
     this.value = this.input.value;
+    this.dispatchEvent(
+      new Event('mid-input', { bubbles: true, composed: true })
+    );
   }
 
   private handleClearClick(event: MouseEvent) {
@@ -173,6 +194,7 @@ export class MinidTextfield extends styled(LitElement, styles) {
         ${!this.label
           ? nothing
           : html`<label
+              for="input"
               class="${classMap({
                 'fds-label': true,
                 'fds-label--medium-weight': true,
@@ -207,21 +229,26 @@ export class MinidTextfield extends styled(LitElement, styles) {
             <slot name="prefix"></slot>
           </span>
           <input
+            id="input"
             class="input"
             .value=${live(this.value)}
             ?disabled=${this.disabled}
             type=${this.type}
             placeholder=${this.placeholder}
-            size=${this.inputsize}
             @input=${this.handleInput}
           />
           ${isClearIconVisible
             ? html`
                 <button
                   part="clear-button"
-                  class="input__clear"
+                  class="${classMap({
+                    'clear-button': true,
+                    'clear-button--sm': sm,
+                    'clear-button--md': md,
+                    'clear-button--lg': lg,
+                  })}"
                   type="button"
-                  aria-label="Tilbakestill"
+                  aria-label="Tøm"
                   @click=${this.handleClearClick}
                   tabindex="-1"
                 >

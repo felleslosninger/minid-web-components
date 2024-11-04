@@ -8,6 +8,7 @@ type SearchProps = {
   label?: string;
   placeholder?: string;
   size?: MinidSearch['size'];
+  value?: string;
 };
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories
@@ -20,7 +21,7 @@ const meta = {
   },
   parameters: {
     controls: {
-      exclude: [],
+      exclude: ['textField'],
     },
   },
 } satisfies Meta<SearchProps>;
@@ -31,16 +32,16 @@ type Story = StoryObj<SearchProps>;
 // More on writing stories with args: https://storybook.js.org/docs/writing-stories/args
 export const Main: Story = {
   args: {
-    label: 'Søk',
     placeholder: 'Søk',
   },
-  decorators: [(story) => html`<div class="flex max-w-6">${story()}</div>`],
-  render: ({ label, placeholder, size }: SearchProps) =>
+  decorators: [(story) => html`<div class="w-80">${story()}</div>`],
+  render: ({ label, value, placeholder, size }: SearchProps) =>
     html`<mid-search
       label=${ifDefined(label)}
+      value=${ifDefined(value)}
       placeholder=${ifDefined(placeholder)}
       size=${ifDefined(size)}
-      @input=${(event) => {
+      @mid-input=${(event) => {
         console.log(event.target.value);
       }}
     ></mid-search>`,
