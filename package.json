@@ -12,6 +12,70 @@
     ".": {
       "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
+    },
+    "./icon.component": {
+      "import": "./dist/icon.component.js",
+      "types": "./dist/icon.component.d.ts"
+    },
+    "./alert.component": {
+      "import": "./dist/alert.component.js",
+      "types": "./dist/alert.component.d.ts"
+    },
+    "./button.component": {
+      "import": "./dist/button.component.js",
+      "types": "./dist/button.component.d.ts"
+    },
+    "./checkbox.component": {
+      "import": "./dist/checkbox.component.js",
+      "types": "./dist/checkbox.component.d.ts"
+    },
+    "./countdown.component": {
+      "import": "./dist/countdown.component.js",
+      "types": "./dist/countdown.component.d.ts"
+    },
+    "./dropdown.component": {
+      "import": "./dist/dropdown.component.js",
+      "types": "./dist/dropdown.component.d.ts"
+    },
+    "./heading.component": {
+      "import": "./dist/heading.component.js",
+      "types": "./dist/heading.component.d.ts"
+    },
+    "./helptext.component": {
+      "import": "./dist/helptext.component.js",
+      "types": "./dist/helptext.component.d.ts"
+    },
+    "./label.component": {
+      "import": "./dist/label.component.js",
+      "types": "./dist/label.component.d.ts"
+    },
+    "./menu.component": {
+      "import": "./dist/menu.component.js",
+      "types": "./dist/menu.component.d.ts"
+    },
+    "./menu-item.component": {
+      "import": "./dist/menu-item.component.js",
+      "types": "./dist/menu-item.component.d.ts"
+    },
+    "./paragraph.component": {
+      "import": "./dist/paragraph.component.js",
+      "types": "./dist/paragraph.component.d.ts"
+    },
+    "./popup.component": {
+      "import": "./dist/popup.component.js",
+      "types": "./dist/popup.component.d.ts"
+    },
+    "./spinner.component": {
+      "import": "./dist/spinner.component.js",
+      "types": "./dist/spinner.component.d.ts"
+    },
+    "./textfield.component": {
+      "import": "./dist/textfield.component.js",
+      "types": "./dist/textfield.component.d.ts"
+    },
+    "./tooltip.component": {
+      "import": "./dist/tooltip.component.js",
+      "types": "./dist/tooltip.component.d.ts"
     }
   },
   "repository": {

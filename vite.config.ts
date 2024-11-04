@@ -5,7 +5,6 @@ import dts from 'vite-plugin-dts';
 import tailwindcss from 'tailwindcss';
 import { externalizeDeps } from 'vite-plugin-externalize-deps';
 import { glob } from "glob"
-import path from 'node:path';
 
 export default defineConfig(({}) => {
   return {
@@ -27,7 +26,7 @@ export default defineConfig(({}) => {
     rollupOptions: {
       external: ['^lit$'],
       output: {
-        // preserveModules: true,
+        preserveModules: true,
         globals: {
           lit: 'Lit',
         }
