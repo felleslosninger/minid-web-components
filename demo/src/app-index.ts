@@ -1,7 +1,7 @@
 import { html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators.js';
 
-import '@felleslosninger/minid-elements';
+import '@felleslosninger/minid-elements/dist/button.component';
 
 @customElement('app-index')
 export class AppIndex extends LitElement {

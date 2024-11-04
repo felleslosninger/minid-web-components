@@ -4,6 +4,8 @@ import { resolve } from 'path';
 import dts from 'vite-plugin-dts';
 import tailwindcss from 'tailwindcss';
 import { externalizeDeps } from 'vite-plugin-externalize-deps';
+import { glob } from "glob"
+import path from 'node:path';
 
 export default defineConfig(({}) => {
   return {
@@ -16,21 +18,19 @@ export default defineConfig(({}) => {
       sourcemap: true,
       emptyOutDir: true,
       lib: {
-        entry: resolve(__dirname, 'src/index.ts'),
-        // entry: [
-        //   resolve(__dirname, 'src/components/button.component.ts'),
-        //   resolve(__dirname, 'src/components/checkbox.component.ts')
-        // ],
-
+        entry: glob.sync(resolve(__dirname, 'src/**/*.component.ts')),
         name: 'MinID-Elements',
         formats: ['es'],
-        // fileName: 'index',
+        fileName: (format, entryName) => `${entryName}.js`,
       },
     },
     rollupOptions: {
-      // external: ['^lit$'],
+      external: ['^lit$'],
       output: {
-        entryFileNames: '[name].js',
+        // preserveModules: true,
+        globals: {
+          lit: 'Lit',
+        }
       },
     },
     plugins: [

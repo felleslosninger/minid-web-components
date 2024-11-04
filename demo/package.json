@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@digdir/designsystemet-theme": "^0.15.3",
-    "@felleslosninger/minid-elements": "file:../dist",
+    "@felleslosninger/minid-elements": "../felleslosninger-minid-elements-v0.0.17.tgz",
     "lit": "^3.1.2"
   },
   "devDependencies": {
