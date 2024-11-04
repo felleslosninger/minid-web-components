@@ -7,6 +7,7 @@ on:
 
 jobs:
   build-and-publish:
+
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -19,13 +20,11 @@ jobs:
 
       - name: Increment version
         run: |
-          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
-          git config user.name "$GITHUB_ACTOR"
           npm version patch -m  "[skip actions] Bump version to %s"
           VERSION=$(node -p "require('./package.json').version")
           echo "New version: $VERSION"
           git tag ${VERSION}
-          git push "https://$GITHUB_ACTOR:${{ secrets.GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY.git" --follow-tags          
+          git push --follow-tags          
 
       - name: Install dependencies
         run: yarn install
