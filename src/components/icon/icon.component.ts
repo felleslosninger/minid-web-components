@@ -127,6 +127,16 @@ export class MinidIcon extends styled(LitElement, styles) {
       }
 
       svgEl.part.add('svg');
+
+      if(this.style.fontSize) {
+        svgEl.setAttribute('width', '1em');
+        svgEl.setAttribute('height', '1em');
+      }
+
+      if(this.style.color) {
+        svgEl.setAttribute('color', 'current-color');
+      }
+
       return document.adoptNode(svgEl);
     } catch {
       return CACHEABLE_ERROR;
@@ -207,11 +217,6 @@ export class MinidIcon extends styled(LitElement, styles) {
     if (url !== this.getIconSource().url) {
       // If the url has changed while fetching the icon, ignore this request
       return;
-    }
-
-    if(!svg.width || !svg.heigth || svg.width !== "1em" || svg.height !== "1em") {
-      svg.setAttribute('width', '1em');
-      svg.setAttribute('height', '1em');
     }
 
     if (isTemplateResult(svg)) {
