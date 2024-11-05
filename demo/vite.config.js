@@ -3,13 +3,26 @@ import { defineConfig } from 'vite';
 // import basicSsl from '@vitejs/plugin-basic-ssl' // uncomment for HTTPS
 
 export default defineConfig(({ command, mode }) => {
+
+  const cspPolicy =
+  "base-uri 'self' ; " +
+  "object-src 'none' ; " +
+  "default-src 'self' ; " +
+  "connect-src 'self' http: https: ; " +
+  "script-src 'nonce-rand0m' 'strict-dynamic' http: https: ; " +
+  "style-src 'self' 'nonce-rand0m' ; " +
+  "font-src 'self' ; " +
+  "img-src 'self' data: ; " +
+  "child-src 'self' ; " +
+  "frame-src 'self';" +
+  "frame-ancestors 'self';"
+
+
   const server = mode === "development"
     ? {
       server: {
         host: "0.0.0.0",
-        headers: {
-          'Content-Security-Policy': `style-src 'nonce-rand0m' 'self'`,
-        }
+        headers: {'Content-Security-Policy': cspPolicy}
       }
     }
     : {};

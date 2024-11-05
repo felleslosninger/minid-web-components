@@ -1,0 +1,2 @@
+rm -rf node_modules/\@felleslosninger &&  mkdir -p node_modules/\@felleslosninger/minid-elements &&  ln -s ../../../../dist node_modules/\@felleslosninger/minid-elements/ &&  ln -s ../../../../package.json node_modules/\@felleslosninger/minid-elements/package.json
+
