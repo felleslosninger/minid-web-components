@@ -14,6 +14,15 @@ const styles = [
   css`
     :host {
       display: inline-flex;
+      width: 1em;
+      height: 1em;
+      box-sizing: content-box !important;
+    }
+
+    svg {
+      width: 100%;
+      height: 100%;
+      display: block;
     }
   `,
 ];
@@ -87,12 +96,10 @@ export class MinidIcon extends styled(LitElement, styles) {
    * Given a URL, this function returns the resulting SVG element or an appropriate error symbol.
    */
   private async resolveIcon(url: string): Promise<SVGResult> {
-
     let svgString = '';
 
-    if(url.startsWith("data:image/svg+xml")) {
-       svgString = decodeURIComponent(url);
-
+    if (url.startsWith('data:image/svg+xml')) {
+      svgString = decodeURIComponent(url);
     } else {
       let fileData: Response;
       try {
@@ -127,15 +134,6 @@ export class MinidIcon extends styled(LitElement, styles) {
       }
 
       svgEl.part.add('svg');
-
-      if(this.style.fontSize) {
-        svgEl.setAttribute('width', '1em');
-        svgEl.setAttribute('height', '1em');
-      }
-
-      if(this.style.color) {
-        svgEl.setAttribute('color', 'current-color');
-      }
 
       return document.adoptNode(svgEl);
     } catch {
