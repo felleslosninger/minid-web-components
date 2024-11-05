@@ -1,7 +1,7 @@
 import { html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators.js';
 
-import '@felleslosninger/minid-elements/dist/button.component';
+import '@felleslosninger/minid-elements';
 
 @customElement('app-index')
 export class AppIndex extends LitElement {
@@ -9,11 +9,11 @@ export class AppIndex extends LitElement {
   override render() {
     return html`<div>hei hei hei</div>
     <mid-countdown expiry=${Date.now() + 60 * 1000}></mid-countdown>
-   <hr/>
+    <hr/>
     <mid-button  @click=${() => {console.log("You clicked?")}}>Klikk meg...</mid-button>
     <hr/>
     <mid-spinner></mid-spinner>
-    <mid-icon name="books-fill"></mid-icon>
+    <mid-icon name="bell"></mid-icon>
     `;
   }
 }

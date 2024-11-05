@@ -30,8 +30,8 @@ Since this package is hosted in an internal GitHub repository, you'll need to co
           npmRegistryServer: "https://npm.pkg.github.com"
           npmAlwaysAuth: true
           npmAuthToken: "[YOUR_PERSONAL_ACCESS_TOKEN]"
-        },
-      },
+        }
+      }
       ```
 
 **2. Install the package:**
