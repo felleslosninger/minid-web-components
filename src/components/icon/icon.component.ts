@@ -209,6 +209,11 @@ export class MinidIcon extends styled(LitElement, styles) {
       return;
     }
 
+    if(!svg.width || !svg.heigth || svg.width !== "1em" || svg.height !== "1em") {
+      svg.setAttribute('width', '1em');
+      svg.setAttribute('height', '1em');
+    }
+
     if (isTemplateResult(svg)) {
       this.svg = svg;
 
