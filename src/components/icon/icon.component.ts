@@ -87,9 +87,28 @@ export class MinidIcon extends styled(LitElement, styles) {
    * Given a URL, this function returns the resulting SVG element or an appropriate error symbol.
    */
   private async resolveIcon(url: string): Promise<SVGResult> {
+
+    let svgString = '';
+
+    if(url.startsWith("data:image/svg+xml")) {
+       svgString = decodeURIComponent(url);
+
+    } else {
+      let fileData: Response;
+      try {
+        fileData = await fetch(url, { mode: 'cors' });
+
+        if (!fileData.ok) {
+          return fileData.status === 410 ? CACHEABLE_ERROR : RETRYABLE_ERROR;
+        }
+      } catch {
+        return RETRYABLE_ERROR;
+      }
+      svgString = await fileData.text();
+    }
+
     try {
       const div = document.createElement('div');
-      const svgString = decodeURIComponent(url);
       div.innerHTML = svgString;
 
       const svg = div.firstElementChild;
@@ -100,7 +119,6 @@ export class MinidIcon extends styled(LitElement, styles) {
       if (!parser) {
         parser = new DOMParser();
       }
-
       const doc = parser.parseFromString(svg.outerHTML, 'text/html');
 
       const svgEl = doc.body.querySelector('svg');

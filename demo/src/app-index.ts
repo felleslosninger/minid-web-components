@@ -26,6 +26,8 @@ export class AppIndex extends LitElement {
       <mid-spinner class="icon"></mid-spinner>
       <mid-spinner class="icon"></mid-spinner>
       <mid-icon class="icon" name="bell"></mid-icon>
-      <mid-icon class="icon" name="bell"></mid-icon> `;
+      <mid-icon class="icon" src="https://cors-anywhere.herokuapp.com/https://www.svgrepo.com/show/23577/small-umbrella.svg"></mid-icon>      
+    
+    `;
   }
 }
