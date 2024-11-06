@@ -8,6 +8,13 @@ import { live } from 'lit/directives/live.js';
 import { MinidTextfield } from './textfield.component.ts';
 import { debounce } from 'src/internal/debounce.ts';
 
+/**
+ * @event mid-change - Emitted when a change to the input value is comitted by the user
+ * @event mid-input - Emitted when the input element recieves input
+ * @event mid-clear - Emitted when the input value is cleared
+ * @event mid-focus - Emitted when input element is focused
+ * @event mid-blur - Emitted when focus moves away from input element
+ */
 @customElement('mid-search')
 export class MinidSearch extends styled(LitElement) {
   @query('mid-textfield')
