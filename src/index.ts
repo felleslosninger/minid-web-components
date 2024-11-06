@@ -44,6 +44,9 @@ export { MinidParagraph };
 import { MinidPopup } from './components/popup.component.ts';
 export { MinidPopup };
 
+import { MinidSearch } from 'src/components/search.component.ts';
+export { MinidSearch };
+
 import { MinidSpinner } from './components/spinner.component';
 export { MinidSpinner };
 
@@ -68,6 +71,7 @@ declare global {
     'mid-menu': MinidMenu;
     'mid-paragraph': MinidParagraph;
     'mid-popup': MinidPopup;
+    'mid-search': MinidSearch;
     'mid-spinner': MinidSpinner;
     'mid-textfield': MinidTextfield;
     'mid-tooltip': MinidTooltip;

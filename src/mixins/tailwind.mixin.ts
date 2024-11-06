@@ -16,10 +16,10 @@ export const styled = <T extends Constructor<LitElement>>(
      * @ignore
      */
     static styles = [
-      elementCss,
       tailwindCssStyles,
       dsCssStyles,
       dsCssTheme,
+      elementCss,
     ] satisfies CSSResultArray;
   };
 
