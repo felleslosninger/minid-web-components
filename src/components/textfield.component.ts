@@ -1,5 +1,5 @@
 import { css, html, LitElement, nothing } from 'lit';
-import { customElement, property, query } from 'lit/decorators.js';
+import { customElement, property, query, state } from 'lit/decorators.js';
 import { live } from 'lit/directives/live.js';
 import { stringConverter } from 'internal/string-converter';
 import { classMap } from 'lit/directives/class-map.js';
@@ -75,13 +75,7 @@ const styles = [
       font-size: 28px;
     }
 
-    .fds-focus:not(
-        :has(
-            .suffix:focus-within,
-            .prefix:focus-within,
-            .clear-button:focus-within
-          )
-      ):focus-within {
+    .fds-focus:focus-within {
       --fds-focus-border-width: 3px;
       outline: var(--fds-focus-border-width) solid
         var(--fds-semantic-border-focus-outline);
@@ -95,8 +89,10 @@ const styles = [
 /**
  *
  * @event mid-change - Emitted when a change to the input value is comitted by the user
- * @event mid-input - Emitted when the input field recieves input
- * @event mid-clear - Emitted when the input field is cleared
+ * @event mid-input - Emitted when the input element recieves input
+ * @event mid-clear - Emitted when the input value is cleared
+ * @event mid-focus - Emitted when input element is focused
+ * @event mid-blur - Emitted when focus moves away from input element
  *
  * @slot prefix - Used for decoration to the left of the input
  * @slot suffix - Used for decoration to the right of the input
@@ -160,10 +156,34 @@ export class MinidTextfield extends styled(LitElement, styles) {
   @property({ type: Boolean })
   hidelabel = false;
 
+  @state()
+  hasFocus = false;
+
+  private handleBlur() {
+    this.hasFocus = false;
+    this.dispatchEvent(
+      new Event('mid-blur', { bubbles: true, composed: true })
+    );
+  }
+
+  private handleChange() {
+    this.value = this.input.value;
+    this.dispatchEvent(
+      new Event('mid-change', { bubbles: true, composed: true })
+    );
+  }
+
   private handleInput() {
     this.value = this.input.value;
     this.dispatchEvent(
       new Event('mid-input', { bubbles: true, composed: true })
+    );
+  }
+
+  private handleFocus() {
+    this.hasFocus = true;
+    this.dispatchEvent(
+      new Event('mid-focus', { composed: true, bubbles: true })
     );
   }
 
@@ -238,6 +258,7 @@ export class MinidTextfield extends styled(LitElement, styles) {
           ? nothing
           : html`
               <div
+                id="description"
                 part="description"
                 class="${classMap({
                   description: true,
@@ -254,7 +275,12 @@ export class MinidTextfield extends styled(LitElement, styles) {
             `}
         <div
           part="base"
-          class="field fds-textfield__field fds-textfield__input fds-focus"
+          class="${classMap({
+            field: true,
+            'fds-textfield__field': true,
+            'fds-textfield__input': true,
+            'fds-focus': this.hasFocus,
+          })}"
         >
           <span class="prefix">
             <slot name="prefix"></slot>
@@ -267,8 +293,12 @@ export class MinidTextfield extends styled(LitElement, styles) {
             ?disabled=${this.disabled}
             ?readonly=${this.readonly}
             type=${this.type}
+            aria-describedby="description"
             placeholder=${this.placeholder}
             @input=${this.handleInput}
+            @change=${this.handleChange}
+            @focus=${this.handleFocus}
+            @blur=${this.handleBlur}
           />
           ${isClearIconVisible
             ? html`

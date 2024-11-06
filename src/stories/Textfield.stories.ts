@@ -24,6 +24,8 @@ type TextfieldProps = {
   'mid-change'?: Event;
   'mid-input'?: Event;
   'mid-clear': Event;
+  'mid-focus': Event;
+  'mid-blur': Event;
 };
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories
@@ -63,13 +65,15 @@ const meta = {
     'mid-change': { control: { disable: true } },
     'mid-input': { control: { disable: true } },
     'mid-clear': { control: { disable: true } },
+    'mid-focus': { control: { disable: true } },
+    'mid-blur': { control: { disable: true } },
     'form-control': { control: { disable: true } },
     input: { control: { disable: true } },
     base: { control: { disable: true } },
   },
   parameters: {
     controls: {
-      exclude: [],
+      exclude: ['hasFocus'],
     },
   },
 } satisfies Meta<TextfieldProps>;
