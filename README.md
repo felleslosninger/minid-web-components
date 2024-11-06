@@ -1,49 +1,73 @@
-## Getting started
+# @felleslosninger/minid-elements
 
-- Run `yarn dev`
-- Application available at `localhost:5173`
-- For login to work, you need to set cookies through the dev-cookie-controller, example: `http://localhost:8080/cookie?uuid=a0e6ca73-f955-4b14-ae93-08610e049195&serviceProviderName=ID-porten%20test&locale=en`
+This repository contains a collection of web components built with Lit.
 
-# Developer
+## Installation
 
-- `yarn dev`
-- `yarn build`
-- `yarn deploy`
+**1. Set up your environment:**
 
+Since this package is hosted in an internal GitHub repository, you'll need to configure your npm or yarn client to authenticate with a personal access token (PAT).
 
-registry = https://npm.pkg.github.com/felleslosninger
-//npm.pkg.github.com/:_authToken=[TOKEN] (edited)
+* **Create a PAT:**
+    - Go to your GitHub settings.
+    - Navigate to "Developer settings" -> "Personal access tokens" -> "Tokens (classic)".
+    - Generate a new token with the `read:packages` scope.
 
-yarn add @felleslosninger/minid-elements@0.0.1
+* **Configure npm:**
+    - Create or edit your `~/.npmrc` file:
 
+      ```
+      //npm.pkg.github.com/:_authToken=[YOUR_PERSONAL_ACCESS_TOKEN]
+      @felleslosninger:registry=https://npm.pkg.github.com/
+      ```
 
+* **Configure yarn:**
+    - Create or edit your `~/.yarnrc.yaml` file:
 
-Enable dev mode by adding `?mode=dev` to the url e.g 'http://localhost:5173/?mode=dev
+      ```yaml
+      npmScopes: {
+        felleslosninger: {
+          npmRegistryServer: "https://npm.pkg.github.com"
+          npmAlwaysAuth: true
+          npmAuthToken: "[YOUR_PERSONAL_ACCESS_TOKEN]"
+        }
+      }
+      ```
 
+**2. Install the package:**
 
-## Locale
+   ```bash
+   npm install @felleslosninger/minid-elements
+   ```
+or
+   ```bash
+   yarn add @felleslosninger/minid-elements
+   ```
 
-Change locale by adding `?locale=en` to the url e.g 'http://localhost:5173/?locale=en'
+## Usage
+Import the desired components into your project:
 
-### lit-localize
+```javascript
+import '@felleslosninger/minid-elements/button';
+<mid-button variant="primary">Click me</mid-button>
+```
 
-Wrap a string or template in the msg function (details).
-Create a lit-localize.json config file (details).
-Run lit-localize extract to generate an XLIFF file (details).
-Edit the generated XLIFF file to add a <target> translation tag (details).
-Run lit-localize build to output a localized version of your strings and templates (details).
+## Documentation
+View the complete component documentation and examples in our Storybook:
 
-- `npx lit-localize extract`
-- `npx lit-localize build`
+[https://verbose-telegram-zwgl6jl.pages.github.io/](https://verbose-telegram-zwgl6jl.pages.github.io/)
 
-## Tests
+## Development
+If you're contributing to this project, follow these steps:
 
-Tests are written using [vitest](https://vitest.dev)
+1. Clone the repository.
+2. Install dependencies: `npm install` or `yarn install`.
+3. Run the development server: `npm run dev` or `yarn dev`.
+4. Build the project: `npm run build` or `yarn build`.
 
-- `yarn test:run` # run tests
-- `yarn test:watch` # run tests in watch mode
+## Contributing
+We welcome contributions! Please feel free to open issues and pull requests.
 
-# TODO
-
-https://www.labnol.org/internet/reduce-google-fonts-size/21057/
-vurder om det er greit at bruke google fonts direkte fra google
+## License
+BSD 3-Clause License - See [LICENSE](LICENSE) for more information.
+```

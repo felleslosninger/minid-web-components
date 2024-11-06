@@ -3,10 +3,11 @@ name: Build and Publish Web Components
 on:
   push:
     branches:
-      - main # Replace with your main branch name
+      - main
 
 jobs:
   build-and-publish:
+
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -16,6 +17,27 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20.x'
+
+      - name: Increment version
+        run: |
+          git config user.email ""
+          git config user.name ""
+          npm --no-git-tag-version version patch
+
+      - name: Commit package.json
+        run: |
+          echo "Committing changes..."
+          VERSION=$(node -p "require('./package.json').version")
+          file=package.json
+          CONTENT=$(base64 -w 0 $file)
+          FILENAME=$(basename $file)
+          SHA=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/${{ github.repository }}/contents/$file?ref=main | jq -r .sha)
+          if [ "$SHA" == "null" ]; then
+           SHA=""
+          fi
+          curl -s -X PUT -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+           -d "{\"message\":\"[skip actions] new version $VERSION\", \"content\":\"$CONTENT\", \"branch\":\"main\", \"sha\":\"$SHA\"}" \
+           https://api.github.com/repos/${{ github.repository }}/contents/$file
 
       - name: Install dependencies
         run: yarn install
@@ -27,5 +49,6 @@ jobs:
         run: |
           npm config set //npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}
           npm config set @felleslosninger:registry=https://npm.pkg.github.com/
+
       - name: Publish to GitHub Packages
         run: npm publish

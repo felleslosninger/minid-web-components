@@ -1,6 +1,6 @@
 {
   "name": "@felleslosninger/minid-elements",
-  "version": "0.0.16",
+  "version": "0.0.24",
   "type": "module",
   "module": "./dist/index.js",
   "main": "./dist/index.js",
@@ -12,6 +12,70 @@
     ".": {
       "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
+    },
+    "./icon": {
+      "import": "./dist/icon.component.js",
+      "types": "./dist/icon.component.d.ts"
+    },
+    "./alert": {
+      "import": "./dist/alert.component.js",
+      "types": "./dist/alert.component.d.ts"
+    },
+    "./button": {
+      "import": "./dist/button.component.js",
+      "types": "./dist/button.component.d.ts"
+    },
+    "./checkbox": {
+      "import": "./dist/checkbox.component.js",
+      "types": "./dist/checkbox.component.d.ts"
+    },
+    "./countdown": {
+      "import": "./dist/countdown.component.js",
+      "types": "./dist/countdown.component.d.ts"
+    },
+    "./dropdown": {
+      "import": "./dist/dropdown.component.js",
+      "types": "./dist/dropdown.component.d.ts"
+    },
+    "./heading": {
+      "import": "./dist/heading.component.js",
+      "types": "./dist/heading.component.d.ts"
+    },
+    "./helptext": {
+      "import": "./dist/helptext.component.js",
+      "types": "./dist/helptext.component.d.ts"
+    },
+    "./label": {
+      "import": "./dist/label.component.js",
+      "types": "./dist/label.component.d.ts"
+    },
+    "./menu": {
+      "import": "./dist/menu.component.js",
+      "types": "./dist/menu.component.d.ts"
+    },
+    "./menu-item": {
+      "import": "./dist/menu-item.component.js",
+      "types": "./dist/menu-item.component.d.ts"
+    },
+    "./paragraph": {
+      "import": "./dist/paragraph.component.js",
+      "types": "./dist/paragraph.component.d.ts"
+    },
+    "./popup": {
+      "import": "./dist/popup.component.js",
+      "types": "./dist/popup.component.d.ts"
+    },
+    "./spinner": {
+      "import": "./dist/spinner.component.js",
+      "types": "./dist/spinner.component.d.ts"
+    },
+    "./textfield": {
+      "import": "./dist/textfield.component.js",
+      "types": "./dist/textfield.component.d.ts"
+    },
+    "./tooltip": {
+      "import": "./dist/tooltip.component.js",
+      "types": "./dist/tooltip.component.d.ts"
     }
   },
   "repository": {

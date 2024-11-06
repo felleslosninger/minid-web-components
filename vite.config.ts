@@ -4,6 +4,7 @@ import { resolve } from 'path';
 import dts from 'vite-plugin-dts';
 import tailwindcss from 'tailwindcss';
 import { externalizeDeps } from 'vite-plugin-externalize-deps';
+import { glob } from "glob"
 
 export default defineConfig(({}) => {
   return {
@@ -16,14 +17,20 @@ export default defineConfig(({}) => {
       sourcemap: true,
       emptyOutDir: true,
       lib: {
-        entry: resolve(__dirname, 'src/index.ts'),
+        entry: glob.sync(resolve(__dirname, 'src/{**/\*.component.ts,index.ts}')),
         name: 'MinID-Elements',
         formats: ['es'],
-        fileName: 'index',
+        fileName: (format, entryName) => `${entryName}.js`,
       },
     },
     rollupOptions: {
-      // external: ['^lit$'],
+      external: ['^lit$'],
+      output: {
+        preserveModules: true,
+        globals: {
+          lit: 'Lit',
+        }
+      },
     },
     plugins: [
       externalizeDeps(),

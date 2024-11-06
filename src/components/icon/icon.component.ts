@@ -14,6 +14,15 @@ const styles = [
   css`
     :host {
       display: inline-flex;
+      width: 1em;
+      height: 1em;
+      box-sizing: content-box !important;
+    }
+
+    svg {
+      width: 100%;
+      height: 100%;
+      display: block;
     }
   `,
 ];
@@ -35,6 +44,9 @@ interface IconSource {
 }
 
 /**
+ *
+ * Size and color can be adjusted with `font-size` and `color` css properties
+ *
  * @event mid-load - Emitted when the icon has loaded
  * @event mid-error - Emitted when the icon fails to load
  */
@@ -84,18 +96,27 @@ export class MinidIcon extends styled(LitElement, styles) {
    * Given a URL, this function returns the resulting SVG element or an appropriate error symbol.
    */
   private async resolveIcon(url: string): Promise<SVGResult> {
-    let fileData: Response;
-    try {
-      fileData = await fetch(url, { mode: 'cors' });
-      if (!fileData.ok)
-        return fileData.status === 410 ? CACHEABLE_ERROR : RETRYABLE_ERROR;
-    } catch {
-      return RETRYABLE_ERROR;
+    let svgString = '';
+
+    if (url.startsWith('data:image/svg+xml')) {
+      svgString = decodeURIComponent(url);
+    } else {
+      let fileData: Response;
+      try {
+        fileData = await fetch(url, { mode: 'cors' });
+
+        if (!fileData.ok) {
+          return fileData.status === 410 ? CACHEABLE_ERROR : RETRYABLE_ERROR;
+        }
+      } catch {
+        return RETRYABLE_ERROR;
+      }
+      svgString = await fileData.text();
     }
 
     try {
       const div = document.createElement('div');
-      div.innerHTML = await fileData.text();
+      div.innerHTML = svgString;
 
       const svg = div.firstElementChild;
       if (svg?.tagName?.toLowerCase() !== 'svg') {
@@ -113,6 +134,7 @@ export class MinidIcon extends styled(LitElement, styles) {
       }
 
       svgEl.part.add('svg');
+
       return document.adoptNode(svgEl);
     } catch {
       return CACHEABLE_ERROR;
