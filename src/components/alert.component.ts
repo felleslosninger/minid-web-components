@@ -26,23 +26,36 @@ const styles = [
     .fds-alert__icon {
       font-size: var(--fds-alert-icon-size);
     }
+
+    .close-button {
+      font-size: 24px;
+      display: inline-flex;
+      align-self: center;
+      padding: 10px;
+      border-radius: 4px;
+
+      color: var(--fds-alert-icon-color);
+    }
+
+    .close-button:hover {
+      background: color-mix(in srgb, --fds-alert-icon-color, transparent, 20%);
+      /* background: var(--fds-semantic-surface-action-first-subtle-hover); */
+    }
   `,
 ];
 
 /**
+ * @csspart base - The base of the alert
+ *
+ * @slot -- The default slot for the content of the alert
  */
-
 @customElement('mid-alert')
 export class MinidAlert extends styled(LitElement, styles) {
   private autoHideTimeout?: number;
   private remainingTimeInterval?: number;
-  private countdownAnimation?: Animation;
 
   @query('[part~="base"]')
   base!: HTMLElement;
-
-  @query('.alert__countdown-elapsed')
-  countdownElement!: HTMLElement;
 
   /**
    * Indicates whether or not the alert is open. You can toggle this attribute to show and hide the alert, or you can
@@ -113,7 +126,6 @@ export class MinidAlert extends styled(LitElement, styles) {
   }
 
   private pauseAutoHide() {
-    this.countdownAnimation?.pause();
     clearTimeout(this.autoHideTimeout);
     clearInterval(this.remainingTimeInterval);
   }
@@ -127,7 +139,6 @@ export class MinidAlert extends styled(LitElement, styles) {
       this.remainingTimeInterval = window.setInterval(() => {
         this.remainingTime -= 100;
       }, 100);
-      this.countdownAnimation?.play();
     }
   }
 
@@ -212,6 +223,7 @@ export class MinidAlert extends styled(LitElement, styles) {
       }
 
       toastStack.appendChild(this);
+      this.elevated = true;
 
       const { keyframes, options } = getAnimation(
         this,
@@ -292,6 +304,13 @@ export class MinidAlert extends styled(LitElement, styles) {
         >
           <slot></slot>
         </div>
+        <button
+          class="${classMap({
+            'close-button': true,
+          })}"
+        >
+          <mid-icon name="xmark"> </mid-icon>
+        </button>
       </div>
     `;
   }

@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
-import { html } from 'lit';
+import { html, Part } from 'lit';
 import '../components/alert.component';
 import '../components/heading.component';
 import '../components/paragraph.component';
@@ -15,6 +15,8 @@ type AlertProps = {
   iconlabel?: string;
   duration?: number;
   size?: MinidAlert['size'];
+  base: Part;
+  '--': string;
 };
 
 const meta = {
@@ -35,6 +37,18 @@ const meta = {
       control: { type: 'text' },
     },
     duration: { type: 'number' },
+    base: { control: { disable: true } },
+    '--': { name: '-' },
+  },
+  parameters: {
+    controls: {
+      exclude: [
+        'autoHideTimeout',
+        'remainingTimeInterval',
+        'countdownElement',
+        'remainingTime',
+      ],
+    },
   },
 } satisfies Meta<AlertProps>;
 
@@ -46,9 +60,6 @@ export const Main: Story = {
     title: 'Advarsel: Viktig melding!',
     content: 'Dette er en viktig melding som krever umiddelbar oppmerksomhet.',
   },
-  decorators: [
-    (story) => html` <div class="flex flex-col gap-2">${story()}</div>`,
-  ],
   render: ({
     content,
     severity,
@@ -57,6 +68,7 @@ export const Main: Story = {
     iconlabel,
     size,
     duration,
+    ...rest
   }: AlertProps) => html`
     <mid-alert
       open
@@ -66,8 +78,10 @@ export const Main: Story = {
       severity=${ifDefined(severity)}
       duration=${ifDefined(duration)}
     >
-      <mid-heading spacing level="2" size="xs"> ${title} </mid-heading>
-      <mid-paragraph>${content}</mid-paragraph>
+      ${rest['--']
+        ? html`<span>${rest['--']}</span>`
+        : html`<mid-heading spacing level="2" size="xs"> ${title} </mid-heading>
+            <mid-paragraph>${content}</mid-paragraph>`}
     </mid-alert>
   `,
 };
@@ -145,7 +159,9 @@ export const ImperativeToast: Story = {
       }
 
       createAlertButton.addEventListener('click', () => {
-        notify('Notifikasjon #' + ++count);
+        notify(
+          'Her er en viktig melding til brukeren av applikasjonen: ' + ++count
+        );
       });
     </script>
   `,
