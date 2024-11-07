@@ -1,5 +1,8 @@
 export type AnimationName =
-  | 'helptext.show'
+  | 'alert.hide'
+  | 'alert.show'
   | 'helptext.hide'
+  | 'helptext.show'
+  | 'tooltip.hide'
   | 'tooltip.show'
-  | 'tooltip.hide';
+  | 'toast-stack.new-alert';

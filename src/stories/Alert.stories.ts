@@ -3,7 +3,8 @@ import { html } from 'lit';
 import '../components/alert.component';
 import '../components/heading.component';
 import '../components/paragraph.component';
-import type { MinidAlert } from '../components/alert.component';
+import '../components/button.component';
+import { MinidAlert } from '../components/alert.component';
 import { ifDefined } from 'lit/directives/if-defined.js';
 
 type AlertProps = {
@@ -12,6 +13,7 @@ type AlertProps = {
   elevated: boolean;
   severity?: MinidAlert['severity'];
   iconlabel?: string;
+  duration?: number;
   size?: MinidAlert['size'];
 };
 
@@ -32,6 +34,7 @@ const meta = {
     iconlabel: {
       control: { type: 'text' },
     },
+    duration: { type: 'number' },
   },
 } satisfies Meta<AlertProps>;
 
@@ -43,6 +46,9 @@ export const Main: Story = {
     title: 'Advarsel: Viktig melding!',
     content: 'Dette er en viktig melding som krever umiddelbar oppmerksomhet.',
   },
+  decorators: [
+    (story) => html` <div class="flex flex-col gap-2">${story()}</div>`,
+  ],
   render: ({
     content,
     severity,
@@ -50,15 +56,97 @@ export const Main: Story = {
     elevated,
     iconlabel,
     size,
+    duration,
   }: AlertProps) => html`
     <mid-alert
+      open
       ?elevated=${elevated}
       size=${ifDefined(size)}
       iconlabel=${ifDefined(iconlabel)}
       severity=${ifDefined(severity)}
+      duration=${ifDefined(duration)}
     >
       <mid-heading spacing level="2" size="xs"> ${title} </mid-heading>
       <mid-paragraph>${content}</mid-paragraph>
     </mid-alert>
+  `,
+};
+
+export const Toast: Story = {
+  args: {
+    title: 'Advarsel: Viktig melding!',
+    content: 'Dette er en viktig melding som krever umiddelbar oppmerksomhet.',
+    duration: 3000,
+  },
+  decorators: [
+    (story) => html` <div class="flex flex-col gap-2">${story()}</div>`,
+  ],
+  render: ({
+    content,
+    severity,
+    title,
+    elevated,
+    iconlabel,
+    size,
+    duration,
+  }: AlertProps) => html`
+    <mid-alert
+      class="toast-alert"
+      ?elevated=${elevated}
+      size=${ifDefined(size)}
+      iconlabel=${ifDefined(iconlabel)}
+      severity=${ifDefined(severity)}
+      duration=${ifDefined(duration)}
+    >
+      <mid-heading spacing level="2" size="xs"> ${title} </mid-heading>
+      <mid-paragraph>${content}</mid-paragraph>
+    </mid-alert>
+    <mid-button class="toast-button">Toast</mid-button>
+    <script>
+      const alert = document.querySelector('.toast-alert');
+      const button = document.querySelector('.toast-button');
+      button.addEventListener('click', () => alert.toast());
+    </script>
+  `,
+};
+
+export const ImperativeToast: Story = {
+  args: {
+    title: 'Advarsel: Viktig melding!',
+    content: 'Dette er en viktig melding som krever umiddelbar oppmerksomhet.',
+    duration: 3000,
+  },
+  decorators: [
+    (story) => html` <div class="flex flex-col gap-2">${story()}</div>`,
+  ],
+  render: () => html`
+    <mid-button class="imperative-toast-button">Toast</mid-button>
+    <script>
+      const createAlertButton = document.querySelector(
+        '.imperative-toast-button'
+      );
+      let count = 0;
+
+      // Always escape HTML for text arguments!
+      function escapeHtml(html) {
+        const div = document.createElement('div');
+        div.textContent = html;
+        return div.innerHTML;
+      }
+
+      function notify(message, duration = 3000) {
+        const alert = Object.assign(document.createElement('mid-alert'), {
+          closable: true,
+          duration: duration,
+          innerHTML: escapeHtml(message),
+        });
+        document.body.append(alert);
+        return alert.toast();
+      }
+
+      createAlertButton.addEventListener('click', () => {
+        notify('Notifikasjon #' + ++count);
+      });
+    </script>
   `,
 };
