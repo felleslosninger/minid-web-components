@@ -124,24 +124,21 @@ export const Toast: Story = {
   `,
 };
 
-export const ImperativeToast: Story = {
+export const ToastFactory: Story = {
   args: {
     title: 'Advarsel: Viktig melding!',
     content: 'Dette er en viktig melding som krever umiddelbar oppmerksomhet.',
-    duration: 3000,
+    duration: 30000,
   },
   decorators: [
     (story) => html` <div class="flex flex-col gap-2">${story()}</div>`,
   ],
   render: () => html`
-    <mid-button class="imperative-toast-button">Toast</mid-button>
+    <mid-button class="toast-factory-button">Toast</mid-button>
     <script>
-      const createAlertButton = document.querySelector(
-        '.imperative-toast-button'
-      );
+      const createAlertButton = document.querySelector('.toast-factory-button');
       let count = 0;
 
-      // Always escape HTML for text arguments!
       function escapeHtml(html) {
         const div = document.createElement('div');
         div.textContent = html;
@@ -160,7 +157,9 @@ export const ImperativeToast: Story = {
 
       createAlertButton.addEventListener('click', () => {
         notify(
-          'Her er en viktig melding til brukeren av applikasjonen: ' + ++count
+          'Her er viktig melding #' +
+            ++count +
+            ' til brukeren av applikasjonen: '
         );
       });
     </script>

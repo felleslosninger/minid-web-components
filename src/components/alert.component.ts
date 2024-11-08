@@ -1,4 +1,4 @@
-import { css, html, LitElement } from 'lit';
+import { css, html, LitElement, nothing } from 'lit';
 import { customElement, property, query, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { styled } from 'src/mixins/tailwind.mixin.ts';
@@ -38,8 +38,11 @@ const styles = [
     }
 
     .close-button:hover {
-      background: color-mix(in srgb, --fds-alert-icon-color, transparent, 20%);
-      /* background: var(--fds-semantic-surface-action-first-subtle-hover); */
+      background-color: color-mix(
+        in srgb,
+        var(--fds-alert-icon-color) 20%,
+        var(--fds-alert-background)
+      );
     }
   `,
 ];
@@ -48,6 +51,9 @@ const styles = [
  * @csspart base - The base of the alert
  *
  * @slot -- The default slot for the content of the alert
+ *
+ * @animation alert.show - The animation to use when showing the alert.
+ * @animation alert.hide - The animation to use when hiding the alert.
  */
 @customElement('mid-alert')
 export class MinidAlert extends styled(LitElement, styles) {
@@ -222,14 +228,23 @@ export class MinidAlert extends styled(LitElement, styles) {
         document.body.append(toastStack);
       }
 
-      toastStack.appendChild(this);
       this.elevated = true;
 
-      const { keyframes, options } = getAnimation(
-        this,
-        'toast-stack.new-alert'
-      );
-      animateTo(toastStack, keyframes, options);
+      // We wrap this in a timeout for `getBoundingClientRect` to get the height properly
+      setTimeout(() => {
+        toastStack.appendChild(this);
+
+        animateTo(
+          toastStack,
+          [
+            {
+              transform: `translateY(${this.getBoundingClientRect().height}px)`,
+            },
+            { transform: 'translateY(0px)' },
+          ],
+          { duration: 250, easing: 'ease-out' }
+        );
+      }, 0);
 
       // Wait for the toast stack to render
       requestAnimationFrame(() => {
@@ -304,30 +319,22 @@ export class MinidAlert extends styled(LitElement, styles) {
         >
           <slot></slot>
         </div>
-        <button
-          class="${classMap({
-            'close-button': true,
-          })}"
-        >
-          <mid-icon name="xmark"> </mid-icon>
-        </button>
+        ${this.closable
+          ? html`
+              <button class="close-button" @click="${this.hide}">
+                <mid-icon name="xmark"> </mid-icon>
+              </button>
+            `
+          : nothing}
       </div>
     `;
   }
 }
 
-setDefaultAnimation('toast-stack.new-alert', {
-  keyframes: [
-    { transform: 'translateY(100px)' },
-    { transform: 'translateY(0px)' },
-  ],
-  options: { duration: 250, easing: 'ease-out' },
-});
-
 setDefaultAnimation('alert.show', {
   keyframes: [
-    { opacity: 0, scale: 1, transform: 'translateY(100px)' },
-    { opacity: 1, scale: 1, transform: 'translateY(0px)' },
+    { opacity: 0, transform: 'translateY(100%)' },
+    { opacity: 1, transform: 'translateY(0px)' },
   ],
   options: { duration: 400, easing: 'ease-out' },
 });
