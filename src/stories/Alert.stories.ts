@@ -17,6 +17,10 @@ type AlertProps = {
   size?: MinidAlert['size'];
   base: Part;
   '--': string;
+  'mid-show': Event;
+  'mid-hide': Event;
+  'mid-after-show': Event;
+  'mid-after-hide': Event;
 };
 
 const meta = {
@@ -38,6 +42,10 @@ const meta = {
     },
     duration: { type: 'number' },
     base: { control: { disable: true } },
+    'mid-after-hide': { control: { disable: true } },
+    'mid-after-show': { control: { disable: true } },
+    'mid-hide': { control: { disable: true } },
+    'mid-show': { control: { disable: true } },
     '--': { name: '-' },
   },
   parameters: {

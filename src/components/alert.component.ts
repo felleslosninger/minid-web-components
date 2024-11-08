@@ -48,7 +48,13 @@ const styles = [
 ];
 
 /**
- * @csspart base - The base of the alert
+ * Alerts need to have the `open` attribute to be displayed
+ * @csspart base - Select the base of the alert
+ *
+ * @event mid-show - Emitted when the alert opens.
+ * @event mid-after-show - Emitted after the alert opens and all animations are complete.
+ * @event mid-hide - Emitted when the alert closes.
+ * @event mid-after-hide - Emitted after the alert closes and all animations are complete.
  *
  * @slot -- The default slot for the content of the alert
  *
