@@ -1,3 +1,4 @@
+@import './global.css';
 @layer tw-base, ds, tw-rest;
 
 @layer tw-base {
@@ -11,25 +12,6 @@
       @apply outline-3;
       @apply outline-focus-yellow;
       @apply outline-offset-3;
-    }
-
-    .mid-toast-stack {
-      position: fixed;
-      bottom: 0;
-      inset-inline-end: 0;
-      z-index: 600;
-      width: 28rem;
-      max-width: 100%;
-      max-height: 100%;
-      overflow: hidden;
-    }
-
-    .mid-toast-stack mid-alert {
-      margin: 1rem;
-    }
-
-    .mid-toast-stack mid-alert::part(base) {
-      @apply shadow-sm;
     }
   }
 }

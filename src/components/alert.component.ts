@@ -33,6 +33,8 @@ const styles = [
       align-self: center;
       padding: 10px;
       border-radius: 4px;
+      margin-top: -10px;
+      margin-bottom: -10px;
 
       color: var(--fds-alert-icon-color);
     }
@@ -43,6 +45,26 @@ const styles = [
         var(--fds-alert-icon-color) 20%,
         var(--fds-alert-background)
       );
+    }
+
+    .message-details {
+      margin-top: 0.5rem;
+      font-size: 0.875rem;
+      line-height: 1.25rem;
+      padding: 0.75rem;
+
+      background-color: color-mix(
+        in srgb,
+        var(--fds-alert-icon-color) 20%,
+        var(--fds-alert-background)
+      );
+
+      border-left: solid 4px
+        color-mix(
+          in srgb,
+          var(--fds-alert-border-color),
+          var(--fds-alert-background)
+        );
     }
   `,
 ];
@@ -117,6 +139,13 @@ export class MinidAlert extends styled(LitElement, styles) {
 
   @state()
   private remainingTime = this.duration;
+
+  @state()
+  notificationContent?: {
+    title?: string;
+    message: string;
+    details?: string;
+  };
 
   firstUpdated() {
     this.base.hidden = !this.open;
@@ -228,12 +257,30 @@ export class MinidAlert extends styled(LitElement, styles) {
    * dismissed, it will be removed from the DOM completely. By storing a reference to the alert, you can reuse it by
    * calling this method again. The returned promise will resolve after the alert is hidden.
    */
-  async toast() {
+  async toast(
+    content: MinidAlert['notificationContent'],
+    closable = true,
+    severity?: MinidAlert['severity'],
+    duration?: number
+  ) {
     return new Promise<void>((resolve) => {
       if (toastStack.parentElement === null) {
         document.body.append(toastStack);
       }
 
+      if (content) {
+        this.notificationContent = content;
+      }
+
+      if (severity) {
+        this.severity = severity;
+      }
+
+      if (duration) {
+        this.duration = duration;
+      }
+
+      this.closable = closable;
       this.elevated = true;
 
       // We wrap this in a timeout for `getBoundingClientRect` to get the height properly
@@ -323,7 +370,19 @@ export class MinidAlert extends styled(LitElement, styles) {
             'fds-paragraph--lg': this.size === 'lg',
           })}
         >
-          <slot></slot>
+          <slot>
+            ${!this.notificationContent?.title
+              ? nothing
+              : html`<h2 class="mb-2 text-xl font-semibold">
+                  ${this.notificationContent?.title}
+                </h2>`}
+            ${this.notificationContent?.message}
+            ${!this.notificationContent?.details
+              ? nothing
+              : html`<div class="message-details">
+                  <pre>${this.notificationContent?.details}</pre>
+                </div>`}
+          </slot>
         </div>
         ${this.closable
           ? html`

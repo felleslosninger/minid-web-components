@@ -11,6 +11,8 @@ type AlertProps = {
   title: string;
   content: string;
   elevated: boolean;
+  closable?: boolean;
+  open?: boolean;
   severity?: MinidAlert['severity'];
   iconlabel?: string;
   duration?: number;
@@ -67,6 +69,7 @@ export const Main: Story = {
   args: {
     title: 'Advarsel: Viktig melding!',
     content: 'Dette er en viktig melding som krever umiddelbar oppmerksomhet.',
+    open: true,
   },
   render: ({
     content,
@@ -76,11 +79,14 @@ export const Main: Story = {
     iconlabel,
     size,
     duration,
+    closable,
+    open,
     ...rest
   }: AlertProps) => html`
     <mid-alert
-      open
+      ?open=${open}
       ?elevated=${elevated}
+      ?closable=${closable}
       size=${ifDefined(size)}
       iconlabel=${ifDefined(iconlabel)}
       severity=${ifDefined(severity)}
@@ -164,11 +170,7 @@ export const ToastFactory: Story = {
       }
 
       createAlertButton.addEventListener('click', () => {
-        notify(
-          'Her er viktig melding #' +
-            ++count +
-            ' til brukeren av applikasjonen: '
-        );
+        notify('Her er viktig melding #' + ++count);
       });
     </script>
   `,
