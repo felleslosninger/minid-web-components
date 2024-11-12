@@ -4,5 +4,4 @@ export type AnimationName =
   | 'helptext.hide'
   | 'helptext.show'
   | 'tooltip.hide'
-  | 'tooltip.show'
-  | 'toast-stack.new-alert';
+  | 'tooltip.show';

@@ -23,6 +23,9 @@ type AlertProps = {
   'mid-hide': Event;
   'mid-after-show': Event;
   'mid-after-hide': Event;
+  show: Function;
+  hide: Function;
+  toast: Function;
 };
 
 const meta = {
@@ -49,6 +52,25 @@ const meta = {
     'mid-hide': { control: { disable: true } },
     'mid-show': { control: { disable: true } },
     '--': { name: '-' },
+    show: {
+      control: false,
+      table: { category: 'Methods' },
+      type: 'function',
+      description: 'Shows the alert.',
+    },
+    hide: {
+      control: false,
+      table: { category: 'Methods' },
+      type: 'function',
+      description: 'Hides the alert',
+    },
+    toast: {
+      control: false,
+      table: { category: 'Methods' },
+      type: 'function',
+      description:
+        'Displays the alert as a toast notification. This will move the alert out of its position in the DOM and, when dismissed, it will be removed from the DOM completely. By storing a reference to the alert, you can reuse it by calling this method again. The returned promise will resolve after the alert is hidden.',
+    },
   },
   parameters: {
     controls: {
@@ -68,7 +90,7 @@ type Story = StoryObj<AlertProps>;
 
 export const Main: Story = {
   args: {
-    title: 'Advarsel: Viktig melding!',
+    title: 'Viktig informasjon!',
     content: 'Dette er en viktig melding som krever umiddelbar oppmerksomhet.',
     open: true,
   },
@@ -140,11 +162,6 @@ export const Toast: Story = {
 };
 
 export const ToastFactory: Story = {
-  args: {
-    title: 'Advarsel: Viktig melding!',
-    content: 'Dette er en viktig melding som krever umiddelbar oppmerksomhet.',
-    duration: 30000,
-  },
   decorators: [
     (story) => html` <div class="flex flex-col gap-2">${story()}</div>`,
   ],
