@@ -35,7 +35,6 @@ const styles = [
       border-radius: 4px;
       margin-top: -10px;
       margin-bottom: -10px;
-
       color: var(--fds-alert-icon-color);
     }
 
@@ -47,24 +46,33 @@ const styles = [
       );
     }
 
+    .message-title {
+      margin-bottom: 0.5rem;
+      font-size: 1.25rem;
+      line-height: 1.75rem;
+      font-weight: 600;
+    }
+
     .message-details {
       margin-top: 0.5rem;
       font-size: 0.875rem;
       line-height: 1.25rem;
       padding: 0.75rem;
-
       background-color: color-mix(
         in srgb,
         var(--fds-alert-icon-color) 20%,
         var(--fds-alert-background)
       );
-
       border-left: solid 4px
         color-mix(
           in srgb,
           var(--fds-alert-border-color),
           var(--fds-alert-background)
         );
+    }
+
+    .message-details pre {
+      white-space: pre-wrap;
     }
   `,
 ];
@@ -259,9 +267,9 @@ export class MinidAlert extends styled(LitElement, styles) {
    */
   async toast(
     content: MinidAlert['notificationContent'],
-    closable = true,
+    duration?: number,
     severity?: MinidAlert['severity'],
-    duration?: number
+    closable = true
   ) {
     return new Promise<void>((resolve) => {
       if (toastStack.parentElement === null) {
@@ -373,7 +381,7 @@ export class MinidAlert extends styled(LitElement, styles) {
           <slot>
             ${!this.notificationContent?.title
               ? nothing
-              : html`<h2 class="mb-2 text-xl font-semibold">
+              : html`<h2 class="message-title">
                   ${this.notificationContent?.title}
                 </h2>`}
             ${this.notificationContent?.message}

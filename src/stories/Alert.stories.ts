@@ -57,6 +57,7 @@ const meta = {
         'remainingTimeInterval',
         'countdownElement',
         'remainingTime',
+        'notificationContent',
       ],
     },
   },
@@ -150,26 +151,16 @@ export const ToastFactory: Story = {
   render: () => html`
     <mid-button class="toast-factory-button">Toast</mid-button>
     <script>
-      const createAlertButton = document.querySelector('.toast-factory-button');
+      const factoryButton = document.querySelector('.toast-factory-button');
       let count = 0;
 
-      function escapeHtml(html) {
-        const div = document.createElement('div');
-        div.textContent = html;
-        return div.innerHTML;
-      }
-
       function notify(message, duration = 3000) {
-        const alert = Object.assign(document.createElement('mid-alert'), {
-          closable: true,
-          duration: duration,
-          innerHTML: escapeHtml(message),
-        });
+        const alert = document.createElement('mid-alert');
         document.body.append(alert);
-        return alert.toast();
+        return alert.toast({ message }, duration);
       }
 
-      createAlertButton.addEventListener('click', () => {
+      factoryButton.addEventListener('click', () => {
         notify('Her er viktig melding #' + ++count);
       });
     </script>
