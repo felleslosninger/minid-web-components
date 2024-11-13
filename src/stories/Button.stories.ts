@@ -10,7 +10,7 @@ type ButtonProps = {
   type?: MinidButton['type'];
   label: string;
   href?: string;
-  'full-width'?: boolean;
+  fullwidth?: boolean;
   disabled?: boolean;
 };
 
@@ -53,7 +53,7 @@ export const Main: Story = {
     type,
     href,
     disabled,
-    ...rest
+    fullwidth,
   }: ButtonProps) => {
     return html`<mid-button
       @click=${onclick}
@@ -61,7 +61,7 @@ export const Main: Story = {
       size=${ifDefined(size)}
       variant=${ifDefined(variant)}
       href=${ifDefined(href)}
-      ?full-width=${rest['full-width']}
+      ?fullwidth=${fullwidth}
       ?disabled=${disabled}
       >${label}
     </mid-button>`;

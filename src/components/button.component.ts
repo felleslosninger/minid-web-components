@@ -42,8 +42,8 @@ export class MinidButton extends styled(LitElement, styles) {
   /**
    * Whether the button should be full width
    */
-  @property({ type: Boolean, attribute: 'full-width' })
-  'full-width' = false;
+  @property({ type: Boolean })
+  fullwidth = false;
 
   /**
    * Whether the button is disabled
@@ -73,7 +73,7 @@ export class MinidButton extends styled(LitElement, styles) {
         'fds-focus': true,
         'fds-btn': true,
         'fds-btn--first': true,
-        'fds-btn--full-width': this['full-width'],
+        'fds-btn--full-width': this.fullwidth,
         'fds-btn--icon-only': this.iconstyled,
         'fds-btn--primary': this.variant === 'primary',
         'fds-btn--secondary': this.variant === 'secondary',

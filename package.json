@@ -69,6 +69,9 @@
       "import": "./dist/spinner.component.js",
       "types": "./dist/spinner.component.d.ts"
     },
+    "./styles": {
+      "import": "./dist/index.css"
+    },
     "./textfield": {
       "import": "./dist/textfield.component.js",
       "types": "./dist/textfield.component.d.ts"
