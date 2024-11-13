@@ -1,4 +1,3 @@
-import './styles/vendor.css';
 import './styles/global.css';
 
 export {

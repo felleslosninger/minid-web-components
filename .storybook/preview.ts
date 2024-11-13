@@ -16,6 +16,7 @@ const preview: Preview = {
     },
     docs: {
       source: {
+        format: true,
         excludeDecorators: true,
         transform: (source) => source.replace(/=\"\"/g, ''), // Remove ="" on boolean attributes
       },

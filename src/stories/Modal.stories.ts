@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import '../components/button.component';
 import '../components/modal.component';
+import '../components/paragraph.component';
 
 type ModalProps = {
   open: boolean;
@@ -12,6 +13,11 @@ const meta = {
   title: 'Komponenter/Modal',
   component: 'mid-modal',
   argTypes: {},
+  parameters: {
+    controls: {
+      exclude: ['dialogElement'],
+    },
+  },
 } satisfies Meta<ModalProps>;
 
 export default meta;
@@ -23,15 +29,32 @@ export const Main: Story = {
   args: {},
   render: ({ open }: ModalProps) => {
     return html`
-      <mid-button class="button">Modal</mid-button>
-      <mid-modal ?open=${open} class="modal"></mid-modal>
+      <mid-button class="modal-button">Modal</mid-button>
+      <mid-modal ?open=${open} class="modal">
+        <span slot="heading"> Bekreft handling </span>
+        <mid-paragraph>
+          Er du sikker på at du vil utføre denne handlingen? Det er ikke sikkert
+          at handlingen kan reverseres.
+        </mid-paragraph>
+        <div
+          slot="footer"
+          class="flex flex-row-reverse gap-4 self-stretch justify-self-end"
+        >
+          <mid-button class="confirm-button">Bekreft</mid-button>
+          <mid-button class="cancel-button" variant="secondary"
+            >Avbryt
+          </mid-button>
+        </div>
+      </mid-modal>
       <script>
-        const modalButton = document.querySelector('.button');
-        const modal = document.querySelector('.modal');
+        var modalButton = document.querySelector('.modal-button');
+        var cancelButton = document.querySelector('.cancel-button');
+        var confirmButton = document.querySelector('.confirm-button');
+        var modal = document.querySelector('.modal');
 
-        modalButton.addEventListener('click', () => {
-          modal.open ? modal.hide() : modal.show();
-        });
+        modalButton.addEventListener('click', () => modal.show());
+        cancelButton.addEventListener('click', () => modal.hide());
+        confirmButton.addEventListener('click', () => modal.hide());
       </script>
     `;
   },

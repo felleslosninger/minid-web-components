@@ -154,8 +154,8 @@ export const Toast: Story = {
     </mid-alert>
     <mid-button class="toast-button">Toast</mid-button>
     <script>
-      const alert = document.querySelector('.toast-alert');
-      const button = document.querySelector('.toast-button');
+      var alert = document.querySelector('.toast-alert');
+      var button = document.querySelector('.toast-button');
       button.addEventListener('click', () => alert.toast());
     </script>
   `,
@@ -168,8 +168,8 @@ export const ToastFactory: Story = {
   render: () => html`
     <mid-button class="toast-factory-button">Toast</mid-button>
     <script>
-      const factoryButton = document.querySelector('.toast-factory-button');
-      let count = 0;
+      var factoryButton = document.querySelector('.toast-factory-button');
+      var count = 0;
 
       function notify(message, duration = 3000) {
         const alert = document.createElement('mid-alert');
