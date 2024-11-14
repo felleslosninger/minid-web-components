@@ -31,7 +31,7 @@ export default defineConfig(({ command, mode }) => {
   const build = mode === "development"
     ? {
         build: {
-          minify: false,
+          minify: true,
           cssCodeSplit: true,
           cssMinify: false
         }

@@ -1,44 +1,39 @@
 import { defineConfig } from 'vite';
-import { hmrPlugin, presets } from 'vite-plugin-web-components-hmr';
 import { resolve } from 'path';
-import dts from 'vite-plugin-dts';
 import tailwindcss from 'tailwindcss';
-import { externalizeDeps } from 'vite-plugin-externalize-deps';
 import { glob } from "glob"
+//import * as path from 'node:path';
 
 export default defineConfig(({}) => {
   return {
+
     build: {
-      minify: false,
-      cssCodeSplit: true,
-      cssMinify: false,
+      minify: 'esbuild',
+      cssCodeSplit: false,
+      // cssMinify: 'esbuild',
 
       target: 'es2021',
-      sourcemap: true,
+      sourcemap: false,
       emptyOutDir: true,
+      outDir: 'dist-cdn',
+
       lib: {
         entry: glob.sync(resolve(__dirname, 'src/{**/\*.component.ts,index.ts}')),
         name: 'MinID-Elements',
         formats: ['es'],
-        fileName: (_format, entryName) => `${entryName}.js`,
+        fileName: (_format, entryName) => `${entryName.replace(/\.component$/, '')}.js`,
       },
+
     },
+
     rollupOptions: {
-      external: ['^lit$'],
       output: {
         preserveModules: true,
-        globals: {
-          lit: 'Lit',
-        }
       },
     },
+
+
     plugins: [
-      externalizeDeps(),
-      dts({ rollupTypes: true }),
-      hmrPlugin({
-        include: ['./src/**/*.ts'],
-        presets: [presets.lit],
-      }),
     ],
     css: {
       postcss: {
