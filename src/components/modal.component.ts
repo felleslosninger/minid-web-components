@@ -33,6 +33,10 @@ const styles = [
     .footer {
       justify-content: flex-end;
     }
+
+    .close-button mid-icon {
+      font-size: 1.75rem;
+    }
   `,
 ];
 
@@ -248,7 +252,7 @@ export class MinidModal extends styled(LitElement, styles) {
           <button
             autofocus
             @click="${() => this.requestClose('close-button')}"
-            class="fds-btn fds-focus fds-btn--md fds-btn--tertiary fds-btn--second fds-btn--icon-only fds-modal__header__button"
+            class="close-button fds-btn fds-focus fds-btn--md fds-btn--tertiary fds-btn--second fds-btn--icon-only fds-modal__header__button"
           >
             <mid-icon name="xmark"></mid-icon>
           </button>
