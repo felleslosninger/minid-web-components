@@ -38,6 +38,9 @@ export { MinidMenuItem };
 import { MinidMenu } from './components/menu.component.ts';
 export { MinidMenu };
 
+import { MinidModal } from './components/modal.component.ts';
+export { MinidModal };
+
 import { MinidParagraph } from './components/paragraph.component.ts';
 export { MinidParagraph };
 
@@ -69,6 +72,7 @@ declare global {
     'mid-label': MinidLabel;
     'mid-menu-item': MinidMenuItem;
     'mid-menu': MinidMenu;
+    'mid-modal': MinidModal;
     'mid-paragraph': MinidParagraph;
     'mid-popup': MinidPopup;
     'mid-search': MinidSearch;

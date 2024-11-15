@@ -13,12 +13,39 @@ import { lockBodyScrolling, unlockBodyScrolling } from 'src/internal/scroll';
 
 const styles = [
   css`
+    :host {
+      --max-width: 40rem;
+      --footer-and-header-height: 140px;
+      display: contents;
+    }
+
+    .dialog {
+      max-width: var(--max-width);
+      flex: 1 1 auto;
+      display: block;
+      max-height: unset;
+      padding: var(--body-spacing);
+    }
+
     .dialog[open] {
       animation: none;
     }
 
     .dialog.closing::backdrop {
       animation: fade-out 200ms ease-in forwards;
+    }
+
+    .modal-content {
+      max-height: calc(90vh - var(--footer-and-header-height));
+      overflow: auto;
+    }
+
+    .footer {
+      justify-content: flex-end;
+    }
+
+    .close-button mid-icon {
+      font-size: 1.75rem;
     }
 
     @keyframes fade-out {
@@ -29,14 +56,6 @@ const styles = [
       to {
         opacity: 0;
       }
-    }
-
-    .footer {
-      justify-content: flex-end;
-    }
-
-    .close-button mid-icon {
-      font-size: 1.75rem;
     }
   `,
 ];
@@ -217,7 +236,7 @@ export class MinidModal extends styled(LitElement, styles) {
             <mid-icon name="xmark"></mid-icon>
           </button>
         </header>
-        <article part="body" class="fds-modal__content">
+        <article part="body" class="fds-modal__content modal-content">
           <slot> </slot>
         </article>
         <footer part="footer" class="fds-modal__footer footer">

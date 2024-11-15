@@ -66,6 +66,7 @@ const styles = [
 
     .message-details pre {
       white-space: pre-wrap;
+      word-break: break-all;
     }
   `,
 ];
