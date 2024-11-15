@@ -9,6 +9,7 @@ import {
   setDefaultAnimation,
 } from 'src/components/utilities/animation-registry';
 import { animateTo, stopAnimations } from 'src/internal/animate';
+import { lockBodyScrolling, unlockBodyScrolling } from 'src/internal/scroll';
 
 const styles = [
   css`
@@ -59,6 +60,13 @@ export class MinidModal extends styled(LitElement, styles) {
   @property({ type: Boolean })
   open = false;
 
+  /**
+   * The dialog's label as displayed in the header. You should always include a relevant label even when using
+   * `no-header`, as it is required for proper accessibility. If you need to display HTML, use the `label` slot instead.
+   */
+  @property({ reflect: true })
+  heading = '';
+
   private requestClose(source: 'close-button' | 'keyboard' | 'overlay') {
     const requestCloseEvent = new CustomEvent('mid-request-close', {
       bubbles: true,
@@ -104,6 +112,13 @@ export class MinidModal extends styled(LitElement, styles) {
     this.requestClose('keyboard');
   }
 
+  handleBackdropClick({ target }: Event) {
+    // if the target is the dialog, the backdrop was clicked
+    if (target === this.dialog) {
+      this.requestClose('overlay');
+    }
+  }
+
   @watch('open', { waitUntilFirstUpdate: true })
   async handleOpenChange() {
     if (this.open) {
@@ -112,53 +127,9 @@ export class MinidModal extends styled(LitElement, styles) {
         new Event('mid-show', { composed: true, bubbles: true })
       );
       this.addOpenListeners();
-      // this.originalTrigger = document.activeElement as HTMLElement;
       this.dialog.showModal();
 
-      // lockBodyScrolling(this); TODO
-
-      // When the dialog is shown, Safari will attempt to set focus on whatever element has autofocus. This can cause
-      // the dialogs's animation to jitter (if it starts offscreen), so we'll temporarily remove the attribute, call
-      // `focus({ preventScroll: true })` ourselves, and add the attribute back afterwards.
-      //
-      // Related: https://github.com/shoelace-style/shoelace/issues/693
-      //
-      // const autoFocusTarget = this.querySelector('[autofocus]');
-      // if (autoFocusTarget) {
-      //   autoFocusTarget.removeAttribute('autofocus');
-      // }
-
-      // await Promise.all([
-      //   stopAnimations(this.dialog),
-      //   // stopAnimations(this.overlay),
-      // ]);
-      // this.dialog.showModal();
-
-      // // Set initial focus
-      // requestAnimationFrame(() => {
-      //   const initialFocusEvent = new Event('mid-initial-focus', {
-      //     composed: true,
-      //     bubbles: true,
-      //     cancelable: true,
-      //   });
-      //   this.dispatchEvent(initialFocusEvent);
-
-      //   if (!initialFocusEvent.defaultPrevented) {
-      //     // Set focus to the autofocus target and restore the attribute
-      //     if (autoFocusTarget) {
-      //       (autoFocusTarget as HTMLInputElement).focus({
-      //         preventScroll: true,
-      //       });
-      //     } else {
-      //       this.panel.focus({ preventScroll: true });
-      //     }
-      //   }
-
-      //   // Restore the autofocus attribute
-      //   if (autoFocusTarget) {
-      //     autoFocusTarget.setAttribute('autofocus', '');
-      //   }
-      // });
+      lockBodyScrolling(this);
 
       const panelAnimation = getAnimation(this, 'dialog.show');
       await animateTo(
@@ -192,21 +163,9 @@ export class MinidModal extends styled(LitElement, styles) {
         panelAnimation.options
       );
       this.panel.classList.remove('closing');
-
       this.dialog.close();
-
-      // Now that the dialog is hidden, restore the overlay and panel for next time
-      // this.overlay.hidden = false;
       this.panel.hidden = false;
-
-      // unlockBodyScrolling(this);
-
-      // Restore focus to the original trigger
-      // const trigger = this.originalTrigger;
-      // if (typeof trigger?.focus === 'function') {
-      //   setTimeout(() => trigger.focus());
-      // }
-
+      unlockBodyScrolling(this);
       this.dispatchEvent(
         new Event('mid-after-hide', { composed: true, bubbles: true })
       );
@@ -240,10 +199,11 @@ export class MinidModal extends styled(LitElement, styles) {
   override render() {
     return html`
       <dialog
-        @cancel=${this.handleDialogCancel}
         part="base"
         id="dialog"
         class="dialog fds-modal"
+        @cancel=${this.handleDialogCancel}
+        @click=${this.handleBackdropClick}
       >
         <header part="header" class="fds-modal__header flex">
           <h2 class="fds-heading fds-heading--xs">
@@ -285,16 +245,6 @@ setDefaultAnimation('dialog.hide', {
 });
 
 setDefaultAnimation('dialog.denyClose', {
-  keyframes: [{ scale: 1 }, { scale: 1.02 }, { scale: 1 }],
-  options: { duration: 250 },
-});
-
-setDefaultAnimation('dialog.overlay.show', {
-  keyframes: [{ opacity: 0 }, { opacity: 1 }],
-  options: { duration: 250 },
-});
-
-setDefaultAnimation('dialog.overlay.hide', {
-  keyframes: [{ opacity: 1 }, { opacity: 0 }],
-  options: { duration: 250 },
+  keyframes: [{ scale: 1 }, { scale: 1.03 }, { scale: 1 }],
+  options: { duration: 100 },
 });

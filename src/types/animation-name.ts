@@ -3,8 +3,6 @@ export type AnimationName =
   | 'alert.show'
   | 'dialog.hide'
   | 'dialog.show'
-  | 'dialog.overlay.hide'
-  | 'dialog.overlay.show'
   | 'dialog.denyClose'
   | 'helptext.hide'
   | 'helptext.show'

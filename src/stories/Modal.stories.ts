@@ -6,13 +6,16 @@ import '../components/paragraph.component';
 
 type ModalProps = {
   open: boolean;
+  preventClose: boolean;
 };
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories
 const meta = {
   title: 'Komponenter/Modal',
   component: 'mid-modal',
-  argTypes: {},
+  argTypes: {
+    preventClose: { type: 'boolean' },
+  },
   parameters: {
     controls: {
       exclude: ['dialogElement'],
@@ -26,11 +29,17 @@ type Story = StoryObj<ModalProps>;
 // More on writing stories with args: https://storybook.js.org/docs/writing-stories/args
 
 export const Main: Story = {
-  args: {},
-  render: ({ open }: ModalProps) => {
+  args: {
+    preventClose: false,
+  },
+  render: ({ open, preventClose }: ModalProps) => {
     return html`
       <mid-button class="modal-button">Modal</mid-button>
-      <mid-modal ?open=${open} class="modal">
+      <mid-modal
+        ?open=${open}
+        class="modal"
+        @mid-request-close=${(event) => preventClose && event.preventDefault()}
+      >
         <span slot="heading"> Bekreft handling </span>
         <mid-paragraph>
           Er du sikker på at du vil utføre denne handlingen? Det er ikke sikkert
