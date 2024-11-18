@@ -68,6 +68,7 @@ jobs:
           repository: 'felleslosninger/minid-cdn'
           token: ${{ secrets.GITHUB_TOKEN }}
           path: cdn
+          ref: main
 
       - name: Create Versioned Folder in CDN Repo
         run: |
