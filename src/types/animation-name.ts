@@ -1,9 +1,9 @@
 export type AnimationName =
   | 'alert.hide'
   | 'alert.show'
-  | 'dialog.hide'
-  | 'dialog.show'
-  | 'dialog.denyClose'
+  | 'modal.hide'
+  | 'modal.show'
+  | 'modal.denyClose'
   | 'helptext.hide'
   | 'helptext.show'
   | 'tooltip.hide'
