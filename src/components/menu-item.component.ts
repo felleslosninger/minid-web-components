@@ -22,7 +22,7 @@ export class MinidMenuItem extends styled(LitElement, style) {
   override render() {
     return html`
       <li>
-        <mid-button variant="tertiary" href=${ifDefined(this.href)} full-width>
+        <mid-button variant="tertiary" href=${ifDefined(this.href)} fullwidth>
           <slot></slot>
         </mid-button>
       </li>

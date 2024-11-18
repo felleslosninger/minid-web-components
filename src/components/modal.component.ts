@@ -21,8 +21,6 @@ const styles = [
 
     .dialog {
       max-width: var(--max-width);
-      flex: 1 1 auto;
-      display: block;
       max-height: unset;
       padding: var(--body-spacing);
     }
