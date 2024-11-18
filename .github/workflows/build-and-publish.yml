@@ -8,6 +8,11 @@ on:
 jobs:
   build-and-publish:
 
+    permissions:
+      id-token: write
+      contents: read
+      packages: read
+
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -59,21 +64,13 @@ jobs:
       #################################
       # Publish to MinID CDN
       ################################
-      - name: Debug
-        run: |
-          echo "GITHUB_TOKEN Permissions:"
-          curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/user/repos
-
       - name: Build CDN version
         run: yarn build:cdn
 
-      - name: Checkout CDN Repo
-        uses: actions/checkout@v4
-        with:
-          repository: felleslosninger/minid-cdn
-          token: ${{ secrets.GITHUB_TOKEN }}
-          path: cdn
-          ref: main
+      - name: Clone CDN Repo (using API)
+        run: |
+          gh repo clone felleslosninger/minid-cdn cdn
+          cd cdn
 
       - name: Create Versioned Folder in CDN Repo
         run: |
