@@ -10,8 +10,8 @@ jobs:
 
     permissions:
       id-token: write
-      contents: read
-      packages: read
+      contents: write
+      packages: write
 
     runs-on: ubuntu-latest
     steps:
