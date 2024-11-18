@@ -65,7 +65,7 @@ jobs:
       - name: Checkout CDN Repo
         uses: actions/checkout@v4
         with:
-          repository: 'felleslosninger/minid-cdn'
+          repository: felleslosninger/minid-cdn
           token: ${{ secrets.GITHUB_TOKEN }}
           path: cdn
           ref: main
