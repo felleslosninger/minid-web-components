@@ -1,6 +1,6 @@
 {
   "name": "@felleslosninger/minid-elements",
-  "version": "0.0.24",
+  "version": "0.0.28",
   "type": "module",
   "module": "./dist/index.js",
   "main": "./dist/index.js",
@@ -68,6 +68,9 @@
     "./spinner": {
       "import": "./dist/spinner.component.js",
       "types": "./dist/spinner.component.d.ts"
+    },
+    "./styles": {
+      "import": "./dist/index.css"
     },
     "./textfield": {
       "import": "./dist/textfield.component.js",

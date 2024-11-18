@@ -1,5 +1,7 @@
 export type AnimationName =
-  | 'helptext.show'
+  | 'alert.hide'
+  | 'alert.show'
   | 'helptext.hide'
-  | 'tooltip.show'
-  | 'tooltip.hide';
+  | 'helptext.show'
+  | 'tooltip.hide'
+  | 'tooltip.show';

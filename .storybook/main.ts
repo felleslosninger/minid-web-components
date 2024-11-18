@@ -12,7 +12,7 @@ const config: StorybookConfig = {
     builder: '@storybook/builder-vite',
     disableTelemetry: true,
   },
-
+  staticDirs: ['../.storybook/public'],
   async viteFinal(config) {
     // Merge custom configuration into the default config
     const { mergeConfig } = await import('vite');

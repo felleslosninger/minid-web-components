@@ -1,4 +1,5 @@
-import './vendor.css';
+import './styles/vendor.css';
+import './styles/global.css';
 
 export {
   registerIconLibrary,
@@ -23,7 +24,7 @@ export { MinidDropdown };
 import { MinidHeading } from './components/heading.component.ts';
 export { MinidHeading };
 
-import { MinidHelptext } from 'src/components/helptext.component.ts';
+import { MinidHelptext } from './components/helptext.component.ts';
 export { MinidHelptext };
 
 import { MinidIcon } from './components/icon/icon.component.ts';
@@ -43,6 +44,9 @@ export { MinidParagraph };
 
 import { MinidPopup } from './components/popup.component.ts';
 export { MinidPopup };
+
+import { MinidSearch } from './components/search.component.ts';
+export { MinidSearch };
 
 import { MinidSpinner } from './components/spinner.component';
 export { MinidSpinner };
@@ -68,6 +72,7 @@ declare global {
     'mid-menu': MinidMenu;
     'mid-paragraph': MinidParagraph;
     'mid-popup': MinidPopup;
+    'mid-search': MinidSearch;
     'mid-spinner': MinidSpinner;
     'mid-textfield': MinidTextfield;
     'mid-tooltip': MinidTooltip;

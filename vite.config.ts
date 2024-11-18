@@ -4,7 +4,7 @@ import { resolve } from 'path';
 import dts from 'vite-plugin-dts';
 import tailwindcss from 'tailwindcss';
 import { externalizeDeps } from 'vite-plugin-externalize-deps';
-import { glob } from "glob"
+import { glob } from 'glob';
 
 export default defineConfig(({}) => {
   return {
@@ -17,7 +17,9 @@ export default defineConfig(({}) => {
       sourcemap: true,
       emptyOutDir: true,
       lib: {
-        entry: glob.sync(resolve(__dirname, 'src/{**/\*.component.ts,index.ts}')),
+        entry: glob.sync(
+          resolve(__dirname, 'src/{**/*.component.ts,index.ts}')
+        ),
         name: 'MinID-Elements',
         formats: ['es'],
         fileName: (_format, entryName) => `${entryName}.js`,
@@ -29,7 +31,7 @@ export default defineConfig(({}) => {
         preserveModules: true,
         globals: {
           lit: 'Lit',
-        }
+        },
       },
     },
     plugins: [

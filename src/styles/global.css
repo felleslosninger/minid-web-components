@@ -1,0 +1,14 @@
+.mid-toast-stack {
+  position: fixed;
+  bottom: 0;
+  inset-inline-end: 0;
+  padding-inline: 0.5rem;
+  z-index: 600;
+  width: min(32rem, 100% - 1rem);
+  max-height: 100%;
+  overflow: hidden;
+}
+
+.mid-toast-stack mid-alert {
+  margin: 1rem;
+}
