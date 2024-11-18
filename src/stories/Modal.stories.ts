@@ -74,7 +74,7 @@ type Story = StoryObj<ModalProps>;
 
 export const Main: Story = {
   args: {},
-  render: ({ open, body, footerSlot, heading, ...rest }: ModalProps) => {
+  render: ({ open, footerSlot, heading, ...rest }: ModalProps) => {
     return html`
       <mid-button class="modal-button">Modal</mid-button>
       <mid-modal
