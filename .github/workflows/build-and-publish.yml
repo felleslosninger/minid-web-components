@@ -59,6 +59,11 @@ jobs:
       #################################
       # Publish to MinID CDN
       ################################
+      - name: Debug
+        run: |
+          echo "GITHUB_TOKEN Permissions:"
+          curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/user/repos
+
       - name: Build CDN version
         run: yarn build:cdn
 
