@@ -12,6 +12,7 @@ type ButtonProps = {
   href?: string;
   fullwidth?: boolean;
   disabled?: boolean;
+  iconstyled?: boolean;
 };
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories
@@ -54,6 +55,7 @@ export const Main: Story = {
     href,
     disabled,
     fullwidth,
+    iconstyled,
   }: ButtonProps) => {
     return html`<mid-button
       @click=${onclick}
@@ -63,6 +65,7 @@ export const Main: Story = {
       href=${ifDefined(href)}
       ?fullwidth=${fullwidth}
       ?disabled=${disabled}
+      ?iconstyled=${iconstyled}
       >${label}
     </mid-button>`;
   },

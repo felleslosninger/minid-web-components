@@ -1,3 +1,21 @@
+@supports (scrollbar-gutter: stable) {
+  .mid-scroll-lock {
+    scrollbar-gutter: var(--mid-scroll-lock-gutter) !important;
+  }
+
+  .mid-scroll-lock body {
+    overflow: hidden !important;
+  }
+}
+
+/** This can go away once Safari has scrollbar-gutter support. */
+@supports not (scrollbar-gutter: stable) {
+  .mid-scroll-lock body {
+    padding-right: var(--mid-scroll-lock-size) !important;
+    overflow: hidden !important;
+  }
+}
+
 .mid-toast-stack {
   position: fixed;
   bottom: 0;

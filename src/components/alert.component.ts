@@ -46,13 +46,6 @@ const styles = [
       );
     }
 
-    .message-title {
-      margin-bottom: 0.5rem;
-      font-size: 1.25rem;
-      line-height: 1.75rem;
-      font-weight: 600;
-    }
-
     .message-details {
       margin-top: 0.5rem;
       font-size: 0.875rem;
@@ -73,6 +66,7 @@ const styles = [
 
     .message-details pre {
       white-space: pre-wrap;
+      word-break: break-all;
     }
   `,
 ];
@@ -381,7 +375,7 @@ export class MinidAlert extends styled(LitElement, styles) {
           <slot>
             ${!this.notificationContent?.title
               ? nothing
-              : html`<h2 class="message-title">
+              : html`<h2 class="fds-heading fds-heading--xs">
                   ${this.notificationContent?.title}
                 </h2>`}
             ${this.notificationContent?.message}
