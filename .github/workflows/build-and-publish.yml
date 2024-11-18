@@ -72,6 +72,7 @@ jobs:
           mkdir cdn
           cd cdn
           curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" -H "Accept: application/vnd.github+json" https://api.github.com/repos/felleslosninger/minid-cdn/zipball/main > main.zip
+          cat main.zip
           unzip main.zip
           mv *(felleslosninger-minid-cdn-*)/* .
           rm -rf *(felleslosninger-minid-cdn-*) main.zip

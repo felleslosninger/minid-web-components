@@ -9,8 +9,8 @@ export default defineConfig(({}) => {
 
     build: {
       minify: 'esbuild',
-      cssCodeSplit: false,
-      // cssMinify: 'esbuild',
+      cssCodeSplit: true,
+      cssMinify: 'esbuild',
 
       target: 'es2021',
       sourcemap: false,
