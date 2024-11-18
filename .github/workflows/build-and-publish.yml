@@ -96,6 +96,6 @@ jobs:
               SHA=""
             fi
             curl -s -X PUT -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-              -d "{\"message\":\"Deploy version $VERSION to CDN\", \"content\":\"$CONTENT\", \"branch\":\"main\", \"sha\":\"$SHA\"}" \
+              -d "{\"message\":\"[skip actions] Deploy version $VERSION to CDN\", \"content\":\"$CONTENT\", \"branch\":\"main\", \"sha\":\"$SHA\"}" \
               https://api.github.com/repos/felleslosninger/minid-cdn/contents/$FILE
           done
