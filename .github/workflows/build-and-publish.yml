@@ -85,6 +85,12 @@ jobs:
           cd cdn/minid-elements
           ln -sfn $VERSION latest
 
+      - name: Write Version to File
+        run: |
+          cd cdn
+          VERSION=$(node -p "require('../package.json').version")
+          echo $VERSION > version.txt
+
       - name: Commit Changes to CDN Repo (using API)
         run: |
           cd cdn
