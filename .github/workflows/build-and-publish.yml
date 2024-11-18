@@ -68,6 +68,8 @@ jobs:
         run: yarn build:cdn
 
       - name: Clone CDN Repo (using API)
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           gh repo clone felleslosninger/minid-cdn cdn
           cd cdn
