@@ -554,6 +554,26 @@ export default {
       outlineWidth: {
         3: '3px',
       },
+      animation: {
+        dash: 'dash 1.4s cubic-bezier(0.2,-0.01, 0.51, 0.96) infinite',
+        'spin-slow': 'spin 2.2s linear infinite',
+      },
+      keyframes: {
+        dash: {
+          '0%': {
+            strokeDasharray: '1, 150',
+            strokeDashoffset: '0',
+          },
+          '50%': {
+            strokeDasharray: '90, 150',
+            strokeDashoffset: '-35',
+          },
+          '100%': {
+            strokeDasharray: '90, 150',
+            strokeDashoffset: '-124',
+          },
+        },
+      },
     },
   },
 } satisfies Config;

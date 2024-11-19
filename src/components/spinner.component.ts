@@ -18,11 +18,23 @@ const styles = [
 export class MinidSpinner extends styled(LitElement, styles) {
   override render() {
     return html`
-      <mid-icon
-        class="animate-spin"
-        library="system"
-        name="circle-broken"
-      ></mid-icon>
+      <svg
+        class="animate-spin-slow"
+        width="1em"
+        height="1em"
+        viewBox="0 0 50 50"
+      >
+        <circle
+          class="animate-dash"
+          cx="25"
+          cy="25"
+          r="20"
+          fill="none"
+          stroke-width="5"
+          stroke="currentColor"
+          stroke-linecap="round"
+        ></circle>
+      </svg>
     `;
   }
 }
