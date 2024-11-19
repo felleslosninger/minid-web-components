@@ -13,6 +13,8 @@ type ButtonProps = {
   fullwidth?: boolean;
   disabled?: boolean;
   iconstyled?: boolean;
+  loading?: boolean;
+  loadingtext?: string;
 };
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories
@@ -56,6 +58,8 @@ export const Main: Story = {
     disabled,
     fullwidth,
     iconstyled,
+    loading,
+    loadingtext,
   }: ButtonProps) => {
     return html`<mid-button
       @click=${onclick}
@@ -63,9 +67,11 @@ export const Main: Story = {
       size=${ifDefined(size)}
       variant=${ifDefined(variant)}
       href=${ifDefined(href)}
+      loadingtext=${ifDefined(loadingtext)}
       ?fullwidth=${fullwidth}
       ?disabled=${disabled}
       ?iconstyled=${iconstyled}
+      ?loading=${loading}
       >${label}
     </mid-button>`;
   },

@@ -4,11 +4,28 @@ import { classMap } from 'lit/directives/class-map.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { html, literal } from 'lit/static-html.js';
 import { styled } from 'mixins/tailwind.mixin.ts';
+import './spinner.component';
 
 const styles = [
   css`
     :host {
-      display: flex;
+      display: inline-flex;
+      width: auto;
+    }
+
+    .btn-loading {
+      cursor: wait;
+    }
+
+    .btn-spinner-only {
+      position: relative;
+      gap: 0;
+    }
+
+    .btn-spinner-only mid-spinner {
+      position: absolute;
+      top: calc(50% - 0.5em);
+      left: calc(50% - 0.5em);
     }
   `,
 ];
@@ -52,6 +69,15 @@ export class MinidButton extends styled(LitElement, styles) {
   disabled = false;
 
   /**
+   *
+   */
+  @property({ type: Boolean })
+  loading = false;
+
+  @property()
+  loadingtext = '';
+
+  /**
    * Toggle icon only styling
    */
   @property({ type: Boolean })
@@ -81,12 +107,19 @@ export class MinidButton extends styled(LitElement, styles) {
         'fds-btn--sm': this.size === 'sm',
         'fds-btn--md': this.size === 'md',
         'fds-btn--lg': this.size === 'lg',
+        'btn-loading': this.loading,
+        'btn-spinner-only': this.loading && !this.loadingtext,
       })}"
       type=${this.type}
       ?disabled=${this.disabled}
       href="${ifDefined(this.href)}"
     >
-      <slot></slot>
+      <slot class="${classMap({
+        invisible: this.loading && !this.loadingtext,
+        hidden: this.loading && this.loadingtext,
+      })}"></slot>
+      <span class="${classMap({ hidden: !this.loading })}">${this.loadingtext}</span>
+      ${this.loading ? html`<mid-spinner class="text-2xl" part="spinner"></mid-spinner>` : ''}
     </${tag}>`;
   }
 }
