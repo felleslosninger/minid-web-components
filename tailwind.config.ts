@@ -554,6 +554,9 @@ export default {
       outlineWidth: {
         3: '3px',
       },
+      boxShadow: {
+        'focus-visible': '0 0 0 3px #00347d',
+      },
       animation: {
         dash: 'dash 1.4s cubic-bezier(0.2,-0.01, 0.51, 0.96) infinite',
         'spin-slow': 'spin 2.2s linear infinite',

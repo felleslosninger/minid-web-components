@@ -9,7 +9,6 @@ import './spinner.component';
 const styles = [
   css`
     :host {
-      display: inline-flex;
       width: auto;
     }
 
