@@ -1,5 +1,7 @@
-import { css, html, LitElement } from 'lit';
-import { customElement } from 'lit/decorators.js';
+import { css, html, LitElement, nothing } from 'lit';
+import { customElement, property, query, state } from 'lit/decorators.js';
+import { classMap } from 'lit/directives/class-map.js';
+import { live } from 'lit/directives/live.js';
 import { styled } from 'src/mixins/tailwind.mixin';
 
 const styles = [
@@ -7,13 +9,170 @@ const styles = [
     :host {
       display: flex;
     }
+
+    /* .field {
+      height: 3rem;
+    } */
+
+    .country-code,
+    .phone-number {
+      outline: none;
+      box-shadow: none;
+      background-color: transparent;
+      /* padding: 0 1rem; */
+    }
+
+    .country-code {
+      border-right: 1px solid currentColor;
+    }
+
+    .fds-focus:focus-within {
+      --fds-focus-border-width: 3px;
+      outline: var(--fds-focus-border-width) solid
+        var(--fds-semantic-border-focus-outline);
+      outline-offset: var(--fds-focus-border-width);
+      box-shadow: 0 0 0 var(--fds-focus-border-width)
+        var(--fds-semantic-border-focus-boxshadow);
+    }
   `,
 ];
 
 @customElement('mid-phone-input')
 export class MinidPhoneInput extends styled(LitElement, styles) {
+  @query('.country-code')
+  countryCodeInput!: HTMLInputElement;
+
+  @query('.phone-number')
+  phoneNumberInput!: HTMLInputElement;
+
+  @property()
+  value = '';
+
+  @property()
+  label = '';
+
+  @state()
+  hasFocus = false;
+
+  @property({ reflect: true })
+  countryCode = '';
+
+  @property({ reflect: true })
+  phoneNumber = '';
+
+  private handleBlur() {
+    this.hasFocus = false;
+    this.dispatchEvent(
+      new Event('mid-blur', { bubbles: true, composed: true })
+    );
+  }
+
+  private handleChange() {
+    this.value = this.countryCodeInput.value;
+    this.dispatchEvent(
+      new Event('mid-change', { bubbles: true, composed: true })
+    );
+  }
+
+  private handleInput() {
+    this.countryCode = this.countryCodeInput.value;
+
+    this.dispatchEvent(
+      new CustomEvent('mid-input', {
+        bubbles: true,
+        composed: true,
+        detail: {
+          countryCode: this.countryCode,
+          phoneNumber: this.phoneNumber,
+        },
+      })
+    );
+  }
+
+  private handleFocus() {
+    this.hasFocus = true;
+    this.dispatchEvent(
+      new Event('mid-focus', { composed: true, bubbles: true })
+    );
+  }
+
   override render() {
-    return html` <input class="border" placeholder="+47" />
-      <input class="border" />`;
+    const lg = false;
+    const md = true;
+    const sm = false;
+    return html`
+      <div
+        part="form-control"
+        class="${classMap({
+          'form-control': true,
+          'fds-paragraph': true,
+          'fds-textfield': true,
+          //   'fds-textfield--readonly': this.readonly,
+          'fds-paragraph--sm': sm,
+          'fds-paragraph--md': md,
+          'fds-paragraph--lg': lg,
+          'fds-textfield--sm': sm,
+          'fds-textfield--md': md,
+          'fds-textfield--lg': lg,
+        })}"
+      >
+        ${!this.label
+          ? nothing
+          : html`<label
+              for="input"
+              class="${classMap({
+                // 'sr-only': this.hidelabel,
+                'fds-label': true,
+                'fds-label--medium-weight': true,
+                'fds-textfield__label': true,
+                'fds-label--sm': sm,
+                'fds-label--md': md,
+                'fds-label--lg': lg,
+              })}"
+            >
+              ${this.label}
+            </label>`}
+        <div
+          part="base"
+          class="${classMap({
+            field: true,
+            'fds-textfield__field': true,
+            'fds-textfield__input': true,
+            'fds-focus': this.hasFocus,
+          })}"
+        >
+          <span class="prefix">
+            <slot name="prefix"></slot>
+          </span>
+          <input
+            part="country-code"
+            class="country-code"
+            placeholder="+47"
+            size="5"
+            maxlength="5"
+            aria-describedby="description"
+            .value=${live(this.countryCode)}
+            @input=${this.handleInput}
+            @change=${this.handleChange}
+            @focus=${this.handleFocus}
+            @blur=${this.handleBlur}
+          />
+
+          <input
+            class="phone-number"
+            part="phone-number"
+            .value=${live(this.phoneNumber)}
+            @input=${this.handleInput}
+            @change=${this.handleChange}
+            @focus=${this.handleFocus}
+            @blur=${this.handleBlur}
+          />
+
+          <span part="suffix" class="suffix">
+            <slot name="suffix"></slot>
+          </span>
+        </div>
+      </div>
+    `;
   }
 }

@@ -5,8 +5,11 @@ import '../components/combobox.component';
 import '../components/menu.component';
 import '../components/menu-item.component';
 import '../components/phone-input.component';
+import { ifDefined } from 'lit/directives/if-defined.js';
 
-type PhoneInputProps = {};
+type PhoneInputProps = {
+  value?: string;
+};
 
 const meta: Meta = {
   title: 'Komponenter/Phone Input',
@@ -19,10 +22,13 @@ export default meta;
 type Story = StoryObj<PhoneInputProps>;
 
 export const Main: Story = {
-  render: (args: PhoneInputProps) => html`
-    <mid-combobox sync="width">
-      <mid-phone-input slot="trigger"></mid-phone-input>
-      <mid-menu>
+  decorators: [(story) => html`<div class="mb-64">${story()}</div>`],
+  render: ({ value }: PhoneInputProps) => html`
+    <mid-combobox>
+      <mid-phone-input value=${ifDefined(value)} slot="trigger">
+        <span slot="prefix">${'🇳🇴'}</span>
+      </mid-phone-input>
+      <mid-menu style="--max-height: 14rem">
         ${countries.map(
           (country) => html`
             <mid-menu-item value=${country.code}
