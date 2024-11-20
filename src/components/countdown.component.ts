@@ -104,7 +104,7 @@ export class CountdownComponent extends styled(LitElement) {
 
   override render() {
     return this.expired
-      ? html`<div>counter expired...</div>`
+      ? html`<slot>`
       : html`<canvas></canvas>`;
   }
 }

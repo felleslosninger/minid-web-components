@@ -19,6 +19,6 @@ type Story = StoryObj<CodeInputProps>;
 export const Main: Story = {
   args: {},
   render: (args: CodeInputProps) => {
-    return html`<mid-code-input></mid-code-input>`;
+    return html`<form><mid-code-input></mid-code-input></form>`;
   },
 };

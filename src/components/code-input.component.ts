@@ -4,6 +4,7 @@ import { styled } from 'src/mixins/tailwind.mixin';
 import { createRef, ref, Ref } from 'lit/directives/ref.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { live } from 'lit/directives/live.js';
+import {webOtpApiClose, webOtpApiInit} from "./utilities/web-otp-api";
 
 const styles = [
   css`
@@ -65,10 +66,6 @@ export class MinidCodeInput extends styled(LitElement, styles) {
   private internals: ElementInternals;
   public inputRef: Ref<HTMLInputElement> = createRef();
 
-  //   @consume({ context: domainContext, subscribe: true })
-  //   @property({ attribute: false })
-  //   public domainData!: DomainData;
-
   @property({ type: String, reflect: true })
   value = '';
 
@@ -90,15 +87,19 @@ export class MinidCodeInput extends styled(LitElement, styles) {
   @property({ type: Number })
   length = 5;
 
+  @property({ type: String, attribute: 'font-size' })
+  fontSize = "3cqw";
+
   constructor() {
     super();
     this.internals = this.attachInternals();
   }
 
-  connectedCallback() {
+  override connectedCallback() {
     super.connectedCallback();
     this._whenSettled();
   }
+
   async _whenSettled() {
     await this.updateComplete;
     this.inputRef.value?.addEventListener(
@@ -107,6 +108,15 @@ export class MinidCodeInput extends styled(LitElement, styles) {
     );
     this.calcInputStyle();
   }
+
+  override disconnectedCallback() {
+    webOtpApiClose();
+    this.inputRef.value?.removeEventListener(
+      'animationstart',
+      this.autoFillEventHandler.bind(this)
+    );
+  }
+
 
   calcInputStyle() {
     const inputStyle = this.inputRef.value?.style;
@@ -123,15 +133,16 @@ export class MinidCodeInput extends styled(LitElement, styles) {
     const gradientErrorStyle = `linear-gradient(90deg, rgba(179, 38, 30, 60%) calc(${this.length}ch / 2), transparent 0) 0 0 / 3ch 100%`;
     inputStyle?.setProperty('--otc-error-background', gradientErrorStyle);
 
-    const otcWidth =
-      this.length === 4
-        ? '14.5'
-        : this.length === 5
-          ? '11.45'
-          : this.length === 6
-            ? '9.45'
-            : '8';
-    inputStyle?.setProperty('--otc-width', otcWidth + 'cqw');
+    // const otcWidth =
+    //   this.length === 4
+    //     ? '14.5'
+    //     : this.length === 5
+    //       ? '11.45'
+    //       : this.length === 6
+    //         ? '9.45'
+    //         : '8';
+    // inputStyle?.setProperty('--otc-width', otcWidth + 'cqw');
+    inputStyle?.setProperty('--otc-width', this.fontSize);
   }
 
   autoFillEventHandler(e: AnimationEvent) {
@@ -146,7 +157,7 @@ export class MinidCodeInput extends styled(LitElement, styles) {
 
   firstUpdated(_changedProperties: PropertyValues) {
     this.focus();
-    // webOtpApiInit(this.renderRoot);
+    webOtpApiInit(this.renderRoot);
   }
 
   focus(options?: FocusOptions) {
@@ -155,13 +166,6 @@ export class MinidCodeInput extends styled(LitElement, styles) {
     notMobile && this.inputRef.value?.focus(options);
   }
 
-  override disconnectedCallback() {
-    // webOtpApiClose();
-    this.inputRef.value?.removeEventListener(
-      'animationstart',
-      this.autoFillEventHandler.bind(this)
-    );
-  }
 
   onFocusOut() {
     for (let i = 0; i < this.length; i++) {
@@ -183,8 +187,7 @@ export class MinidCodeInput extends styled(LitElement, styles) {
   updated(_changedProperties: PropertyValues): void {
     // highlight current char
     for (let i = 0; i < this.length; i++) {
-      const color =
-        i === this.value.length ? this.caretHighlightColor : this.caretColor;
+      const color = i === this.value.length ? this.caretHighlightColor : this.caretColor;
       this.inputRef.value?.style.setProperty(`--char-${i + 1}-color`, color);
     }
 
@@ -195,6 +198,12 @@ export class MinidCodeInput extends styled(LitElement, styles) {
       this.inputRef!.value
     );
   }
+
+  onClick() { // clear input to the right of where user clicked in the input field
+    // this.otc = this.otc.substring(0, this.inputRef.value?.selectionEnd || 0);
+    this.value = this.value.substring(0, this.selectionEnd || 0);
+  }
+
 
   override render() {
     const errorDiv = this.error
@@ -235,6 +244,7 @@ export class MinidCodeInput extends styled(LitElement, styles) {
           @focusin="${() => {
             this.onFocusIn();
           }}"
+          @click="${this.onClick}"
           ?required="${this.required}"
           ?disabled="${this.disabled}"
           maxlength=${this.length}

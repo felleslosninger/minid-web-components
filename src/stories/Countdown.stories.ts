@@ -23,11 +23,11 @@ export default meta;
 type Story = StoryObj;
 
 export const Primary: Story = {
-  render: (args) => html`<mid-countdown expiry=${args.expiry} size=${args.size}></mid-countdown>`,
+  render: (args) => html`<mid-countdown expiry=${args.expiry} size=${args.size}><span>Ta-da!</span></mid-countdown>`,
 };
 
 export const WithSizeProp: Story = {
-  render: (args) => html`<mid-countdown expiry=${args.expiry} size=${args.size}></mid-countdown>`,
+  render: (args) => html`<mid-countdown expiry=${args.expiry} size=${args.size}><span>I can't believe it's over already...</span></mid-countdown>`,
   args: {
     expiry: Date.now() + 145 * 1000,
     size: 100,
