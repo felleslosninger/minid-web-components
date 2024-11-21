@@ -24,7 +24,10 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "types": ["vite/client"],
+    "types": [
+      "vite/client",
+      "webappsec-credential-management"
+    ],
     "baseUrl": ".",
     "paths": {
       "src/*": ["./src/*"],
@@ -34,7 +37,10 @@
       "css/*": ["./src/css/*"]
     }
   },
-  "include": ["src/**/*.ts"],
+  "include": [
+    "src/**/*.ts",
+    "node_modules/@types/webappsec-credential-management/index.d.ts"
+  ],
   "exclude": ["src/**/*.stories.ts", "src/stories"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
