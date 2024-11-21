@@ -67,19 +67,22 @@ jobs:
       - name: Build CDN version
         run: yarn build:cdn
 
-      - name: Checkout CDN Repo
-        uses: actions/checkout@v4
+      - name: Setup SSH Deploy Key
+        uses: shimataro/ssh-key-action@v2
         with:
-          repository: 'felleslosninger/minid-cdn'
-          token: ${{ secrets.CDN_PUSH_TOKEN }}
-          path: cdn
-          ref: main
+          key: ${{ secrets.CDN_DEPLOY_KEY }}
+          known_hosts: ${{ secrets.KNOWN_HOSTS }}
+
+      - name: Clone CDN Repo (using SSH)
+        run: |
+          git clone git@github.com:felleslosninger/minid-cdn.git cdn
 
       - name: Create Versioned Folder in CDN Repo
         run: |
           cd cdn
           VERSION=$(node -p "require('../package.json').version")
           mkdir -p minid-elements/$VERSION
+          echo $VERSION > minid-elements/version.txt
 
       - name: Copy CDN Files to Versioned Folder
         run: |
@@ -90,24 +93,27 @@ jobs:
           cd cdn/minid-elements
           ln -sfn $VERSION latest
 
-      - name: Write Version to File
+      - name: Commit Changes to CDN Repo (using SSH)
         run: |
           cd cdn
-          VERSION=$(node -p "require('../package.json').version")
-          echo $VERSION > version.txt
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add .
+          git commit -m "[skip actions] Deploy version $VERSION to CDN"
+          git push origin main
 
-      - name: Commit Changes to CDN Repo (using API)
-        run: |
-          cd cdn
-          FILES=$(git ls-files -m)
-          for FILE in $FILES; do
-            CONTENT=$(base64 -w 0 $FILE)
-            FILENAME=$(basename $FILE)
-            SHA=$(curl -s -H "Authorization: token ${{ secrets.CDN_PUSH_TOKEN }}" https://api.github.com/repos/felleslosninger/minid-cdn/contents/$FILE?ref=main | jq -r .sha)
-            if [ "$SHA" == "null" ]; then
-              SHA=""
-            fi
-            curl -s -X PUT -H "Authorization: token ${{ secrets.CDN_PUSH_TOKEN }}" \
-              -d "{\"message\":\"[skip actions] Deploy version $VERSION to CDN\", \"content\":\"$CONTENT\", \"branch\":\"main\", \"sha\":\"$SHA\"}" \
-              https://api.github.com/repos/felleslosninger/minid-cdn/contents/$FILE
-          done
+#      - name: Commit Changes to CDN Repo (using API)
+#        run: |
+#          cd cdn
+#          FILES=$(git ls-files -m)
+#          for FILE in $FILES; do
+#            CONTENT=$(base64 -w 0 $FILE)
+#            FILENAME=$(basename $FILE)
+#            SHA=$(curl -s -H "Authorization: token ${{ secrets.CDN_PUSH_TOKEN }}" https://api.github.com/repos/felleslosninger/minid-cdn/contents/$FILE?ref=main | jq -r .sha)
+#            if [ "$SHA" == "null" ]; then
+#              SHA=""
+#            fi
+#            curl -s -X PUT -H "Authorization: token ${{ secrets.CDN_PUSH_TOKEN }}" \
+#              -d "{\"message\":\"[skip actions] Deploy version $VERSION to CDN\", \"content\":\"$CONTENT\", \"branch\":\"main\", \"sha\":\"$SHA\"}" \
+#              https://api.github.com/repos/felleslosninger/minid-cdn/contents/$FILE
+#          done
