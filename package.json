@@ -79,6 +79,10 @@
     "./tooltip": {
       "import": "./dist/tooltip.component.js",
       "types": "./dist/tooltip.component.d.ts"
+    },
+    "./code-input": {
+      "import": "./dist/code-input.component.js",
+      "types": "./dist/code-input.component.d.ts"
     }
   },
   "repository": {

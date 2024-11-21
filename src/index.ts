@@ -59,6 +59,9 @@ export { MinidTextfield };
 import { MinidTooltip } from './components/tooltip.component.ts';
 export { MinidTooltip };
 
+import { MinidCodeInput } from './components/code-input.component.ts';
+export { MinidCodeInput };
+
 declare global {
   interface HTMLElementTagNameMap {
     'countdown-component': CountdownComponent;
@@ -79,5 +82,6 @@ declare global {
     'mid-spinner': MinidSpinner;
     'mid-textfield': MinidTextfield;
     'mid-tooltip': MinidTooltip;
+    'mid-code-input': MinidCodeInput;
   }
 }
