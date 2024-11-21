@@ -25,17 +25,18 @@ export const Main: Story = {
   decorators: [(story) => html`<div class="mb-64">${story()}</div>`],
   render: ({ value }: PhoneInputProps) => html`
     <mid-combobox>
-      <mid-phone-input value=${ifDefined(value)} slot="trigger">
-        <span slot="prefix">${'🇳🇴'}</span>
+      <mid-phone-input
+        countrycode="+47"
+        value=${ifDefined(value)}
+        slot="trigger"
+      >
+        <div class="mr-1 flex h-full items-center" slot="prefix">${'🇳🇴'}</div>
       </mid-phone-input>
       <mid-menu style="--max-height: 14rem">
-        ${countries.map(
-          (country) => html`
-            <mid-menu-item value=${country.code}
-              >${country.flag} - ${country.name}</mid-menu-item
-            >
-          `
-        )}
+        ${countries.map((country) => {
+          // prettier-ignore
+          return html`<mid-menu-item value=${country.dial_code}>${country.flag} - ${country.name} <span class="text-slate-500">(${country.dial_code})</span> </mid-menu-item>`;
+        })}
       </mid-menu>
     </mid-combobox>
   `,

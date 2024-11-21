@@ -10,10 +10,6 @@ const styles = [
       display: flex;
     }
 
-    /* .field {
-      height: 3rem;
-    } */
-
     .country-code,
     .phone-number {
       outline: none;
@@ -42,23 +38,23 @@ export class MinidPhoneInput extends styled(LitElement, styles) {
   @query('.country-code')
   countryCodeInput!: HTMLInputElement;
 
+  @property()
+  value = '';
+
   @query('.phone-number')
   phoneNumberInput!: HTMLInputElement;
 
-  @property()
-  value = '';
+  @property({ reflect: true })
+  countrycode = '';
+
+  @property({ reflect: true })
+  phonenumber = '';
 
   @property()
   label = '';
 
   @state()
   hasFocus = false;
-
-  @property({ reflect: true })
-  countryCode = '';
-
-  @property({ reflect: true })
-  phoneNumber = '';
 
   private handleBlur() {
     this.hasFocus = false;
@@ -75,15 +71,15 @@ export class MinidPhoneInput extends styled(LitElement, styles) {
   }
 
   private handleInput() {
-    this.countryCode = this.countryCodeInput.value;
+    this.countrycode = this.countryCodeInput.value;
 
     this.dispatchEvent(
       new CustomEvent('mid-input', {
         bubbles: true,
         composed: true,
         detail: {
-          countryCode: this.countryCode,
-          phoneNumber: this.phoneNumber,
+          countryCode: this.countrycode,
+          phoneNumber: this.phonenumber,
         },
       })
     );
@@ -151,7 +147,7 @@ export class MinidPhoneInput extends styled(LitElement, styles) {
             size="5"
             maxlength="5"
             aria-describedby="description"
-            .value=${live(this.countryCode)}
+            .value=${live(this.countrycode)}
             @input=${this.handleInput}
             @change=${this.handleChange}
             @focus=${this.handleFocus}
@@ -161,7 +157,7 @@ export class MinidPhoneInput extends styled(LitElement, styles) {
           <input
             class="phone-number"
             part="phone-number"
-            .value=${live(this.phoneNumber)}
+            .value=${live(this.phonenumber)}
             @input=${this.handleInput}
             @change=${this.handleChange}
             @focus=${this.handleFocus}

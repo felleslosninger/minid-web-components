@@ -1,5 +1,5 @@
 import { css, LitElement } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { customElement, property, query } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { html, literal } from 'lit/static-html.js';
@@ -31,6 +31,9 @@ const styles = [
 
 @customElement('mid-button')
 export class MinidButton extends styled(LitElement, styles) {
+  @query('.button')
+  button!: HTMLButtonElement | HTMLLinkElement;
+
   /**
    * The variant of the button
    */
@@ -95,6 +98,7 @@ export class MinidButton extends styled(LitElement, styles) {
     return html`<${tag}
       part="base"
       class="${classMap({
+        button: true,
         'fds-focus': true,
         'fds-btn': true,
         'fds-btn--first': true,
