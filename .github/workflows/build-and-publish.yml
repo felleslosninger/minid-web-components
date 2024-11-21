@@ -102,18 +102,43 @@ jobs:
 #          git commit -m "[skip actions] Deploy version $VERSION to CDN"
 #          git push origin main
 
-      - name: Commit Changes to CDN Repo (using API)
+#      - name: Commit Changes to CDN Repo (using API)
+#        run: |
+#          cd cdn
+#          FILES=$(git ls-files -m)
+#          for FILE in $FILES; do
+#            CONTENT=$(base64 -w 0 $FILE)
+#            FILENAME=$(basename $FILE)
+#            SHA=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_SECRET }}" https://api.github.com/repos/felleslosninger/minid-cdn/contents/$FILE?ref=main | jq -r .sha)
+#            if [ "$SHA" == "null" ]; then
+#              SHA=""
+#            fi
+#            echo "Committing $FILE..."
+#            curl -s -X PUT -H "Authorization: token ${{ secrets.GITHUB_SECRET }}" \
+#              -d "{\"message\":\"[skip actions] Deploy version $VERSION to CDN\", \"content\":\"$CONTENT\", \"branch\":\"main\", \"sha\":\"$SHA\"}" \
+#              https://api.github.com/repos/felleslosninger/minid-cdn/contents/$FILE
+#          done
+
+      - name: Commit Changes to CDN Repo (using API with Git)
         run: |
           cd cdn
-          FILES=$(git ls-files -m)
-          for FILE in $FILES; do
-            CONTENT=$(base64 -w 0 $FILE)
-            FILENAME=$(basename $FILE)
-            SHA=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_SECRET }}" https://api.github.com/repos/felleslosninger/minid-cdn/contents/$FILE?ref=main | jq -r .sha)
-            if [ "$SHA" == "null" ]; then
-              SHA=""
-            fi
-            curl -s -X PUT -H "Authorization: token ${{ secrets.GITHUB_SECRET }}" \
-              -d "{\"message\":\"[skip actions] Deploy version $VERSION to CDN\", \"content\":\"$CONTENT\", \"branch\":\"main\", \"sha\":\"$SHA\"}" \
-              https://api.github.com/repos/felleslosninger/minid-cdn/contents/$FILE
-          done
+          git add . 
+          git commit -m "Deploy version $VERSION to CDN"
+
+          # Get the latest commit SHA
+          SHA=$(git rev-parse HEAD)
+
+          # Create a tree object with all changes
+          TREE_SHA=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -X POST -d "{\"tree\": $(git ls-tree -r $SHA --name-only | xargs -I {} sh -c 'echo \"{\\\"path\\\": \\\"{}\\\", \\\"mode\\\": \\\"100644\\\", \\\"type\\\": \\\"blob\\\", \\\"sha\\\": \\\"$(git rev-parse $SHA:{})\\\"}"')}" \
+            https://api.github.com/repos/felleslosninger/minid-cdn/git/trees | jq -r '.sha')
+
+          # Create a commit object pointing to the tree
+          COMMIT_SHA=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -X POST -d "{\"message\": \"Deploy version $VERSION to CDN\", \"tree\": \"$TREE_SHA\", \"parents\": [\"$SHA\"]}" \
+            https://api.github.com/repos/felleslosninger/minid-cdn/git/commits | jq -r '.sha')
+
+          # Update the main branch to point to the new commit
+          curl -s -X PATCH -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -d "{\"sha\": \"$COMMIT_SHA\"}" \
+            https://api.github.com/repos/felleslosninger/minid-cdn/git/refs/heads/main
