@@ -84,9 +84,12 @@ jobs:
           cd minid-elements
           echo $VERSION > version.txt
           ln -sfn $VERSION latest          
+          pwd
 
       - name: Commit Changes to CDN Repo (using SSH)
         run: |
+          pwd
+          ls -la
           VERSION=$(node -p "require('package.json').version")
           cd cdn
           git config user.name 'github-actions[bot]'
