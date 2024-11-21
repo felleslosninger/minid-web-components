@@ -88,10 +88,10 @@ jobs:
         run: |
           cp -r dist-cdn/* cdn/minid-elements/$VERSION
 
-      - name: Create Symlink to Latest Version
-        run: |
-          cd cdn/minid-elements
-          ln -sfn $VERSION latest
+#      - name: Create Symlink to Latest Version
+#        run: |
+#          cd cdn/minid-elements
+#          ln -sfn $VERSION latest
 
 #      - name: Commit Changes to CDN Repo (using SSH)
 #        run: |
