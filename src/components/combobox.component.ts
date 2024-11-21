@@ -106,9 +106,9 @@ export class MinidCombobox extends styled(LitElement, styles) {
       console.log('found textfield');
     }
     console.log('first updated', input);
-    input?.addEventListener('input', console.log);
-    input?.addEventListener('mid-focus', (e) => this.show());
-    input?.addEventListener('mid-blur', (e) => this.hide());
+    // input?.addEventListener('input', console.log);
+    // input?.addEventListener('mid-focus', (e) => this.show());
+    // input?.addEventListener('mid-blur', (e) => this.hide());
 
     this.panel.hidden = !this.open;
 

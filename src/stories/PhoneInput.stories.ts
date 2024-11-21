@@ -5,10 +5,12 @@ import '../components/combobox.component';
 import '../components/menu.component';
 import '../components/menu-item.component';
 import '../components/phone-input.component';
+import '../components/icon/icon.component';
 import { ifDefined } from 'lit/directives/if-defined.js';
 
 type PhoneInputProps = {
   value?: string;
+  defaultcountry?: string;
 };
 
 const meta: Meta = {
@@ -22,22 +24,32 @@ export default meta;
 type Story = StoryObj<PhoneInputProps>;
 
 export const Main: Story = {
+  args: {
+    value: '+47',
+    defaultcountry: 'NO',
+  },
   decorators: [(story) => html`<div class="mb-64">${story()}</div>`],
-  render: ({ value }: PhoneInputProps) => html`
+  render: ({ value, defaultcountry }: PhoneInputProps) => html`
     <mid-combobox>
       <mid-phone-input
-        countrycode="+47"
+        defaultcountry=${ifDefined(defaultcountry)}
         value=${ifDefined(value)}
         slot="trigger"
       >
-        <div class="mr-1 flex h-full items-center" slot="prefix">${'🇳🇴'}</div>
+        <!-- <div class="mr-1 flex h-full items-center" slot="prefix">${'🇳🇴'}</div> -->
+        <!-- <mid-icon
+          class="h-4 w-6 overflow-hidden rounded"
+          slot="prefix"
+          library="country"
+          name="NO"
+        ></mid-icon> -->
       </mid-phone-input>
-      <mid-menu style="--max-height: 14rem">
+      <!-- <mid-menu style="--max-height: 14rem">
         ${countries.map((country) => {
-          // prettier-ignore
-          return html`<mid-menu-item value=${country.dial_code}>${country.flag} - ${country.name} <span class="text-slate-500">(${country.dial_code})</span> </mid-menu-item>`;
-        })}
-      </mid-menu>
+        // prettier-ignore
+        return html`<mid-menu-item value=${country.dial_code}><mid-icon class="h-4 w-6 overflow-hidden rounded" library="country" name="${country.code}"></mid-icon> - ${country.name} <span class="text-slate-500">(${country.dial_code})</span> </mid-menu-item>`;
+      })}
+      </mid-menu> -->
     </mid-combobox>
   `,
 };
