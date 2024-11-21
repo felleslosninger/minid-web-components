@@ -64,9 +64,6 @@ jobs:
       #################################
       # Publish to MinID CDN
       ################################
-      - name: Build CDN version
-        run: yarn build:cdn
-
       - name: Setup SSH Deploy Key
         uses: shimataro/ssh-key-action@v2
         with:
@@ -77,15 +74,16 @@ jobs:
         run: |
           git clone git@github.com:felleslosninger/minid-cdn.git cdn
 
-      - name: Create and Copy Files to CDN Repo
+      - name: Build CDN version, and copy files to CDN repo
         run: |
+          yarn build:cdn
           cd cdn
           VERSION=$(node -p "require('../package.json').version")
-          mkdir -p minid-elements/${VERSION}
-          echo $VERSION > minid-elements/version.txt          
-          cp -r dist-cdn/* cdn/minid-elements/$VERSION
+          mkdir -p minid-elements/${VERSION}                    
+          cp -r ../dist-cdn/* minid-elements/$VERSION
           cd minid-elements
-          ln -sfn $VERSION latest
+          echo $VERSION > version.txt
+          ln -sfn $VERSION latest          
 
       - name: Commit Changes to CDN Repo (using SSH)
         run: |
