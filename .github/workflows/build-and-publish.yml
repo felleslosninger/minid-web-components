@@ -96,8 +96,8 @@ jobs:
       - name: Commit Changes to CDN Repo (using SSH)
         run: |
           cd cdn
-          git config user.name ""
-          git config user.email ""
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
           git add .
           git commit -m "[skip actions] Deploy version $VERSION to CDN"
           git push origin main
@@ -109,11 +109,11 @@ jobs:
 #          for FILE in $FILES; do
 #            CONTENT=$(base64 -w 0 $FILE)
 #            FILENAME=$(basename $FILE)
-#            SHA=$(curl -s -H "Authorization: token ${{ secrets.CDN_PUSH_TOKEN }}" https://api.github.com/repos/felleslosninger/minid-cdn/contents/$FILE?ref=main | jq -r .sha)
+#            SHA=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_SECRET }}" https://api.github.com/repos/felleslosninger/minid-cdn/contents/$FILE?ref=main | jq -r .sha)
 #            if [ "$SHA" == "null" ]; then
 #              SHA=""
 #            fi
-#            curl -s -X PUT -H "Authorization: token ${{ secrets.CDN_PUSH_TOKEN }}" \
+#            curl -s -X PUT -H "Authorization: token ${{ secrets.GITHUB_SECRET }}" \
 #              -d "{\"message\":\"[skip actions] Deploy version $VERSION to CDN\", \"content\":\"$CONTENT\", \"branch\":\"main\", \"sha\":\"$SHA\"}" \
 #              https://api.github.com/repos/felleslosninger/minid-cdn/contents/$FILE
 #          done
