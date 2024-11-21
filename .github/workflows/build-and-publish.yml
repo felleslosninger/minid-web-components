@@ -96,8 +96,8 @@ jobs:
       - name: Commit Changes to CDN Repo (using SSH)
         run: |
           cd cdn
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
+          git config user.name ""
+          git config user.email ""
           git add .
           git commit -m "[skip actions] Deploy version $VERSION to CDN"
           git push origin main
