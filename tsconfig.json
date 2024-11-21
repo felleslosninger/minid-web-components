@@ -26,7 +26,7 @@
     "noFallthroughCasesInSwitch": true,
     "types": [
       "vite/client",
-      "webappsec-credential-management"
+//      "@types/webappsec-credential-management"
     ],
     "baseUrl": ".",
     "paths": {
@@ -38,8 +38,7 @@
     }
   },
   "include": [
-    "src/**/*.ts",
-    "node_modules/@types/webappsec-credential-management/index.d.ts"
+    "src/**/*.ts"
   ],
   "exclude": ["src/**/*.stories.ts", "src/stories"],
   "references": [{ "path": "./tsconfig.node.json" }]

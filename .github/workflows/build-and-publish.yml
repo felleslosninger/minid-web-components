@@ -64,52 +64,50 @@ jobs:
       #################################
       # Publish to MinID CDN
       ################################
-#      - name: Build CDN version
-#        run: yarn build:cdn
-#
-#      - name: Clone CDN Repo (using API)
-#        run: |
-#          mkdir cdn
-#          cd cdn
-#          curl -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -H "Accept: application/vnd.github+json" https://api.github.com/repos/felleslosninger/minid-cdn/zipball > main.zip || exit -1
-#          curl -H "Authorization: Bearer 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" -H "Accept: application/vnd.github+json" https://api.github.com/repos/felleslosninger/minid-cdn/zipball/main > main.zip || exit -1
-#          unzip main.zip
-#          mv *(felleslosninger-minid-cdn-*)/* .
-#          rm -rf *(felleslosninger-minid-cdn-*) main.zip
-#
-#      - name: Create Versioned Folder in CDN Repo
-#        run: |
-#          cd cdn
-#          VERSION=$(node -p "require('../package.json').version")
-#          mkdir -p minid-elements/$VERSION
-#
-#      - name: Copy CDN Files to Versioned Folder
-#        run: |
-#          cp -r dist-cdn/* cdn/minid-elements/$VERSION
-#
-#      - name: Create Symlink to Latest Version
-#        run: |
-#          cd cdn/minid-elements
-#          ln -sfn $VERSION latest
-#
-#      - name: Write Version to File
-#        run: |
-#          cd cdn
-#          VERSION=$(node -p "require('../package.json').version")
-#          echo $VERSION > version.txt
-#
-#      - name: Commit Changes to CDN Repo (using API)
-#        run: |
-#          cd cdn
-#          FILES=$(git ls-files -m)
-#          for FILE in $FILES; do
-#            CONTENT=$(base64 -w 0 $FILE)
-#            FILENAME=$(basename $FILE)
-#            SHA=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/felleslosninger/minid-cdn/contents/$FILE?ref=main | jq -r .sha)
-#            if [ "$SHA" == "null" ]; then
-#              SHA=""
-#            fi
-#            curl -s -X PUT -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-#              -d "{\"message\":\"[skip actions] Deploy version $VERSION to CDN\", \"content\":\"$CONTENT\", \"branch\":\"main\", \"sha\":\"$SHA\"}" \
-#              https://api.github.com/repos/felleslosninger/minid-cdn/contents/$FILE
-#          done
+      - name: Build CDN version
+        run: yarn build:cdn
+
+      - name: Checkout CDN Repo
+        uses: actions/checkout@v4
+        with:
+          repository: 'felleslosninger/minid-cdn'
+          token: ${{ secrets.CDN_PUSH_TOKEN }}
+          path: cdn
+          ref: main
+
+      - name: Create Versioned Folder in CDN Repo
+        run: |
+          cd cdn
+          VERSION=$(node -p "require('../package.json').version")
+          mkdir -p minid-elements/$VERSION
+
+      - name: Copy CDN Files to Versioned Folder
+        run: |
+          cp -r dist-cdn/* cdn/minid-elements/$VERSION
+
+      - name: Create Symlink to Latest Version
+        run: |
+          cd cdn/minid-elements
+          ln -sfn $VERSION latest
+
+      - name: Write Version to File
+        run: |
+          cd cdn
+          VERSION=$(node -p "require('../package.json').version")
+          echo $VERSION > version.txt
+
+      - name: Commit Changes to CDN Repo (using API)
+        run: |
+          cd cdn
+          FILES=$(git ls-files -m)
+          for FILE in $FILES; do
+            CONTENT=$(base64 -w 0 $FILE)
+            FILENAME=$(basename $FILE)
+            SHA=$(curl -s -H "Authorization: token ${{ secrets.CDN_PUSH_TOKEN }}" https://api.github.com/repos/felleslosninger/minid-cdn/contents/$FILE?ref=main | jq -r .sha)
+            if [ "$SHA" == "null" ]; then
+              SHA=""
+            fi
+            curl -s -X PUT -H "Authorization: token ${{ secrets.CDN_PUSH_TOKEN }}" \
+              -d "{\"message\":\"[skip actions] Deploy version $VERSION to CDN\", \"content\":\"$CONTENT\", \"branch\":\"main\", \"sha\":\"$SHA\"}" \
+              https://api.github.com/repos/felleslosninger/minid-cdn/contents/$FILE
+          done
