@@ -89,14 +89,14 @@ jobs:
         run: |
           cp -r dist-cdn/* cdn/minid-elements/$VERSION
 
-#      - name: Commit Changes to CDN Repo (using SSH)
-#        run: |
-#          cd cdn
-##          git config user.name 'github-actions[bot]'
-##          git config user.email 'github-actions[bot]@users.noreply.github.com'
-#          git add .
-#          git commit -m "[skip actions] Deploy version $VERSION to CDN"
-#          git push origin main
+      - name: Commit Changes to CDN Repo (using SSH)
+        run: |
+          cd cdn
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git add .
+          git commit -m "[skip actions] Deploy version $VERSION to CDN"
+          git push origin main
 
 #      - name: Commit Changes to CDN Repo (using API)
 #        run: |
