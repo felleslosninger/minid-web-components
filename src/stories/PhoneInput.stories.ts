@@ -7,16 +7,19 @@ import '../components/menu-item.component';
 import '../components/phone-input.component';
 import '../components/icon/icon.component';
 import { ifDefined } from 'lit/directives/if-defined.js';
+import { CountryCode, getCountries } from 'libphonenumber-js';
 
 type PhoneInputProps = {
   value?: string;
-  defaultcountry?: string;
+  defaultcountry?: CountryCode;
 };
 
 const meta: Meta = {
   title: 'Komponenter/Phone Input',
   component: 'mid-phone-input',
-  argTypes: {},
+  argTypes: {
+    defaultcountry: { control: { type: 'select' }, options: getCountries() },
+  },
 };
 
 export default meta;
@@ -25,7 +28,6 @@ type Story = StoryObj<PhoneInputProps>;
 
 export const Main: Story = {
   args: {
-    value: '+47',
     defaultcountry: 'NO',
   },
   decorators: [(story) => html`<div class="mb-64">${story()}</div>`],
@@ -44,12 +46,12 @@ export const Main: Story = {
           name="NO"
         ></mid-icon> -->
       </mid-phone-input>
-      <!-- <mid-menu style="--max-height: 14rem">
+      <mid-menu style="--max-height: 14rem">
         ${countries.map((country) => {
-        // prettier-ignore
-        return html`<mid-menu-item value=${country.dial_code}><mid-icon class="h-4 w-6 overflow-hidden rounded" library="country" name="${country.code}"></mid-icon> - ${country.name} <span class="text-slate-500">(${country.dial_code})</span> </mid-menu-item>`;
-      })}
-      </mid-menu> -->
+          // prettier-ignore
+          return html`<mid-menu-item value=${country.dial_code}><mid-icon class="h-4 w-6 overflow-hidden rounded" library="country" name="${country.code}"></mid-icon> - ${country.name} <span class="text-slate-500">(${country.dial_code})</span> </mid-menu-item>`;
+        })}
+      </mid-menu>
     </mid-combobox>
   `,
 };

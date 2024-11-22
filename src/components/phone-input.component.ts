@@ -3,10 +3,14 @@ import { customElement, property, query, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { live } from 'lit/directives/live.js';
 import { styled } from 'src/mixins/tailwind.mixin';
-import parsePhoneNumber, { AsYouType } from 'libphonenumber-js';
+import parsePhoneNumber, {
+  AsYouType,
+  parseIncompletePhoneNumber,
+  formatIncompletePhoneNumber,
+  getCountryCallingCode,
+  CountryCode,
+} from 'libphonenumber-js';
 import './icon/icon.component';
-import { ifDefined } from 'lit/directives/if-defined.js';
-import { watch } from 'src/internal/watch';
 
 const styles = [
   css`
@@ -22,8 +26,20 @@ const styles = [
       /* padding: 0 1rem; */
     }
 
+    .phone-number {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+    }
+
     .country-code {
       border-right: 1px solid currentColor;
+    }
+
+    .country-button {
+      border: 1px solid var(--fds-semantic-border-input-default);
+      border-right: 0;
+      border-top-left-radius: var(--fds-border_radius-medium);
+      border-bottom-left-radius: var(--fds-border_radius-medium);
     }
 
     .fds-focus:focus-within {
@@ -46,6 +62,9 @@ export class MinidPhoneInput extends styled(LitElement, styles) {
   @query('.phone-number')
   phoneNumberInput!: HTMLInputElement;
 
+  /**
+   *
+   */
   @property()
   value = '';
 
@@ -58,8 +77,21 @@ export class MinidPhoneInput extends styled(LitElement, styles) {
   @property()
   label = '';
 
+  /**
+   * The country selected
+   */
   @property()
-  defaultcountry?: string;
+  country?: string;
+
+  /**
+   * If defaultCountry is specified then the phone number can
+   * be input both in "international" format and "national" format.
+   * A phone number that's being input in "national" format will be
+   * parsed as a phone number belonging to the defaultCountry. Must be
+   * a supported country code. Example: defaultCountry="NO"
+   */
+  @property()
+  defaultcountry?: CountryCode;
 
   @state()
   hasFocus = false;
@@ -67,18 +99,19 @@ export class MinidPhoneInput extends styled(LitElement, styles) {
   @state()
   initialValue = '';
 
-  @state()
-  country?: string;
-
-  handleCountryClick() {}
+  handleCountryClick() {
+    this.dispatchEvent(
+      new Event('mid-country-click', { composed: true, bubbles: true })
+    );
+  }
 
   connectedCallback(): void {
     super.connectedCallback();
     if (this.value) {
       this.initialValue = this.value;
       // this.asYouType.input(this.value);
-      this.setValue(this.value);
     }
+    this.setValue(this.value);
 
     if (this.defaultcountry) {
       this.country = this.defaultcountry;
@@ -102,7 +135,7 @@ export class MinidPhoneInput extends styled(LitElement, styles) {
   private handleInput(event: InputEvent) {
     // this.countrycode = this.countryCodeInput.value;
     this.setValue(this.phoneNumberInput.value);
-
+    this.asYouType.getTemplate();
     this.dispatchEvent(
       new CustomEvent('mid-input', {
         bubbles: true,
@@ -125,21 +158,32 @@ export class MinidPhoneInput extends styled(LitElement, styles) {
   private setValue(value: string) {
     // this.countrycode = this.countryCodeInput.value;
 
-    if (!value.startsWith('+')) {
-      value = '+' + value;
+    console.log(value);
+
+    if (!value) {
+      console.log('📭', !value);
+
+      if (this.defaultcountry) {
+        this.countrycode = getCountryCallingCode(this.defaultcountry);
+        value = `+${this.countrycode} `;
+      }
     }
 
     const parsed = parsePhoneNumber(value);
+    const incomplete = parseIncompletePhoneNumber(value);
+    const incompleteFormatted = formatIncompletePhoneNumber(value);
     // const parsed = this.asYouType.getNumber()?.number;
 
     // const formatted = this.asYouType.getNumber()?.formatInternational();
     // const countryCode = this.asYouType.getCallingCode();
 
     this.countrycode = parsed?.countryCallingCode;
-    this.country = parsed?.country;
-    this.value = parsed?.formatInternational() ?? value;
+    this.country = parsed?.country ?? this.defaultcountry;
+    this.value = incompleteFormatted;
 
-    console.log(value, parsed);
+    console.log(value, parsed, incomplete);
+    console.log(incompleteFormatted);
+
     // console.log(formatted, this.initialValue, countryCode);
   }
 
@@ -147,7 +191,6 @@ export class MinidPhoneInput extends styled(LitElement, styles) {
     const lg = false;
     const md = true;
     const sm = false;
-    console.log(this.country);
 
     return html`
       <div
@@ -186,16 +229,16 @@ export class MinidPhoneInput extends styled(LitElement, styles) {
           class="${classMap({
             field: true,
 
-            'fds-textfield__field': true,
-            'fds-textfield__input': true,
-            'fds-focus': this.hasFocus,
-          })}"
+            // 'fds-textfield__field': true,
+            // 'fds-textfield__input': true,
+            // 'fds-focus': this.hasFocus,
+          })} flex"
         >
           <span class="prefix">
             <slot name="prefix"></slot>
           </span>
           <button
-            class="flex h-full items-center"
+            class="country-button fds-focus flex h-full items-center border border-text-action-active pl-3"
             iconstyled
             variant="tertiary"
             @click=${this.handleCountryClick}
@@ -208,12 +251,9 @@ export class MinidPhoneInput extends styled(LitElement, styles) {
                     name="${this.country}"
                   ></mid-icon>
                 `
-              : html`<div class="h-4 w-6 overflow-hidden rounded bg-slate-500">
-                  <mid-icon
-                    style="color: white"
-                    name="questionmark-diamond"
-                  ></mid-icon>
-                </div>`}
+              : html`<div
+                  class="h-4 w-6 overflow-hidden rounded bg-surface-neutral-active"
+                ></div>`}
             <mid-icon name="chevron-down"></mid-icon>
           </button>
           <!-- <input
@@ -231,7 +271,7 @@ export class MinidPhoneInput extends styled(LitElement, styles) {
           /> -->
 
           <input
-            class="phone-number"
+            class="phone-number fds-textfield__field fds-textfield__input fds-focus"
             part="phone-number"
             .value=${live(this.value)}
             @input=${this.handleInput}
@@ -239,10 +279,6 @@ export class MinidPhoneInput extends styled(LitElement, styles) {
             @focus=${this.handleFocus}
             @blur=${this.handleBlur}
           />
-
-          <span part="suffix" class="suffix">
-            <slot name="suffix"></slot>
-          </span>
         </div>
       </div>
     `;

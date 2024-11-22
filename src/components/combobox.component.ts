@@ -110,6 +110,8 @@ export class MinidCombobox extends styled(LitElement, styles) {
     // input?.addEventListener('mid-focus', (e) => this.show());
     // input?.addEventListener('mid-blur', (e) => this.hide());
 
+    input.addEventListener('mid-country-click', () => this.show());
+
     this.panel.hidden = !this.open;
 
     // If the dropdown is visible on init, update its position
