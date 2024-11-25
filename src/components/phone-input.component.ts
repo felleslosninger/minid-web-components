@@ -154,7 +154,14 @@ export class MinidPhoneInput extends styled(LitElement, styles) {
 
   private handleInput(event: InputEvent) {
     // this.setValue(this.input.value);
-    this.asYouTypeValue(event);
+
+    if (!this.input.value.startsWith('+')) {
+      console.log('input.value', this.input.value);
+
+      this.value = '+' + this.value;
+    }
+    // this.asYouTypeValue(event);
+    this.setValue(this.input.value);
 
     this.dispatchEvent(
       new CustomEvent('mid-input', {
@@ -230,7 +237,18 @@ export class MinidPhoneInput extends styled(LitElement, styles) {
 
     this.countrycode = parsed?.countryCallingCode;
     this.country = parsed?.country ?? this.defaultcountry;
+
+    const start = this.input.selectionStart;
+    const end = this.input.selectionEnd;
+    // const shouldMoveCursor = start !== this.value.length;
+    const shouldMoveCursor = true;
+    console.log('start:', start, 'end', end);
+
     this.value = incompleteFormatted;
+
+    if (shouldMoveCursor) {
+      this.input.setSelectionRange(start, end);
+    }
 
     console.log(value, parsed, incomplete);
     console.log(incompleteFormatted);
@@ -240,14 +258,13 @@ export class MinidPhoneInput extends styled(LitElement, styles) {
 
   @watch('country')
   handleCountryChange() {
-    console.log('🇳🇴', this.country);
     this.formatter = new AsYouType(this.country);
     this.phonePrefix = this.country
       ? `+${getCountryCallingCode(this.country)}`
       : '+';
-    console.log('🇳🇴', this.country, this.phonePrefix, this.input?.value);
     this.value = this.phonePrefix;
     this.phonePrefix && this.formatter.input(this.phonePrefix);
+    console.log('🇳🇴', this.country, this.phonePrefix, this.input?.value);
   }
 
   override render() {
