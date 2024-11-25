@@ -110,7 +110,9 @@ export class MinidCombobox extends styled(LitElement, styles) {
     // input?.addEventListener('mid-focus', (e) => this.show());
     // input?.addEventListener('mid-blur', (e) => this.hide());
 
-    input.addEventListener('mid-country-click', () => this.show());
+    input.addEventListener('mid-country-click', () =>
+      this.open ? this.hide() : this.show()
+    );
 
     this.panel.hidden = !this.open;
 
@@ -168,7 +170,7 @@ export class MinidCombobox extends styled(LitElement, styles) {
       // Tabbing within an open menu should close the dropdown and refocus the trigger
       if (
         this.open &&
-        document.activeElement?.tagName.toLowerCase() === 'sl-menu-item'
+        document.activeElement?.tagName.toLowerCase() === 'mid-menu-item'
       ) {
         event.preventDefault();
         this.hide();
@@ -448,11 +450,12 @@ export class MinidCombobox extends styled(LitElement, styles) {
         ?active=${this.open}
       >
         <slot class="dropdown__trigger" slot="anchor" name="trigger"> </slot>
-        <div
-          aria-hidden=${this.open ? 'false' : 'true'}
-          aria-labelledby="dropdown"
-        >
+        <div>
+
+          <!-- aria-hidden=${this.open ? 'false' : 'true'}
+          aria-labelledby="dropdown" -->
           <slot class="dropdown__panel" part="panel"></slot>
+        </div>
         </div>
       </mid-popup>
     `;

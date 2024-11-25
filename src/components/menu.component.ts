@@ -49,6 +49,8 @@ export class MinidMenu extends styled(LitElement, styles) {
     // This isn't true. But we use it for TypeScript checks below.
     const item = target as MinidMenuItem;
 
+    console.log(item.value);
+
     // if (item.type === 'checkbox') {
     //   item.checked = !item.checked;
     // }

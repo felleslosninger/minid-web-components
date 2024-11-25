@@ -9,8 +9,19 @@ import parsePhoneNumber, {
   formatIncompletePhoneNumber,
   getCountryCallingCode,
   CountryCode,
+  parsePhoneNumberCharacter,
 } from 'libphonenumber-js';
 import './icon/icon.component';
+import {
+  onChange,
+  onKeyDown,
+  parseDigit,
+  ParseFunction,
+  ParseFunctionResult,
+  templateFormatter,
+  templateParser,
+} from 'input-format';
+import { watch } from 'src/internal/watch';
 
 const styles = [
   css`
@@ -55,12 +66,10 @@ const styles = [
 
 @customElement('mid-phone-input')
 export class MinidPhoneInput extends styled(LitElement, styles) {
-  private asYouType = new AsYouType();
-  @query('.country-code')
-  countryCodeInput!: HTMLInputElement;
+  private formatter = new AsYouType();
 
   @query('.phone-number')
-  phoneNumberInput!: HTMLInputElement;
+  input!: HTMLInputElement;
 
   /**
    *
@@ -81,7 +90,7 @@ export class MinidPhoneInput extends styled(LitElement, styles) {
    * The country selected
    */
   @property()
-  country?: string;
+  country?: CountryCode;
 
   /**
    * If defaultCountry is specified then the phone number can
@@ -99,6 +108,9 @@ export class MinidPhoneInput extends styled(LitElement, styles) {
   @state()
   initialValue = '';
 
+  @state()
+  phonePrefix?: string;
+
   handleCountryClick() {
     this.dispatchEvent(
       new Event('mid-country-click', { composed: true, bubbles: true })
@@ -111,7 +123,7 @@ export class MinidPhoneInput extends styled(LitElement, styles) {
       this.initialValue = this.value;
       // this.asYouType.input(this.value);
     }
-    this.setValue(this.value);
+    // this.setValue(this.value);
 
     if (this.defaultcountry) {
       this.country = this.defaultcountry;
@@ -125,17 +137,25 @@ export class MinidPhoneInput extends styled(LitElement, styles) {
     );
   }
 
-  private handleChange() {
-    // this.value = this.phoneNumberInput.value;
+  private handleChange(event: Event) {
+    // this.asYouTypeValue(event);
+
     this.dispatchEvent(
       new Event('mid-change', { bubbles: true, composed: true })
     );
   }
 
+  private handleKeydown(event: KeyboardEvent) {
+    if (event.key === 'Backspace' && this.input.selectionStart === 1) {
+      console.log('prevented default');
+      event.preventDefault();
+    }
+  }
+
   private handleInput(event: InputEvent) {
-    // this.countrycode = this.countryCodeInput.value;
-    this.setValue(this.phoneNumberInput.value);
-    this.asYouType.getTemplate();
+    // this.setValue(this.input.value);
+    this.asYouTypeValue(event);
+
     this.dispatchEvent(
       new CustomEvent('mid-input', {
         bubbles: true,
@@ -148,11 +168,42 @@ export class MinidPhoneInput extends styled(LitElement, styles) {
     );
   }
 
+  private asYouTypeValue(event: Event) {
+    this.formatter.reset();
+    this.formatter.input(this.input.value);
+    if (this.formatter.getCountry() !== this.country) {
+      console.log('changing country ❤️', this.formatter.getCountry());
+
+      this.country = this.formatter.getCountry();
+    }
+    console.log('formatter', this.formatter);
+    const template = this.formatter.getTemplate();
+
+    const parse = templateParser(template, parsePhoneNumberCharacter);
+    const format = templateFormatter(template);
+    const onChangeListener = (value: string) => {
+      console.log('Value has changed:', value);
+    };
+    onChange(event, this.input, parse, format, onChangeListener);
+
+    console.log('template: 👨🏻‍🍼', template);
+  }
+
   private handleFocus() {
     this.hasFocus = true;
     this.dispatchEvent(
       new Event('mid-focus', { composed: true, bubbles: true })
     );
+  }
+
+  removePrefix(value: string, prefix: string) {
+    if (prefix) {
+      value = value.slice(prefix.length);
+      if (value[0] === ' ') {
+        value = value.slice(1);
+      }
+    }
+    return value;
   }
 
   private setValue(value: string) {
@@ -185,6 +236,18 @@ export class MinidPhoneInput extends styled(LitElement, styles) {
     console.log(incompleteFormatted);
 
     // console.log(formatted, this.initialValue, countryCode);
+  }
+
+  @watch('country')
+  handleCountryChange() {
+    console.log('🇳🇴', this.country);
+    this.formatter = new AsYouType(this.country);
+    this.phonePrefix = this.country
+      ? `+${getCountryCallingCode(this.country)}`
+      : '+';
+    console.log('🇳🇴', this.country, this.phonePrefix, this.input?.value);
+    this.value = this.phonePrefix;
+    this.phonePrefix && this.formatter.input(this.phonePrefix);
   }
 
   override render() {
@@ -269,16 +332,19 @@ export class MinidPhoneInput extends styled(LitElement, styles) {
             @focus=${this.handleFocus}
             @blur=${this.handleBlur}
           /> -->
-
           <input
             class="phone-number fds-textfield__field fds-textfield__input fds-focus"
             part="phone-number"
             .value=${live(this.value)}
             @input=${this.handleInput}
-            @change=${this.handleChange}
             @focus=${this.handleFocus}
             @blur=${this.handleBlur}
+            @keydown=${this.handleKeydown}
           />
+          <!-- @change=${this.handleChange} -->
+
+          <!-- type="tel"
+                    autocomplete="tel" -->
         </div>
       </div>
     `;

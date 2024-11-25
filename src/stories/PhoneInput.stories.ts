@@ -12,6 +12,7 @@ import { CountryCode, getCountries } from 'libphonenumber-js';
 type PhoneInputProps = {
   value?: string;
   defaultcountry?: CountryCode;
+  country?: CountryCode;
 };
 
 const meta: Meta = {
@@ -19,6 +20,7 @@ const meta: Meta = {
   component: 'mid-phone-input',
   argTypes: {
     defaultcountry: { control: { type: 'select' }, options: getCountries() },
+    country: { control: { type: 'select' }, options: getCountries() },
   },
 };
 
@@ -29,12 +31,15 @@ type Story = StoryObj<PhoneInputProps>;
 export const Main: Story = {
   args: {
     defaultcountry: 'NO',
+    value: '+4741429483',
   },
   decorators: [(story) => html`<div class="mb-64">${story()}</div>`],
-  render: ({ value, defaultcountry }: PhoneInputProps) => html`
+  render: ({ value, country, defaultcountry }: PhoneInputProps) => html`
     <mid-combobox>
       <mid-phone-input
+        class="input"
         defaultcountry=${ifDefined(defaultcountry)}
+        country=${ifDefined(country)}
         value=${ifDefined(value)}
         slot="trigger"
       >
@@ -46,13 +51,21 @@ export const Main: Story = {
           name="NO"
         ></mid-icon> -->
       </mid-phone-input>
-      <mid-menu style="--max-height: 14rem">
+      <mid-menu class="menu" style="--max-height: 14rem">
         ${countries.map((country) => {
           // prettier-ignore
-          return html`<mid-menu-item value=${country.dial_code}><mid-icon class="h-4 w-6 overflow-hidden rounded" library="country" name="${country.code}"></mid-icon> - ${country.name} <span class="text-slate-500">(${country.dial_code})</span> </mid-menu-item>`;
+          return html`<mid-menu-item value=${country.code}><mid-icon class="h-4 w-6 overflow-hidden rounded" library="country" name="${country.code}"></mid-icon> - <span class="truncate">${country.name}</span>  <span class="text-slate-500">(${country.dial_code})</span> </mid-menu-item>`;
         })}
       </mid-menu>
     </mid-combobox>
+    <script>
+      var input = document.querySelector('.input');
+      var menu = document.querySelector('.menu');
+
+      menu.addEventListener('mid-select', ({ detail }) => {
+        input.country = detail.item.value;
+      });
+    </script>
   `,
 };
 
