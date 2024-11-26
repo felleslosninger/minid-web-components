@@ -92,6 +92,10 @@ export class MinidButton extends styled(LitElement, styles) {
     return !!this.href;
   }
 
+  focus(options?: FocusOptions): void {
+    this.button.focus();
+  }
+
   override render() {
     const tag = this.#isLink ? literal`a` : literal`button`;
 

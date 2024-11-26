@@ -45,6 +45,10 @@ export class MinidSearch extends styled(LitElement) {
     );
   };
 
+  focus() {
+    this.textField.focus();
+  }
+
   override render() {
     return html`
       <mid-textfield

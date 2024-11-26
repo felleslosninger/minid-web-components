@@ -134,6 +134,20 @@ export class MinidMenu extends styled(LitElement, styles) {
     );
   }
 
+  filter = (filterFn: (item: MinidMenuItem) => boolean) => {
+    this.getAllItems().forEach((item) => {
+      if (filterFn(item)) {
+        item.removeAttribute('hidden');
+      } else {
+        item.setAttribute('hidden', 'true');
+      }
+    });
+  };
+
+  clearFilter() {
+    this.getAllItems().forEach((item) => item.removeAttribute('hidden'));
+  }
+
   /**
    * @internal Gets all slotted menu items, ignoring dividers, headers, and other elements.
    */

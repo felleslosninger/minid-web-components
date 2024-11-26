@@ -34,7 +34,7 @@ const styles = [
  */
 @customElement('mid-combobox')
 export class MinidCombobox extends styled(LitElement, styles) {
-  private closeWatcher?: CloseWatcher;
+  #closeWatcher?: CloseWatcher;
 
   @query('#dropdown')
   popup!: MinidPopup;
@@ -110,9 +110,9 @@ export class MinidCombobox extends styled(LitElement, styles) {
     // input?.addEventListener('mid-focus', (e) => this.show());
     // input?.addEventListener('mid-blur', (e) => this.hide());
 
-    input.addEventListener('mid-country-click', () =>
-      this.open ? this.hide() : this.show()
-    );
+    input.addEventListener('mid-country-click', () => {
+      this.open ? this.hide() : this.show();
+    });
 
     this.panel.hidden = !this.open;
 
@@ -158,7 +158,7 @@ export class MinidCombobox extends styled(LitElement, styles) {
 
   private handleDocumentKeyDown = (event: KeyboardEvent) => {
     // Close when escape or tab is pressed
-    if (event.key === 'Escape' && this.open && !this.closeWatcher) {
+    if (event.key === 'Escape' && this.open && !this.#closeWatcher) {
       event.stopPropagation();
       this.focusOnTrigger();
       this.hide();
@@ -286,9 +286,9 @@ export class MinidCombobox extends styled(LitElement, styles) {
   addOpenListeners() {
     this.panel.addEventListener('mid-select', this.handlePanelSelect);
     if ('CloseWatcher' in window) {
-      this.closeWatcher?.destroy();
-      this.closeWatcher = new CloseWatcher();
-      this.closeWatcher.onclose = () => {
+      this.#closeWatcher?.destroy();
+      this.#closeWatcher = new CloseWatcher();
+      this.#closeWatcher.onclose = () => {
         this.hide();
         this.focusOnTrigger();
       };
@@ -306,33 +306,7 @@ export class MinidCombobox extends styled(LitElement, styles) {
     }
     document.removeEventListener('keydown', this.handleDocumentKeyDown);
     document.removeEventListener('mousedown', this.handleDocumentMouseDown);
-    this.closeWatcher?.destroy();
-  }
-
-  /**
-   *
-   * @ignore
-   */
-  // #handleClickOutside = (event: Event) => {
-  //   if (!event.composedPath().includes(this)) {
-  //     this.#toggleDropdownOpen(event, false);
-  //   }
-  // };
-
-  #toggleDropdownOpen(event: Event, open?: boolean) {
-    event.stopPropagation();
-    console.log('toggle', open);
-    if (open !== undefined) {
-      this.open = open;
-    } else {
-      this.open = !this.open;
-    }
-
-    // if (this.open) {
-    //   addEventListener('click', this.#handleClickOutside);
-    // } else {
-    //   removeEventListener('click', this.#handleClickOutside);
-    // }
+    this.#closeWatcher?.destroy();
   }
 
   /** Shows the dropdown panel. */

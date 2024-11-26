@@ -5,6 +5,7 @@ import '../components/combobox.component';
 import '../components/menu.component';
 import '../components/menu-item.component';
 import '../components/phone-input.component';
+import '../components/search.component';
 import '../components/icon/icon.component';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { CountryCode, getCountries } from 'libphonenumber-js';
@@ -31,7 +32,7 @@ type Story = StoryObj<PhoneInputProps>;
 
 export const Main: Story = {
   args: {
-    defaultcountry: 'GB',
+    defaultcountry: 'NO',
   },
   decorators: [
     (story) =>
@@ -41,16 +42,17 @@ export const Main: Story = {
       </div>`,
   ],
   render: ({ value, country, defaultcountry }: PhoneInputProps) => html`
-    <mid-combobox>
+    <mid-combobox class="combobox">
       <mid-phone-input
         class="input"
+        slot="trigger"
         defaultcountry=${ifDefined(defaultcountry)}
         country=${ifDefined(country)}
         value=${ifDefined(value)}
-        slot="trigger"
       >
       </mid-phone-input>
       <mid-menu class="menu" style="--max-height: 14rem">
+        <mid-search size="sm" class="search pb-4"></mid-search>
         ${getCountries()
           .sort((a, b) =>
             Array<CountryCode>('NO', 'PL', 'DK', 'SE', 'US', 'GB').includes(a)
@@ -73,15 +75,29 @@ export const Main: Story = {
     <script>
       var input = document.querySelector('.input');
       var menu = document.querySelector('.menu');
+      var search = document.querySelector('.search');
+      var combobox = document.querySelector('.combobox');
 
       menu.addEventListener('mid-select', ({ detail }) => {
         input.country = detail.item.value;
       });
+
       input.addEventListener('mid-change', () => {
         console.log('change', input.value, input.country);
       });
+
       input.addEventListener('mid-input', () => {
         console.log('input', input.value, input.country);
+      });
+
+      combobox.addEventListener('mid-after-show', () => {
+        search.focus();
+      });
+
+      search.addEventListener('mid-input', () => {
+        menu.filter((item) =>
+          item.innerHTML.toLowerCase().includes(search.value.toLowerCase())
+        );
       });
     </script>
   `,

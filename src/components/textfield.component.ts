@@ -206,6 +206,10 @@ export class MinidTextfield extends styled(LitElement, styles) {
     this.input.focus();
   }
 
+  focus() {
+    this.input.focus();
+  }
+
   override render() {
     const lg = this.size === 'lg';
     const md = this.size === 'md';
