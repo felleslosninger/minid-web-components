@@ -67,6 +67,7 @@ const styles = [
 @customElement('mid-phone-input')
 export class MinidPhoneInput extends styled(LitElement, styles) {
   private formatter = new AsYouType();
+  private skipCountry = false;
 
   @query('.phone-number')
   input!: HTMLInputElement;
@@ -128,6 +129,7 @@ export class MinidPhoneInput extends styled(LitElement, styles) {
     if (this.defaultcountry) {
       this.country = this.defaultcountry;
     }
+    this.value = formatIncompletePhoneNumber(this.value);
   }
 
   private handleBlur() {
@@ -160,8 +162,8 @@ export class MinidPhoneInput extends styled(LitElement, styles) {
 
       this.value = '+' + this.value;
     }
-    // this.asYouTypeValue(event);
-    this.setValue(this.input.value);
+    this.asYouTypeValue(event);
+    // this.setValue(this.input.value);
 
     this.dispatchEvent(
       new CustomEvent('mid-input', {
@@ -175,23 +177,46 @@ export class MinidPhoneInput extends styled(LitElement, styles) {
     );
   }
 
+  private handleValueCange = (value: string) => {
+    const country = this.formatter.getCountry();
+    console.log(this.formatter);
+
+    if (country !== this.country) {
+      console.log('country !== country');
+
+      this.value = value;
+      this.country = country;
+      this.skipCountry = true;
+    }
+    this.dispatchEvent(
+      new CustomEvent('mid-change', {
+        bubbles: true,
+        composed: true,
+        detail: {
+          value: this.value,
+        },
+      })
+    );
+  };
+
   private asYouTypeValue(event: Event) {
     this.formatter.reset();
-    this.formatter.input(this.input.value);
-    if (this.formatter.getCountry() !== this.country) {
-      console.log('changing country ❤️', this.formatter.getCountry());
-
-      this.country = this.formatter.getCountry();
+    if (!this.input.value.startsWith('+')) {
+      this.input.value = `+${this.input.value}`;
     }
-    console.log('formatter', this.formatter);
+    this.formatter.input(this.input.value);
+    // if (this.formatter.getCountry() !== this.country) {
+    // console.log('changing country ❤️', this.formatter.getCountry());
+
+    // this.country = this.formatter.getCountry();
+    // }
+
     const template = this.formatter.getTemplate();
 
     const parse = templateParser(template, parsePhoneNumberCharacter);
     const format = templateFormatter(template);
-    const onChangeListener = (value: string) => {
-      console.log('Value has changed:', value);
-    };
-    onChange(event, this.input, parse, format, onChangeListener);
+
+    onChange(event, this.input, parse, format, this.handleValueCange);
 
     console.log('template: 👨🏻‍🍼', template);
   }
@@ -240,7 +265,7 @@ export class MinidPhoneInput extends styled(LitElement, styles) {
 
     const start = this.input.selectionStart;
     const end = this.input.selectionEnd;
-    // const shouldMoveCursor = start !== this.value.length;
+    // const shouldMoveCursor = start !== this.value.length;a
     const shouldMoveCursor = true;
     console.log('start:', start, 'end', end);
 
@@ -256,15 +281,25 @@ export class MinidPhoneInput extends styled(LitElement, styles) {
     // console.log(formatted, this.initialValue, countryCode);
   }
 
-  @watch('country')
+  @watch('country', { waitUntilFirstUpdate: true })
   handleCountryChange() {
-    this.formatter = new AsYouType(this.country);
+    if (!this.country || this.skipCountry) {
+      this.skipCountry = false;
+      return;
+    }
+    this.formatter = new AsYouType(this.country ?? this.defaultcountry);
+
+    const value = this.phonePrefix
+      ? this.removePrefix(this.input.value, this.phonePrefix)
+      : this.input.value;
+
     this.phonePrefix = this.country
       ? `+${getCountryCallingCode(this.country)}`
       : '+';
-    this.value = this.phonePrefix;
-    this.phonePrefix && this.formatter.input(this.phonePrefix);
-    console.log('🇳🇴', this.country, this.phonePrefix, this.input?.value);
+
+    this.input.value = formatIncompletePhoneNumber(
+      `${this.phonePrefix}${value}`
+    );
   }
 
   override render() {
@@ -352,7 +387,7 @@ export class MinidPhoneInput extends styled(LitElement, styles) {
           <input
             class="phone-number fds-textfield__field fds-textfield__input fds-focus"
             part="phone-number"
-            .value=${live(this.value)}
+            value=${this.value}
             @input=${this.handleInput}
             @focus=${this.handleFocus}
             @blur=${this.handleBlur}
