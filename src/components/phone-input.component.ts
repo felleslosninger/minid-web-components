@@ -1,11 +1,9 @@
 import { css, html, LitElement, nothing } from 'lit';
 import { customElement, property, query, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
-import { live } from 'lit/directives/live.js';
 import { styled } from 'src/mixins/tailwind.mixin';
-import parsePhoneNumber, {
+import {
   AsYouType,
-  parseIncompletePhoneNumber,
   formatIncompletePhoneNumber,
   getCountryCallingCode,
   CountryCode,
@@ -15,9 +13,6 @@ import './icon/icon.component';
 import {
   onChange,
   onKeyDown,
-  parseDigit,
-  ParseFunction,
-  ParseFunctionResult,
   templateFormatter,
   templateParser,
 } from 'input-format';
@@ -66,8 +61,10 @@ const styles = [
 
 @customElement('mid-phone-input')
 export class MinidPhoneInput extends styled(LitElement, styles) {
-  private formatter = new AsYouType();
-  private skipCountry = false;
+  #formatter = new AsYouType();
+  #skipCountryUpdate = false;
+  #currentEvent = new Event('');
+  #currentTemplate = '';
 
   @query('.phone-number')
   input!: HTMLInputElement;
@@ -107,29 +104,41 @@ export class MinidPhoneInput extends styled(LitElement, styles) {
   hasFocus = false;
 
   @state()
-  initialValue = '';
-
-  @state()
   phonePrefix?: string;
 
   handleCountryClick() {
     this.dispatchEvent(
-      new Event('mid-country-click', { composed: true, bubbles: true })
+      new CustomEvent('mid-country-click', { composed: true, bubbles: true })
     );
   }
 
   connectedCallback(): void {
     super.connectedCallback();
-    if (this.value) {
-      this.initialValue = this.value;
-      // this.asYouType.input(this.value);
-    }
-    // this.setValue(this.value);
 
     if (this.defaultcountry) {
       this.country = this.defaultcountry;
     }
+
+    this.#formatter.input(this.value);
+    this.country = this.#formatter.getCountry() ?? this.country;
+    this.phonePrefix = this.country
+      ? `+${getCountryCallingCode(this.country)}`
+      : '+';
+
     this.value = formatIncompletePhoneNumber(this.value);
+    this.value ??= this.phonePrefix;
+
+    setTimeout(() => {
+      this.input.value = `${this.phonePrefix}${this.removePhonePrefix(this.value)}`;
+    }, 0);
+  }
+
+  get parseTemplate() {
+    return templateParser(this.#currentTemplate, parsePhoneNumberCharacter);
+  }
+
+  get formatTemplate() {
+    return templateFormatter(this.#currentTemplate);
   }
 
   private handleBlur() {
@@ -140,85 +149,70 @@ export class MinidPhoneInput extends styled(LitElement, styles) {
   }
 
   private handleChange(event: Event) {
-    // this.asYouTypeValue(event);
+    // Event is dispatched after value is set
+    this.#currentEvent = new Event('mid-change', {
+      bubbles: true,
+      composed: true,
+    });
 
-    this.dispatchEvent(
-      new Event('mid-change', { bubbles: true, composed: true })
-    );
+    this.setValue(event);
   }
 
   private handleKeydown(event: KeyboardEvent) {
     if (event.key === 'Backspace' && this.input.selectionStart === 1) {
-      console.log('prevented default');
       event.preventDefault();
+      return;
     }
+
+    onKeyDown(
+      event,
+      this.input,
+      this.parseTemplate,
+      this.formatTemplate,
+      this.valueChangeCallback
+    );
   }
 
   private handleInput(event: InputEvent) {
-    // this.setValue(this.input.value);
-
-    if (!this.input.value.startsWith('+')) {
-      console.log('input.value', this.input.value);
-
-      this.value = '+' + this.value;
-    }
-    this.asYouTypeValue(event);
-    // this.setValue(this.input.value);
-
-    this.dispatchEvent(
-      new CustomEvent('mid-input', {
-        bubbles: true,
-        composed: true,
-        detail: {
-          countryCode: this.countrycode,
-          phoneNumber: this.phonenumber,
-        },
-      })
-    );
+    // Event is dispatched after value is set
+    this.#currentEvent = new Event('mid-input', {
+      composed: true,
+      bubbles: true,
+    });
+    this.setValue(event);
   }
 
-  private handleValueCange = (value: string) => {
-    const country = this.formatter.getCountry();
-    console.log(this.formatter);
+  private valueChangeCallback = (value: string) => {
+    const country =
+      value.length < 2
+        ? undefined
+        : (this.#formatter.getCountry() ?? this.country);
 
     if (country !== this.country) {
-      console.log('country !== country');
-
-      this.value = value;
       this.country = country;
-      this.skipCountry = true;
+      this.#skipCountryUpdate = true;
     }
-    this.dispatchEvent(
-      new CustomEvent('mid-change', {
-        bubbles: true,
-        composed: true,
-        detail: {
-          value: this.value,
-        },
-      })
-    );
+
+    this.value = value;
+    this.dispatchEvent(this.#currentEvent);
   };
 
-  private asYouTypeValue(event: Event) {
-    this.formatter.reset();
+  private setValue(event: Event) {
+    this.#formatter.reset();
+
     if (!this.input.value.startsWith('+')) {
       this.input.value = `+${this.input.value}`;
     }
-    this.formatter.input(this.input.value);
-    // if (this.formatter.getCountry() !== this.country) {
-    // console.log('changing country ❤️', this.formatter.getCountry());
+    this.#formatter.input(this.input.value);
+    this.#currentTemplate = this.#formatter.getTemplate();
 
-    // this.country = this.formatter.getCountry();
-    // }
-
-    const template = this.formatter.getTemplate();
-
-    const parse = templateParser(template, parsePhoneNumberCharacter);
-    const format = templateFormatter(template);
-
-    onChange(event, this.input, parse, format, this.handleValueCange);
-
-    console.log('template: 👨🏻‍🍼', template);
+    onChange(
+      event,
+      this.input,
+      this.parseTemplate,
+      this.formatTemplate,
+      this.valueChangeCallback
+    );
   }
 
   private handleFocus() {
@@ -228,9 +222,10 @@ export class MinidPhoneInput extends styled(LitElement, styles) {
     );
   }
 
-  removePrefix(value: string, prefix: string) {
-    if (prefix) {
-      value = value.slice(prefix.length);
+  private removePhonePrefix(value: string) {
+    console.log(this.phonePrefix);
+    if (this.phonePrefix) {
+      value = value.slice(this.phonePrefix.length);
       if (value[0] === ' ') {
         value = value.slice(1);
       }
@@ -238,68 +233,27 @@ export class MinidPhoneInput extends styled(LitElement, styles) {
     return value;
   }
 
-  private setValue(value: string) {
-    // this.countrycode = this.countryCodeInput.value;
-
-    console.log(value);
-
-    if (!value) {
-      console.log('📭', !value);
-
-      if (this.defaultcountry) {
-        this.countrycode = getCountryCallingCode(this.defaultcountry);
-        value = `+${this.countrycode} `;
-      }
-    }
-
-    const parsed = parsePhoneNumber(value);
-    const incomplete = parseIncompletePhoneNumber(value);
-    const incompleteFormatted = formatIncompletePhoneNumber(value);
-    // const parsed = this.asYouType.getNumber()?.number;
-
-    // const formatted = this.asYouType.getNumber()?.formatInternational();
-    // const countryCode = this.asYouType.getCallingCode();
-
-    this.countrycode = parsed?.countryCallingCode;
-    this.country = parsed?.country ?? this.defaultcountry;
-
-    const start = this.input.selectionStart;
-    const end = this.input.selectionEnd;
-    // const shouldMoveCursor = start !== this.value.length;a
-    const shouldMoveCursor = true;
-    console.log('start:', start, 'end', end);
-
-    this.value = incompleteFormatted;
-
-    if (shouldMoveCursor) {
-      this.input.setSelectionRange(start, end);
-    }
-
-    console.log(value, parsed, incomplete);
-    console.log(incompleteFormatted);
-
-    // console.log(formatted, this.initialValue, countryCode);
-  }
-
   @watch('country', { waitUntilFirstUpdate: true })
   handleCountryChange() {
-    if (!this.country || this.skipCountry) {
-      this.skipCountry = false;
+    if (this.#skipCountryUpdate) {
+      console.log('skipping', this.#skipCountryUpdate);
+      this.#skipCountryUpdate = false;
       return;
     }
-    this.formatter = new AsYouType(this.country ?? this.defaultcountry);
 
-    const value = this.phonePrefix
-      ? this.removePrefix(this.input.value, this.phonePrefix)
-      : this.input.value;
+    this.#formatter = new AsYouType(this.country ?? this.defaultcountry);
+    const nationalNumber = this.removePhonePrefix(this.input.value);
+    console.log(this.phonePrefix, nationalNumber);
 
     this.phonePrefix = this.country
       ? `+${getCountryCallingCode(this.country)}`
       : '+';
-
+    console.log(this.phonePrefix);
     this.input.value = formatIncompletePhoneNumber(
-      `${this.phonePrefix}${value}`
+      `${this.phonePrefix}${nationalNumber}`
     );
+    this.input.dispatchEvent(new Event('input', { bubbles: true }));
+    this.input.dispatchEvent(new Event('change', { bubbles: true }));
   }
 
   override render() {
@@ -349,9 +303,6 @@ export class MinidPhoneInput extends styled(LitElement, styles) {
             // 'fds-focus': this.hasFocus,
           })} flex"
         >
-          <span class="prefix">
-            <slot name="prefix"></slot>
-          </span>
           <button
             class="country-button fds-focus flex h-full items-center border border-text-action-active pl-3"
             iconstyled
@@ -371,32 +322,19 @@ export class MinidPhoneInput extends styled(LitElement, styles) {
                 ></div>`}
             <mid-icon name="chevron-down"></mid-icon>
           </button>
-          <!-- <input
-            part="country-code"
-            class="country-code"
-            placeholder="+47"
-            size="5"
-            maxlength="5"
-            aria-describedby="description"
-            .value=${live(this.countrycode)}
-            @input=${this.handleInput}
-            @change=${this.handleChange}
-            @focus=${this.handleFocus}
-            @blur=${this.handleBlur}
-          /> -->
+
           <input
             class="phone-number fds-textfield__field fds-textfield__input fds-focus"
             part="phone-number"
+            type="tel"
+            autocomplete="tel"
             value=${this.value}
             @input=${this.handleInput}
             @focus=${this.handleFocus}
             @blur=${this.handleBlur}
             @keydown=${this.handleKeydown}
+            @change=${this.handleChange}
           />
-          <!-- @change=${this.handleChange} -->
-
-          <!-- type="tel"
-                    autocomplete="tel" -->
         </div>
       </div>
     `;
