@@ -16,3 +16,4 @@ custom-elements.json
 /package-lock.json
 /demo/dist/
 /dist-cdn/
+/dev/node_modules/

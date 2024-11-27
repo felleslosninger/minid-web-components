@@ -4,6 +4,7 @@ import { classMap } from 'lit/directives/class-map.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { html, literal } from 'lit/static-html.js';
 import { styled } from 'mixins/tailwind.mixin.ts';
+import { FormAssociatedMixin } from 'mixins/form-associated.mixin';
 import './spinner.component';
 
 const styles = [
@@ -31,7 +32,14 @@ const styles = [
 ];
 
 @customElement('mid-button')
-export class MinidButton extends styled(LitElement, styles) {
+export class MinidButton extends FormAssociatedMixin(styled(LitElement, styles)) {
+
+  /**
+   * The value of the button (optional)
+   */
+  @property({ type: String })
+  value?: string;
+
   /**
    * The variant of the button
    */
@@ -82,6 +90,19 @@ export class MinidButton extends styled(LitElement, styles) {
    */
   @property({ type: Boolean })
   iconstyled = false;
+
+
+  constructor() {
+    super();
+    this.addEventListener('click', this.handleClick);
+  }
+
+  handleClick() {
+    if (this.type === 'submit') {
+      this.value && this.setFormValue(this.value);
+      this.internals.form!.requestSubmit();
+    }
+  }
 
   /**
    * @ignore

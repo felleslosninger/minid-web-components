@@ -1,14 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+  <title>Form and Validation Test</title>
+
+  <!-- nonce for CSP -->
+  <script>window.litNonce = "{{cspNonce}}";</script>
+  <meta property="csp-nonce" content="{{cspNonce}}" nonce="{{cspNonce}}">
+
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MinID Button Example</title>
-  <link rel="stylesheet" href="https://cdn.minid.no/minid-elements/latest/index.css?v=3"></link>
-  <link rel="stylesheet" href="https://cdn.minid.no/minid-elements/latest/theme/digdir/tokens.css?v=3"></link> <!-- digdir, altinn, brreg, tilsynet -->
+
+  <!-- MinID Elements and theme-->
+  <script type="module" src="src/components/code-input.component.ts"></script>
+  <script type="module" src="src/components/button.component.ts"></script>
+  <link rel="stylesheet" href="index.css" />
+  <link rel="stylesheet" href="theme.css" />
+  <link rel="stylesheet" href="src/styles/tailwind.css" />
 </head>
+
 <body>
-<script type="module" src="https://cdn.minid.no/minid-elements/latest/index.js?v=3"></script>
-<mid-button>Click me!</mid-button>
+
+<form id="myForm" enctype="text/plain" method="get" class="p-3">
+  <mid-code-input id="otc-input" name="otc" error2="gorilla" required></mid-code-input>
+  <mid-button class="pt-5" id="my-swanky-submit-button" type="submit" name="action" value="login">Submit</mid-button>
+</form>
+
 </body>
 </html>
