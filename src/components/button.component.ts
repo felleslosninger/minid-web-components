@@ -92,7 +92,7 @@ export class MinidButton extends styled(LitElement, styles) {
     return !!this.href;
   }
 
-  focus(options?: FocusOptions): void {
+  focus() {
     this.button.focus();
   }
 

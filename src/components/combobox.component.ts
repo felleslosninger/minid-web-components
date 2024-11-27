@@ -18,6 +18,7 @@ import { animateTo, stopAnimations } from 'src/internal/animate';
 import { getTabbableBoundary } from 'src/internal/tabbable';
 import { MinidButton } from 'src/components/button.component';
 import { MinidMenu } from 'src/components/menu.component';
+import { MinidSearch } from 'src/components/search.component';
 
 const styles = [
   css`
@@ -146,6 +147,14 @@ export class MinidCombobox extends styled(LitElement, styles) {
       | undefined;
   }
 
+  getMenuSearch() {
+    return this.getMenu()
+      ?.defaultSlot.assignedElements({ flatten: true })
+      .find(
+        (el) => (el as HTMLElement).tagName.toLowerCase() === 'mid-search'
+      ) as MinidSearch | undefined;
+  }
+
   private handleKeyDown = (event: KeyboardEvent) => {
     // Close when escape is pressed inside an open dropdown. We need to listen on the panel itself and stop propagation
     // in case any ancestors are also listening for this key.
@@ -153,6 +162,20 @@ export class MinidCombobox extends styled(LitElement, styles) {
       event.stopPropagation();
       this.hide();
       this.focusOnTrigger();
+      return;
+    }
+
+    const menu = this.getMenu();
+    const search = this.getMenuSearch();
+
+    const lol = new KeyboardEvent('input', { ...event });
+
+    if (search) {
+      search.dispatchEvent(lol);
+      search;
+      // menu?.filter((item) =>
+      //   item.innerText.toLowerCase().includes(search.value.toLowerCase())
+      // );
     }
   };
 
@@ -237,9 +260,10 @@ export class MinidCombobox extends styled(LitElement, styles) {
     }
 
     const menu = this.getMenu();
+    console.log('🔫', menu);
 
     if (menu) {
-      const menuItems = menu.getAllItems();
+      const menuItems = menu.getAllSelectableItems();
       const firstMenuItem = menuItems[0];
       const lastMenuItem = menuItems[menuItems.length - 1];
 
@@ -285,6 +309,8 @@ export class MinidCombobox extends styled(LitElement, styles) {
 
   addOpenListeners() {
     this.panel.addEventListener('mid-select', this.handlePanelSelect);
+    this.panel.addEventListener('keydown', this.handleKeyDown);
+
     if ('CloseWatcher' in window) {
       this.#closeWatcher?.destroy();
       this.#closeWatcher = new CloseWatcher();

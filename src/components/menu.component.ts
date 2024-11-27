@@ -9,6 +9,10 @@ const styles = [
       --max-height: none;
     }
 
+    .panel {
+      padding: 0;
+    }
+
     ul {
       max-height: var(--max-height);
       overflow-y: auto;
@@ -20,6 +24,9 @@ const styles = [
 export class MinidMenu extends styled(LitElement, styles) {
   @query('slot')
   defaultSlot!: HTMLSlotElement;
+
+  @query('.filter-input')
+  filterInput!: HTMLInputElement;
 
   connectedCallback() {
     super.connectedCallback();
@@ -64,7 +71,17 @@ export class MinidMenu extends styled(LitElement, styles) {
     );
   }
 
+  handleFilterItems() {
+    this.filter((item) =>
+      item.innerText
+        .toLowerCase()
+        .includes(this.filterInput.value.toLowerCase())
+    );
+  }
+
   private handleKeyDown(event: KeyboardEvent) {
+    console.log('menu', event.key);
+
     // Make a selection when pressing enter or space
     if (event.key === 'Enter' || event.key === ' ') {
       const item = this.getCurrentItem();
@@ -77,7 +94,7 @@ export class MinidMenu extends styled(LitElement, styles) {
 
     // Move the selection when pressing down or up
     else if (['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) {
-      const items = this.getAllItems();
+      const items = this.getAllSelectableItems();
       const activeItem = this.getCurrentItem();
       let index = activeItem ? items.indexOf(activeItem) : 0;
 
@@ -117,7 +134,7 @@ export class MinidMenu extends styled(LitElement, styles) {
   }
 
   private handleSlotChange() {
-    const items = this.getAllItems();
+    const items = this.getAllSelectableItems();
 
     // Reset the roving tab index when the slotted items change
     if (items.length > 0) {
@@ -138,30 +155,38 @@ export class MinidMenu extends styled(LitElement, styles) {
     this.getAllItems().forEach((item) => {
       if (filterFn(item)) {
         item.removeAttribute('hidden');
+        item.removeAttribute('inert');
       } else {
+        item.setAttribute('inert', 'true');
         item.setAttribute('hidden', 'true');
       }
     });
   };
 
   clearFilter() {
-    this.getAllItems().forEach((item) => item.removeAttribute('hidden'));
+    this.getAllSelectableItems().forEach((item) => {
+      item.removeAttribute('hidden');
+      item.removeAttribute('inert');
+    });
   }
 
   /**
    * @internal Gets all slotted menu items, ignoring dividers, headers, and other elements.
    */
+  getAllSelectableItems() {
+    return [
+      ...(this.defaultSlot.assignedElements({
+        flatten: true,
+      }) as MinidMenuItem[]),
+    ].filter((el) => !(el.inert || !this.isMenuItem(el)));
+  }
+
   getAllItems() {
     return [
       ...(this.defaultSlot.assignedElements({
         flatten: true,
-      }) as HTMLElement[]),
-    ].filter((el) => {
-      if (el.inert || !this.isMenuItem(el)) {
-        return false;
-      }
-      return true;
-    }) as MinidMenuItem[];
+      }) as MinidMenuItem[]),
+    ].filter((el) => this.isMenuItem(el));
   }
 
   /**
@@ -169,7 +194,9 @@ export class MinidMenu extends styled(LitElement, styles) {
    * The menu item may or may not have focus, but for keyboard interaction purposes it's considered the "active" item.
    */
   getCurrentItem() {
-    return this.getAllItems().find((i) => i.getAttribute('tabindex') === '0');
+    return this.getAllSelectableItems().find(
+      (i) => i.getAttribute('tabindex') === '0'
+    );
   }
 
   /**
@@ -177,7 +204,7 @@ export class MinidMenu extends styled(LitElement, styles) {
    * `tabindex="-1"` to all other items. This method must be called prior to setting focus on a menu item.
    */
   setCurrentItem(item: MinidMenuItem) {
-    const items = this.getAllItems();
+    const items = this.getAllSelectableItems();
 
     // Update tab indexes
     items.forEach((i) => {
@@ -186,13 +213,34 @@ export class MinidMenu extends styled(LitElement, styles) {
   }
 
   override render() {
-    return html`<ul class="fds-dropdownmenu fds-dropdownmenu--md">
-      <slot
-        @slotchange=${this.handleSlotChange}
-        @click=${this.handleClick}
-        @keydown=${this.handleKeyDown}
-        @mousedown=${this.handleMouseDown}
-      ></slot>
-    </ul> `;
+    return html`
+      <!-- <div class="fds-dropdownmenu fds-dropdownmenu--md"> -->
+      <div
+        class="panel fds-box--md-shadow fds-box--default-border-color fds-box--md-border-radius fds-box--default-background fds-combobox__options-wrapper fds-combobox--md"
+      >
+        <div class="filter-input flex items-center gap-2 border-b px-2 pt-2">
+          <mid-icon
+            slot="prefix"
+            class="text-2xl"
+            library="system"
+            name="magnifying-glass"
+          >
+          </mid-icon>
+          <input
+            @input=${this.handleFilterItems}
+            class="h-8 w-full px-2"
+            type="search"
+          />
+        </div>
+        <ul>
+          <slot
+            @slotchange=${this.handleSlotChange}
+            @click=${this.handleClick}
+            @keydown=${this.handleKeyDown}
+            @mousedown=${this.handleMouseDown}
+          ></slot>
+        </ul>
+      </div>
+    `;
   }
 }

@@ -52,7 +52,6 @@ export const Main: Story = {
       >
       </mid-phone-input>
       <mid-menu class="menu" style="--max-height: 14rem">
-        <mid-search size="sm" class="search pb-4"></mid-search>
         ${getCountries()
           .sort((a, b) =>
             Array<CountryCode>('NO', 'PL', 'DK', 'SE', 'US', 'GB').includes(a)
@@ -91,14 +90,14 @@ export const Main: Story = {
       });
 
       combobox.addEventListener('mid-after-show', () => {
-        search.focus();
+        // search.focus();
       });
 
-      search.addEventListener('mid-input', () => {
-        menu.filter((item) =>
-          item.innerHTML.toLowerCase().includes(search.value.toLowerCase())
-        );
-      });
+      // search.addEventListener('mid-input', () => {
+      //   menu.filter((item) =>
+      //     item.innerHTML.toLowerCase().includes(search.value.toLowerCase())
+      //   );
+      // });
     </script>
   `,
 };
