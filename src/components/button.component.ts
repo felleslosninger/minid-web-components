@@ -5,7 +5,7 @@ import { ifDefined } from 'lit/directives/if-defined.js';
 import { html, literal } from 'lit/static-html.js';
 import { styled } from 'mixins/tailwind.mixin.ts';
 import { FormAssociatedMixin } from 'mixins/form-associated.mixin';
-import './spinner.component';
+// import './spinner.component';
 
 const styles = [
   css`
@@ -38,7 +38,7 @@ export class MinidButton extends FormAssociatedMixin(styled(LitElement, styles))
    * The value of the button (optional)
    */
   @property({ type: String })
-  value?: string;
+  value = '';
 
   /**
    * The variant of the button
@@ -101,6 +101,8 @@ export class MinidButton extends FormAssociatedMixin(styled(LitElement, styles))
     if (this.type === 'submit') {
       this.value && this.setFormValue(this.value);
       this.internals.form!.requestSubmit();
+    } else if(this.type === 'reset') {
+      this.internals.form!.reset();
     }
   }
 
