@@ -1,12 +1,12 @@
 
 import { css, html, LitElement, nothing, PropertyValues } from 'lit';
-import { customElement, property, query } from 'lit/decorators.js';
+import { customElement, property, state } from 'lit/decorators.js';
 import { createRef, ref, Ref } from 'lit/directives/ref.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { live } from 'lit/directives/live.js';
 import { webOtpApiClose, webOtpApiInit } from 'components/utilities/web-otp-api';
 import { styled } from 'mixins/tailwind.mixin';
-import { FormAssociatedMixin } from 'mixins/form-associated.mixin';
+import { ConstraintsValidationMixin } from 'mixins/form-controller.mixin';
 
 const styles = [
   css`
@@ -58,7 +58,7 @@ const styles = [
 ];
 
 @customElement('mid-code-input')
-export class MinidCodeInput extends FormAssociatedMixin(styled(LitElement, styles)) {
+export class MinidCodeInput extends ConstraintsValidationMixin(styled(LitElement, styles)) {
   caretColor = '#EEE';
   caretHighlightColor = '#bee3f5';
 
@@ -91,6 +91,17 @@ export class MinidCodeInput extends FormAssociatedMixin(styled(LitElement, style
 
   @property({ type: String, attribute: 'font-size' })
   fontSize = '3cqw';
+
+  @state()
+  _renderError = false;
+
+  constructor() {
+    super();
+    this.addEventListener('invalid', (e) => {
+      e.preventDefault();
+      this._renderError = true;
+    });
+  }
 
   override connectedCallback() {
     super.connectedCallback();
@@ -167,33 +178,30 @@ export class MinidCodeInput extends FormAssociatedMixin(styled(LitElement, style
 
     this.setFormValue(this.value);
     this.setValidity(this.inputRef.value!.validity, this.inputRef.value!.validationMessage, this.inputRef!.value);
+
   }
 
   setCustomValidity(error: string) {
     this.inputRef!.value?.setCustomValidity(error);
   }
 
-
-  @query('input')
-  inputElem!: HTMLInputElement;
-
   onClick() {
-    // this.value = this.value.substring(0, this.selectionEnd || 0);
-    this.inputElem.value = this.value.substring(0, this.inputElem.selectionEnd || 0);
-    this.userInvalid = false;
-    this.requestUpdate();
+    this.value = this.value.substring(0, this.selectionEnd || 0);
+    this._renderError = false;
   }
 
   override render() {
 
-    const errorDiv = this.userInvalid
+    const showErrorMessage = this.error || this._renderError;
+    const errorDiv = showErrorMessage
       ? html`
         <div class="fds-textfield__error-message" role="alert">
           <div class="fds-error-message fds-error-message--md fds-error-message--error">
-            ${this.validationMessage}
+            ${this.error || this.validationMessage}
           </div>
         </div>`
       : nothing;
+
 
     return html`
       <div class="flex flex-col">
@@ -201,7 +209,7 @@ export class MinidCodeInput extends FormAssociatedMixin(styled(LitElement, style
           ${ref(this.inputRef)}
           class="${classMap({
             'w-full': true,
-            error: this.userInvalid,
+            error: showErrorMessage,
           })}"
           .value=${live(this.value)}
           autocomplete="${'one-time-code' as any}"

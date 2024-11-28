@@ -4,8 +4,8 @@ import { classMap } from 'lit/directives/class-map.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { html, literal } from 'lit/static-html.js';
 import { styled } from 'mixins/tailwind.mixin.ts';
-import { FormAssociatedMixin } from 'mixins/form-associated.mixin';
-// import './spinner.component';
+import { FormControllerMixin } from 'mixins/form-controller.mixin.ts';
+import './spinner.component';
 
 const styles = [
   css`
@@ -32,7 +32,7 @@ const styles = [
 ];
 
 @customElement('mid-button')
-export class MinidButton extends FormAssociatedMixin(styled(LitElement, styles)) {
+export class MinidButton extends FormControllerMixin(styled(LitElement, styles)) {
 
   /**
    * The value of the button (optional)
