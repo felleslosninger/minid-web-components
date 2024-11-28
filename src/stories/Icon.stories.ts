@@ -17,8 +17,7 @@ export interface IconProps {
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories
 const meta = {
-  title: 'Komponenter/Icon',
-  tags: ['autodocs'],
+  title: 'Komponenter/Under arbeid/Icon',
   component: 'mid-icon',
   argTypes: {
     name: {
