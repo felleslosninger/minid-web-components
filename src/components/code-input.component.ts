@@ -76,10 +76,10 @@ export class MinidCodeInput extends ConstraintsValidationMixin(styled(LitElement
   inputMode = 'numeric';
 
   /**
-   * Display custom error message, and set the input to invalid state
+   * Display custom error message, and force the input to invalid state
    */
-  @property({ type: String })
-  error?: string;
+  @property({ type: String, attribute: "error-message" })
+  _forcedErrorMessage?: string;
 
 
   /**
@@ -102,24 +102,14 @@ export class MinidCodeInput extends ConstraintsValidationMixin(styled(LitElement
     this.addEventListener('invalid', (e) => {
       if(this._localErrorNode) {
         e.preventDefault();
-        this._displayLocalError();
+        if(this._localErrorNode) {
+          this._renderError = true;
+          this._localErrorNode.textContent = this.validationMessage || 'Error';
+        }
       }
     });
   }
 
-  _displayLocalError() {
-    if(this._localErrorNode) {
-      this._renderError = true;
-      this._localErrorNode.textContent = this.validationMessage || 'Error';
-    }
-  }
-
-  _hideLocalError() {
-    if(this._localErrorNode) {
-      this._renderError = false;
-      this._localErrorNode.textContent = '';
-    }
-  }
 
   override connectedCallback() {
     super.connectedCallback();
@@ -190,13 +180,16 @@ export class MinidCodeInput extends ConstraintsValidationMixin(styled(LitElement
       this.inputRef.value?.style.setProperty(`--char-${i + 1}-color`, color);
     }
 
-    if (_changedProperties.has('error') && this.error) {
-      this.setCustomValidity(this.error);
+    if (_changedProperties.has('_forcedErrorMessage') && this._forcedErrorMessage) {
+      this.setCustomValidity(this._forcedErrorMessage);
     }
 
     this.setFormValue(this.value);
     this.setValidity(this.inputRef.value!.validity, this.inputRef.value!.validationMessage, this.inputRef!.value);
 
+    if(this.validity.customError && this._forcedErrorMessage) { // trigger built-in visual feedback
+      this.reportValidity();
+    }
   }
 
   setCustomValidity(error: string) {
@@ -205,9 +198,25 @@ export class MinidCodeInput extends ConstraintsValidationMixin(styled(LitElement
 
   onClick() {
     this.value = this.value.substring(0, this.selectionEnd || 0);
+
     this._renderError = false;
+    this.setCustomValidity('');
     if(this._localErrorNode) {
       this._localErrorNode.textContent = '';
+    }
+
+    this.setFormValue(this.value);
+    this.setValidity(this.inputRef.value!.validity, this.inputRef.value!.validationMessage, this.inputRef!.value);
+  }
+
+  handleSlotchange(e: Event) {
+    let slot = e.target as HTMLSlotElement;
+    const childNodes = slot.assignedNodes({flatten: true});
+
+    this._localErrorNode = this._findErrorMessageNode(childNodes);
+    if(this._localErrorNode && this._forcedErrorMessage) { // display if slot set, and error override in effect
+      this._renderError = true;
+      this._localErrorNode.textContent = this._forcedErrorMessage;
     }
   }
 
@@ -225,15 +234,9 @@ export class MinidCodeInput extends ConstraintsValidationMixin(styled(LitElement
     return null;
   }
 
-  handleSlotchange(e: Event) {
-    let slot = e.target as HTMLSlotElement;
-    const childNodes = slot.assignedNodes({flatten: true});
-    this._localErrorNode = this._findErrorMessageNode(childNodes);
-  }
+
 
   override render() {
-
-    const showErrorMessage = this.error || this._renderError;
 
     return html`
       <div class="flex flex-col">
@@ -241,7 +244,7 @@ export class MinidCodeInput extends ConstraintsValidationMixin(styled(LitElement
           ${ref(this.inputRef)}
           class="${classMap({
             'w-full': true,
-            error: showErrorMessage,
+            error: this._renderError,
           })}"
           .value=${live(this.value)}
           autocomplete="${'one-time-code' as any}"
@@ -266,9 +269,8 @@ export class MinidCodeInput extends ConstraintsValidationMixin(styled(LitElement
             this.onFocusIn();
           }}"
           @click="${this.onClick}"
-          ?required="${live(this.required)}"
           ?disabled="${live(this.disabled)}"
-          maxlength=${this.length}
+          ?required="${live(this.required)}"
           minlength=${this.length}
         />
         <slot name="error-message" @slotchange=${this.handleSlotchange}></slot>
