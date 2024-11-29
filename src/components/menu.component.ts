@@ -2,10 +2,8 @@ import { css, html, LitElement, nothing, PropertyValues } from 'lit';
 import { customElement, property, query } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { styled } from 'mixins/tailwind.mixin.ts';
-import {
-  getMenuItemScrollPosition,
-  MinidMenuItem,
-} from 'src/components/menu-item.component';
+import { MinidMenuItem } from 'src/components/menu-item.component';
+import { scrollIntoView } from 'src/internal/scroll';
 
 const styles = [
   css`
@@ -98,17 +96,10 @@ export class MinidMenu extends styled(LitElement, styles) {
   }
 
   #scrollOptionIntoView(item: MinidMenuItem): void {
-    this.itemList.scrollTop = getMenuItemScrollPosition(
-      item.offsetTop,
-      item.offsetHeight,
-      this.itemList.scrollTop,
-      this.itemList.offsetHeight
-    );
+    scrollIntoView(item, this.itemList, 'vertical', 'auto');
   }
 
   private handleKeyDown(event: KeyboardEvent) {
-    console.log('menu', event.key);
-
     // Make a selection when pressing enter or space
     if (event.key === 'Enter' || event.key === ' ') {
       const item = this.getCurrentItem();
@@ -196,6 +187,7 @@ export class MinidMenu extends styled(LitElement, styles) {
 
   clearFilter() {
     this.filterInput.value = '';
+    this.itemList.scrollTop = 0;
     this.filterInput.dispatchEvent(new Event('input'));
   }
 
@@ -253,7 +245,6 @@ export class MinidMenu extends styled(LitElement, styles) {
     const dropdown = this.variant === 'dropdown';
     console.log(this.variant);
     return html`
-      <!-- <div class="fds-dropdownmenu fds-dropdownmenu--md"> -->
       <div
         class="${classMap({
           panel: true,

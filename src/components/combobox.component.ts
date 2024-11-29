@@ -260,7 +260,6 @@ export class MinidCombobox extends styled(LitElement, styles) {
     }
 
     const menu = this.getMenu();
-    console.log('🔫', menu);
 
     if (menu) {
       const menuItems = menu.getAllSelectableItems();
@@ -318,9 +317,8 @@ export class MinidCombobox extends styled(LitElement, styles) {
         this.hide();
         this.focusOnTrigger();
       };
-    } else {
-      this.panel.addEventListener('keydown', this.handleKeyDown);
     }
+
     document.addEventListener('keydown', this.handleDocumentKeyDown);
     document.addEventListener('mousedown', this.handleDocumentMouseDown);
   }

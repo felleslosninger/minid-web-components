@@ -85,27 +85,3 @@ export class MinidMenuItem extends styled(LitElement, style) {
         </button>`;
   }
 }
-
-export function getMenuItemScrollPosition(
-  optionOffset: number,
-  optionHeight: number,
-  currentScrollPosition: number,
-  panelHeight: number
-): number {
-  const halfHeight = panelHeight / 2;
-
-  if (optionOffset - halfHeight < currentScrollPosition) {
-    return optionOffset - halfHeight;
-  }
-
-  if (
-    optionOffset + optionHeight - halfHeight >
-    currentScrollPosition + panelHeight
-  ) {
-    return (
-      Math.max(0, optionOffset - panelHeight + optionHeight) - halfHeight + 10
-    );
-  }
-
-  return currentScrollPosition;
-}
