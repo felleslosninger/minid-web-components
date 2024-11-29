@@ -46,6 +46,13 @@ export const Main: Story = {
         </mid-code-input>
         <mid-button class="pt-2" type="submit">Submit</mid-button>
       </form>
+      
+      <b>With custom error message and built-in error display</b>
+      <form class="pb-8">
+        <mid-code-input error-message="Generic error type 5 occurred..." required>
+        </mid-code-input>
+        <mid-button class="pt-2" type="submit">Submit</mid-button>
+      </form>
     `;
   },
 };

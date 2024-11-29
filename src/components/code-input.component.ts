@@ -100,12 +100,10 @@ export class MinidCodeInput extends ConstraintsValidationMixin(styled(LitElement
   constructor() {
     super();
     this.addEventListener('invalid', (e) => {
+      this.renderError = true;
       if(this._localErrorNode) {
         e.preventDefault();
-        if(this._localErrorNode) {
-          this.renderError = true;
-          this._localErrorNode.textContent = this.validationMessage || 'Error';
-        }
+        this._localErrorNode.textContent = this.validationMessage || 'Error';
       }
     });
   }
