@@ -6,12 +6,12 @@
   @layer base {
     *:focus-visible {
       @apply ring;
-      /*@apply ring-focus;*/ /* The `ring-focus` class does not exist. If `outline-3` is a custom class, make sure it is defined within a `@layer` directive. */
+      @apply ring-focus;
       @apply ring-opacity-100;
-      /*@apply outline-3;*/ /* The `outline-3` class does not exist. If `outline-3` is a custom class, make sure it is defined within a `@layer` directive. */
+      @apply outline-3;
 
-      /*@apply outline-focus-yellow;*/ /*  The `outline-focus-yellow` class does not exist. If `outline-focus-yellow` is a custom class, make sure it is defined within a `@layer` directive. */
-      /*@apply outline-offset-3;*/ /*  The `outline-offset-3` class does not exist. If `outline-offset-3` is a custom class, make sure it is defined within a `@layer` directive. */
+      @apply outline-focus-yellow;
+      @apply outline-offset-3;
     }
   }
 }
@@ -25,12 +25,12 @@
       @apply inline-flex;
       @apply items-center;
       @apply gap-1;
-      /*@apply text-text-action;*/ /* The `text-action` class does not exist. If `text-action` is a custom class, make sure it is defined within a `@layer` directive. */
+      @apply text-text-action;
       @apply underline;
       @apply decoration-1;
       @apply underline-offset-4;
-      /*@apply visited:text-text-visited;*/ /*  The `visited:text-text-visited` class does not exist. If `visited:text-text-visited` is a custom class, make sure it is defined within a `@layer` directive. */
-      /*@apply hover:text-surface-action-hover;*/ /*  The `hover:text-surface-action-hover` class does not exist. If `hover:text-surface-action-hover` is a custom class, make sure it is defined within a `@layer` directive. */
+      @apply visited:text-text-visited;
+      @apply hover:text-surface-action-hover;
     }
 
     .btn {

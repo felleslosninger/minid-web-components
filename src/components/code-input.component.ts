@@ -1,5 +1,5 @@
 
-import { css, html, LitElement, nothing, PropertyValues } from 'lit';
+import { css, html, LitElement, PropertyValues } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { createRef, ref, Ref } from 'lit/directives/ref.js';
 import { classMap } from 'lit/directives/class-map.js';
@@ -10,7 +10,6 @@ import { ConstraintsValidationMixin } from 'mixins/form-controller.mixin';
 
 const styles = [
   css`
-
       
       :host {
           container: otc / inline-size;
@@ -95,12 +94,31 @@ export class MinidCodeInput extends ConstraintsValidationMixin(styled(LitElement
   @state()
   _renderError = false;
 
+  @state()
+  _localErrorNode: Node | null = null;
+
   constructor() {
     super();
     this.addEventListener('invalid', (e) => {
-      e.preventDefault();
-      this._renderError = true;
+      if(this._localErrorNode) {
+        e.preventDefault();
+        this._displayLocalError();
+      }
     });
+  }
+
+  _displayLocalError() {
+    if(this._localErrorNode) {
+      this._renderError = true;
+      this._localErrorNode.textContent = this.validationMessage || 'Error';
+    }
+  }
+
+  _hideLocalError() {
+    if(this._localErrorNode) {
+      this._renderError = false;
+      this._localErrorNode.textContent = '';
+    }
   }
 
   override connectedCallback() {
@@ -188,20 +206,34 @@ export class MinidCodeInput extends ConstraintsValidationMixin(styled(LitElement
   onClick() {
     this.value = this.value.substring(0, this.selectionEnd || 0);
     this._renderError = false;
+    if(this._localErrorNode) {
+      this._localErrorNode.textContent = '';
+    }
+  }
+
+  _findErrorMessageNode(nodes: Node[]): Node | null {
+    for (const node of nodes) {
+      if (node instanceof Element && node.classList.contains('error-message')) {
+        return node;
+      }
+      const childNodesArray = Array.from(node.childNodes);
+      const foundNode = this._findErrorMessageNode(childNodesArray);
+      if (foundNode) {
+        return foundNode;
+      }
+    }
+    return null;
+  }
+
+  handleSlotchange(e: Event) {
+    let slot = e.target as HTMLSlotElement;
+    const childNodes = slot.assignedNodes({flatten: true});
+    this._localErrorNode = this._findErrorMessageNode(childNodes);
   }
 
   override render() {
 
     const showErrorMessage = this.error || this._renderError;
-    const errorDiv = showErrorMessage
-      ? html`
-        <div class="fds-textfield__error-message" role="alert">
-          <div class="fds-error-message fds-error-message--md fds-error-message--error">
-            ${this.error || this.validationMessage}
-          </div>
-        </div>`
-      : nothing;
-
 
     return html`
       <div class="flex flex-col">
@@ -239,7 +271,7 @@ export class MinidCodeInput extends ConstraintsValidationMixin(styled(LitElement
           maxlength=${this.length}
           minlength=${this.length}
         />
-        ${errorDiv}
+        <slot name="error-message" @slotchange=${this.handleSlotchange}></slot>
       </div>
     `;
   }
