@@ -101,18 +101,18 @@ export class MinidCombobox extends styled(LitElement, styles) {
 
   protected firstUpdated(_changedProperties: PropertyValues): void {
     const input = this.triggerElements[0];
-    if (input.tagName === 'MID-PHONE-INPUT') {
-      console.log('found phone input');
+    if (input.tagName.toLowerCase() === 'mid-phone-input') {
       input.addEventListener('mid-country-click', this.handleCountryClick);
-    } else if (input.tagName === 'MID-TEXTFIELD') {
+    } else if (input.tagName.toLowerCase() === 'mid-textfield') {
       console.log('found textfield');
     }
-    console.log('first updated', input);
-    // input?.addEventListener('input', console.log);
-    // input?.addEventListener('mid-focus', (e) => this.show());
-    // input?.addEventListener('mid-blur', (e) => this.hide());
 
     this.panel.hidden = !this.open;
+
+    const menu = this.getMenu();
+    if (menu) {
+      menu.variant = 'combobox';
+    }
 
     // If the dropdown is visible on init, update its position
     if (this.open) {
@@ -131,8 +131,11 @@ export class MinidCombobox extends styled(LitElement, styles) {
     const trigger = this.trigger.assignedElements({ flatten: true })[0] as
       | HTMLElement
       | undefined;
+
     if (typeof trigger?.focus === 'function') {
-      trigger.focus();
+      setTimeout(() => {
+        trigger.focus();
+      }, 1);
     }
   }
 
@@ -147,18 +150,19 @@ export class MinidCombobox extends styled(LitElement, styles) {
   getMenuSearch() {
     return this.getMenu()
       ?.defaultSlot.assignedElements({ flatten: true })
-      .find(
-        (el) => (el as HTMLElement).tagName.toLowerCase() === 'mid-search'
-      ) as MinidSearch | undefined;
+      .find((el) => el.tagName.toLowerCase() === 'mid-search') as
+      | MinidSearch
+      | undefined;
   }
 
   private handleCountryClick = () => {
     const menu = this.getMenu();
+    menu?.clearFilter();
+
     this.open ? this.hide() : this.show();
     if (this.open && menu && menu.hasAttribute('searchable')) {
+      // Delay focus slightly to win the focus battle
       setTimeout(() => {
-        console.log(menu);
-
         menu.focusSearchField();
       }, 1);
     }
@@ -172,19 +176,6 @@ export class MinidCombobox extends styled(LitElement, styles) {
       this.hide();
       this.focusOnTrigger();
       return;
-    }
-
-    const menu = this.getMenu();
-    const search = this.getMenuSearch();
-
-    const lol = new KeyboardEvent('input', { ...event });
-
-    if (search) {
-      search.dispatchEvent(lol);
-      search;
-      // menu?.filter((item) =>
-      //   item.innerText.toLowerCase().includes(search.value.toLowerCase())
-      // );
     }
   };
 
@@ -385,7 +376,7 @@ export class MinidCombobox extends styled(LitElement, styles) {
 
     if (accessibleTrigger) {
       switch (accessibleTrigger.tagName.toLowerCase()) {
-        // Shoelace buttons have to update the internal button so it's announced correctly by screen readers
+        // buttons have to update the internal button so it's announced correctly by screen readers
         case 'mid-button':
           target = (accessibleTrigger as MinidButton).button;
           break;
@@ -418,7 +409,7 @@ export class MinidCombobox extends styled(LitElement, styles) {
       await stopAnimations(this);
       this.panel.hidden = false;
       this.popup.active = true;
-      const { keyframes, options } = getAnimation(this, 'dropdown.show');
+      const { keyframes, options } = getAnimation(this, 'combobox.show');
       await animateTo(this.popup.popup, keyframes, options);
 
       this.dispatchEvent(
@@ -432,7 +423,7 @@ export class MinidCombobox extends styled(LitElement, styles) {
       this.removeOpenListeners();
 
       await stopAnimations(this);
-      const { keyframes, options } = getAnimation(this, 'dropdown.hide');
+      const { keyframes, options } = getAnimation(this, 'combobox.hide');
       await animateTo(this.popup.popup, keyframes, options);
       this.panel.hidden = true;
       this.popup.active = false;
@@ -459,19 +450,18 @@ export class MinidCombobox extends styled(LitElement, styles) {
         ?active=${this.open}
       >
         <slot class="dropdown__trigger" slot="anchor" name="trigger"> </slot>
-        <div>
-
-          <!-- aria-hidden=${this.open ? 'false' : 'true'}
-          aria-labelledby="dropdown" -->
+        <div
+          aria-hidden=${this.open ? 'false' : 'true'}
+          aria-labelledby="dropdown"
+        >
           <slot class="dropdown__panel" part="panel"></slot>
-        </div>
         </div>
       </mid-popup>
     `;
   }
 }
 
-setDefaultAnimation('dropdown.show', {
+setDefaultAnimation('combobox.show', {
   keyframes: [
     { opacity: 0, scale: 0.9 },
     { opacity: 1, scale: 1 },
@@ -479,7 +469,7 @@ setDefaultAnimation('dropdown.show', {
   options: { duration: 100, easing: 'ease' },
 });
 
-setDefaultAnimation('dropdown.hide', {
+setDefaultAnimation('combobox.hide', {
   keyframes: [
     { opacity: 1, scale: 1 },
     { opacity: 0, scale: 0.9 },

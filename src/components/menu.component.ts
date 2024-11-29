@@ -1,5 +1,6 @@
-import { css, html, LitElement, nothing } from 'lit';
+import { css, html, LitElement, nothing, PropertyValues } from 'lit';
 import { customElement, property, query } from 'lit/decorators.js';
+import { classMap } from 'lit/directives/class-map.js';
 import { styled } from 'mixins/tailwind.mixin.ts';
 import {
   getMenuItemScrollPosition,
@@ -37,6 +38,15 @@ export class MinidMenu extends styled(LitElement, styles) {
   @property({ type: Boolean })
   searchable = false;
 
+  @property()
+  variant: 'combobox' | 'dropdown' = 'dropdown';
+
+  protected firstUpdated(_changedProperties: PropertyValues): void {
+    this.getAllItems().forEach((item) => {
+      item.variant = this.variant;
+    });
+  }
+
   connectedCallback() {
     super.connectedCallback();
     this.setAttribute('role', 'menu');
@@ -65,8 +75,6 @@ export class MinidMenu extends styled(LitElement, styles) {
     // This isn't true. But we use it for TypeScript checks below.
     const item = target as MinidMenuItem;
 
-    console.log(item.value);
-
     // if (item.type === 'checkbox') {
     //   item.checked = !item.checked;
     // }
@@ -81,8 +89,6 @@ export class MinidMenu extends styled(LitElement, styles) {
   }
 
   handleFilterItems() {
-    console.log(this.filterInput.value);
-
     this.filter((item) =>
       item.innerText
         .toLowerCase()
@@ -189,10 +195,8 @@ export class MinidMenu extends styled(LitElement, styles) {
   };
 
   clearFilter() {
-    this.getAllSelectableItems().forEach((item) => {
-      item.removeAttribute('hidden');
-      item.removeAttribute('inert');
-    });
+    this.filterInput.value = '';
+    this.filterInput.dispatchEvent(new Event('input'));
   }
 
   /**
@@ -245,10 +249,23 @@ export class MinidMenu extends styled(LitElement, styles) {
   }
 
   override render() {
+    const combobox = this.variant === 'combobox';
+    const dropdown = this.variant === 'dropdown';
+    console.log(this.variant);
     return html`
       <!-- <div class="fds-dropdownmenu fds-dropdownmenu--md"> -->
       <div
-        class="panel fds-box--md-shadow fds-box--default-border-color fds-box--md-border-radius fds-box--default-background fds-combobox__options-wrapper fds-combobox--md"
+        class="${classMap({
+          panel: true,
+          'fds-dropdownmenu': dropdown,
+          'fds-dropdownmenu--md': dropdown,
+          'fds-box--md-shadow': combobox,
+          'fds-box--default-border-color': combobox,
+          'fds-box--md-border-radius': combobox,
+          'fds-box--default-background': combobox,
+          'fds-combobox__options-wrapper': combobox,
+          'fds-combobox--md': combobox,
+        })}"
       >
         ${!this.searchable
           ? nothing

@@ -41,6 +41,9 @@ export class MinidMenuItem extends styled(LitElement, style) {
   @property()
   value?: string;
 
+  @property()
+  variant: 'combobox' | 'dropdown' = 'dropdown';
+
   @property({ type: Boolean, reflect: true })
   active = false;
 
@@ -58,22 +61,28 @@ export class MinidMenuItem extends styled(LitElement, style) {
   }
 
   override render() {
-    return html`
-      <button
-        class=${classMap({
-          button: true,
-          'fds-combobox__option': true,
-          'fds-combobox__option--active': this.active,
-        })}
-        variant="tertiary"
-        href=${ifDefined(this.href)}
-        fullwidth
-      >
-        <div class="col-span-2 flex items-center gap-2">
-          <slot></slot>
-        </div>
-      </button>
-    `;
+    console.log(this.variant);
+
+    return this.variant === 'dropdown'
+      ? html`
+          <mid-button variant="tertiary" href=${ifDefined(this.href)} fullwidth>
+            <slot></slot>
+          </mid-button>
+        `
+      : html` <button
+          class=${classMap({
+            button: true,
+            'fds-combobox__option': true,
+            'fds-combobox__option--active': this.active,
+          })}
+          variant="tertiary"
+          href=${ifDefined(this.href)}
+          fullwidth
+        >
+          <div class="col-span-2 flex items-center gap-2">
+            <slot></slot>
+          </div>
+        </button>`;
   }
 }
 

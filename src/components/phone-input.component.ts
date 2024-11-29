@@ -215,6 +215,14 @@ export class MinidPhoneInput extends styled(LitElement, styles) {
     );
   }
 
+  focus() {
+    this.input.focus();
+    this.input.setSelectionRange(
+      (this.phonePrefix?.length ?? 0) + 1,
+      this.input.value.length
+    );
+  }
+
   private handleFocus() {
     this.hasFocus = true;
     this.dispatchEvent(
