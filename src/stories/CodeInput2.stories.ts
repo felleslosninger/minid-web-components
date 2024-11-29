@@ -9,7 +9,7 @@ type CodeInputProps = {
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories
 const meta = {
-  title: 'Komponenter/Code Input 2',
+  title: 'Komponenter/Under arbeid/Code Input 2',
   component: 'mid-code-input-2',
   argTypes: {},
 } satisfies Meta<CodeInputProps>;

@@ -23,7 +23,7 @@ const preview: Preview = {
       },
     },
   },
-  tags: ['autodocs'],
+  tags: ['autodocs', '!dev'],
 };
 
 export default preview;
