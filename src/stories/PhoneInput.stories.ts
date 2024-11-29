@@ -51,14 +51,14 @@ export const Main: Story = {
         value=${ifDefined(value)}
       >
       </mid-phone-input>
-      <mid-menu class="menu" style="--max-height: 14rem">
+      <mid-menu searchable class="menu" style="--max-height: 14rem">
         ${getCountries()
           .sort((a, b) =>
             Array<CountryCode>('NO', 'PL', 'DK', 'SE', 'US', 'GB').includes(a)
               ? -1
               : a.localeCompare(b)
           )
-          .slice(0, 10)
+          // .slice(0, 10)
           .map((country) => {
             return html`<mid-menu-item value=${country}
               ><mid-icon

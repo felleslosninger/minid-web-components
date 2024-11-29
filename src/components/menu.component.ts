@@ -1,7 +1,10 @@
-import { css, html, LitElement } from 'lit';
-import { customElement, query } from 'lit/decorators.js';
+import { css, html, LitElement, nothing } from 'lit';
+import { customElement, property, query } from 'lit/decorators.js';
 import { styled } from 'mixins/tailwind.mixin.ts';
-import { MinidMenuItem } from 'src/components/menu-item.component';
+import {
+  getMenuItemScrollPosition,
+  MinidMenuItem,
+} from 'src/components/menu-item.component';
 
 const styles = [
   css`
@@ -27,6 +30,12 @@ export class MinidMenu extends styled(LitElement, styles) {
 
   @query('.filter-input')
   filterInput!: HTMLInputElement;
+
+  @query('.item-list')
+  itemList!: HTMLUListElement;
+
+  @property({ type: Boolean })
+  searchable = false;
 
   connectedCallback() {
     super.connectedCallback();
@@ -72,10 +81,22 @@ export class MinidMenu extends styled(LitElement, styles) {
   }
 
   handleFilterItems() {
+    console.log(this.filterInput.value);
+
     this.filter((item) =>
       item.innerText
         .toLowerCase()
         .includes(this.filterInput.value.toLowerCase())
+    );
+    this.setCurrentItem(this.getAllSelectableItems()[0]);
+  }
+
+  #scrollOptionIntoView(item: MinidMenuItem): void {
+    this.itemList.scrollTop = getMenuItemScrollPosition(
+      item.offsetTop,
+      item.offsetHeight,
+      this.itemList.scrollTop,
+      this.itemList.offsetHeight
     );
   }
 
@@ -120,7 +141,11 @@ export class MinidMenu extends styled(LitElement, styles) {
         }
 
         this.setCurrentItem(items[index]);
-        items[index].focus();
+        this.#scrollOptionIntoView(items[index]);
+
+        if (!this.searchable) {
+          items[index].focus();
+        }
       }
     }
   }
@@ -208,8 +233,15 @@ export class MinidMenu extends styled(LitElement, styles) {
 
     // Update tab indexes
     items.forEach((i) => {
+      i.setActive(i === item);
       i.setAttribute('tabindex', i === item ? '0' : '-1');
     });
+  }
+
+  focusSearchField() {
+    if (this.searchable) {
+      this.filterInput.focus();
+    }
   }
 
   override render() {
@@ -218,21 +250,26 @@ export class MinidMenu extends styled(LitElement, styles) {
       <div
         class="panel fds-box--md-shadow fds-box--default-border-color fds-box--md-border-radius fds-box--default-background fds-combobox__options-wrapper fds-combobox--md"
       >
-        <div class="filter-input flex items-center gap-2 border-b px-2 pt-2">
-          <mid-icon
-            slot="prefix"
-            class="text-2xl"
-            library="system"
-            name="magnifying-glass"
-          >
-          </mid-icon>
-          <input
-            @input=${this.handleFilterItems}
-            class="h-8 w-full px-2"
-            type="search"
-          />
-        </div>
-        <ul>
+        ${!this.searchable
+          ? nothing
+          : html`<div
+              class="filter-search flex items-center gap-2 border-b p-2"
+            >
+              <mid-icon
+                slot="prefix"
+                class="text-2xl"
+                library="system"
+                name="magnifying-glass"
+              >
+              </mid-icon>
+              <input
+                @input=${this.handleFilterItems}
+                @keydown=${this.handleKeyDown}
+                class="filter-input h-8 w-full rounded px-2"
+                type="search"
+              />
+            </div>`}
+        <ul class="item-list p-2">
           <slot
             @slotchange=${this.handleSlotChange}
             @click=${this.handleClick}

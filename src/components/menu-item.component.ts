@@ -4,11 +4,21 @@ import { styled } from 'mixins/tailwind.mixin.ts';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import './button.component';
 import { MinidButton } from './button.component';
+import { classMap } from 'lit/directives/class-map.js';
 
 const style = [
   css`
     :host[hidden] {
       display: none;
+    }
+
+    .active {
+      --fds-focus-border-width: 3px;
+      outline: var(--fds-focus-border-width) solid
+        var(--fds-semantic-border-focus-outline);
+      outline-offset: var(--fds-focus-border-width);
+      box-shadow: 0 0 0 var(--fds-focus-border-width)
+        var(--fds-semantic-border-focus-boxshadow);
     }
 
     .fds-dropdownmenu__item {
@@ -31,6 +41,9 @@ export class MinidMenuItem extends styled(LitElement, style) {
   @property()
   value?: string;
 
+  @property({ type: Boolean, reflect: true })
+  active = false;
+
   connectedCallback(): void {
     super.connectedCallback();
     this.setAttribute('role', 'menuitem');
@@ -40,18 +53,50 @@ export class MinidMenuItem extends styled(LitElement, style) {
     this.button.focus();
   }
 
+  setActive(active: boolean) {
+    this.active = active;
+  }
+
   override render() {
     return html`
-      <li>
-        <mid-button
-          class="button"
-          variant="tertiary"
-          href=${ifDefined(this.href)}
-          fullwidth
-        >
+      <button
+        class=${classMap({
+          button: true,
+          'fds-combobox__option': true,
+          'fds-combobox__option--active': this.active,
+        })}
+        variant="tertiary"
+        href=${ifDefined(this.href)}
+        fullwidth
+      >
+        <div class="col-span-2 flex items-center gap-2">
           <slot></slot>
-        </mid-button>
-      </li>
+        </div>
+      </button>
     `;
   }
+}
+
+export function getMenuItemScrollPosition(
+  optionOffset: number,
+  optionHeight: number,
+  currentScrollPosition: number,
+  panelHeight: number
+): number {
+  const halfHeight = panelHeight / 2;
+
+  if (optionOffset - halfHeight < currentScrollPosition) {
+    return optionOffset - halfHeight;
+  }
+
+  if (
+    optionOffset + optionHeight - halfHeight >
+    currentScrollPosition + panelHeight
+  ) {
+    return (
+      Math.max(0, optionOffset - panelHeight + optionHeight) - halfHeight + 10
+    );
+  }
+
+  return currentScrollPosition;
 }

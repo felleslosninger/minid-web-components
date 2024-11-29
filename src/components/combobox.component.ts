@@ -103,6 +103,7 @@ export class MinidCombobox extends styled(LitElement, styles) {
     const input = this.triggerElements[0];
     if (input.tagName === 'MID-PHONE-INPUT') {
       console.log('found phone input');
+      input.addEventListener('mid-country-click', this.handleCountryClick);
     } else if (input.tagName === 'MID-TEXTFIELD') {
       console.log('found textfield');
     }
@@ -110,10 +111,6 @@ export class MinidCombobox extends styled(LitElement, styles) {
     // input?.addEventListener('input', console.log);
     // input?.addEventListener('mid-focus', (e) => this.show());
     // input?.addEventListener('mid-blur', (e) => this.hide());
-
-    input.addEventListener('mid-country-click', () => {
-      this.open ? this.hide() : this.show();
-    });
 
     this.panel.hidden = !this.open;
 
@@ -154,6 +151,18 @@ export class MinidCombobox extends styled(LitElement, styles) {
         (el) => (el as HTMLElement).tagName.toLowerCase() === 'mid-search'
       ) as MinidSearch | undefined;
   }
+
+  private handleCountryClick = () => {
+    const menu = this.getMenu();
+    this.open ? this.hide() : this.show();
+    if (this.open && menu && menu.hasAttribute('searchable')) {
+      setTimeout(() => {
+        console.log(menu);
+
+        menu.focusSearchField();
+      }, 1);
+    }
+  };
 
   private handleKeyDown = (event: KeyboardEvent) => {
     // Close when escape is pressed inside an open dropdown. We need to listen on the panel itself and stop propagation
