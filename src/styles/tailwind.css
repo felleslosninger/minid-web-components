@@ -9,6 +9,7 @@
       @apply ring-focus;
       @apply ring-opacity-100;
       @apply outline-3;
+
       @apply outline-focus-yellow;
       @apply outline-offset-3;
     }
