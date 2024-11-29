@@ -50,6 +50,10 @@ export class MinidMenu extends styled(LitElement, styles) {
     this.setAttribute('role', 'menu');
   }
 
+  get noItems() {
+    return this.getAllItems().length === 0;
+  }
+
   private handleClick(event: MouseEvent) {
     const menuItemTypes = ['menuitem', 'menuitemcheckbox'];
 
@@ -243,7 +247,6 @@ export class MinidMenu extends styled(LitElement, styles) {
   override render() {
     const combobox = this.variant === 'combobox';
     const dropdown = this.variant === 'dropdown';
-    console.log(this.variant);
     return html`
       <div
         class="${classMap({
