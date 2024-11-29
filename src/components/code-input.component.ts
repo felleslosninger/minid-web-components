@@ -73,10 +73,10 @@ export class MinidCodeInput extends ConstraintsValidationMixin(styled(LitElement
   disabled = false;
 
   @property({ type: String })
-  inputMode = 'numeric';
+  inputmode = 'numeric';
 
   /**
-   * Display custom error message, and force the input to invalid state
+   * Display custom error message, and force invalid state
    */
   @property({ type: String, attribute: "error-message" })
   _forcedErrorMessage?: string;
@@ -92,7 +92,7 @@ export class MinidCodeInput extends ConstraintsValidationMixin(styled(LitElement
   fontSize = '3cqw';
 
   @state()
-  _renderError = false;
+  renderError = false;
 
   @state()
   _localErrorNode: Node | null = null;
@@ -103,7 +103,7 @@ export class MinidCodeInput extends ConstraintsValidationMixin(styled(LitElement
       if(this._localErrorNode) {
         e.preventDefault();
         if(this._localErrorNode) {
-          this._renderError = true;
+          this.renderError = true;
           this._localErrorNode.textContent = this.validationMessage || 'Error';
         }
       }
@@ -120,6 +120,10 @@ export class MinidCodeInput extends ConstraintsValidationMixin(styled(LitElement
     await this.updateComplete;
     this.inputRef.value?.addEventListener('animationstart', this.autoFillEventHandler.bind(this));
     this.calcInputStyle();
+
+    if(this.validity.customError && !this._localErrorNode) { // trigger built-in visual feedback only if no custom error slot is set
+      this.reportValidity();
+    }
   }
 
   override disconnectedCallback() {
@@ -186,10 +190,6 @@ export class MinidCodeInput extends ConstraintsValidationMixin(styled(LitElement
 
     this.setFormValue(this.value);
     this.setValidity(this.inputRef.value!.validity, this.inputRef.value!.validationMessage, this.inputRef!.value);
-
-    if(this.validity.customError && this._forcedErrorMessage) { // trigger built-in visual feedback
-      this.reportValidity();
-    }
   }
 
   setCustomValidity(error: string) {
@@ -199,14 +199,14 @@ export class MinidCodeInput extends ConstraintsValidationMixin(styled(LitElement
   onClick() {
     this.value = this.value.substring(0, this.selectionEnd || 0);
 
-    this._renderError = false;
+    this.renderError = false;
     this.setCustomValidity('');
     if(this._localErrorNode) {
       this._localErrorNode.textContent = '';
     }
 
     this.setFormValue(this.value);
-    this.setValidity(this.inputRef.value!.validity, this.inputRef.value!.validationMessage, this.inputRef!.value);
+    this.setValidity({} as ValidityState);
   }
 
   handleSlotchange(e: Event) {
@@ -215,8 +215,9 @@ export class MinidCodeInput extends ConstraintsValidationMixin(styled(LitElement
 
     this._localErrorNode = this._findErrorMessageNode(childNodes);
     if(this._localErrorNode && this._forcedErrorMessage) { // display if slot set, and error override in effect
-      this._renderError = true;
+      this.renderError = true;
       this._localErrorNode.textContent = this._forcedErrorMessage;
+      this.setValidity({} as ValidityState); // cancel built-in visual feedback
     }
   }
 
@@ -244,11 +245,11 @@ export class MinidCodeInput extends ConstraintsValidationMixin(styled(LitElement
           ${ref(this.inputRef)}
           class="${classMap({
             'w-full': true,
-            error: this._renderError,
+            error: this.renderError,
           })}"
           .value=${live(this.value)}
           autocomplete="${'one-time-code' as any}"
-          inputmode=${this.inputMode}
+          inputmode=${this.inputmode}
           @input="${(e: InputEvent) => {
             this.value = (e.target as HTMLInputElement).value;
           }}"
@@ -272,6 +273,7 @@ export class MinidCodeInput extends ConstraintsValidationMixin(styled(LitElement
           ?disabled="${live(this.disabled)}"
           ?required="${live(this.required)}"
           minlength=${this.length}
+          maxlength="${this.length}"
         />
         <slot name="error-message" @slotchange=${this.handleSlotchange}></slot>
       </div>
