@@ -1,6 +1,6 @@
 {
   "name": "@felleslosninger/minid-elements",
-  "version": "0.0.41",
+  "version": "0.0.61",
   "type": "module",
   "module": "./dist/index.js",
   "main": "./dist/index.js",
@@ -79,6 +79,10 @@
     "./tooltip": {
       "import": "./dist/tooltip.component.js",
       "types": "./dist/tooltip.component.d.ts"
+    },
+    "./code-input": {
+      "import": "./dist/code-input.component.js",
+      "types": "./dist/code-input.component.d.ts"
     }
   },
   "repository": {
@@ -97,7 +101,6 @@
   },
   "dependencies": {
     "@digdir/designsystemet-css": "^0.10.0",
-    "@digdir/designsystemet-theme": "^0.15.3",
     "@floating-ui/dom": "^1.6.10",
     "composed-offset-position": "^0.0.6",
     "country-flag-icons": "^1.5.13",
@@ -108,7 +111,6 @@
   },
   "devDependencies": {
     "@custom-elements-manifest/analyzer": "^0.10.3",
-    "@digdir/designsystemet-css": "^0.10.0",
     "@digdir/designsystemet-theme": "^0.15.3",
     "@floating-ui/dom": "^1.6.10",
     "@navikt/aksel-icons": "^7.1.2",
@@ -122,6 +124,7 @@
     "@storybook/web-components": "^8.3.6",
     "@storybook/web-components-vite": "^8.3.6",
     "@types/node": "^22.7.4",
+    "@types/webappsec-credential-management": "^0.6.9",
     "@typescript-eslint/eslint-plugin": "^7.0.2",
     "@typescript-eslint/parser": "^7.0.2",
     "@vitejs/plugin-basic-ssl": "^1.1.0",

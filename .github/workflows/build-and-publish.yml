@@ -64,51 +64,35 @@ jobs:
       #################################
       # Publish to MinID CDN
       ################################
-      - name: Build CDN version
-        run: yarn build:cdn
+      - name: Setup SSH Deploy Key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.CDN_DEPLOY_KEY }}
+          known_hosts: ${{ secrets.KNOWN_HOSTS }}
 
-      - name: Clone CDN Repo (using API)
+      - name: Clone CDN Repo (using SSH)
         run: |
-          mkdir cdn
-          cd cdn
-          curl -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -H "Accept: application/vnd.github+json" https://api.github.com/repos/felleslosninger/minid-cdn/zipball > main.zip || exit -1
-          unzip main.zip
-          mv *(felleslosninger-minid-cdn-*)/* .
-          rm -rf *(felleslosninger-minid-cdn-*) main.zip
+          git clone git@github.com:felleslosninger/minid-cdn.git cdn
 
-      - name: Create Versioned Folder in CDN Repo
+      - name: Build CDN version, and copy files to CDN repo
         run: |
-          cd cdn
-          VERSION=$(node -p "require('../package.json').version")
-          mkdir -p minid-elements/$VERSION
-
-      - name: Copy CDN Files to Versioned Folder
-        run: |
-          cp -r dist-cdn/* cdn/minid-elements/$VERSION
-
-      - name: Create Symlink to Latest Version
-        run: |
-          cd cdn/minid-elements
-          ln -sfn $VERSION latest
-
-      - name: Write Version to File
-        run: |
+          yarn build:cdn
           cd cdn
           VERSION=$(node -p "require('../package.json').version")
+          mkdir -p minid-elements/${VERSION}                    
+          cp -r ../dist-cdn/* minid-elements/$VERSION
+          cd minid-elements
           echo $VERSION > version.txt
+          ln -sfn $VERSION latest      
+          mkdir -p $VERSION/theme
+          cp -r ../../node_modules/@digdir/designsystemet-theme/brand/* $VERSION/theme/
 
-      - name: Commit Changes to CDN Repo (using API)
+      - name: Commit Changes to CDN Repo (using SSH)
         run: |
+          VERSION=$(node -p "require('./package.json').version")
           cd cdn
-          FILES=$(git ls-files -m)
-          for FILE in $FILES; do
-            CONTENT=$(base64 -w 0 $FILE)
-            FILENAME=$(basename $FILE)
-            SHA=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/felleslosninger/minid-cdn/contents/$FILE?ref=main | jq -r .sha)
-            if [ "$SHA" == "null" ]; then
-              SHA=""
-            fi
-            curl -s -X PUT -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-              -d "{\"message\":\"[skip actions] Deploy version $VERSION to CDN\", \"content\":\"$CONTENT\", \"branch\":\"main\", \"sha\":\"$SHA\"}" \
-              https://api.github.com/repos/felleslosninger/minid-cdn/contents/$FILE
-          done
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git add .
+          git commit -m "[skip actions] Deploy version $VERSION to CDN"
+          git push origin main

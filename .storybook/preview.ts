@@ -10,6 +10,7 @@ setCustomElementsManifest(customElements);
 const preview: Preview = {
   parameters: {
     controls: {
+      exclude: /(_.*|#.*|internals|validationMessage|validity|[a-z][A-Z]+)/, // exclude private props
       matchers: {
         color: /(background|color)$/i,
         date: /Date$/i,
@@ -23,7 +24,7 @@ const preview: Preview = {
       },
     },
   },
-  tags: ['autodocs'],
+  tags: ['autodocs', '!dev'],
 };
 
 export default preview;
