@@ -3,12 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MinID Button Example</title>
-  <link rel="stylesheet" href="https://cdn.minid.no/minid-elements/latest/index.css?v=3" />
-  <link rel="stylesheet" href="https://cdn.minid.no/minid-elements/latest/theme/digdir/tokens.css?v=3" /> <!-- digdir, altinn, brreg, tilsynet -->
+  <title>MinID CDN Example</title>
+  <link rel="stylesheet" href="https://cdn.minid.no/minid-elements/latest/index.css" />
+  <link rel="stylesheet" href="https://cdn.minid.no/minid-elements/latest/theme/digdir/tokens.css" /> <!-- digdir, altinn, brreg, tilsynet -->
+  <script type="module" src="https://cdn.minid.no/minid-elements/latest/index.js"></script>
 </head>
+
 <body>
-<script type="module" src="https://cdn.minid.no/minid-elements/latest/index.js?v=3"></script>
-<mid-button>Click me!</mid-button>
+
+<form enctype="text/plain" method="get" class="p-3">
+  <mid-code-input required font-size="32px">
+    <div style="color: indianred" class="error-message" slot="error-message"></div>
+  </mid-code-input>
+  <mid-button style="padding-top: 5px" type="submit">Submit</mid-button>
+</form>
+
 </body>
 </html>

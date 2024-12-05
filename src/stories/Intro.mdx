@@ -1,0 +1,80 @@
+import { Meta } from '@storybook/addon-docs';
+
+<Meta title="Introduction" />
+
+# Welcome to MinId Elements
+
+MinId Elements is a web component library designed to streamline your development process while adhering to the Digitaliseringsdirektoratets Design System. This means you can seamlessly integrate our components with your projects, leveraging their design tokens and themes for a consistent user experience.
+
+## Getting Started
+
+### Installation
+
+For now, MinId Elements is available as a private package on GitHub. To install it, you'll first need to be part for the 'felleslosninger' organization, and then you'll need to configure your npm or yarn client to access the private repository.
+
+**npm:**
+
+1.  Create or edit your `~/.npmrc` file and add the following lines:
+
+    ```plaintext
+    //npm.pkg.github.com/:_authToken=[PERSONAL_ACCESS_TOKEN]
+    @felleslosninger:registry=https://npm.pkg.github.com/
+    ```
+    
+2.  Replace `[PERSONAL_ACCESS_TOKEN]` with your GitHub personal access token.
+
+**yarn:**
+
+1.  Create or edit your `~/.yarnrc.yaml` file and add the following:
+
+    ```yaml
+    npmScopes: {
+      felleslosninger: {
+        npmRegistryServer: "https://npm.pkg.github.com",
+          npmAlwaysAuth: true,
+          npmAuthToken: [PERSONAL_ACCESS_TOKEN]
+      }
+    }
+    ```
+2. Replace [PERSONAL_ACCESS_TOKEN] with your GitHub personal access token.
+
+Once your client is configured, you can install the package using:
+```bash
+npm install @felleslosninger/minid-elements
+```
+
+or 
+
+```bash
+yarn add @felleslosninger/minid-elements
+```
+
+### CDN Usage
+Alternatively, you can use MinId Elements directly from our CDN. Here's an example of how to include the components in your HTML file:
+    
+```html
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>MinID CDN Example</title>
+      <link rel="stylesheet" href="https://cdn.minid.no/minid-elements/latest/index.css" />
+      <link rel="stylesheet" href="https://cdn.minid.no/minid-elements/latest/theme/digdir/tokens.css" /> 
+      <script type="module" src="https://cdn.minid.no/minid-elements/latest/index.js"></script>
+    </head>
+    <body>
+      <mid-button>Click me</mid-button> 
+    </body>
+    </html>
+```
+This example demonstrates how to include the mid-button component. You can replace this with any other component from the MinId Elements library.
+
+## Compatibility with Design System
+MinId Elements is fully compatible with the Digitaliseringsdirektoratets Design System. This ensures that your applications have a consistent look and feel, regardless of the components you use.
+
+## Available Components
+This library offers a wide range of components to cover your UI needs. Explore the Storybook to see them in action and learn how to use them.
+
+## Contributing
+We welcome contributions to MinId Elements! If you find a bug or have a feature request, please open an issue on our GitHub repository.

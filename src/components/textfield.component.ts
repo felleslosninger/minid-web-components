@@ -4,6 +4,7 @@ import { live } from 'lit/directives/live.js';
 import { stringConverter } from 'internal/string-converter';
 import { classMap } from 'lit/directives/class-map.js';
 import { styled } from 'mixins/tailwind.mixin.ts';
+import { FormControllerMixin } from 'mixins/form-controller.mixin.ts';
 
 const styles = [
   css`
@@ -103,7 +104,7 @@ const styles = [
  * @csspart form-control - The form control that wraps the label, input, and help text.
  */
 @customElement('mid-textfield')
-export class MinidTextfield extends styled(LitElement, styles) {
+export class MinidTextfield extends FormControllerMixin(styled(LitElement, styles)) {
   @query('.input')
   input!: HTMLInputElement;
 

@@ -9,6 +9,11 @@ setCustomElementsManifest(customElements);
 
 const preview: Preview = {
   parameters: {
+    options: {
+      storySort: {
+        order: ['Introduction', '*'],
+      },
+    },
     controls: {
       exclude: /(_.*|#.*|internals|validationMessage|validity|[a-z][A-Z]+)/, // exclude private props
       matchers: {
