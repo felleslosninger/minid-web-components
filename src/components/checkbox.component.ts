@@ -7,9 +7,10 @@ import {
 } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { styled } from 'src/mixins/tailwind.mixin';
+import { FormControllerMixin } from 'mixins/form-controller.mixin.ts';
 
 @customElement('mid-checkbox')
-export class MinidCheckbox extends styled(LitElement) {
+export class MinidCheckbox extends FormControllerMixin(styled(LitElement)) {
   @property({ type: Boolean })
   checked = false;
 
@@ -30,6 +31,7 @@ export class MinidCheckbox extends styled(LitElement) {
 
   #handleChange(event: Event) {
     this.checked = (event.target as HTMLInputElement).checked;
+    this.checked && this.setFormValue('on', 'checked');
     this.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
   }
 

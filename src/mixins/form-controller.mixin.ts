@@ -3,7 +3,7 @@ import { LitElement } from 'lit';
 export interface FormAssociatedMixinInterface {
   internals: ElementInternals;
   shadowRoot: ShadowRoot | null;
-  setFormValue(value: string): void;
+  setFormValue(value: File | string | FormData | null, state?: File | string | FormData | null): void;
 }
 
 export const FormControllerMixin = <TBase extends Constructor<LitElement>>(Base: TBase): TBase & Constructor<FormAssociatedMixinInterface> => {
@@ -16,8 +16,8 @@ export const FormControllerMixin = <TBase extends Constructor<LitElement>>(Base:
       this.internals = this.attachInternals();
     }
 
-    setFormValue(value: string) {
-      this.internals.setFormValue(value);
+    setFormValue(value: File | string | FormData | null, state?: File | string | FormData | null) {
+      this.internals.setFormValue(value, state);
     }
 
     get shadowRoot (){
