@@ -179,6 +179,7 @@ export class MinidTextfield extends FormControllerMixin(styled(LitElement, style
     this.dispatchEvent(
       new Event('mid-input', { bubbles: true, composed: true })
     );
+    this.setFormValue(this.value);
   }
 
   private handleFocus() {

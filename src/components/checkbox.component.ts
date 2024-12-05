@@ -31,6 +31,7 @@ export class MinidCheckbox extends FormControllerMixin(styled(LitElement)) {
 
   #handleChange(event: Event) {
     this.checked = (event.target as HTMLInputElement).checked;
+    this.checked && this.setFormValue('on', 'checked');
     this.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
   }
 

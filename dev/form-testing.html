@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Form and Validation Test</title>
+
+  <!-- nonce for CSP -->
+  <script>window.litNonce = "{{cspNonce}}";</script>
+  <meta property="csp-nonce" content="{{cspNonce}}" nonce="{{cspNonce}}">
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- MinID Elements and theme-->
+  <script type="module" src="src/components/code-input.component.ts"></script>
+  <script type="module" src="src/components/button.component.ts"></script>
+  <script type="module" src="src/components/textfield.component.ts"></script>
+  <script type="module" src="src/components/checkbox.component.ts"></script>
+  <link rel="stylesheet" href="index.css" />
+  <link rel="stylesheet" href="theme.css" />
+  <link rel="stylesheet" href="src/styles/tailwind.css" />
+
+  <style>
+    .error-message {
+        font: bold 1rem sans-serif;
+        color: indianred;
+    }
+  </style>
+
+</head>
+
+<body>
+
+<form enctype="text/plain" method="get" class="p-3">
+
+  <mid-code-input id="otc-input" name="otc" required></mid-code-input>
+
+  <mid-checkbox name="topping" value="cheese">
+    <span slot="description">Want cheese with that?</span>
+  </mid-checkbox>
+
+  <mid-textfield label="Tekst input" type="text" name="text-input"></mid-textfield>
+
+  <mid-button class="pt-5" id="my-swanky-submit-button" type="submit" name="action" value="login">Submit</mid-button>
+</form>
+
+</body>
+</html>
