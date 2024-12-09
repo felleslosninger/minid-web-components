@@ -59,18 +59,21 @@ const styles = [
   `,
 ];
 
+/**
+ *
+ */
 @customElement('mid-phone-input')
 export class MinidPhoneInput extends styled(LitElement, styles) {
   #formatter = new AsYouType();
-  #skipCountryUpdate = false;
-  #currentEvent = new Event('');
+  #skipCountryUpdate = false; // avoids unwanted update loop
+  #currentEvent = new Event(''); // the event to be emitted after value is set
   #currentTemplate = '';
 
   @query('.phone-number')
   input!: HTMLInputElement;
 
   /**
-   *
+   * The value from the input field.
    */
   @property()
   value = '';
@@ -110,6 +113,14 @@ export class MinidPhoneInput extends styled(LitElement, styles) {
     this.dispatchEvent(
       new CustomEvent('mid-country-click', { composed: true, bubbles: true })
     );
+  }
+
+  handleCountryKeyDown(event: KeyboardEvent) {
+    if ([' ', 'Enter'].includes(event.key)) {
+      this.dispatchEvent(
+        new CustomEvent('mid-country-click', { composed: true, bubbles: true })
+      );
+    }
   }
 
   connectedCallback(): void {
@@ -217,10 +228,12 @@ export class MinidPhoneInput extends styled(LitElement, styles) {
 
   focus() {
     this.input.focus();
-    this.input.setSelectionRange(
-      (this.phonePrefix?.length ?? 0) + 1,
-      this.input.value.length
-    );
+    setTimeout(() => {
+      this.input.setSelectionRange(
+        (this.phonePrefix?.length ?? 0) + 1,
+        this.input.value.length
+      );
+    }, 0);
   }
 
   private handleFocus() {
@@ -231,7 +244,6 @@ export class MinidPhoneInput extends styled(LitElement, styles) {
   }
 
   private removePhonePrefix(value: string) {
-    console.log(this.phonePrefix);
     if (this.phonePrefix) {
       value = value.slice(this.phonePrefix.length);
       if (value[0] === ' ') {
@@ -244,19 +256,16 @@ export class MinidPhoneInput extends styled(LitElement, styles) {
   @watch('country', { waitUntilFirstUpdate: true })
   handleCountryChange() {
     if (this.#skipCountryUpdate) {
-      console.log('skipping', this.#skipCountryUpdate);
       this.#skipCountryUpdate = false;
       return;
     }
 
     this.#formatter = new AsYouType(this.country ?? this.defaultcountry);
     const nationalNumber = this.removePhonePrefix(this.input.value);
-    console.log(this.phonePrefix, nationalNumber);
 
     this.phonePrefix = this.country
       ? `+${getCountryCallingCode(this.country)}`
       : '+';
-    console.log(this.phonePrefix);
     this.input.value = formatIncompletePhoneNumber(
       `${this.phonePrefix}${nationalNumber}`
     );
@@ -316,6 +325,7 @@ export class MinidPhoneInput extends styled(LitElement, styles) {
             iconstyled
             variant="tertiary"
             @click=${this.handleCountryClick}
+            @keydown=${this.handleCountryKeyDown}
           >
             ${this.country
               ? html`

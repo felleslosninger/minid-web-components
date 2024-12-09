@@ -58,7 +58,7 @@ export const Main: Story = {
               ? -1
               : a.localeCompare(b)
           )
-          // .slice(0, 10)
+          .slice(0, 10)
           .map((country) => {
             return html`<mid-menu-item value=${country}>
               <mid-icon

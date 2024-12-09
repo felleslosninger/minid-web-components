@@ -4,6 +4,7 @@ import {
   property,
   query,
   queryAssignedElements,
+  state,
 } from 'lit/decorators.js';
 import 'components/popup.component';
 import { styled } from 'mixins/tailwind.mixin.ts';
@@ -83,6 +84,9 @@ export class MinidCombobox extends styled(LitElement, styles) {
   @property({ type: Boolean })
   disabled = false;
 
+  @state()
+  mode: 'textfield' | 'phone-input' = 'textfield';
+
   /**
    * The dropdown will close when the user interacts outside of this element (e.g. clicking). Useful for composing other
    * components that use a dropdown internally.
@@ -101,9 +105,9 @@ export class MinidCombobox extends styled(LitElement, styles) {
   protected firstUpdated(_changedProperties: PropertyValues): void {
     const input = this.triggerElements[0];
     if (input.tagName.toLowerCase() === 'mid-phone-input') {
-      input.addEventListener('mid-country-click', this.handleCountryClick);
+      this.mode = 'phone-input';
     } else if (input.tagName.toLowerCase() === 'mid-textfield') {
-      console.log('found textfield');
+      this.mode = 'textfield';
     }
 
     this.panel.hidden = !this.open;
@@ -132,9 +136,7 @@ export class MinidCombobox extends styled(LitElement, styles) {
       | undefined;
 
     if (typeof trigger?.focus === 'function') {
-      setTimeout(() => {
-        trigger.focus();
-      }, 1);
+      trigger.focus();
     }
   }
 
@@ -148,12 +150,12 @@ export class MinidCombobox extends styled(LitElement, styles) {
 
   private handleCountryClick = () => {
     const menu = this.getMenu();
-    menu?.clearFilter();
 
     this.open ? this.hide() : this.show();
-    if (this.open && menu && menu.hasAttribute('searchable')) {
+    if (this.open && menu && menu.searchable) {
       // Delay focus slightly to win the focus battle
       setTimeout(() => {
+        menu.clearFilter();
         menu.focusSearchField();
       }, 1);
     }
@@ -234,6 +236,10 @@ export class MinidCombobox extends styled(LitElement, styles) {
   };
 
   handleTriggerClick() {
+    if (this.mode === 'phone-input') {
+      return;
+    }
+
     if (this.open) {
       this.hide();
     } else {
@@ -247,7 +253,9 @@ export class MinidCombobox extends styled(LitElement, styles) {
     // key again to hide the menu in case they don't want to make a selection.
     if ([' ', 'Enter'].includes(event.key)) {
       event.preventDefault();
-      this.handleTriggerClick();
+      if (this.mode === 'textfield') {
+        this.handleTriggerClick();
+      }
       return;
     }
 
@@ -277,17 +285,38 @@ export class MinidCombobox extends styled(LitElement, styles) {
           this.updateComplete.then(() => {
             if (event.key === 'ArrowDown' || event.key === 'Home') {
               menu.setCurrentItem(firstMenuItem);
-              firstMenuItem.focus();
+              if (this.mode === 'textfield') {
+                firstMenuItem.focus();
+              } else {
+                menu.clearFilter();
+                menu.focusSearchField();
+              }
             }
 
             if (event.key === 'ArrowUp' || event.key === 'End') {
               menu.setCurrentItem(lastMenuItem);
-              lastMenuItem.focus();
+              if (this.mode === 'textfield') {
+                lastMenuItem.focus();
+              } else {
+                menu.clearFilter();
+                menu.focusSearchField();
+              }
             }
           });
         }
       }
     }
+  }
+
+  handleTriggerKeyUp(event: KeyboardEvent) {
+    // Prevent space from triggering a click event in Firefox
+    if (event.key === ' ') {
+      event.preventDefault();
+    }
+  }
+
+  handleTriggerSlotChange() {
+    this.updateAccessibleTrigger();
   }
 
   /**
@@ -325,7 +354,9 @@ export class MinidCombobox extends styled(LitElement, styles) {
     this.#closeWatcher?.destroy();
   }
 
-  /** Shows the dropdown panel. */
+  /**
+   * Shows the dropdown panel.
+   */
   async show() {
     if (this.open) {
       return undefined;
@@ -335,7 +366,9 @@ export class MinidCombobox extends styled(LitElement, styles) {
     return waitForEvent(this, 'mid-after-show');
   }
 
-  /** Hides the dropdown panel */
+  /**
+   * Hides the dropdown panel
+   */
   async hide() {
     if (!this.open) {
       return undefined;
@@ -411,8 +444,6 @@ export class MinidCombobox extends styled(LitElement, styles) {
         new Event('mid-hide', { bubbles: true, composed: true })
       );
       this.removeOpenListeners();
-      console.log('hiding');
-
       await stopAnimations(this);
       const { keyframes, options } = getAnimation(this, 'combobox.hide');
       await animateTo(this.popup.popup, keyframes, options);
@@ -426,8 +457,6 @@ export class MinidCombobox extends styled(LitElement, styles) {
   }
 
   override render() {
-    console.log('rendering, open:', this.open);
-
     return html`
       <mid-popup
         id="dropdown"
@@ -442,7 +471,17 @@ export class MinidCombobox extends styled(LitElement, styles) {
         sync="width"
         ?active=${this.open}
       >
-        <slot class="dropdown__trigger" slot="anchor" name="trigger"> </slot>
+        <slot
+          class="dropdown__trigger"
+          slot="anchor"
+          name="trigger"
+          @click=${this.handleTriggerClick}
+          @keydown=${this.handleTriggerKeyDown}
+          @keyup=${this.handleTriggerKeyUp}
+          @slotchange=${this.handleTriggerSlotChange}
+          @mid-country-click=${this.handleCountryClick}
+        >
+        </slot>
         <div
           aria-hidden=${this.open ? 'false' : 'true'}
           aria-labelledby="dropdown"
