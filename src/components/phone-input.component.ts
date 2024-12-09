@@ -17,6 +17,7 @@ import {
   templateParser,
 } from 'input-format';
 import { watch } from 'src/internal/watch';
+import { FormControllerMixin } from 'src/mixins/form-controller.mixin';
 
 const styles = [
   css`
@@ -59,32 +60,50 @@ const styles = [
 ];
 
 /**
- *
+ * @event {Event} mid-country-click - Emitted when the country button is clicked
+ * @event {Event} mid-change - Emitted when the value is modified by the user
+ * @event {Event} mid-input - Emitted after a new user input
+ * @event {Event} mid-focus - Emitted after focus is moved away from input
+ * @event {Event} mid-blur - Emitted after input gains focus
  */
 @customElement('mid-phone-input')
-export class MinidPhoneInput extends styled(LitElement, styles) {
+export class MinidPhoneInput extends FormControllerMixin(
+  styled(LitElement, styles)
+) {
   #formatter = new AsYouType();
   #skipCountryUpdate = false; // avoids unwanted update loop
   #currentEvent = new Event(''); // the event to be emitted after value is set
   #currentTemplate = '';
 
+  /**
+   * @ignore
+   */
   @query('.phone-number')
   input!: HTMLInputElement;
 
   /**
-   * The value from the input field. country
+   * The value of the phone number in E.164 format. Example: `"+4799999999"`
+   *
    */
   @property({ reflect: true })
   value = '';
 
+  /**
+   * The phone number without the country code prefix. Example: `"99999999"`
+   */
   @property({ reflect: true })
   nationalnumber = '';
 
   /**
+   * The country code of the current phone number value. Example: `"+47"`
    */
   @property({ reflect: true })
   countrycode = '';
 
+  /**
+   * Label for the combobox.
+   * Passed label will be encapsulated by a label element.
+   */
   @property()
   label = '';
 
@@ -219,6 +238,7 @@ export class MinidPhoneInput extends styled(LitElement, styles) {
     this.value = value;
     this.nationalnumber = this.removePhonePrefix(value);
     this.dispatchEvent(this.#currentEvent);
+    this.setFormValue(this.value);
   };
 
   focus() {

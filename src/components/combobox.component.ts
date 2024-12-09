@@ -250,7 +250,6 @@ export class MinidCombobox extends styled(LitElement, styles) {
       return;
     }
 
-    console.log(event.detail.item.value, event.detail.item, event.target);
     // Transfer selected country from panel to input field
     const input = this.triggerElements[0] as MinidPhoneInput;
     const country = event.detail.item.value;

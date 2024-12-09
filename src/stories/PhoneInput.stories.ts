@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
-
 import '../components/combobox.component';
 import '../components/menu.component';
 import '../components/menu-item.component';
@@ -12,6 +11,11 @@ import { CountryCode, getCountries } from 'libphonenumber-js';
 import { countryLabelsNO } from '../components/utilities/countries';
 
 type PhoneInputProps = {
+  'mid-country-click': Event;
+  'mid-change': Event;
+  'mid-input': Event;
+  'mid-focus': Event;
+  'mid-blur': Event;
   value?: string;
   country?: CountryCode;
   label?: string;
@@ -23,6 +27,11 @@ const meta: Meta = {
   component: 'mid-phone-input',
   argTypes: {
     country: { control: { type: 'select' }, options: getCountries() },
+    'mid-country-click': { control: false },
+    'mid-change': { control: false },
+    'mid-input': { control: false },
+    'mid-focus': { control: false },
+    'mid-blur': { control: false },
   },
   subcomponents: {
     Menu: 'mid-menu',
@@ -40,17 +49,12 @@ export const Main: Story = {
     country: 'NO',
     label: 'Telefonnummer',
   },
-  decorators: [
-    (story) =>
-      html`<div class="mb-64">
-        ${story()}
-        <pre class="pre"></pre>
-      </div>`,
-  ],
+  decorators: [(story) => html`<div class="mb-64">${story()}</div> `],
   render: ({ value, country, label, hidelabel }: PhoneInputProps) => html`
     <mid-combobox>
       <mid-phone-input
         slot="trigger"
+        class="phone-input"
         country=${ifDefined(country)}
         value=${ifDefined(value)}
         label=${ifDefined(label)}
@@ -72,7 +76,7 @@ export const Main: Story = {
                 library="country"
                 name="${country}"
               ></mid-icon>
-              - <span class="truncate">${countryLabelsNO[country]}</span>
+              <span class="truncate">${countryLabelsNO[country]}</span>
             </mid-menu-item>`;
           })}
       </mid-menu>

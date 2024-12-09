@@ -23,7 +23,7 @@ const styles = [
 ];
 
 /**
- *  @event {{ item: MidMenuItem }} mid-select - Emitted when a menu item is selected.
+ *  @event {{ detail: { item: MidMenuItem } }} mid-select - Emitted when a menu item is selected.
  */
 @customElement('mid-menu')
 export class MinidMenu extends styled(LitElement, styles) {
