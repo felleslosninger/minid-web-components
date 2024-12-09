@@ -19,6 +19,8 @@ import { animateTo, stopAnimations } from 'src/internal/animate';
 import { getTabbableBoundary } from 'src/internal/tabbable';
 import { MinidButton } from 'src/components/button.component';
 import { MinidMenu } from 'src/components/menu.component';
+import { MinidPhoneInput } from 'src/components/phone-input.component';
+import { MinidTextfield } from 'src/components/textfield.component';
 
 const styles = [
   css`
@@ -35,27 +37,45 @@ const styles = [
  */
 @customElement('mid-combobox')
 export class MinidCombobox extends styled(LitElement, styles) {
+  /**
+   * @ignore
+   */
   #closeWatcher?: CloseWatcher;
 
-  @query('#dropdown')
+  /**
+   * @ignore
+   */
+  @query('#combobox')
   popup!: MinidPopup;
 
-  @query('.dropdown__trigger')
+  /**
+   * @ignore
+   */
+  @query('.combobox__trigger')
   trigger!: HTMLSlotElement;
 
-  @query('.dropdown__panel')
+  /**
+   * @ignore
+   */
+  @query('.combobox__panel')
   panel!: HTMLSlotElement;
 
+  /**
+   * @ignore
+   */
   @queryAssignedElements({ slot: 'trigger' })
-  triggerElements!: HTMLInputElement[];
+  triggerElements!: (MinidTextfield | MinidPhoneInput | HTMLInputElement)[];
 
   /**
-   * By default, the dropdown is closed when an item is selected. This attribute will keep it open instead. Useful for
-   * dropdowns that allow for multiple interactions.
+   * By default, the combobox is closed when an item is selected. This attribute will keep it open instead. Useful for
+   * comboboxs that allow for multiple interactions.
    */
   @property({ type: Boolean, reflect: true })
   stayopenonselect = false;
 
+  /**
+   * Indicates wether the combobox panel is open. You can use this or the show/hide methods.
+   */
   @property({ type: Boolean, reflect: true })
   open = false;
 
@@ -63,13 +83,13 @@ export class MinidCombobox extends styled(LitElement, styles) {
   size: 'sm' | 'md' | 'lg' = 'md';
 
   /**
-   * Distance between trigger and dropdown panel
+   * Distance between trigger and combobox panel
    */
   @property({ type: Number })
   distance = 4;
 
   /**
-   * Nudge the dropdown panel position. Accepts a negative or positive number.
+   * Nudge the combobox panel position. Accepts a negative or positive number.
    */
   @property({ type: Number })
   skidding = 0;
@@ -85,11 +105,11 @@ export class MinidCombobox extends styled(LitElement, styles) {
   disabled = false;
 
   @state()
-  mode: 'textfield' | 'phone-input' = 'textfield';
+  triggerElement: 'mid-textfield' | 'mid-phone-input' = 'mid-textfield';
 
   /**
-   * The dropdown will close when the user interacts outside of this element (e.g. clicking). Useful for composing other
-   * components that use a dropdown internally.
+   * The combobox will close when the user interacts outside of this element (e.g. clicking). Useful for composing other
+   * components that use a combobox internally.
    */
   @property({ attribute: false })
   containingElement?: HTMLElement;
@@ -105,9 +125,9 @@ export class MinidCombobox extends styled(LitElement, styles) {
   protected firstUpdated(_changedProperties: PropertyValues): void {
     const input = this.triggerElements[0];
     if (input.tagName.toLowerCase() === 'mid-phone-input') {
-      this.mode = 'phone-input';
+      this.triggerElement = 'mid-phone-input';
     } else if (input.tagName.toLowerCase() === 'mid-textfield') {
-      this.mode = 'textfield';
+      this.triggerElement = 'mid-textfield';
     }
 
     this.panel.hidden = !this.open;
@@ -117,7 +137,7 @@ export class MinidCombobox extends styled(LitElement, styles) {
       menu.variant = 'combobox';
     }
 
-    // If the dropdown is visible on init, update its position
+    // If the combobox panel is visible on init, update its position
     if (this.open) {
       this.addOpenListeners();
       this.popup.active = true;
@@ -162,7 +182,7 @@ export class MinidCombobox extends styled(LitElement, styles) {
   };
 
   private handleKeyDown = (event: KeyboardEvent) => {
-    // Close when escape is pressed inside an open dropdown. We need to listen on the panel itself and stop propagation
+    // Close when escape is pressed inside an open combobox. We need to listen on the panel itself and stop propagation
     // in case any ancestors are also listening for this key.
     if (this.open && event.key === 'Escape') {
       event.stopPropagation();
@@ -183,7 +203,7 @@ export class MinidCombobox extends styled(LitElement, styles) {
 
     // Handle tabbing
     if (event.key === 'Tab') {
-      // Tabbing within an open menu should close the dropdown and refocus the trigger
+      // Tabbing within an open menu should close the combobox and refocus the trigger
       if (
         this.open &&
         (document.activeElement?.tagName.toLowerCase() === 'mid-menu-item' ||
@@ -197,7 +217,7 @@ export class MinidCombobox extends styled(LitElement, styles) {
 
       // Tabbing outside of the containing element closes the panel
       //
-      // If the dropdown is used within a shadow DOM, we need to obtain the activeElement within that shadowRoot,
+      // If the combobox is used within a shadow DOM, we need to obtain the activeElement within that shadowRoot,
       // otherwise `document.activeElement` will only return the name of the parent shadow DOM element.
       setTimeout(() => {
         const activeElement =
@@ -225,10 +245,20 @@ export class MinidCombobox extends styled(LitElement, styles) {
     }
   };
 
-  private handlePanelSelect = (event: Event) => {
+  private handlePanelSelect = (event: CustomEvent) => {
+    if (this.triggerElement !== 'mid-phone-input') {
+      return;
+    }
+
+    console.log(event.detail.item.value, event.detail.item, event.target);
+    // Transfer selected country from panel to input field
+    const input = this.triggerElements[0] as MinidPhoneInput;
+    const country = event.detail.item.value;
+    input.country = country;
+
     const target = event.target as HTMLElement;
 
-    // Hide the dropdown when a menu item is selected
+    // Hide the combobox when a menu item is selected
     if (!this.stayopenonselect && target.tagName.toLowerCase() === 'mid-menu') {
       this.hide();
       this.focusOnTrigger();
@@ -236,7 +266,7 @@ export class MinidCombobox extends styled(LitElement, styles) {
   };
 
   handleTriggerClick() {
-    if (this.mode === 'phone-input') {
+    if (this.triggerElement === 'mid-phone-input') {
       return;
     }
 
@@ -253,7 +283,7 @@ export class MinidCombobox extends styled(LitElement, styles) {
     // key again to hide the menu in case they don't want to make a selection.
     if ([' ', 'Enter'].includes(event.key)) {
       event.preventDefault();
-      if (this.mode === 'textfield') {
+      if (this.triggerElement === 'mid-textfield') {
         this.handleTriggerClick();
       }
       return;
@@ -276,7 +306,7 @@ export class MinidCombobox extends styled(LitElement, styles) {
         if (!this.open) {
           this.show();
 
-          // Wait for the dropdown to open before focusing, but not the animation
+          // Wait for the combobox to open before focusing, but not the animation
           await this.updateComplete;
         }
 
@@ -285,7 +315,7 @@ export class MinidCombobox extends styled(LitElement, styles) {
           this.updateComplete.then(() => {
             if (event.key === 'ArrowDown' || event.key === 'Home') {
               menu.setCurrentItem(firstMenuItem);
-              if (this.mode === 'textfield') {
+              if (this.triggerElement === 'mid-textfield') {
                 firstMenuItem.focus();
               } else {
                 menu.clearFilter();
@@ -295,7 +325,7 @@ export class MinidCombobox extends styled(LitElement, styles) {
 
             if (event.key === 'ArrowUp' || event.key === 'End') {
               menu.setCurrentItem(lastMenuItem);
-              if (this.mode === 'textfield') {
+              if (this.triggerElement === 'mid-textfield') {
                 lastMenuItem.focus();
               } else {
                 menu.clearFilter();
@@ -320,7 +350,7 @@ export class MinidCombobox extends styled(LitElement, styles) {
   }
 
   /**
-   * Instructs the dropdown menu to reposition. Useful when the position or size of the trigger changes when the menu
+   * Instructs the combobox menu to reposition. Useful when the position or size of the trigger changes when the menu
    * is activated.
    */
   reposition() {
@@ -328,9 +358,6 @@ export class MinidCombobox extends styled(LitElement, styles) {
   }
 
   addOpenListeners() {
-    this.panel.addEventListener('mid-select', this.handlePanelSelect);
-    this.panel.addEventListener('keydown', this.handleKeyDown);
-
     if ('CloseWatcher' in window) {
       this.#closeWatcher?.destroy();
       this.#closeWatcher = new CloseWatcher();
@@ -345,17 +372,13 @@ export class MinidCombobox extends styled(LitElement, styles) {
   }
 
   removeOpenListeners() {
-    if (this.panel) {
-      this.panel.removeEventListener('mid-select', this.handlePanelSelect);
-      this.panel.removeEventListener('keydown', this.handleKeyDown);
-    }
     document.removeEventListener('keydown', this.handleDocumentKeyDown);
     document.removeEventListener('mousedown', this.handleDocumentMouseDown);
     this.#closeWatcher?.destroy();
   }
 
   /**
-   * Shows the dropdown panel.
+   * Shows the combobox panel.
    */
   async show() {
     if (this.open) {
@@ -367,7 +390,7 @@ export class MinidCombobox extends styled(LitElement, styles) {
   }
 
   /**
-   * Hides the dropdown panel
+   * Hides the combobox panel
    */
   async hide() {
     if (!this.open) {
@@ -379,7 +402,7 @@ export class MinidCombobox extends styled(LitElement, styles) {
   }
 
   //
-  // Slotted triggers can be arbitrary content, but we need to link them to the dropdown panel with `aria-haspopup` and
+  // Slotted triggers can be arbitrary content, but we need to link them to the combobox panel with `aria-haspopup` and
   // `aria-expanded`. These must be applied to the "accessible trigger" (the tabbable portion of the trigger element
   // that gets slotted in) so screen readers will understand them. The accessible trigger could be the slotted element,
   // a child of the slotted element, or an element in the slotted element's shadow root.
@@ -459,7 +482,7 @@ export class MinidCombobox extends styled(LitElement, styles) {
   override render() {
     return html`
       <mid-popup
-        id="dropdown"
+        id="combobox"
         distance=${this.distance}
         placement="bottom-end"
         skidding=${this.skidding}
@@ -472,7 +495,7 @@ export class MinidCombobox extends styled(LitElement, styles) {
         ?active=${this.open}
       >
         <slot
-          class="dropdown__trigger"
+          class="combobox__trigger"
           slot="anchor"
           name="trigger"
           @click=${this.handleTriggerClick}
@@ -484,9 +507,14 @@ export class MinidCombobox extends styled(LitElement, styles) {
         </slot>
         <div
           aria-hidden=${this.open ? 'false' : 'true'}
-          aria-labelledby="dropdown"
+          aria-labelledby="combobox"
         >
-          <slot class="dropdown__panel" part="panel"></slot>
+          <slot
+            class="combobox__panel"
+            part="panel"
+            @keydown=${this.handleKeyDown}
+            @mid-select=${this.handlePanelSelect}
+          ></slot>
         </div>
       </mid-popup>
     `;

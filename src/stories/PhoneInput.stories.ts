@@ -13,16 +13,21 @@ import { countryLabelsNO } from '../components/utilities/countries';
 
 type PhoneInputProps = {
   value?: string;
-  defaultcountry?: CountryCode;
   country?: CountryCode;
+  label?: string;
+  hidelabel?: boolean;
 };
 
 const meta: Meta = {
   title: 'Komponenter/Under arbeid/Phone Input',
   component: 'mid-phone-input',
   argTypes: {
-    defaultcountry: { control: { type: 'select' }, options: getCountries() },
     country: { control: { type: 'select' }, options: getCountries() },
+  },
+  subcomponents: {
+    Menu: 'mid-menu',
+    MenuItem: 'mid-menu-item',
+    Combobox: 'mid-combobox',
   },
 };
 
@@ -32,7 +37,8 @@ type Story = StoryObj<PhoneInputProps>;
 
 export const Main: Story = {
   args: {
-    defaultcountry: 'NO',
+    country: 'NO',
+    label: 'Telefonnummer',
   },
   decorators: [
     (story) =>
@@ -41,17 +47,17 @@ export const Main: Story = {
         <pre class="pre"></pre>
       </div>`,
   ],
-  render: ({ value, country, defaultcountry }: PhoneInputProps) => html`
-    <mid-combobox class="combobox">
+  render: ({ value, country, label, hidelabel }: PhoneInputProps) => html`
+    <mid-combobox>
       <mid-phone-input
-        class="input"
         slot="trigger"
-        defaultcountry=${ifDefined(defaultcountry)}
         country=${ifDefined(country)}
         value=${ifDefined(value)}
+        label=${ifDefined(label)}
+        ?hidelabel=${hidelabel}
       >
       </mid-phone-input>
-      <mid-menu searchable class="menu" style="--max-height: 14rem">
+      <mid-menu searchable style="--max-height: 14rem">
         ${getCountries()
           .sort((a, b) =>
             Array<CountryCode>('NO', 'PL', 'DK', 'SE', 'US', 'GB').includes(a)
@@ -71,33 +77,5 @@ export const Main: Story = {
           })}
       </mid-menu>
     </mid-combobox>
-    <script>
-      var input = document.querySelector('.input');
-      var menu = document.querySelector('.menu');
-      var search = document.querySelector('.search');
-      var combobox = document.querySelector('.combobox');
-
-      menu.addEventListener('mid-select', ({ detail }) => {
-        input.country = detail.item.value;
-      });
-
-      input.addEventListener('mid-change', () => {
-        console.log('change', input.value, input.country);
-      });
-
-      input.addEventListener('mid-input', () => {
-        console.log('input', input.value, input.country);
-      });
-
-      combobox.addEventListener('mid-after-show', () => {
-        // search.focus();
-      });
-
-      // search.addEventListener('mid-input', () => {
-      //   menu.filter((item) =>
-      //     item.innerHTML.toLowerCase().includes(search.value.toLowerCase())
-      //   );
-      // });
-    </script>
   `,
 };

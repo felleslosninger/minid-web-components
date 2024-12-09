@@ -32,18 +32,33 @@ const style = [
 ];
 @customElement('mid-menu-item')
 export class MinidMenuItem extends styled(LitElement, style) {
+  /**
+   * @ignore
+   */
   @query('.button')
   button!: MinidButton;
 
+  /**
+   * If set, the interactive element will be an anchor element
+   */
   @property()
   href: string | undefined;
 
+  /**
+   * The items value
+   */
   @property()
   value?: string;
 
+  /**
+   * Controls which styling to use
+   */
   @property()
   variant: 'combobox' | 'dropdown' = 'dropdown';
 
+  /**
+   * Used as a focus state. So the actual focus can be somewhere else
+   */
   @property({ type: Boolean, reflect: true })
   active = false;
 

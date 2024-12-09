@@ -29,7 +29,6 @@ const styles = [
       outline: none;
       box-shadow: none;
       background-color: transparent;
-      /* padding: 0 1rem; */
     }
 
     .phone-number {
@@ -73,41 +72,36 @@ export class MinidPhoneInput extends styled(LitElement, styles) {
   input!: HTMLInputElement;
 
   /**
-   * The value from the input field.
+   * The value from the input field. country
    */
-  @property()
+  @property({ reflect: true })
   value = '';
 
   @property({ reflect: true })
-  countrycode? = '';
+  nationalnumber = '';
 
+  /**
+   */
   @property({ reflect: true })
-  phonenumber = '';
+  countrycode = '';
 
   @property()
   label = '';
 
   /**
-   * The country selected
+   * Hide label visually. Still available for screen readers
    */
-  @property()
-  country?: CountryCode;
+  @property({ type: Boolean })
+  hidelabel = false;
 
   /**
-   * If defaultCountry is specified then the phone number can
-   * be input both in "international" format and "national" format.
-   * A phone number that's being input in "national" format will be
-   * parsed as a phone number belonging to the defaultCountry. Must be
-   * a supported country code. Example: defaultCountry="NO"
+   * The country selected
    */
-  @property()
-  defaultcountry?: CountryCode;
+  @property({ reflect: true })
+  country?: CountryCode;
 
   @state()
   hasFocus = false;
-
-  @state()
-  phonePrefix?: string;
 
   handleCountryClick() {
     this.dispatchEvent(
@@ -126,21 +120,18 @@ export class MinidPhoneInput extends styled(LitElement, styles) {
   connectedCallback(): void {
     super.connectedCallback();
 
-    if (this.defaultcountry) {
-      this.country = this.defaultcountry;
-    }
-
     this.#formatter.input(this.value);
     this.country = this.#formatter.getCountry() ?? this.country;
-    this.phonePrefix = this.country
+    this.countrycode = this.country
       ? `+${getCountryCallingCode(this.country)}`
       : '+';
 
     this.value = formatIncompletePhoneNumber(this.value);
-    this.value ??= this.phonePrefix;
+    this.value ??= this.countrycode;
+    this.nationalnumber = this.removePhonePrefix(this.value);
 
     setTimeout(() => {
-      this.input.value = `${this.phonePrefix}${this.removePhonePrefix(this.value)}`;
+      this.input.value = `${this.countrycode}${this.nationalnumber}`;
     }, 0);
   }
 
@@ -193,21 +184,6 @@ export class MinidPhoneInput extends styled(LitElement, styles) {
     this.setValue(event);
   }
 
-  private valueChangeCallback = (value: string) => {
-    const country =
-      value.length < 2
-        ? undefined
-        : (this.#formatter.getCountry() ?? this.country);
-
-    if (country !== this.country) {
-      this.country = country;
-      this.#skipCountryUpdate = true;
-    }
-
-    this.value = value;
-    this.dispatchEvent(this.#currentEvent);
-  };
-
   private setValue(event: Event) {
     this.#formatter.reset();
 
@@ -226,11 +202,30 @@ export class MinidPhoneInput extends styled(LitElement, styles) {
     );
   }
 
+  private valueChangeCallback = (value: string) => {
+    const country =
+      value.length < 2
+        ? undefined
+        : (this.#formatter.getCountry() ?? this.country);
+
+    if (country !== this.country) {
+      this.country = country;
+      this.countrycode = this.country
+        ? `+${getCountryCallingCode(this.country)}`
+        : '+';
+      this.#skipCountryUpdate = true;
+    }
+
+    this.value = value;
+    this.nationalnumber = this.removePhonePrefix(value);
+    this.dispatchEvent(this.#currentEvent);
+  };
+
   focus() {
     this.input.focus();
     setTimeout(() => {
       this.input.setSelectionRange(
-        (this.phonePrefix?.length ?? 0) + 1,
+        (this.countrycode?.length ?? 0) + 1,
         this.input.value.length
       );
     }, 0);
@@ -244,8 +239,8 @@ export class MinidPhoneInput extends styled(LitElement, styles) {
   }
 
   private removePhonePrefix(value: string) {
-    if (this.phonePrefix) {
-      value = value.slice(this.phonePrefix.length);
+    if (this.countrycode) {
+      value = value.slice(this.countrycode.length);
       if (value[0] === ' ') {
         value = value.slice(1);
       }
@@ -260,14 +255,14 @@ export class MinidPhoneInput extends styled(LitElement, styles) {
       return;
     }
 
-    this.#formatter = new AsYouType(this.country ?? this.defaultcountry);
-    const nationalNumber = this.removePhonePrefix(this.input.value);
+    this.#formatter = new AsYouType(this.country);
+    this.nationalnumber = this.removePhonePrefix(this.input.value);
 
-    this.phonePrefix = this.country
+    this.countrycode = this.country
       ? `+${getCountryCallingCode(this.country)}`
       : '+';
     this.input.value = formatIncompletePhoneNumber(
-      `${this.phonePrefix}${nationalNumber}`
+      `${this.countrycode}${this.nationalnumber}`
     );
     this.input.dispatchEvent(new Event('input', { bubbles: true }));
     this.input.dispatchEvent(new Event('change', { bubbles: true }));
@@ -299,7 +294,7 @@ export class MinidPhoneInput extends styled(LitElement, styles) {
           : html`<label
               for="input"
               class="${classMap({
-                // 'sr-only': this.hidelabel,
+                'sr-only': this.hidelabel,
                 'fds-label': true,
                 'fds-label--medium-weight': true,
                 'fds-textfield__label': true,
@@ -342,6 +337,7 @@ export class MinidPhoneInput extends styled(LitElement, styles) {
           </button>
 
           <input
+            id="input"
             class="phone-number fds-textfield__field fds-textfield__input fds-focus"
             part="phone-number"
             type="tel"

@@ -22,20 +22,38 @@ const styles = [
   `,
 ];
 
+/**
+ *  @event {{ item: MidMenuItem }} mid-select - Emitted when a menu item is selected.
+ */
 @customElement('mid-menu')
 export class MinidMenu extends styled(LitElement, styles) {
+  /**
+   * @ignore
+   */
   @query('slot')
   defaultSlot!: HTMLSlotElement;
 
+  /**
+   * @ignore
+   */
   @query('.filter-input')
   filterInput!: HTMLInputElement;
 
+  /**
+   * @ignore
+   */
   @query('.item-list')
   itemList!: HTMLUListElement;
 
+  /**
+   * Adds an input element that filters selectable menu items
+   */
   @property({ type: Boolean })
   searchable = false;
 
+  /**
+   * Wether the menu should be styled as a dropdown or a combobox
+   */
   @property()
   variant: 'combobox' | 'dropdown' = 'dropdown';
 
@@ -53,6 +71,9 @@ export class MinidMenu extends styled(LitElement, styles) {
     this.setAttribute('role', 'menu');
   }
 
+  /**
+   * @ignore
+   */
   get noItems() {
     return this.getAllItems().length === 0;
   }
@@ -180,6 +201,10 @@ export class MinidMenu extends styled(LitElement, styles) {
     );
   }
 
+  /**
+   * Pass a filter function to enable/disable menu items in the menu
+   * @type {(item: MinidMenuItem) => boolean}
+   */
   filter = (filterFn: (item: MinidMenuItem) => boolean) => {
     this.getAllItems().forEach((item) => {
       if (filterFn(item)) {
