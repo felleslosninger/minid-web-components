@@ -61,11 +61,14 @@ export class MinidMenuItem extends styled(LitElement, style) {
   }
 
   override render() {
-    console.log(this.variant);
-
     return this.variant === 'dropdown'
       ? html`
-          <mid-button variant="tertiary" href=${ifDefined(this.href)} fullwidth>
+          <mid-button
+            class="button"
+            variant="tertiary"
+            href=${ifDefined(this.href)}
+            fullwidth
+          >
             <slot></slot>
           </mid-button>
         `

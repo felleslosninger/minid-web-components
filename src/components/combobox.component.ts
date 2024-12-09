@@ -18,7 +18,6 @@ import { animateTo, stopAnimations } from 'src/internal/animate';
 import { getTabbableBoundary } from 'src/internal/tabbable';
 import { MinidButton } from 'src/components/button.component';
 import { MinidMenu } from 'src/components/menu.component';
-import { MinidSearch } from 'src/components/search.component';
 
 const styles = [
   css`
@@ -147,14 +146,6 @@ export class MinidCombobox extends styled(LitElement, styles) {
       | undefined;
   }
 
-  getMenuSearch() {
-    return this.getMenu()
-      ?.defaultSlot.assignedElements({ flatten: true })
-      .find((el) => el.tagName.toLowerCase() === 'mid-search') as
-      | MinidSearch
-      | undefined;
-  }
-
   private handleCountryClick = () => {
     const menu = this.getMenu();
     menu?.clearFilter();
@@ -193,7 +184,8 @@ export class MinidCombobox extends styled(LitElement, styles) {
       // Tabbing within an open menu should close the dropdown and refocus the trigger
       if (
         this.open &&
-        document.activeElement?.tagName.toLowerCase() === 'mid-menu-item'
+        (document.activeElement?.tagName.toLowerCase() === 'mid-menu-item' ||
+          document.activeElement?.tagName.toLowerCase() === 'mid-menu')
       ) {
         event.preventDefault();
         this.hide();
@@ -419,6 +411,7 @@ export class MinidCombobox extends styled(LitElement, styles) {
         new Event('mid-hide', { bubbles: true, composed: true })
       );
       this.removeOpenListeners();
+      console.log('hiding');
 
       await stopAnimations(this);
       const { keyframes, options } = getAnimation(this, 'combobox.hide');
@@ -433,6 +426,8 @@ export class MinidCombobox extends styled(LitElement, styles) {
   }
 
   override render() {
+    console.log('rendering, open:', this.open);
+
     return html`
       <mid-popup
         id="dropdown"

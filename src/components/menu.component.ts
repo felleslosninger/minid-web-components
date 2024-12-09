@@ -1,4 +1,4 @@
-import { css, html, LitElement, nothing, PropertyValues } from 'lit';
+import { css, html, LitElement, nothing } from 'lit';
 import { customElement, property, query } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { styled } from 'mixins/tailwind.mixin.ts';
@@ -39,9 +39,12 @@ export class MinidMenu extends styled(LitElement, styles) {
   @property()
   variant: 'combobox' | 'dropdown' = 'dropdown';
 
-  protected firstUpdated(_changedProperties: PropertyValues): void {
+  protected firstUpdated() {
     this.getAllItems().forEach((item) => {
       item.variant = this.variant;
+      item.addEventListener('mouseenter', () => {
+        this.setCurrentItem(item);
+      });
     });
   }
 

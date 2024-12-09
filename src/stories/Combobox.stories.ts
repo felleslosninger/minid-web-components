@@ -9,7 +9,7 @@ import '../components/textfield.component';
 type ComboboxProps = {};
 
 const meta: Meta = {
-  title: 'Komponenter/Combobox',
+  title: 'Komponenter/Under arbeid/Combobox',
   component: 'mid-combobox',
   argTypes: {
     size: {

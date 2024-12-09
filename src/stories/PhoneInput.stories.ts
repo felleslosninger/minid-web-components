@@ -18,7 +18,7 @@ type PhoneInputProps = {
 };
 
 const meta: Meta = {
-  title: 'Komponenter/Phone Input',
+  title: 'Komponenter/Under arbeid/Phone Input',
   component: 'mid-phone-input',
   argTypes: {
     defaultcountry: { control: { type: 'select' }, options: getCountries() },
@@ -60,8 +60,8 @@ export const Main: Story = {
           )
           // .slice(0, 10)
           .map((country) => {
-            return html`<mid-menu-item value=${country}
-              ><mid-icon
+            return html`<mid-menu-item value=${country}>
+              <mid-icon
                 class="h-4 w-6 overflow-hidden rounded"
                 library="country"
                 name="${country}"
