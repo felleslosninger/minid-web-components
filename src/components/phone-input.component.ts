@@ -300,7 +300,6 @@ export class MinidPhoneInput extends FormControllerMixin(
           'form-control': true,
           'fds-paragraph': true,
           'fds-textfield': true,
-          //   'fds-textfield--readonly': this.readonly,
           'fds-paragraph--sm': sm,
           'fds-paragraph--md': md,
           'fds-paragraph--lg': lg,
@@ -325,16 +324,7 @@ export class MinidPhoneInput extends FormControllerMixin(
             >
               ${this.label}
             </label>`}
-        <div
-          part="base"
-          class="${classMap({
-            field: true,
-
-            // 'fds-textfield__field': true,
-            // 'fds-textfield__input': true,
-            // 'fds-focus': this.hasFocus,
-          })} flex"
-        >
+        <div part="base" class="flex">
           <button
             class="country-button fds-focus flex h-full items-center border border-text-action-active pl-3"
             iconstyled

@@ -90,6 +90,10 @@ export class MinidMenuItem extends styled(LitElement, style) {
       : html` <button
           class=${classMap({
             button: true,
+            'fds-label': true,
+            'fds-label--md': true,
+            'fds-label--medium-weight': true,
+            'fds-combobox__option__label': true,
             'fds-combobox__option': true,
             'fds-combobox__option--active': this.active,
           })}

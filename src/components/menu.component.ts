@@ -1,5 +1,5 @@
 import { css, html, LitElement, nothing } from 'lit';
-import { customElement, property, query } from 'lit/decorators.js';
+import { customElement, property, query, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { styled } from 'mixins/tailwind.mixin.ts';
 import { MinidMenuItem } from 'src/components/menu-item.component';
@@ -57,7 +57,10 @@ export class MinidMenu extends styled(LitElement, styles) {
   @property()
   variant: 'combobox' | 'dropdown' = 'dropdown';
 
-  protected firstUpdated() {
+  @state()
+  emptyItemList = false;
+
+  protected firstUpdated(): void {
     this.getAllItems().forEach((item) => {
       item.variant = this.variant;
       item.addEventListener('mouseenter', () => {
@@ -69,13 +72,6 @@ export class MinidMenu extends styled(LitElement, styles) {
   connectedCallback() {
     super.connectedCallback();
     this.setAttribute('role', 'menu');
-  }
-
-  /**
-   * @ignore
-   */
-  get noItems() {
-    return this.getAllItems().length === 0;
   }
 
   private handleClick(event: MouseEvent) {
@@ -120,7 +116,10 @@ export class MinidMenu extends styled(LitElement, styles) {
         .toLowerCase()
         .includes(this.filterInput.value.toLowerCase())
     );
-    this.setCurrentItem(this.getAllSelectableItems()[0]);
+
+    const items = this.getAllSelectableItems();
+    this.emptyItemList = items.length === 0;
+    this.setCurrentItem(items[0]);
   }
 
   #scrollOptionIntoView(item: MinidMenuItem): void {
@@ -315,6 +314,9 @@ export class MinidMenu extends styled(LitElement, styles) {
             @keydown=${this.handleKeyDown}
             @mousedown=${this.handleMouseDown}
           ></slot>
+          ${this.emptyItemList
+            ? html`<div class="p-2">Fant ingen treff</div>`
+            : nothing}
         </ul>
       </div>
     `;
