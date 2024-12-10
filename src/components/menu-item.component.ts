@@ -28,6 +28,10 @@ const style = [
     mid-button::part(base) {
       justify-content: flex-start;
     }
+
+    .button {
+      display: block;
+    }
   `,
 ];
 @customElement('mid-menu-item')

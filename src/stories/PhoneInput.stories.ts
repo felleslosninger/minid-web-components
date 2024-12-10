@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
-import { html } from 'lit';
+import { html, Part } from 'lit';
 import '../components/combobox.component';
 import '../components/menu.component';
 import '../components/menu-item.component';
@@ -20,10 +20,15 @@ type PhoneInputProps = {
   country?: CountryCode;
   label?: string;
   hidelabel?: boolean;
+  labelPart: Part;
+  base: Part;
+  'form-control': Part;
+  'country-button': Part;
+  input: Part;
 };
 
 const meta: Meta = {
-  title: 'Komponenter/Under arbeid/Phone Input',
+  title: 'Komponenter/Phone Input',
   component: 'mid-phone-input',
   argTypes: {
     country: { control: { type: 'select' }, options: getCountries() },
@@ -32,6 +37,19 @@ const meta: Meta = {
     'mid-input': { control: false },
     'mid-focus': { control: false },
     'mid-blur': { control: false },
+    labelPart: {
+      control: false,
+      name: 'label',
+      description: 'Select the label element',
+      table: { category: 'css shadow parts' },
+    },
+    base: { control: false },
+    'form-control': { control: false },
+    'country-button': { control: false },
+    input: { control: false },
+    label: {
+      table: { category: 'attributes' },
+    },
   },
   subcomponents: {
     Menu: 'mid-menu',

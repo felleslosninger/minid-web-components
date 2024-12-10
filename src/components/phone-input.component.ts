@@ -63,8 +63,14 @@ const styles = [
  * @event {Event} mid-country-click - Emitted when the country button is clicked
  * @event {Event} mid-change - Emitted when the value is modified by the user
  * @event {Event} mid-input - Emitted after a new user input
- * @event {Event} mid-focus - Emitted after focus is moved away from input
- * @event {Event} mid-blur - Emitted after input gains focus
+ * @event {Event} mid-blur - Emitted after focus is moved away from input
+ * @event {Event} mid-focus - Emitted after input gains focus
+ *
+ * @part base - Select the container outside the country button and phone number input
+ * @part form-control - Select the container around the label and the inputs
+ * @part label - Select the label element
+ * @part country-button - Select the country button
+ * @part input - Select the phone number input
  */
 @customElement('mid-phone-input')
 export class MinidPhoneInput extends FormControllerMixin(
@@ -114,7 +120,7 @@ export class MinidPhoneInput extends FormControllerMixin(
   hidelabel = false;
 
   /**
-   * The country selected
+   * The country selected. A two letter ISO country code like: `"NO"`
    */
   @property({ reflect: true })
   country?: CountryCode;
@@ -241,16 +247,6 @@ export class MinidPhoneInput extends FormControllerMixin(
     this.setFormValue(this.value);
   };
 
-  focus() {
-    this.input.focus();
-    setTimeout(() => {
-      this.input.setSelectionRange(
-        (this.countrycode?.length ?? 0) + 1,
-        this.input.value.length
-      );
-    }, 0);
-  }
-
   private handleFocus() {
     this.hasFocus = true;
     this.dispatchEvent(
@@ -266,6 +262,16 @@ export class MinidPhoneInput extends FormControllerMixin(
       }
     }
     return value;
+  }
+
+  focus() {
+    this.input.focus();
+    setTimeout(() => {
+      this.input.setSelectionRange(
+        (this.countrycode?.length ?? 0) + 1,
+        this.input.value.length
+      );
+    }, 0);
   }
 
   @watch('country', { waitUntilFirstUpdate: true })
@@ -311,6 +317,7 @@ export class MinidPhoneInput extends FormControllerMixin(
         ${!this.label
           ? nothing
           : html`<label
+              part="label"
               for="input"
               class="${classMap({
                 'sr-only': this.hidelabel,
@@ -326,6 +333,7 @@ export class MinidPhoneInput extends FormControllerMixin(
             </label>`}
         <div part="base" class="flex">
           <button
+            part="country-button"
             class="country-button fds-focus flex h-full items-center border border-text-action-active pl-3"
             iconstyled
             variant="tertiary"
