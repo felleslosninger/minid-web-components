@@ -69,6 +69,10 @@ export const Main: Story = {
   },
   decorators: [(story) => html`<div class="mb-64">${story()}</div> `],
   render: ({ value, country, label, hidelabel }: PhoneInputProps) => html`
+    <script>
+      // A list of countries (localized to Norwegian) is provided to help creating the menu items in the dropdown
+      // import { countryLabelsNO } from '@felleslosninger/minid-elements';
+    </script>
     <mid-combobox>
       <mid-phone-input
         slot="trigger"
