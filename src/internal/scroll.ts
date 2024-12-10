@@ -105,9 +105,9 @@ export function scrollIntoView(
   if (direction === 'vertical' || direction === 'both') {
     if (offsetTop < minY) {
       container.scrollTo({ top: offsetTop, behavior });
-    } else if (offsetTop + element.clientHeight > maxY) {
+    } else if (offsetTop + element.offsetHeight > maxY) {
       container.scrollTo({
-        top: offsetTop - container.offsetHeight + element.clientHeight,
+        top: offsetTop - container.offsetHeight + element.offsetHeight,
         behavior,
       });
     }

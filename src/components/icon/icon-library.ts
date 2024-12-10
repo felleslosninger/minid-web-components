@@ -1,5 +1,6 @@
 import defaultLibrary from './nav-aksel.icon-library.js';
 import systemLibrary from './system.icon-library.js';
+import countryLibrary from './country.icon-library.js';
 import type { MinidIcon } from './icon.component.js';
 
 export type IconLibraryResolver<T = any> = (name: T) => string;
@@ -10,7 +11,7 @@ export interface IconLibrary<T = any> {
   mutator?: IconLibraryMutator;
 }
 
-let registry: IconLibrary[] = [defaultLibrary, systemLibrary];
+let registry: IconLibrary[] = [defaultLibrary, systemLibrary, countryLibrary];
 let watchedIcons: MinidIcon[] = [];
 
 /**

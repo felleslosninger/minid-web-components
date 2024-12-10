@@ -4,6 +4,7 @@ export {
   registerIconLibrary,
   unregisterIconLibrary,
 } from './components/icon/icon-library.ts';
+export { countryLabelsNO } from './components/utilities/countries.ts';
 
 import { CountdownComponent } from './components/countdown.component.ts';
 export { CountdownComponent };
@@ -16,6 +17,12 @@ export { MinidButton };
 
 import { MinidCheckbox } from './components/checkbox.component';
 export { MinidCheckbox };
+
+import { MinidCodeInput } from './components/code-input.component.ts';
+export { MinidCodeInput };
+
+import { MinidCombobox } from './components/combobox.component.ts';
+export { MinidCombobox };
 
 import { MinidDropdown } from './components/dropdown.component.ts';
 export { MinidDropdown };
@@ -44,6 +51,9 @@ export { MinidModal };
 import { MinidParagraph } from './components/paragraph.component.ts';
 export { MinidParagraph };
 
+import { MinidPhoneInput } from './components/phone-input.component.ts';
+export { MinidPhoneInput };
+
 import { MinidPopup } from './components/popup.component.ts';
 export { MinidPopup };
 
@@ -59,15 +69,14 @@ export { MinidTextfield };
 import { MinidTooltip } from './components/tooltip.component.ts';
 export { MinidTooltip };
 
-import { MinidCodeInput } from './components/code-input.component.ts';
-export { MinidCodeInput };
-
 declare global {
   interface HTMLElementTagNameMap {
     'countdown-component': CountdownComponent;
     'mid-alert': MinidAlert;
     'mid-button': MinidButton;
     'mid-checkbox': MinidCheckbox;
+    'mid-code-input': MinidCodeInput;
+    'mid-combobox': MinidCombobox;
     'mid-dropdown': MinidDropdown;
     'mid-heading': MinidHeading;
     'mid-helptext': MinidHelptext;
@@ -77,11 +86,11 @@ declare global {
     'mid-menu': MinidMenu;
     'mid-modal': MinidModal;
     'mid-paragraph': MinidParagraph;
+    'mid-phone-input': MinidPhoneInput;
     'mid-popup': MinidPopup;
     'mid-search': MinidSearch;
     'mid-spinner': MinidSpinner;
     'mid-textfield': MinidTextfield;
     'mid-tooltip': MinidTooltip;
-    'mid-code-input': MinidCodeInput;
   }
 }
