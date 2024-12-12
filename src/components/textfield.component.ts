@@ -98,13 +98,14 @@ const styles = [
  * @slot prefix - Used for decoration to the left of the input
  * @slot suffix - Used for decoration to the right of the input
  *
- *
  * @csspart base - The fields's base wrapper.
  * @csspart input - The internal `<input>` element.
  * @csspart form-control - The form control that wraps the label, input, and help text.
  */
 @customElement('mid-textfield')
-export class MinidTextfield extends FormControllerMixin(styled(LitElement, styles)) {
+export class MinidTextfield extends FormControllerMixin(
+  styled(LitElement, styles)
+) {
   @query('.input')
   input!: HTMLInputElement;
 
@@ -159,6 +160,24 @@ export class MinidTextfield extends FormControllerMixin(styled(LitElement, style
 
   @state()
   hasFocus = false;
+
+  private handleKeydown(event: KeyboardEvent) {
+    const hasModifier =
+      event.metaKey || event.ctrlKey || event.shiftKey || event.altKey;
+
+    // Pressing enter when focused on an input should submit the form like a native input, but we wait a tick before
+    // submitting to allow users to cancel the keydown event if they need to
+    if (event.key === 'Enter' && !hasModifier) {
+      setTimeout(() => {
+        //
+        // When using an Input Method Editor (IME), pressing enter will cause the form to submit unexpectedly. One way
+        // to check for this is to look at event.isComposing, which will be true when the IME is open.
+        if (!event.defaultPrevented && !event.isComposing) {
+          this.internals.form?.requestSubmit();
+        }
+      });
+    }
+  }
 
   private handleBlur() {
     this.hasFocus = false;
@@ -305,6 +324,7 @@ export class MinidTextfield extends FormControllerMixin(styled(LitElement, style
             @change=${this.handleChange}
             @focus=${this.handleFocus}
             @blur=${this.handleBlur}
+            @keydown=${this.handleKeydown}
           />
           ${isClearIconVisible
             ? html`
