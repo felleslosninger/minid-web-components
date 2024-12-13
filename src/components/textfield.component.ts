@@ -101,6 +101,8 @@ const styles = [
  * @csspart base - The fields's base wrapper.
  * @csspart input - The internal `<input>` element.
  * @csspart form-control - The form control that wraps the label, input, and help text.
+ * @csspart clear-button - The clear button
+ * @csspart password-toggle - button - The button for toggling password visibility
  */
 @customElement('mid-textfield')
 export class MinidTextfield extends FormControllerMixin(
@@ -124,6 +126,12 @@ export class MinidTextfield extends FormControllerMixin(
   @property({ attribute: true, converter: stringConverter })
   placeholder = '';
 
+  /**
+   * Autofocus the input field on page load
+   */
+  @property({ type: Boolean })
+  autofocus = false;
+
   @property()
   type:
     | 'date'
@@ -145,6 +153,20 @@ export class MinidTextfield extends FormControllerMixin(
    * */
   @property({ type: Boolean })
   clearable = false;
+
+  /**
+   * Adds a button to toggle the password's visibility.
+   * Only applies if type is password
+   */
+  @property({ type: Boolean })
+  passwordtoggle = false;
+
+  /**
+   * Determines wether the password is currently visible.
+   * Only applies if type is password
+   */
+  @property({ type: Boolean })
+  passwordvisible = false;
 
   @property({ type: Boolean, reflect: true })
   disabled = false;
@@ -206,6 +228,10 @@ export class MinidTextfield extends FormControllerMixin(
     this.dispatchEvent(
       new Event('mid-focus', { composed: true, bubbles: true })
     );
+  }
+
+  private handlePasswordToggle() {
+    this.passwordvisible = !this.passwordvisible;
   }
 
   private handleClearClick(event: MouseEvent) {
@@ -317,7 +343,10 @@ export class MinidTextfield extends FormControllerMixin(
             .value=${live(this.value)}
             ?disabled=${this.disabled}
             ?readonly=${this.readonly}
-            type=${this.type}
+            ?autofocus=${this.autofocus}
+            type=${this.type === 'password' && this.passwordvisible
+              ? 'text'
+              : this.type}
             aria-describedby="description"
             placeholder=${this.placeholder}
             @input=${this.handleInput}
@@ -340,9 +369,32 @@ export class MinidTextfield extends FormControllerMixin(
                   aria-label="Tøm"
                   @click=${this.handleClearClick}
                 >
-                  <slot name="clear-icon">
-                    <mid-icon name="xmark" library="system"></mid-icon>
-                  </slot>
+                  <mid-icon name="xmark" library="system"></mid-icon>
+                </button>
+              `
+            : ''}
+          ${this.passwordtoggle && !this.disabled
+            ? html`
+                <button
+                  part="password-toggle-button"
+                  class="${classMap({
+                    'clear-button': true,
+                    'clear-button--sm': sm,
+                    'clear-button--md': md,
+                    'clear-button--lg': lg,
+                  })}"
+                  type="button"
+                  aria-label=${this.passwordvisible
+                    ? 'skjul passord'
+                    : 'vis passord'}
+                  @click=${this.handlePasswordToggle}
+                  tabindex="-1"
+                >
+                  ${this.passwordvisible
+                    ? html`
+                        <mid-icon name="eye-slash" library="system"></mid-icon>
+                      `
+                    : html` <mid-icon name="eye" library="system"></mid-icon> `}
                 </button>
               `
             : ''}
