@@ -17,10 +17,15 @@ type TextfieldProps = {
   description?: string;
   clearable?: boolean;
   hidelabel?: boolean;
+  passwordtoggle?: boolean;
+  passwordvisible?: boolean;
+  autofocus?: boolean;
   id?: string;
   input: Part;
   base: Part;
   'form-control': Part;
+  'clear-button': Part;
+  'password-toggle-button': Part;
   'mid-change'?: Event;
   'mid-input'?: Event;
   'mid-clear': Event;
@@ -68,12 +73,14 @@ const meta = {
     'mid-focus': { control: { disable: true } },
     'mid-blur': { control: { disable: true } },
     'form-control': { control: { disable: true } },
+    'clear-button': { control: { disable: true } },
+    'password-toggle-button': { control: { disable: true } },
     input: { control: { disable: true } },
     base: { control: { disable: true } },
   },
   parameters: {
     controls: {
-      exclude: ['hasFocus'],
+      exclude: ['hasFocus', 'internals'],
     },
   },
 } satisfies Meta<TextfieldProps>;
@@ -101,12 +108,18 @@ export const Main: Story = {
     hidelabel,
     readonly,
     description,
+    passwordtoggle,
+    passwordvisible,
+    autofocus,
   }: TextfieldProps) =>
     html`<mid-textfield
       ?disabled=${disabled}
+      ?autofocus=${autofocus}
       ?clearable=${clearable}
       ?readonly=${readonly}
       ?hideLabel=${hidelabel}
+      ?passwordtoggle=${passwordtoggle}
+      ?passwordvisible=${passwordvisible}
       description=${ifDefined(description)}
       label="${ifDefined(label)}"
       value=${ifDefined(value)}
