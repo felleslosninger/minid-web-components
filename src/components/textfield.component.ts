@@ -5,6 +5,7 @@ import { stringConverter } from 'internal/string-converter';
 import { classMap } from 'lit/directives/class-map.js';
 import { styled } from 'mixins/tailwind.mixin.ts';
 import { FormControllerMixin } from 'mixins/form-controller.mixin.ts';
+import { ifDefined } from 'lit/directives/if-defined.js';
 
 const styles = [
   css`
@@ -131,6 +132,27 @@ export class MinidTextfield extends FormControllerMixin(
    */
   @property({ type: Boolean })
   autofocus = false;
+
+  @property({ type: Number })
+  minlength?: number;
+
+  @property({ type: Number })
+  maxlength?: number;
+
+  /**
+   * The input's minimum value. Only applies to date and number input types.
+   */
+  @property()
+  min?: number | string;
+
+  /**
+   * The input's maximum value. Only applies to date and number input types.
+   */
+  @property()
+  max?: number | string;
+
+  @property({ type: Boolean })
+  invalid = false;
 
   @property()
   type:
@@ -273,6 +295,7 @@ export class MinidTextfield extends FormControllerMixin(
           'form-control': true,
           'fds-paragraph': true,
           'fds-textfield': true,
+          'fds-textfield--error': this.invalid,
           'fds-textfield--readonly': this.readonly,
           'fds-paragraph--sm': sm,
           'fds-paragraph--md': md,
@@ -349,6 +372,10 @@ export class MinidTextfield extends FormControllerMixin(
               : this.type}
             aria-describedby="description"
             placeholder=${this.placeholder}
+            minlength=${ifDefined(this.minlength)}
+            maxlength=${ifDefined(this.maxlength)}
+            min=${ifDefined(this.min)}
+            max=${ifDefined(this.max)}
             @input=${this.handleInput}
             @change=${this.handleChange}
             @focus=${this.handleFocus}
