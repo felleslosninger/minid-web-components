@@ -39,6 +39,9 @@ export { MinidIcon };
 import { MinidLabel } from './components/label.component.ts';
 export { MinidLabel };
 
+import { MinidLink } from './components/link.component.ts';
+export { MinidLink };
+
 import { MinidMenuItem } from './components/menu-item.component.ts';
 export { MinidMenuItem };
 
@@ -82,6 +85,7 @@ declare global {
     'mid-helptext': MinidHelptext;
     'mid-icon': MinidIcon;
     'mid-label': MinidLabel;
+    'mid-link': MinidLink;
     'mid-menu-item': MinidMenuItem;
     'mid-menu': MinidMenu;
     'mid-modal': MinidModal;
