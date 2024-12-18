@@ -20,7 +20,11 @@ type TextfieldProps = {
   passwordtoggle?: boolean;
   passwordvisible?: boolean;
   autofocus?: boolean;
-  id?: string;
+  minlength?: number;
+  maxlength?: number;
+  min?: number;
+  max?: number;
+  invalid?: boolean;
   input: Part;
   base: Part;
   'form-control': Part;
@@ -43,12 +47,11 @@ const meta = {
       control: { type: 'radio' },
       options: ['sm', 'md', 'lg'],
     },
-    label: {
-      control: { type: 'text' },
-    },
-    value: {
-      control: { type: 'text' },
-    },
+    min: { type: 'number' },
+    max: { type: 'number' },
+    minlength: { type: 'number' },
+    maxlength: { type: 'number' },
+    placeholder: { type: 'string' },
     type: {
       control: { type: 'select' },
       options: [
@@ -92,7 +95,6 @@ type Story = StoryObj<TextfieldProps>;
 export const Main: Story = {
   args: {
     label: 'Tekst input',
-    type: 'text',
   },
   decorators: [(story) => html`<div class="w-80">${story()}</div>`],
   render: ({
@@ -111,6 +113,11 @@ export const Main: Story = {
     passwordtoggle,
     passwordvisible,
     autofocus,
+    min,
+    max,
+    minlength,
+    maxlength,
+    invalid,
   }: TextfieldProps) =>
     html`<mid-textfield
       ?disabled=${disabled}
@@ -120,12 +127,17 @@ export const Main: Story = {
       ?hideLabel=${hidelabel}
       ?passwordtoggle=${passwordtoggle}
       ?passwordvisible=${passwordvisible}
+      ?invalid=${invalid}
       description=${ifDefined(description)}
       label="${ifDefined(label)}"
       value=${ifDefined(value)}
       placeholder=${ifDefined(placeholder)}
       type=${ifDefined(type)}
       size=${ifDefined(size)}
+      min=${ifDefined(min)}
+      max=${ifDefined(max)}
+      minlength=${ifDefined(minlength)}
+      maxlength=${ifDefined(maxlength)}
     >
       ${prefix ? html`<span slot="prefix">${prefix}</span>` : nothing}
       ${suffix ? html`<span slot="suffix">${suffix}</span>` : nothing}

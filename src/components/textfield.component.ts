@@ -103,7 +103,7 @@ const styles = [
  * @csspart input - The internal `<input>` element.
  * @csspart form-control - The form control that wraps the label, input, and help text.
  * @csspart clear-button - The clear button
- * @csspart password-toggle - button - The button for toggling password visibility
+ * @csspart password-toggle-button - The button for toggling password visibility
  */
 @customElement('mid-textfield')
 export class MinidTextfield extends FormControllerMixin(
@@ -124,8 +124,8 @@ export class MinidTextfield extends FormControllerMixin(
   @property()
   size: 'sm' | 'md' | 'lg' = 'md';
 
-  @property({ attribute: true, converter: stringConverter })
-  placeholder = '';
+  @property({ converter: stringConverter })
+  placeholder?: string;
 
   /**
    * Autofocus the input field on page load
@@ -133,9 +133,15 @@ export class MinidTextfield extends FormControllerMixin(
   @property({ type: Boolean })
   autofocus = false;
 
+  /**
+   *  The minimum length of input that will be considered valid.
+   */
   @property({ type: Number })
   minlength?: number;
 
+  /**
+   *  The maximum length of input that will be considered valid.
+   */
   @property({ type: Number })
   maxlength?: number;
 
@@ -151,6 +157,9 @@ export class MinidTextfield extends FormControllerMixin(
   @property()
   max?: number | string;
 
+  /**
+   * Activate error styling on the input element
+   */
   @property({ type: Boolean })
   invalid = false;
 
@@ -360,7 +369,7 @@ export class MinidTextfield extends FormControllerMixin(
             <slot name="prefix"></slot>
           </span>
           <input
-            id="${this.id}"
+            id="input"
             class="input"
             part="input"
             .value=${live(this.value)}
@@ -371,7 +380,7 @@ export class MinidTextfield extends FormControllerMixin(
               ? 'text'
               : this.type}
             aria-describedby="description"
-            placeholder=${this.placeholder}
+            placeholder=${ifDefined(this.placeholder)}
             minlength=${ifDefined(this.minlength)}
             maxlength=${ifDefined(this.maxlength)}
             min=${ifDefined(this.min)}
