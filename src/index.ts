@@ -60,6 +60,9 @@ export { MinidPhoneInput };
 import { MinidPopup } from './components/popup.component.ts';
 export { MinidPopup };
 
+import { MinidQrCode } from './components/qr-code.componet.ts';
+export { MinidQrCode };
+
 import { MinidSearch } from './components/search.component.ts';
 export { MinidSearch };
 
@@ -92,6 +95,7 @@ declare global {
     'mid-paragraph': MinidParagraph;
     'mid-phone-input': MinidPhoneInput;
     'mid-popup': MinidPopup;
+    'mid-qr-code': MinidQrCode;
     'mid-search': MinidSearch;
     'mid-spinner': MinidSpinner;
     'mid-textfield': MinidTextfield;
