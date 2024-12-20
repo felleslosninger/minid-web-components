@@ -29,29 +29,12 @@ const styles = [
       max-width: var(--max-width);
     }
 
-    .tooltip::part(popup) {
+    .tooltip {
       --arrow-color: var(--fds-semantic-surface-neutral-inverted);
-      z-index: 1000;
     }
 
-    .tooltip.inverted::part(popup) {
+    .tooltip.inverted {
       --arrow-color: var(--fds-semantic-surface-neutral-subtle);
-    }
-
-    .tooltip[data-current-placement^='top']::part(popup) {
-      transform-origin: bottom;
-    }
-
-    .tooltip[data-current-placement^='bottom']::part(popup) {
-      transform-origin: top;
-    }
-
-    .tooltip[data-current-placement^='left']::part(popup) {
-      transform-origin: right;
-    }
-
-    .tooltip[data-current-placement^='right']::part(popup) {
-      transform-origin: left;
     }
   `,
 ];

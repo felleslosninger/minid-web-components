@@ -9,6 +9,17 @@ const styles = [
     :host {
       display: flex;
     }
+
+    .popup {
+      --arrow-size: 8px;
+    }
+
+    .popup::part(arrow) {
+      z-index: 1501;
+      border: 1px solid #cbcbcb;
+      border-left: 0;
+      border-top: 0;
+    }
   `,
 ];
 
@@ -58,6 +69,9 @@ export class MinidDropdown extends styled(LitElement, styles) {
   @property({ type: Number })
   skidding = 0;
 
+  @property({ type: Boolean })
+  arrow = false;
+
   /**
    * Choose if position is `fixed` or `absolute`. `absolute` is more performant,
    * but `fixed` can solve issues with overflow clipping
@@ -95,6 +109,7 @@ export class MinidDropdown extends styled(LitElement, styles) {
     return html`
       <mid-popup
         id="dropdown"
+        class="popup"
         distance=${this.distance}
         placement="${this.placement}"
         skidding=${this.skidding}
@@ -105,6 +120,7 @@ export class MinidDropdown extends styled(LitElement, styles) {
         auto-size-padding="10"
         sync=${ifDefined(this.sync)}
         ?active=${this.open}
+        ?arrow=${this.arrow}
         @click=${this.#toggleDropdownOpen}
       >
         <slot slot="anchor" name="trigger"> </slot>

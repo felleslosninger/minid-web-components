@@ -15,6 +15,7 @@ export interface DropdownProps {
   distance?: number;
   skidding?: number;
   hoist?: boolean;
+  arrow?: boolean;
   trigger?: unknown;
   panel?: unknown;
   '--'?: unknown;
@@ -86,11 +87,13 @@ export const Main: Story = {
     placement,
     size,
     skidding,
+    arrow,
     sync,
   }: DropdownProps) =>
     html`<mid-dropdown
       ?open=${open}
       ?hoist=${hoist}
+      ?arrow=${arrow}
       distance=${ifDefined(distance)}
       placement=${ifDefined(placement)}
       size=${ifDefined(size)}

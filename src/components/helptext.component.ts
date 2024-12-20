@@ -42,48 +42,14 @@ const styles = [
       max-width: var(--max-width);
     }
 
+    .popup {
+      --arrow-color: var(--fds-semantic-surface-info-subtle);
+    }
+
     .popup::part(arrow) {
       border: 1px solid var(--fds-semantic-border-info-default);
       border-left: 0;
       border-top: 0;
-      z-index: 1001;
-    }
-
-    .popup[data-current-placement^='top']::part(arrow) {
-      transform: rotate(0deg);
-    }
-
-    .popup[data-current-placement^='bottom']::part(arrow) {
-      transform: rotate(180deg);
-    }
-
-    .popup[data-current-placement^='left']::part(arrow) {
-      transform: rotate(-90deg);
-    }
-
-    .popup[data-current-placement^='right']::part(arrow) {
-      transform: rotate(90deg);
-    }
-
-    .popup::part(popup) {
-      --arrow-color: var(--fds-semantic-surface-info-subtle);
-      z-index: 1000;
-    }
-
-    .popup[data-current-placement^='top']::part(popup) {
-      transform-origin: bottom;
-    }
-
-    .popup[data-current-placement^='bottom']::part(popup) {
-      transform-origin: top;
-    }
-
-    .popup[data-current-placement^='left']::part(popup) {
-      transform-origin: right;
-    }
-
-    .popup[data-current-placement^='right']::part(popup) {
-      transform-origin: left;
     }
   `,
 ];
