@@ -23,7 +23,7 @@ import {
 import { classMap } from 'lit/directives/class-map.js';
 import { css, html, LitElement } from 'lit';
 import { customElement, property, query } from 'lit/decorators.js';
-import { MinidElement } from 'mixins/tailwind.mixin';
+import { styled } from 'mixins/tailwind.mixin';
 import { offsetParent } from 'composed-offset-position';
 
 export interface VirtualElement {
@@ -39,6 +39,105 @@ function isVirtualElement(e: unknown): e is VirtualElement {
     ('contextElement' in e ? e instanceof Element : true)
   );
 }
+
+const styles = [
+  css`
+    :host {
+      --arrow-color: white;
+      --arrow-size: 6px;
+
+      /*
+        These properties are computed to account for the arrow's dimensions after being rotated 45º. The constant
+        0.7071 is derived from sin(45), which is the diagonal size of the arrow's container after rotating.
+        */
+      --arrow-size-diagonal: calc(var(--arrow-size) * 0.7071);
+      --arrow-padding-offset: calc(
+        var(--arrow-size-diagonal) - var(--arrow-size)
+      );
+
+      display: contents;
+    }
+
+    .popup {
+      position: absolute;
+      isolation: isolate;
+      max-width: var(--auto-size-available-width, none);
+      max-height: var(--auto-size-available-height, none);
+      z-index: 900;
+    }
+
+    .popup--fixed {
+      position: fixed;
+    }
+
+    .popup:not(.popup--active) {
+      display: none;
+    }
+
+    .popup__arrow {
+      position: absolute;
+      width: calc(var(--arrow-size-diagonal) * 2);
+      height: calc(var(--arrow-size-diagonal) * 2);
+      rotate: 45deg;
+      background: var(--arrow-color);
+      z-index: 901;
+    }
+
+    /* Hover bridge */
+    .popup-hover-bridge:not(.popup-hover-bridge--visible) {
+      display: none;
+    }
+
+    .popup-hover-bridge {
+      position: fixed;
+      z-index: calc(900 - 1);
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      clip-path: polygon(
+        var(--hover-bridge-top-left-x, 0) var(--hover-bridge-top-left-y, 0),
+        var(--hover-bridge-top-right-x, 0) var(--hover-bridge-top-right-y, 0),
+        var(--hover-bridge-bottom-right-x, 0)
+          var(--hover-bridge-bottom-right-y, 0),
+        var(--hover-bridge-bottom-left-x, 0)
+          var(--hover-bridge-bottom-left-y, 0)
+      );
+    }
+
+    :host([data-current-placement^='top']) .popup {
+      transform-origin: bottom;
+    }
+
+    :host([data-current-placement^='bottom']) .popup {
+      transform-origin: top;
+    }
+
+    :host([data-current-placement^='left']) .popup {
+      transform-origin: right;
+    }
+
+    :host([data-current-placement^='right']) .popup {
+      transform-origin: left;
+    }
+
+    :host([data-current-placement^='top']) .popup__arrow {
+      transform: rotate(0deg);
+    }
+
+    :host([data-current-placement^='bottom']) .popup__arrow {
+      transform: rotate(180deg);
+    }
+
+    :host([data-current-placement^='left']) .popup__arrow {
+      transform: rotate(-90deg);
+    }
+
+    :host([data-current-placement^='right']) .popup__arrow {
+      transform: rotate(90deg);
+    }
+  `,
+];
 
 /**
  * @summary Popup is a utility that lets you declaratively anchor "popup" containers to another element.
@@ -71,7 +170,7 @@ function isVirtualElement(e: unknown): e is VirtualElement {
  */
 
 @customElement('mid-popup')
-export class MinidPopup extends LitElement {
+export class MinidPopup extends styled(LitElement, styles) {
   private anchorEl: Element | VirtualElement | null = null;
   private cleanup?: ReturnType<typeof autoUpdate>;
 
@@ -656,73 +755,6 @@ export class MinidPopup extends LitElement {
       );
     }
   };
-
-  static override styles = [
-    MinidElement.styles,
-    css`
-      :host {
-        --arrow-color: var(--sl-color-neutral-1000);
-        --arrow-size: 6px;
-
-        /*
-        These properties are computed to account for the arrow's dimensions after being rotated 45º. The constant
-        0.7071 is derived from sin(45), which is the diagonal size of the arrow's container after rotating.
-        */
-        --arrow-size-diagonal: calc(var(--arrow-size) * 0.7071);
-        --arrow-padding-offset: calc(
-          var(--arrow-size-diagonal) - var(--arrow-size)
-        );
-
-        display: contents;
-      }
-
-      .popup {
-        position: absolute;
-        isolation: isolate;
-        max-width: var(--auto-size-available-width, none);
-        max-height: var(--auto-size-available-height, none);
-      }
-
-      .popup--fixed {
-        position: fixed;
-      }
-
-      .popup:not(.popup--active) {
-        display: none;
-      }
-
-      .popup__arrow {
-        position: absolute;
-        width: calc(var(--arrow-size-diagonal) * 2);
-        height: calc(var(--arrow-size-diagonal) * 2);
-        rotate: 45deg;
-        background: var(--arrow-color);
-        z-index: -1;
-      }
-
-      /* Hover bridge */
-      .popup-hover-bridge:not(.popup-hover-bridge--visible) {
-        display: none;
-      }
-
-      .popup-hover-bridge {
-        position: fixed;
-        z-index: calc(var(--sl-z-index-dropdown) - 1);
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        clip-path: polygon(
-          var(--hover-bridge-top-left-x, 0) var(--hover-bridge-top-left-y, 0),
-          var(--hover-bridge-top-right-x, 0) var(--hover-bridge-top-right-y, 0),
-          var(--hover-bridge-bottom-right-x, 0)
-            var(--hover-bridge-bottom-right-y, 0),
-          var(--hover-bridge-bottom-left-x, 0)
-            var(--hover-bridge-bottom-left-y, 0)
-        );
-      }
-    `,
-  ];
 
   render() {
     return html`
