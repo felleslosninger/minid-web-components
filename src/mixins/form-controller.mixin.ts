@@ -34,6 +34,7 @@ export const FormControllerMixin = <TBase extends Constructor<LitElement>>(
       state?: File | string | FormData | null
     ) {
       this.internals.setFormValue(value, state);
+      console.log(value, this.internals);
     }
 
     /**
