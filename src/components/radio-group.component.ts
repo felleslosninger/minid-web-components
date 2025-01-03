@@ -19,14 +19,17 @@ const styles = [
 export class MinidRadioGroup extends ConstraintsValidationMixin(
   styled(LitElement, styles)
 ) {
-  @property()
-  name = 'options';
+  // /**
+  //  * The name of the radio group.
+  //  */
+  // @property()
+  // name = 'options';
 
   /**
    * The current value of the radio group.
    */
   @property({ reflect: true })
-  value = '';
+  value: string | null = null;
 
   @property()
   label = '';
@@ -34,13 +37,21 @@ export class MinidRadioGroup extends ConstraintsValidationMixin(
   @property()
   size: 'sm' | 'md' | 'lg' = 'md';
 
+  @property({ type: Boolean })
+  labelhidden = false;
+
+  @property({ type: Boolean })
+  disabled = false;
+
+  @property({ type: Boolean })
+  required = false;
+
   @state()
   private hasButtonRadios = false;
 
   protected firstUpdated(_changedProperties: PropertyValues): void {
     super.firstUpdated(_changedProperties);
-
-    this.reportValidity();
+    this.setFormValue(this.value);
   }
 
   private async syncRadioElements() {
@@ -62,6 +73,7 @@ export class MinidRadioGroup extends ConstraintsValidationMixin(
     if (radios.length > 0 && !radios.some((radio) => radio.checked)) {
       if (this.hasButtonRadios) {
         const buttonRadio = radios[0].shadowRoot?.querySelector('button');
+        console.log('buttonRadio 👯‍♀️', buttonRadio);
 
         if (buttonRadio) {
           buttonRadio.setAttribute('tabindex', '0');
@@ -73,6 +85,8 @@ export class MinidRadioGroup extends ConstraintsValidationMixin(
   }
 
   private syncRadios() {
+    console.log('syncRadios');
+
     if (
       customElements.get('mid-radio') &&
       customElements.get('mid-radio-button')
@@ -104,6 +118,10 @@ export class MinidRadioGroup extends ConstraintsValidationMixin(
   // }
 
   private handleKeyDown(event: KeyboardEvent) {
+    console.log('event', event);
+    if (event.key === 'Tab') {
+      this.blur();
+    }
     if (
       !['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '].includes(
         event.key
@@ -135,6 +153,8 @@ export class MinidRadioGroup extends ConstraintsValidationMixin(
       radio.checked = false;
 
       if (!this.hasButtonRadios) {
+        console.log('radio tabindex -1', radio);
+
         radio.setAttribute('tabindex', '-1');
       }
     });
@@ -146,6 +166,8 @@ export class MinidRadioGroup extends ConstraintsValidationMixin(
       radios[index].setAttribute('tabindex', '0');
       radios[index].focus();
     } else {
+      console.log('radios[index]', radios[index], radios[index].shadowRoot);
+
       radios[index].shadowRoot!.querySelector('button')!.focus();
     }
 
@@ -206,43 +228,6 @@ export class MinidRadioGroup extends ConstraintsValidationMixin(
     }
   }
 
-  // private async syncRadioElements() {
-  //   const radios = this.getAllRadios();
-
-  //   await Promise.all(
-  //     // Sync the checked state and size
-  //     radios.map(async (radio) => {
-  //       await radio.updateComplete;
-  //       radio.checked = radio.value === this.value;
-  //       radio.size = this.size;
-  //     })
-  //   );
-
-  //   this.hasButtonGroup = radios.some(
-  //     (radio) => radio.tagName.toLowerCase() === 'mid-radio-button'
-  //   );
-
-  //   if (radios.length > 0 && !radios.some((radio) => radio.checked)) {
-  //     if (this.hasButtonGroup) {
-  //       const buttonRadio = radios[0].shadowRoot?.querySelector('button');
-
-  //       if (buttonRadio) {
-  //         buttonRadio.setAttribute('tabindex', '0');
-  //       }
-  //     } else {
-  //       radios[0].setAttribute('tabindex', '0');
-  //     }
-  //   }
-
-  //   if (this.hasButtonGroup) {
-  //     const buttonGroup = this.shadowRoot?.querySelector('mid-button-group');
-
-  //     if (buttonGroup) {
-  //       buttonGroup.disableRole = true;
-  //     }
-  //   }
-  // }
-
   @watch('size', { waitUntilFirstUpdate: true })
   handleSizeChange() {
     this.syncRadios();
@@ -255,8 +240,12 @@ export class MinidRadioGroup extends ConstraintsValidationMixin(
     }
   }
 
-  /** Sets focus on the radio-group. */
+  /**
+   *  Sets focus on the radio-group.
+   */
   public focus(options?: FocusOptions) {
+    console.log('🧿 focus');
+
     const radios = this.getAllRadios();
     const checked = radios.find((radio) => radio.checked);
     const firstEnabledRadio = radios.find((radio) => !radio.disabled);
@@ -282,6 +271,7 @@ export class MinidRadioGroup extends ConstraintsValidationMixin(
           'fds-label--sm': this.size === 'sm',
           'fds-label--md': this.size === 'md',
           'fds-label--lg': this.size === 'lg',
+          'sr-only': this.labelhidden,
         })}"
         @click=${this.handleLabelClick}
       >
@@ -293,22 +283,11 @@ export class MinidRadioGroup extends ConstraintsValidationMixin(
         role="radiogroup"
         aria-labelledby="label"
       >
-        <div class="sr-only">
-          <label class="radio-group__validation">
-            <input
-              type="text"
-              class="radio-group__validation-input"
-              tabindex="-1"
-              hidden
-            />
-          </label>
-        </div>
         <div
           class="fds-togglegroup__content"
           part="base"
-          role="group"
+          role="presentation"
           aria-label=${this.label}
-          @focusin=${this.focus}
         >
           <slot
             @slotchange=${this.syncRadios}

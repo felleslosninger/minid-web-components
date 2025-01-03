@@ -6,8 +6,11 @@ import { styled } from 'src/mixins/tailwind.mixin';
 
 @customElement('mid-radio-button')
 export class MinidRadioButton extends styled(LitElement) {
+  /**
+   * @ignore
+   */
   @query('.button')
-  input!: HTMLButtonElement;
+  button!: HTMLButtonElement;
 
   /**
    *  The radio button's checked state.
@@ -65,14 +68,14 @@ export class MinidRadioButton extends styled(LitElement) {
    * Sets focus on the radio button.
    */
   focus(options?: FocusOptions) {
-    this.input.focus(options);
+    this.button.focus(options);
   }
 
   /**
    * Removes focus from the radio button.
    */
   blur() {
-    this.input.blur();
+    this.button.blur();
   }
 
   override render() {
@@ -80,8 +83,6 @@ export class MinidRadioButton extends styled(LitElement) {
       role="radio"
       type="button"
       name="option"
-      aria-checked=${this.checked}
-      ?disabled=${this.disabled}
       class="${classMap({
         button: true,
         'fds-togglegroup__item': true,
@@ -95,6 +96,8 @@ export class MinidRadioButton extends styled(LitElement) {
         'fds-btn--md': this.size === 'md',
         'fds-btn--lg': this.size === 'lg',
       })}"
+      aria-checked=${this.checked}
+      ?disabled=${this.disabled}
       @blur=${this.handleBlur}
       @focus=${this.handleFocus}
       @click=${this.handleClick}
