@@ -3,11 +3,12 @@ import { html } from 'lit';
 import '../components/radio-group.component';
 import '../components/radio-button.component';
 import '../components/button.component';
+import { ifDefined } from 'lit/directives/if-defined.js';
 
 type RadioButtonProps = {
-  label: string;
-  name: string;
-  value: string;
+  label?: string;
+  name?: string;
+  value?: string;
   checked?: boolean;
   disabled?: boolean;
 };
@@ -37,15 +38,13 @@ export const Main: Story = {
         }}
         @submit=${(event: SubmitEvent) => {
           event.preventDefault();
+
           const target = event.target as HTMLFormElement;
           const data = new FormData(target);
           document.querySelector('.output')!.textContent = JSON.stringify({
-            vaue: data,
+            data,
           });
           console.log(event, target.value, data);
-          for (const pair of data.entries()) {
-            console.log(`${pair[0]}, ${pair[1]}`);
-          }
         }}
       >
         ${story()}
@@ -55,10 +54,14 @@ export const Main: Story = {
         </div>
       </form> `,
   ],
-  render: ({ label, value, checked, disabled }: RadioButtonProps) => html`
-    <mid-radio-group value="halibut" label=${label}>
+  render: ({ label, name, value, checked, disabled }: RadioButtonProps) => html`
+    <mid-radio-group
+      name="${ifDefined(name)}"
+      value=${ifDefined(value)}
+      label=${ifDefined(label)}
+    >
       <mid-radio-button value="seabass"> Havabbor </mid-radio-button>
-      <mid-radio-button value="${value}"> Kveite </mid-radio-button>
+      <mid-radio-button value="halibut"> Kveite </mid-radio-button>
       <mid-radio-button value="squirtle"> Squirtle </mid-radio-button>
       <mid-radio-button value="terminator">
         Terminator II (1991)

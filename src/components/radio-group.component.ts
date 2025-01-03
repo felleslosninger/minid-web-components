@@ -1,9 +1,11 @@
-import { css, html, LitElement } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { css, html, LitElement, PropertyValues } from 'lit';
+import { customElement, property, state } from 'lit/decorators.js';
 import { styled } from 'src/mixins/tailwind.mixin';
 import './label.component';
-import { FormControllerMixin } from 'src/mixins/form-controller.mixin';
+import { ConstraintsValidationMixin } from 'src/mixins/form-controller.mixin';
 import { MinidRadioButton } from 'src/components/radio-button.component';
+import { classMap } from 'lit/directives/class-map.js';
+import { watch } from 'src/internal/watch';
 
 const styles = [
   css`
@@ -14,7 +16,7 @@ const styles = [
 ];
 
 @customElement('mid-radio-group')
-export class MinidRadioGroup extends FormControllerMixin(
+export class MinidRadioGroup extends ConstraintsValidationMixin(
   styled(LitElement, styles)
 ) {
   @property()
@@ -32,22 +34,131 @@ export class MinidRadioGroup extends FormControllerMixin(
   @property()
   size: 'sm' | 'md' | 'lg' = 'md';
 
-  private syncRadios() {
+  @state()
+  private hasButtonRadios = false;
+
+  protected firstUpdated(_changedProperties: PropertyValues): void {
+    super.firstUpdated(_changedProperties);
+
+    this.reportValidity();
+  }
+
+  private async syncRadioElements() {
     const radios = this.getAllRadios();
-    radios.forEach((radio) => {
-      radio.size = this.size;
-      radio.checked = radio.value === this.value;
-    });
+
+    await Promise.all(
+      // Sync the checked state and size
+      radios.map(async (radio) => {
+        await radio.updateComplete;
+        radio.checked = radio.value === this.value;
+        radio.size = this.size;
+      })
+    );
+
+    this.hasButtonRadios = radios.some(
+      (radio) => radio.tagName.toLowerCase() === 'mid-radio-button'
+    );
+
+    if (radios.length > 0 && !radios.some((radio) => radio.checked)) {
+      if (this.hasButtonRadios) {
+        const buttonRadio = radios[0].shadowRoot?.querySelector('button');
+
+        if (buttonRadio) {
+          buttonRadio.setAttribute('tabindex', '0');
+        }
+      } else {
+        radios[0].setAttribute('tabindex', '0');
+      }
+    }
   }
 
-  formAssociatedCallback(form: HTMLFormElement) {
-    console.log('form', form);
+  private syncRadios() {
+    if (
+      customElements.get('mid-radio') &&
+      customElements.get('mid-radio-button')
+    ) {
+      this.syncRadioElements();
+      return;
+    }
 
-    this.syncRadios();
+    if (customElements.get('mid-radio')) {
+      this.syncRadioElements();
+    } else {
+      customElements.whenDefined('mid-radio').then(() => this.syncRadios());
+    }
+
+    if (customElements.get('mid-radio-button')) {
+      this.syncRadioElements();
+    } else {
+      // Rerun this handler when <mid-radio> or <mid-radio-button> is registered
+      customElements
+        .whenDefined('mid-radio-button')
+        .then(() => this.syncRadios());
+    }
   }
+
+  // formAssociatedCallback(form: HTMLFormElement) {
+  //   console.log('form', form);
+
+  //   this.syncRadios();
+  // }
 
   private handleKeyDown(event: KeyboardEvent) {
-    // handle key down event
+    if (
+      !['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '].includes(
+        event.key
+      )
+    ) {
+      return;
+    }
+
+    const radios = this.getAllRadios().filter((radio) => !radio.disabled);
+    const checkedRadio = radios.find((radio) => radio.checked) ?? radios[0];
+    const incr =
+      event.key === ' '
+        ? 0
+        : ['ArrowUp', 'ArrowLeft'].includes(event.key)
+          ? -1
+          : 1;
+    const oldValue = this.value;
+    let index = radios.indexOf(checkedRadio) + incr;
+
+    if (index < 0) {
+      index = radios.length - 1;
+    }
+
+    if (index > radios.length - 1) {
+      index = 0;
+    }
+
+    this.getAllRadios().forEach((radio) => {
+      radio.checked = false;
+
+      if (!this.hasButtonRadios) {
+        radio.setAttribute('tabindex', '-1');
+      }
+    });
+
+    this.value = radios[index].value;
+    radios[index].checked = true;
+
+    if (!this.hasButtonRadios) {
+      radios[index].setAttribute('tabindex', '0');
+      radios[index].focus();
+    } else {
+      radios[index].shadowRoot!.querySelector('button')!.focus();
+    }
+
+    if (this.value !== oldValue) {
+      this.dispatchEvent(
+        new Event('mid-change', { bubbles: true, composed: true })
+      );
+      this.dispatchEvent(
+        new Event('mid-input', { bubbles: true, composed: true })
+      );
+    }
+
+    event.preventDefault();
   }
 
   private getAllRadios() {
@@ -63,6 +174,10 @@ export class MinidRadioGroup extends FormControllerMixin(
     });
   }
 
+  private handleLabelClick() {
+    this.focus();
+  }
+
   private handleRadioClick(event: MouseEvent) {
     const target = (event.target as HTMLElement).closest<MinidRadioButton>(
       'mid-radio, mid-radio-button'
@@ -75,7 +190,10 @@ export class MinidRadioGroup extends FormControllerMixin(
     }
 
     this.value = target.value;
-    radios.forEach((radio) => (radio.checked = radio === target));
+    radios.forEach((radio) => {
+      radio.checked = radio === target;
+    });
+
     this.setFormValue(this.value);
 
     if (this.value !== oldValue) {
@@ -125,43 +243,55 @@ export class MinidRadioGroup extends FormControllerMixin(
   //   }
   // }
 
-  private handleBlur(event: FocusEvent) {
-    // handle blur event
+  @watch('size', { waitUntilFirstUpdate: true })
+  handleSizeChange() {
+    this.syncRadios();
   }
 
-  private handleFocus(event: FocusEvent) {
-    // handle focus event
+  @watch('value')
+  handleValueChange() {
+    if (this.hasUpdated) {
+      this.updateCheckedRadio();
+    }
   }
 
-  private handleMouseOver(event: MouseEvent) {
-    // handle mouse over event
-  }
+  /** Sets focus on the radio-group. */
+  public focus(options?: FocusOptions) {
+    const radios = this.getAllRadios();
+    const checked = radios.find((radio) => radio.checked);
+    const firstEnabledRadio = radios.find((radio) => !radio.disabled);
 
-  private handleMouseOut(event: MouseEvent) {
-    // handle mouse out event
+    const radioToFocus = checked || firstEnabledRadio;
+
+    // Call focus for the checked radio
+    // If no radio is checked, focus the first one that is not disabled
+    if (radioToFocus) {
+      radioToFocus.focus(options);
+    }
   }
 
   override render() {
-    // <label
-    //   part="form-control-label"
-    //   id="label"
-    //   class="class=${classMap({
-    //     'fds-label': true,
-    //     'fds-label--spacing': true,
-    //     'fds-label--sm': this.size === 'sm',
-    //     'fds-label--md': this.size === 'md',
-    //     'fds-label--lg': this.size === 'lg',
-    //   })}"
-    // >
-    //   ${this.label}
-    // </label>
-
     return html`
-      <mid-label spacing size=${this.size}>${this.label}</mid-label>
+      <!-- <mid-label spacing size=${this.size}>${this.label}</mid-label> -->
+      <label
+        part="form-control-label"
+        id="label"
+        class="class=${classMap({
+          'fds-label': true,
+          'fds-label--spacing': true,
+          'fds-label--sm': this.size === 'sm',
+          'fds-label--md': this.size === 'md',
+          'fds-label--lg': this.size === 'lg',
+        })}"
+        @click=${this.handleLabelClick}
+      >
+        ${this.label}
+      </label>
       <fieldset
         class="fds-togglegroup flex"
         part="form-control"
         role="radiogroup"
+        aria-labelledby="label"
       >
         <div class="sr-only">
           <label class="radio-group__validation">
@@ -170,7 +300,6 @@ export class MinidRadioGroup extends FormControllerMixin(
               class="radio-group__validation-input"
               tabindex="-1"
               hidden
-              name=${this.name}
             />
           </label>
         </div>
@@ -179,10 +308,7 @@ export class MinidRadioGroup extends FormControllerMixin(
           part="base"
           role="group"
           aria-label=${this.label}
-          @focusout=${this.handleBlur}
-          @focusin=${this.handleFocus}
-          @mouseover=${this.handleMouseOver}
-          @mouseout=${this.handleMouseOut}
+          @focusin=${this.focus}
         >
           <slot
             @slotchange=${this.syncRadios}
