@@ -19,11 +19,11 @@ const styles = [
 export class MinidRadioGroup extends ConstraintsValidationMixin(
   styled(LitElement, styles)
 ) {
-  // /**
-  //  * The name of the radio group.
-  //  */
-  // @property()
-  // name = 'options';
+  /**
+   * The name of the radio group.
+   */
+  @property()
+  name = 'option';
 
   /**
    * The current value of the radio group.
@@ -49,9 +49,19 @@ export class MinidRadioGroup extends ConstraintsValidationMixin(
   @state()
   private hasButtonRadios = false;
 
+  @state()
+  defaultValue: string | null = null;
+
   protected firstUpdated(_changedProperties: PropertyValues): void {
     super.firstUpdated(_changedProperties);
+    this.defaultValue = this.value;
     this.setFormValue(this.value);
+  }
+
+  protected formResetCallback() {
+    this.value = this.defaultValue;
+    this.setFormValue(this.value);
+    this.updateCheckedRadio();
   }
 
   private async syncRadioElements() {
@@ -85,8 +95,6 @@ export class MinidRadioGroup extends ConstraintsValidationMixin(
   }
 
   private syncRadios() {
-    console.log('syncRadios');
-
     if (
       customElements.get('mid-radio') &&
       customElements.get('mid-radio-button')
@@ -110,12 +118,6 @@ export class MinidRadioGroup extends ConstraintsValidationMixin(
         .then(() => this.syncRadios());
     }
   }
-
-  // formAssociatedCallback(form: HTMLFormElement) {
-  //   console.log('form', form);
-
-  //   this.syncRadios();
-  // }
 
   private handleKeyDown(event: KeyboardEvent) {
     console.log('event', event);
@@ -244,8 +246,6 @@ export class MinidRadioGroup extends ConstraintsValidationMixin(
    *  Sets focus on the radio-group.
    */
   public focus(options?: FocusOptions) {
-    console.log('🧿 focus');
-
     const radios = this.getAllRadios();
     const checked = radios.find((radio) => radio.checked);
     const firstEnabledRadio = radios.find((radio) => !radio.disabled);
@@ -261,7 +261,6 @@ export class MinidRadioGroup extends ConstraintsValidationMixin(
 
   override render() {
     return html`
-      <!-- <mid-label spacing size=${this.size}>${this.label}</mid-label> -->
       <label
         part="form-control-label"
         id="label"

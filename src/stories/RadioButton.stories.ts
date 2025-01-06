@@ -42,7 +42,7 @@ export const Main: Story = {
   args: {
     label: 'Velg en av følgende',
     name: 'choice',
-    // value: 'halibut',
+    value: 'halibut',
     labelhidden: true,
   },
   decorators: [
@@ -65,17 +65,19 @@ export const Main: Story = {
         }}
       >
         ${story()}
-        <div class="flex items-end gap-4">
-          <mid-button type="submit"> Submit </mid-button>
+        <div class="flex flex-row-reverse items-end justify-end gap-4">
           <pre class="output"></pre>
+          <mid-button type="submit"> Submit </mid-button>
+          <mid-button variant="secondary" type="reset"> Reset </mid-button>
         </div>
       </form> `,
   ],
-  render: ({ label, name, value, labelhidden }: RadioButtonProps) => html`
+  render: ({ label, name, value, labelhidden, size }: RadioButtonProps) => html`
     <mid-radio-group
       name="${ifDefined(name)}"
       value=${ifDefined(value)}
       label=${ifDefined(label)}
+      size=${ifDefined(size)}
       ?labelhidden=${labelhidden}
     >
       <mid-radio-button value="seabass"> Havabbor </mid-radio-button>

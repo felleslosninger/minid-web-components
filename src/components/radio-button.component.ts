@@ -85,6 +85,7 @@ export class MinidRadioButton extends styled(LitElement) {
       name="option"
       class="${classMap({
         button: true,
+        'whitespace-nowrap': true,
         'fds-togglegroup__item': true,
         'fds-btn': true,
         'fds-focus': true,
