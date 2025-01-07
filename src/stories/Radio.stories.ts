@@ -88,5 +88,19 @@ export const Main: Story = {
       <mid-radio value="squirtle"> Squirtle </mid-radio>
       <mid-radio value="terminator"> Terminator II (1991) </mid-radio>
     </mid-radio-group>
+    <fieldset name="test">
+      <label>
+        Lol 1
+        <input name="test" type="radio" value="lol-1" />
+      </label>
+      <label>
+        Lol 2
+        <input name="test" type="radio" value="lol-2" />
+      </label>
+      <label>
+        Lol 3
+        <input name="test" type="radio" value="lol-3" />
+      </label>
+    </fieldset>
   `,
 };

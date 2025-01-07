@@ -67,6 +67,9 @@ export class MinidRadioGroup extends ConstraintsValidationMixin(
 
   private async syncRadioElements() {
     const radios = this.getAllRadios();
+    this.hasButtonRadios = radios.some(
+      (radio) => radio.tagName.toLowerCase() === 'mid-radio-button'
+    );
 
     await Promise.all(
       // Sync the checked state and size
@@ -75,11 +78,12 @@ export class MinidRadioGroup extends ConstraintsValidationMixin(
         radio.checked = radio.value === this.value;
         radio.size = this.size;
         radio.name = this.name;
+        if (radio.checked) {
+          if (!this.hasButtonRadios) {
+            radio.setAttribute('tabindex', '0');
+          }
+        }
       })
-    );
-
-    this.hasButtonRadios = radios.some(
-      (radio) => radio.tagName.toLowerCase() === 'mid-radio-button'
     );
 
     if (radios.length > 0 && !radios.some((radio) => radio.checked)) {
@@ -89,12 +93,16 @@ export class MinidRadioGroup extends ConstraintsValidationMixin(
           buttonRadio.setAttribute('tabindex', '0');
         }
       } else {
+        console.log('🎮');
+
         radios[0].setAttribute('tabindex', '0');
       }
     }
   }
 
   private syncRadios() {
+    console.log('⛳️ sync radios');
+
     if (
       customElements.get('mid-radio') &&
       customElements.get('mid-radio-button')
@@ -120,9 +128,8 @@ export class MinidRadioGroup extends ConstraintsValidationMixin(
   }
 
   private handleKeyDown(event: KeyboardEvent) {
-    if (event.key === 'Tab') {
-      this.blur();
-    }
+    console.log(document.activeElement);
+
     if (
       !['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '].includes(
         event.key
@@ -130,6 +137,8 @@ export class MinidRadioGroup extends ConstraintsValidationMixin(
     ) {
       return;
     }
+
+    console.log('GET BELOW');
 
     const radios = this.getAllRadios().filter((radio) => !radio.disabled);
     const checkedRadio = radios.find((radio) => radio.checked) ?? radios[0];
@@ -205,6 +214,8 @@ export class MinidRadioGroup extends ConstraintsValidationMixin(
       MinidRadioButton | MinidRadio
     >('mid-radio, mid-radio-button')!;
     // const radios = this.getAllRadios();
+    console.log('handling radio click 🥏', target.value);
+
     const oldValue = this.value;
 
     if (!target || target.disabled) {

@@ -1,6 +1,7 @@
 import { css, html, LitElement } from 'lit';
-import { customElement, property, query } from 'lit/decorators.js';
+import { customElement, property, query, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
+import { live } from 'lit/directives/live.js';
 import { watch } from 'src/internal/watch';
 import { styled } from 'src/mixins/tailwind.mixin';
 
@@ -11,6 +12,19 @@ const styles = [
       display: grid;
       grid-template-columns: auto 1fr;
       gap: 4px;
+      cursor: pointer;
+    }
+
+    .label {
+      font-weight: 400;
+    }
+
+    :host * {
+      cursor: pointer;
+    }
+
+    :host:disabled {
+      cursor: not-allowed;
     }
 
     :host:not(:disabled) {
@@ -57,23 +71,34 @@ export class MinidRadio extends styled(LitElement, styles) {
 
   constructor() {
     super();
-    // this.addEventListener('blur', this.handleBlur);
-    // this.addEventListener('click', this.handleClick);
-    // this.addEventListener('focus', this.handleFocus);
+    this.addEventListener('blur', this.handleBlur);
+    this.addEventListener('click', this.handleClick);
+    this.addEventListener('focus', this.handleFocus);
   }
 
   connectedCallback() {
     super.connectedCallback();
-    this.setInitialAttributes();
+    this.setAttribute('role', 'radio');
+    this.setAttribute('aria-disabled', this.disabled ? 'true' : 'false');
+    this.setAttribute('tabindex', '-1');
+    this.classList.add('rounded');
   }
 
   private handleBlur() {
+    if (this.checked) {
+      this.setAttribute('tabindex', '0');
+    }
+    this.classList.remove('shadow-focus-visible');
     this.dispatchEvent(
       new Event('mid-blur', { composed: true, bubbles: true })
     );
   }
 
   private handleFocus() {
+    // this.classList.add('shadow-focus-visible');
+    console.log('handle focus 👀');
+
+    this.focus();
     this.dispatchEvent(
       new Event('mid-focus', { composed: true, bubbles: true })
     );
@@ -86,12 +111,8 @@ export class MinidRadio extends styled(LitElement, styles) {
       return;
     }
 
+    this.focus();
     this.checked = true;
-  }
-
-  private setInitialAttributes() {
-    this.setAttribute('aria-disabled', this.disabled ? 'true' : 'false');
-    this.classList.add('rounded');
   }
 
   @watch('disabled', { waitUntilFirstUpdate: true })
@@ -99,20 +120,18 @@ export class MinidRadio extends styled(LitElement, styles) {
     this.setAttribute('aria-disabled', this.disabled ? 'true' : 'false');
   }
 
+  @watch('checked', { waitUntilFirstUpdate: true })
+  handleCheckChange() {
+    this.radio.checked = this.checked;
+  }
+
   /**
    * Sets focus on the radio button.
    */
   focus(options?: FocusOptions) {
+    this.setAttribute('tabindex', '-1');
     this.classList.add('shadow-focus-visible');
     this.radio.focus(options);
-  }
-
-  /**
-   * Removes focus from the radio button.
-   */
-  blur() {
-    this.classList.remove('shadow-focus-visible');
-    this.radio.blur();
   }
 
   override render() {
@@ -131,32 +150,18 @@ export class MinidRadio extends styled(LitElement, styles) {
           'h-6': this.size === 'md',
           'w-5': this.size === 'sm',
           'h-5': this.size === 'sm',
-          // 'whitespace-nowrap': true,
-          // 'fds-togglegroup__item': true,
-          // 'fds-btn': true,
-          // 'fds-focus': true,
-          // 'fds-btn--first': true,
-          // 'fds-btn--full-width': true,
-          // 'fds-btn--primary': this.checked,
-          // 'fds-btn--tertiary': !this.checked,
-          // 'fds-btn--sm': this.size === 'sm',
-          // 'fds-btn--md': this.size === 'md',
-          // 'fds-btn--lg': this.size === 'lg',
         })} shadow-none"
-        ?checked=${this.checked}
+        ?checked=${live(this.checked)}
         ?disabled=${this.disabled}
-        @blur=${this.blur}
       />
       <label
-        @click=${this.handleClick}
-        @blur=${this.handleBlur}
-        @focus=${this.handleFocus}
         class="${classMap({
+          label: true,
           'fds-label': true,
           'fds-label--sm': this.size === 'sm',
           'fds-label--md': this.size === 'md',
           'fds-label--lg': this.size === 'lg',
-        })} cursor-pointer"
+        })}"
       >
         <slot></slot>
       </label>
