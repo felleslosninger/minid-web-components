@@ -93,16 +93,12 @@ export class MinidRadioGroup extends ConstraintsValidationMixin(
           buttonRadio.setAttribute('tabindex', '0');
         }
       } else {
-        console.log('🎮');
-
         radios[0].setAttribute('tabindex', '0');
       }
     }
   }
 
   private syncRadios() {
-    console.log('⛳️ sync radios');
-
     if (
       customElements.get('mid-radio') &&
       customElements.get('mid-radio-button')
@@ -128,8 +124,6 @@ export class MinidRadioGroup extends ConstraintsValidationMixin(
   }
 
   private handleKeyDown(event: KeyboardEvent) {
-    console.log(document.activeElement);
-
     if (
       !['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '].includes(
         event.key
@@ -137,8 +131,6 @@ export class MinidRadioGroup extends ConstraintsValidationMixin(
     ) {
       return;
     }
-
-    console.log('GET BELOW');
 
     const radios = this.getAllRadios().filter((radio) => !radio.disabled);
     const checkedRadio = radios.find((radio) => radio.checked) ?? radios[0];
@@ -214,7 +206,6 @@ export class MinidRadioGroup extends ConstraintsValidationMixin(
       MinidRadioButton | MinidRadio
     >('mid-radio, mid-radio-button')!;
     // const radios = this.getAllRadios();
-    console.log('handling radio click 🥏', target.value);
 
     const oldValue = this.value;
 
@@ -224,14 +215,6 @@ export class MinidRadioGroup extends ConstraintsValidationMixin(
 
     this.value = target.value;
     this.setFormValue(this.value);
-
-    console.log('🎯', target.value);
-
-    // radios.forEach((radio) => {
-    //   radio.checked = radio === target;
-
-    //   console.log(radio.value, radio === target);
-    // });
 
     this.updateCheckedRadio();
 

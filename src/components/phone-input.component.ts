@@ -107,7 +107,7 @@ export class MinidPhoneInput extends FormControllerMixin(
   countrycode = '';
 
   /**
-   * Label for the combobox.
+   * Label for the phone input.
    * Passed label will be encapsulated by a label element.
    */
   @property()

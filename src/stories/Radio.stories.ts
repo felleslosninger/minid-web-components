@@ -41,9 +41,7 @@ type Story = StoryObj<RadioProps>;
 export const Main: Story = {
   args: {
     label: 'Velg en av følgende',
-    name: 'choice',
-    value: 'halibut',
-    labelhidden: true,
+    name: 'fav-berry',
   },
   decorators: [
     (story) =>
@@ -83,24 +81,10 @@ export const Main: Story = {
       size=${ifDefined(size)}
       ?labelhidden=${labelhidden}
     >
-      <mid-radio value="seabass"> Havabbor </mid-radio>
-      <mid-radio value="halibut"> Kveite </mid-radio>
-      <mid-radio value="squirtle"> Squirtle </mid-radio>
-      <mid-radio value="terminator"> Terminator II (1991) </mid-radio>
+      <mid-radio value="gooseberry"> Stikkelsbær </mid-radio>
+      <mid-radio value="currant"> Rips </mid-radio>
+      <mid-radio disabled value="rock"> Rockemusikk </mid-radio>
+      <mid-radio value="kielland"> Alexander Kielland </mid-radio>
     </mid-radio-group>
-    <fieldset name="test">
-      <label>
-        Lol 1
-        <input name="test" type="radio" value="lol-1" />
-      </label>
-      <label>
-        Lol 2
-        <input name="test" type="radio" value="lol-2" />
-      </label>
-      <label>
-        Lol 3
-        <input name="test" type="radio" value="lol-3" />
-      </label>
-    </fieldset>
   `,
 };

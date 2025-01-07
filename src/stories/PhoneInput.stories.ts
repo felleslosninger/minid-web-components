@@ -48,6 +48,9 @@ const meta: Meta = {
     'country-button': { control: false },
     input: { control: false },
     label: {
+      type: 'string',
+      description:
+        'Label for the phone input. Passed label will be encapsulated by a label element.',
       table: { category: 'attributes' },
     },
   },

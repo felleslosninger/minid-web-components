@@ -1,5 +1,5 @@
 import { css, html, LitElement } from 'lit';
-import { customElement, property, query, state } from 'lit/decorators.js';
+import { customElement, property, query } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { live } from 'lit/directives/live.js';
 import { watch } from 'src/internal/watch';
@@ -8,22 +8,28 @@ import { styled } from 'src/mixins/tailwind.mixin';
 const styles = [
   css`
     :host {
-      padding: 4px 0;
+      padding: 0.25rem 0;
       display: grid;
       grid-template-columns: auto 1fr;
-      gap: 4px;
+      gap: 0.25rem;
       cursor: pointer;
+      font-weight: 400;
+    }
+
+    :host > * {
+      cursor: pointer;
+    }
+
+    :host[disabled] {
+      background-color: hotpink;
     }
 
     .label {
       font-weight: 400;
     }
 
-    :host * {
-      cursor: pointer;
-    }
-
-    :host:disabled {
+    :host:has(input:disabled),
+    :host:has(input:disabled) > * {
       cursor: not-allowed;
     }
 
@@ -95,8 +101,9 @@ export class MinidRadio extends styled(LitElement, styles) {
   }
 
   private handleFocus() {
-    // this.classList.add('shadow-focus-visible');
-    console.log('handle focus 👀');
+    if (this.disabled) {
+      return;
+    }
 
     this.focus();
     this.dispatchEvent(
@@ -111,7 +118,6 @@ export class MinidRadio extends styled(LitElement, styles) {
       return;
     }
 
-    this.focus();
     this.checked = true;
   }
 
@@ -129,7 +135,10 @@ export class MinidRadio extends styled(LitElement, styles) {
    * Sets focus on the radio button.
    */
   focus(options?: FocusOptions) {
-    this.setAttribute('tabindex', '-1');
+    // Make host untabable to prevent double tabbing to get out
+    if (this.checked) {
+      this.setAttribute('tabindex', '-1');
+    }
     this.classList.add('shadow-focus-visible');
     this.radio.focus(options);
   }
@@ -143,7 +152,6 @@ export class MinidRadio extends styled(LitElement, styles) {
         name="${this.name}"
         class="${classMap({
           radio: true,
-          'cursor-pointer': true,
           'h-7': this.size === 'lg',
           'w-7': this.size === 'lg',
           'w-6': this.size === 'md',
