@@ -41,7 +41,8 @@ type Story = StoryObj<RadioProps>;
 export const Main: Story = {
   args: {
     label: 'Velg en av følgende',
-    name: 'fav-berry',
+    name: 'berry',
+    value: 'currant',
   },
   decorators: [
     (story) =>

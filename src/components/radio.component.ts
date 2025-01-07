@@ -8,10 +8,12 @@ import { styled } from 'src/mixins/tailwind.mixin';
 const styles = [
   css`
     :host {
+      --color-checked: #0062ba;
+      color: white;
       padding: 0.25rem 0;
       display: grid;
       grid-template-columns: auto 1fr;
-      gap: 0.25rem;
+      gap: 0.5rem;
       cursor: pointer;
       font-weight: 400;
     }
@@ -20,21 +22,35 @@ const styles = [
       cursor: pointer;
     }
 
-    :host[disabled] {
-      background-color: hotpink;
+    :host:has(input:disabled),
+    :host:has(input:disabled) > * {
+      cursor: not-allowed;
+    }
+
+    :host:has(input:disabled) > * {
+      opacity: 0.3;
     }
 
     .label {
       font-weight: 400;
     }
 
-    :host:has(input:disabled),
-    :host:has(input:disabled) > * {
-      cursor: not-allowed;
+    .radio {
+      -webkit-appearance: none;
+      appearance: none;
+
+      display: grid;
+      place-content: center;
+      transform: translateY(-0.075em);
     }
 
-    :host:not(:disabled) {
-      background-color: hotpink;
+    .radio:checked {
+      background: radial-gradient(
+          circle closest-side,
+          currentcolor 45%,
+          transparent 50%
+        ),
+        var(--color-checked);
     }
   `,
 ];
@@ -144,8 +160,6 @@ export class MinidRadio extends styled(LitElement, styles) {
   }
 
   override render() {
-    console.log(this.value, 'checked: ', this.checked);
-
     return html`
       <input
         type="radio"
@@ -158,7 +172,7 @@ export class MinidRadio extends styled(LitElement, styles) {
           'h-6': this.size === 'md',
           'w-5': this.size === 'sm',
           'h-5': this.size === 'sm',
-        })} shadow-none"
+        })} appearance-none rounded-full border-2 border-border-neutral shadow-none checked:border-border-action"
         ?checked=${live(this.checked)}
         ?disabled=${this.disabled}
       />

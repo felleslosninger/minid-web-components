@@ -13,6 +13,10 @@ const styles = [
     :host {
       display: block;
     }
+
+    .fds-label {
+      margin-bottom: 1rem;
+    }
   `,
 ];
 
@@ -285,7 +289,7 @@ export class MinidRadioGroup extends ConstraintsValidationMixin(
         <div
           class="${classMap({
             'fds-togglegroup__content': this.hasButtonRadios,
-          })} grid"
+          })} grid gap-3"
           part="base"
           role="presentation"
           aria-label=${this.label}
