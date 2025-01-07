@@ -1,12 +1,12 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import '../components/radio-group.component';
-import '../components/radio-button.component';
+import '../components/radio.component';
 import '../components/button.component';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { MinidRadioGroup } from '../components/radio-group.component';
 
-type RadioButtonProps = {
+type RadioProps = {
   label?: string;
   name?: string;
   value?: string;
@@ -18,11 +18,10 @@ type RadioButtonProps = {
   'mid-input': Event;
 };
 
-const meta: Meta<RadioButtonProps> = {
-  title: 'Komponenter/Under arbeid/Radio Button',
+const meta: Meta<RadioProps> = {
+  title: 'Komponenter/Under arbeid/Radio',
   component: 'mid-radio-group',
-
-  subcomponents: { MidRadioButton: 'mid-radio-button' },
+  subcomponents: { MidRadio: 'mid-radio' },
   argTypes: {
     name: { type: 'string' },
     value: { type: 'string' },
@@ -37,7 +36,7 @@ const meta: Meta<RadioButtonProps> = {
 
 export default meta;
 
-type Story = StoryObj<RadioButtonProps>;
+type Story = StoryObj<RadioProps>;
 
 export const Main: Story = {
   args: {
@@ -76,7 +75,7 @@ export const Main: Story = {
         </div>
       </form> `,
   ],
-  render: ({ label, name, value, labelhidden, size }: RadioButtonProps) => html`
+  render: ({ label, name, value, labelhidden, size }: RadioProps) => html`
     <mid-radio-group
       name="${ifDefined(name)}"
       value=${ifDefined(value)}
@@ -84,12 +83,10 @@ export const Main: Story = {
       size=${ifDefined(size)}
       ?labelhidden=${labelhidden}
     >
-      <mid-radio-button value="seabass"> Havabbor </mid-radio-button>
-      <mid-radio-button value="halibut"> Kveite </mid-radio-button>
-      <mid-radio-button value="squirtle"> Squirtle </mid-radio-button>
-      <mid-radio-button value="terminator">
-        Terminator II (1991)
-      </mid-radio-button>
+      <mid-radio value="seabass"> Havabbor </mid-radio>
+      <mid-radio value="halibut"> Kveite </mid-radio>
+      <mid-radio value="squirtle"> Squirtle </mid-radio>
+      <mid-radio value="terminator"> Terminator II (1991) </mid-radio>
     </mid-radio-group>
   `,
 };

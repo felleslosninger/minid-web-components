@@ -1,6 +1,7 @@
 import { html, LitElement } from 'lit';
 import { customElement, property, query } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
+import { ifDefined } from 'lit/directives/if-defined.js';
 import { watch } from 'src/internal/watch';
 import { styled } from 'src/mixins/tailwind.mixin';
 
@@ -12,6 +13,9 @@ export class MinidRadioButton extends styled(LitElement) {
   @query('.button')
   button!: HTMLButtonElement;
 
+  @property()
+  name = 'option';
+
   /**
    *  The radio button's checked state.
    */
@@ -22,7 +26,7 @@ export class MinidRadioButton extends styled(LitElement) {
    * The radio's value. When selected, the radio group will receive this value.
    */
   @property()
-  value = '';
+  value: string | null = null;
 
   /**
    * Disables the radio button.
@@ -82,7 +86,7 @@ export class MinidRadioButton extends styled(LitElement) {
     return html`<button
       role="radio"
       type="button"
-      name="option"
+      value=${ifDefined(this.value ?? undefined)}
       class="${classMap({
         button: true,
         'whitespace-nowrap': true,

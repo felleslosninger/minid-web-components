@@ -6,6 +6,7 @@ import { ConstraintsValidationMixin } from 'src/mixins/form-controller.mixin';
 import { MinidRadioButton } from 'src/components/radio-button.component';
 import { classMap } from 'lit/directives/class-map.js';
 import { watch } from 'src/internal/watch';
+import { MinidRadio } from 'src/components/radio.component';
 
 const styles = [
   css`
@@ -73,6 +74,7 @@ export class MinidRadioGroup extends ConstraintsValidationMixin(
         await radio.updateComplete;
         radio.checked = radio.value === this.value;
         radio.size = this.size;
+        radio.name = this.name;
       })
     );
 
@@ -83,8 +85,6 @@ export class MinidRadioGroup extends ConstraintsValidationMixin(
     if (radios.length > 0 && !radios.some((radio) => radio.checked)) {
       if (this.hasButtonRadios) {
         const buttonRadio = radios[0].shadowRoot?.querySelector('button');
-        console.log('buttonRadio 👯‍♀️', buttonRadio);
-
         if (buttonRadio) {
           buttonRadio.setAttribute('tabindex', '0');
         }
@@ -120,7 +120,6 @@ export class MinidRadioGroup extends ConstraintsValidationMixin(
   }
 
   private handleKeyDown(event: KeyboardEvent) {
-    console.log('event', event);
     if (event.key === 'Tab') {
       this.blur();
     }
@@ -155,21 +154,18 @@ export class MinidRadioGroup extends ConstraintsValidationMixin(
       radio.checked = false;
 
       if (!this.hasButtonRadios) {
-        console.log('radio tabindex -1', radio);
-
         radio.setAttribute('tabindex', '-1');
       }
     });
 
     this.value = radios[index].value;
     radios[index].checked = true;
+    this.setFormValue(this.value);
 
     if (!this.hasButtonRadios) {
       radios[index].setAttribute('tabindex', '0');
       radios[index].focus();
     } else {
-      console.log('radios[index]', radios[index], radios[index].shadowRoot);
-
       radios[index].shadowRoot!.querySelector('button')!.focus();
     }
 
@@ -187,7 +183,9 @@ export class MinidRadioGroup extends ConstraintsValidationMixin(
 
   private getAllRadios() {
     return Array.from(
-      this.querySelectorAll<MinidRadioButton>('mid-radio, mid-radio-button')
+      this.querySelectorAll<MinidRadioButton | MinidRadio>(
+        'mid-radio, mid-radio-button'
+      )
     );
   }
 
@@ -203,10 +201,10 @@ export class MinidRadioGroup extends ConstraintsValidationMixin(
   }
 
   private handleRadioClick(event: MouseEvent) {
-    const target = (event.target as HTMLElement).closest<MinidRadioButton>(
-      'mid-radio, mid-radio-button'
-    )!;
-    const radios = this.getAllRadios();
+    const target = (event.target as HTMLElement).closest<
+      MinidRadioButton | MinidRadio
+    >('mid-radio, mid-radio-button')!;
+    // const radios = this.getAllRadios();
     const oldValue = this.value;
 
     if (!target || target.disabled) {
@@ -214,11 +212,17 @@ export class MinidRadioGroup extends ConstraintsValidationMixin(
     }
 
     this.value = target.value;
-    radios.forEach((radio) => {
-      radio.checked = radio === target;
-    });
-
     this.setFormValue(this.value);
+
+    console.log('🎯', target.value);
+
+    // radios.forEach((radio) => {
+    //   radio.checked = radio === target;
+
+    //   console.log(radio.value, radio === target);
+    // });
+
+    this.updateCheckedRadio();
 
     if (this.value !== oldValue) {
       this.dispatchEvent(
@@ -277,13 +281,17 @@ export class MinidRadioGroup extends ConstraintsValidationMixin(
         ${this.label}
       </label>
       <fieldset
-        class="fds-togglegroup flex"
+        class="${classMap({
+          'fds-togglegroup': this.hasButtonRadios,
+        })} flex"
         part="form-control"
         role="radiogroup"
         aria-labelledby="label"
       >
         <div
-          class="fds-togglegroup__content"
+          class="${classMap({
+            'fds-togglegroup__content': this.hasButtonRadios,
+          })} grid"
           part="base"
           role="presentation"
           aria-label=${this.label}
