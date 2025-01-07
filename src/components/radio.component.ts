@@ -9,6 +9,8 @@ const styles = [
   css`
     :host {
       --color-checked: #0062ba;
+      --color-border: #7a818c;
+
       color: white;
       padding: 0.25rem 0;
       display: grid;
@@ -16,10 +18,17 @@ const styles = [
       gap: 0.5rem;
       cursor: pointer;
       font-weight: 400;
+      /* box-shadow: none !important; */
     }
 
     :host > * {
       cursor: pointer;
+    }
+
+    :host:has(input:focus-visible) {
+      --fds-focus-border-width: 3px;
+      box-shadow: 0 0 0 var(--fds-focus-border-width)
+        var(--fds-semantic-border-focus-boxshadow);
     }
 
     :host:has(input:disabled),
@@ -39,12 +48,15 @@ const styles = [
       -webkit-appearance: none;
       appearance: none;
 
+      border-radius: 999px;
       display: grid;
       place-content: center;
+      border: 2px solid var(--color-border);
       transform: translateY(-0.075em);
     }
 
     .radio:checked {
+      border-color: var(--color-checked);
       background: radial-gradient(
           circle closest-side,
           currentcolor 45%,
@@ -61,7 +73,7 @@ export class MinidRadio extends styled(LitElement, styles) {
    * @ignore
    */
   @query('.radio')
-  radio!: HTMLInputElement;
+  element!: HTMLInputElement;
 
   @property()
   name = 'option';
@@ -100,16 +112,13 @@ export class MinidRadio extends styled(LitElement, styles) {
 
   connectedCallback() {
     super.connectedCallback();
-    this.setAttribute('role', 'radio');
+    this.setAttribute('role', 'presentation');
     this.setAttribute('aria-disabled', this.disabled ? 'true' : 'false');
-    this.setAttribute('tabindex', '-1');
+
     this.classList.add('rounded');
   }
 
   private handleBlur() {
-    if (this.checked) {
-      this.setAttribute('tabindex', '0');
-    }
     this.classList.remove('shadow-focus-visible');
     this.dispatchEvent(
       new Event('mid-blur', { composed: true, bubbles: true })
@@ -144,19 +153,15 @@ export class MinidRadio extends styled(LitElement, styles) {
 
   @watch('checked', { waitUntilFirstUpdate: true })
   handleCheckChange() {
-    this.radio.checked = this.checked;
+    this.element.checked = this.checked;
   }
 
   /**
    * Sets focus on the radio button.
    */
   focus(options?: FocusOptions) {
-    // Make host untabable to prevent double tabbing to get out
-    if (this.checked) {
-      this.setAttribute('tabindex', '-1');
-    }
-    this.classList.add('shadow-focus-visible');
-    this.radio.focus(options);
+    // this.classList.add('shadow-focus-visible');
+    this.element.focus(options);
   }
 
   override render() {
@@ -172,7 +177,7 @@ export class MinidRadio extends styled(LitElement, styles) {
           'h-6': this.size === 'md',
           'w-5': this.size === 'sm',
           'h-5': this.size === 'sm',
-        })} appearance-none rounded-full border-2 border-border-neutral shadow-none checked:border-border-action"
+        })} shadow-none"
         ?checked=${live(this.checked)}
         ?disabled=${this.disabled}
       />

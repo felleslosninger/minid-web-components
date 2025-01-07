@@ -74,12 +74,20 @@ export const Main: Story = {
         </div>
       </form> `,
   ],
-  render: ({ label, name, value, labelhidden, size }: RadioProps) => html`
+  render: ({
+    label,
+    name,
+    value,
+    labelhidden,
+    size,
+    disabled,
+  }: RadioProps) => html`
     <mid-radio-group
       name="${ifDefined(name)}"
       value=${ifDefined(value)}
       label=${ifDefined(label)}
       size=${ifDefined(size)}
+      ?disabled=${disabled}
       ?labelhidden=${labelhidden}
     >
       <mid-radio value="gooseberry"> Stikkelsbær </mid-radio>

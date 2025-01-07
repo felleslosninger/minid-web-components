@@ -10,8 +10,8 @@ export class MinidRadioButton extends styled(LitElement) {
   /**
    * @ignore
    */
-  @query('.button')
-  button!: HTMLButtonElement;
+  @query('.radio')
+  element!: HTMLButtonElement;
 
   @property()
   name = 'option';
@@ -72,14 +72,14 @@ export class MinidRadioButton extends styled(LitElement) {
    * Sets focus on the radio button.
    */
   focus(options?: FocusOptions) {
-    this.button.focus(options);
+    this.element.focus(options);
   }
 
   /**
    * Removes focus from the radio button.
    */
   blur() {
-    this.button.blur();
+    this.element.blur();
   }
 
   override render() {
@@ -88,7 +88,7 @@ export class MinidRadioButton extends styled(LitElement) {
       type="button"
       value=${ifDefined(this.value ?? undefined)}
       class="${classMap({
-        button: true,
+        radio: true,
         'whitespace-nowrap': true,
         'fds-togglegroup__item': true,
         'fds-btn': true,

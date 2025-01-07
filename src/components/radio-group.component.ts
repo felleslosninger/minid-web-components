@@ -82,11 +82,6 @@ export class MinidRadioGroup extends ConstraintsValidationMixin(
         radio.checked = radio.value === this.value;
         radio.size = this.size;
         radio.name = this.name;
-        if (radio.checked) {
-          if (!this.hasButtonRadios) {
-            radio.setAttribute('tabindex', '0');
-          }
-        }
       })
     );
 
@@ -97,7 +92,7 @@ export class MinidRadioGroup extends ConstraintsValidationMixin(
           buttonRadio.setAttribute('tabindex', '0');
         }
       } else {
-        radios[0].setAttribute('tabindex', '0');
+        radios[0].element.setAttribute('tabindex', '0');
       }
     }
   }
@@ -159,7 +154,7 @@ export class MinidRadioGroup extends ConstraintsValidationMixin(
       radio.checked = false;
 
       if (!this.hasButtonRadios) {
-        radio.setAttribute('tabindex', '-1');
+        radio.element.setAttribute('tabindex', '-1');
       }
     });
 
@@ -168,7 +163,8 @@ export class MinidRadioGroup extends ConstraintsValidationMixin(
     this.setFormValue(this.value);
 
     if (!this.hasButtonRadios) {
-      radios[index].setAttribute('tabindex', '0');
+      // radios[index].setAttribute('tabindex', '0');
+      radios[index].element.setAttribute('tabindex', '0');
       radios[index].focus();
     } else {
       radios[index].shadowRoot!.querySelector('button')!.focus();
@@ -242,6 +238,20 @@ export class MinidRadioGroup extends ConstraintsValidationMixin(
     if (this.hasUpdated) {
       this.updateCheckedRadio();
     }
+  }
+
+  @watch('disabled')
+  handleDisabledChange() {
+    const radios = this.getAllRadios();
+    const every = radios.every((radio) => radio.disabled);
+    const some = radios.some((radio) => radio.disabled);
+    radios.forEach((radio) => {
+      if (every === some) {
+        radio.disabled = this.disabled;
+      } else if (this.disabled) {
+        radio.disabled = true;
+      }
+    });
   }
 
   /**
