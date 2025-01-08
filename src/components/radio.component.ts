@@ -114,7 +114,6 @@ export class MinidRadio extends styled(LitElement, styles) {
     super.connectedCallback();
     this.setAttribute('role', 'presentation');
     this.setAttribute('aria-disabled', this.disabled ? 'true' : 'false');
-
     this.classList.add('rounded');
   }
 
@@ -171,13 +170,14 @@ export class MinidRadio extends styled(LitElement, styles) {
         name="${this.name}"
         class="${classMap({
           radio: true,
+          'shadow-none': true,
           'h-7': this.size === 'lg',
           'w-7': this.size === 'lg',
           'w-6': this.size === 'md',
           'h-6': this.size === 'md',
           'w-5': this.size === 'sm',
           'h-5': this.size === 'sm',
-        })} shadow-none"
+        })}"
         ?checked=${live(this.checked)}
         ?disabled=${this.disabled}
       />

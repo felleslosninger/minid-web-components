@@ -1,5 +1,5 @@
 import { css, html, LitElement, PropertyValues } from 'lit';
-import { customElement, property, state } from 'lit/decorators.js';
+import { customElement, property, query, state } from 'lit/decorators.js';
 import { styled } from 'src/mixins/tailwind.mixin';
 import './label.component';
 import { ConstraintsValidationMixin } from 'src/mixins/form-controller.mixin';
@@ -14,6 +14,16 @@ const styles = [
       display: block;
     }
 
+    :host:invalid fieldset {
+      border: 2px solid red;
+      outline: 2px solid red;
+    }
+
+    .error {
+      border: 2px solid red;
+      outline: 2px solid red;
+    }
+
     .fds-label {
       margin-bottom: 1rem;
     }
@@ -24,6 +34,8 @@ const styles = [
 export class MinidRadioGroup extends ConstraintsValidationMixin(
   styled(LitElement, styles)
 ) {
+  @query('.fieldset')
+  fieldset!: HTMLFieldSetElement;
   /**
    * The name of the radio group.
    */
@@ -57,14 +69,29 @@ export class MinidRadioGroup extends ConstraintsValidationMixin(
   @state()
   defaultValue: string | null = null;
 
+  constructor() {
+    super();
+
+    this.addEventListener('focus', () => {
+      this.focus();
+    });
+  }
+
   protected firstUpdated(_changedProperties: PropertyValues): void {
     super.firstUpdated(_changedProperties);
     this.defaultValue = this.value;
     this.setFormValue(this.value);
+    // this.setValidity(
+    //   { valueMissing: true } as ValidityState,
+    //   'Feltet er påkrevd'
+    // );
+    this.validate();
+    this.setAttribute('tabindex', '0');
   }
 
   protected formResetCallback() {
     this.value = this.defaultValue;
+    this.validate();
     this.setFormValue(this.value);
     this.updateCheckedRadio();
   }
@@ -228,6 +255,17 @@ export class MinidRadioGroup extends ConstraintsValidationMixin(
     }
   }
 
+  validate() {
+    if (this.required && !this.value) {
+      this.setValidity(
+        { valueMissing: true } as ValidityState,
+        'Feltet er påkrevd'
+      );
+    } else {
+      this.setValidity({} as ValidityState, '');
+    }
+  }
+
   @watch('size', { waitUntilFirstUpdate: true })
   handleSizeChange() {
     this.syncRadios();
@@ -235,6 +273,17 @@ export class MinidRadioGroup extends ConstraintsValidationMixin(
 
   @watch('value')
   handleValueChange() {
+    console.log(
+      'Value: ',
+      this.value,
+      'required ',
+      this.required,
+      'hasupdated: ',
+      this.hasUpdated
+    );
+
+    this.validate();
+
     if (this.hasUpdated) {
       this.updateCheckedRadio();
     }
@@ -258,11 +307,15 @@ export class MinidRadioGroup extends ConstraintsValidationMixin(
    *  Sets focus on the radio-group.
    */
   public focus(options?: FocusOptions) {
+    console.log('focus! 🔎');
+
     const radios = this.getAllRadios();
     const checked = radios.find((radio) => radio.checked);
     const firstEnabledRadio = radios.find((radio) => !radio.disabled);
 
     const radioToFocus = checked || firstEnabledRadio;
+
+    console.log(radioToFocus);
 
     // Call focus for the checked radio
     // If no radio is checked, focus the first one that is not disabled
@@ -290,11 +343,15 @@ export class MinidRadioGroup extends ConstraintsValidationMixin(
       </label>
       <fieldset
         class="${classMap({
+          flex: true,
           'fds-togglegroup': this.hasButtonRadios,
-        })} flex"
+          fieldset: true,
+        })}"
         part="form-control"
         role="radiogroup"
         aria-labelledby="label"
+        name=${this.name}
+        @focus=${this.focus}
       >
         <div
           class="${classMap({

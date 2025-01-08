@@ -13,6 +13,7 @@ type RadioProps = {
   checked?: boolean;
   disabled?: boolean;
   labelhidden?: boolean;
+  required?: boolean;
   size?: MinidRadioGroup['size'];
   'mid-change': Event;
   'mid-input': Event;
@@ -42,8 +43,33 @@ export const Main: Story = {
   args: {
     label: 'Velg en av følgende',
     name: 'berry',
-    value: 'currant',
+    // value: 'currant',
+    required: true,
   },
+  render: ({
+    label,
+    name,
+    value,
+    labelhidden,
+    size,
+    disabled,
+    required,
+  }: RadioProps) => html`
+    <mid-radio-group
+      name="${ifDefined(name)}"
+      value=${ifDefined(value)}
+      label=${ifDefined(label)}
+      size=${ifDefined(size)}
+      ?disabled=${disabled}
+      ?labelhidden=${labelhidden}
+      ?required=${required}
+    >
+      <mid-radio value="gooseberry"> Stikkelsbær </mid-radio>
+      <mid-radio value="currant"> Rips </mid-radio>
+      <mid-radio disabled value="rock"> Rockemusikk </mid-radio>
+      <mid-radio value="kielland"> Alexander Kielland </mid-radio>
+    </mid-radio-group>
+  `,
   decorators: [
     (story) =>
       html`<form
@@ -74,26 +100,4 @@ export const Main: Story = {
         </div>
       </form> `,
   ],
-  render: ({
-    label,
-    name,
-    value,
-    labelhidden,
-    size,
-    disabled,
-  }: RadioProps) => html`
-    <mid-radio-group
-      name="${ifDefined(name)}"
-      value=${ifDefined(value)}
-      label=${ifDefined(label)}
-      size=${ifDefined(size)}
-      ?disabled=${disabled}
-      ?labelhidden=${labelhidden}
-    >
-      <mid-radio value="gooseberry"> Stikkelsbær </mid-radio>
-      <mid-radio value="currant"> Rips </mid-radio>
-      <mid-radio disabled value="rock"> Rockemusikk </mid-radio>
-      <mid-radio value="kielland"> Alexander Kielland </mid-radio>
-    </mid-radio-group>
-  `,
 };
