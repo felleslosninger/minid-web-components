@@ -1,12 +1,12 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
-import { html } from 'lit';
+import { html, Part } from 'lit';
 import '../components/radio-group.component';
 import '../components/radio.component';
 import '../components/button.component';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { MinidRadioGroup } from '../components/radio-group.component';
 
-type RadioProps = {
+export type RadioProps = {
   label?: string;
   name?: string;
   value?: string;
@@ -14,8 +14,12 @@ type RadioProps = {
   disabled?: boolean;
   labelhidden?: boolean;
   size?: MinidRadioGroup['size'];
+  '--': string;
   'mid-change': Event;
   'mid-input': Event;
+  base: Part;
+  'form-control': Part;
+  'form-control-label': Part;
 };
 
 const meta: Meta<RadioProps> = {
@@ -29,8 +33,12 @@ const meta: Meta<RadioProps> = {
       control: { type: 'radio' },
       options: ['sm', 'md', 'lg'],
     },
+    '--': { name: '-', control: { disable: true } },
     'mid-change': { control: { disable: true } },
     'mid-input': { control: { disable: true } },
+    base: { control: { disable: true } },
+    'form-control-label': { control: { disable: true } },
+    'form-control': { control: { disable: true } },
   },
 };
 
@@ -42,8 +50,29 @@ export const Main: Story = {
   args: {
     label: 'Velg en av følgende',
     name: 'berry',
-    value: 'currant',
   },
+  render: ({
+    label,
+    name,
+    value,
+    labelhidden,
+    size,
+    disabled,
+  }: RadioProps) => html`
+    <mid-radio-group
+      name="${ifDefined(name)}"
+      value=${ifDefined(value)}
+      label=${ifDefined(label)}
+      size=${ifDefined(size)}
+      ?disabled=${disabled}
+      ?labelhidden=${labelhidden}
+    >
+      <mid-radio value="gooseberry"> Stikkelsbær </mid-radio>
+      <mid-radio value="currant"> Rips </mid-radio>
+      <mid-radio disabled value="rock"> Rockemusikk </mid-radio>
+      <mid-radio value="kielland"> Alexander Kielland </mid-radio>
+    </mid-radio-group>
+  `,
   decorators: [
     (story) =>
       html`<form
@@ -74,26 +103,4 @@ export const Main: Story = {
         </div>
       </form> `,
   ],
-  render: ({
-    label,
-    name,
-    value,
-    labelhidden,
-    size,
-    disabled,
-  }: RadioProps) => html`
-    <mid-radio-group
-      name="${ifDefined(name)}"
-      value=${ifDefined(value)}
-      label=${ifDefined(label)}
-      size=${ifDefined(size)}
-      ?disabled=${disabled}
-      ?labelhidden=${labelhidden}
-    >
-      <mid-radio value="gooseberry"> Stikkelsbær </mid-radio>
-      <mid-radio value="currant"> Rips </mid-radio>
-      <mid-radio disabled value="rock"> Rockemusikk </mid-radio>
-      <mid-radio value="kielland"> Alexander Kielland </mid-radio>
-    </mid-radio-group>
-  `,
 };

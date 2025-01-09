@@ -18,7 +18,6 @@ const styles = [
       gap: 0.5rem;
       cursor: pointer;
       font-weight: 400;
-      /* box-shadow: none !important; */
     }
 
     :host > * {
@@ -67,6 +66,16 @@ const styles = [
   `,
 ];
 
+/**
+ *
+ * @slot -- The radio's label
+ *
+ * @event mid-blur - Emitted when the control loses focus.
+ * @event mid-focus - Emitted when the control gains focus.
+ *
+ * @csspart radio - Select the radio input element
+ * @csspart label - Select the label element
+ */
 @customElement('mid-radio')
 export class MinidRadio extends styled(LitElement, styles) {
   /**
@@ -168,6 +177,7 @@ export class MinidRadio extends styled(LitElement, styles) {
     return html`
       <input
         type="radio"
+        part="radio"
         name="${this.name}"
         class="${classMap({
           radio: true,
@@ -182,6 +192,7 @@ export class MinidRadio extends styled(LitElement, styles) {
         ?disabled=${this.disabled}
       />
       <label
+        part="label"
         class="${classMap({
           label: true,
           'fds-label': true,

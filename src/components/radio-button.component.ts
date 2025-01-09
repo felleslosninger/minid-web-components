@@ -5,6 +5,15 @@ import { ifDefined } from 'lit/directives/if-defined.js';
 import { watch } from 'src/internal/watch';
 import { styled } from 'src/mixins/tailwind.mixin';
 
+/**
+ *
+ * @slot -- The radio button's label.
+ *
+ * @event mid-blur - Emitted when the button loses focus.
+ * @event mid-focus - Emitted when the button gains focus.
+ *
+ * @csspart button - Select the internal button element
+ */
 @customElement('mid-radio-button')
 export class MinidRadioButton extends styled(LitElement) {
   /**
@@ -86,6 +95,8 @@ export class MinidRadioButton extends styled(LitElement) {
     return html`<button
       role="radio"
       type="button"
+      part="button"
+      name=${this.name}
       value=${ifDefined(this.value ?? undefined)}
       class="${classMap({
         radio: true,

@@ -20,6 +20,17 @@ const styles = [
   `,
 ];
 
+/**
+ *
+ * @slot -- The default slot where `<mid-radio>` or `<mid-radio-button>` elements are placed.
+ *
+ * @event mid-change - Emitted when the selected value changes
+ * @event mid-input - Emitted when radio group recieves input
+ *
+ * @csspart form-control-label - Select the label element
+ * @csspart form-control - Select the fieldset containing the radios
+ * @csspart base - Select the container around the radios
+ */
 @customElement('mid-radio-group')
 export class MinidRadioGroup extends ConstraintsValidationMixin(
   styled(LitElement, styles)
@@ -47,9 +58,6 @@ export class MinidRadioGroup extends ConstraintsValidationMixin(
 
   @property({ type: Boolean })
   disabled = false;
-
-  @property({ type: Boolean })
-  required = false;
 
   @state()
   private hasButtonRadios = false;
@@ -81,7 +89,6 @@ export class MinidRadioGroup extends ConstraintsValidationMixin(
         await radio.updateComplete;
         radio.checked = radio.value === this.value;
         radio.size = this.size;
-        radio.name = this.name;
       })
     );
 
@@ -163,7 +170,6 @@ export class MinidRadioGroup extends ConstraintsValidationMixin(
     this.setFormValue(this.value);
 
     if (!this.hasButtonRadios) {
-      // radios[index].setAttribute('tabindex', '0');
       radios[index].element.setAttribute('tabindex', '0');
       radios[index].focus();
     } else {
@@ -298,8 +304,10 @@ export class MinidRadioGroup extends ConstraintsValidationMixin(
       >
         <div
           class="${classMap({
+            grid: true,
+            'gap-3': true,
             'fds-togglegroup__content': this.hasButtonRadios,
-          })} grid gap-3"
+          })}"
           part="base"
           role="presentation"
           aria-label=${this.label}

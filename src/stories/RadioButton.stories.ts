@@ -4,21 +4,9 @@ import '../components/radio-group.component';
 import '../components/radio-button.component';
 import '../components/button.component';
 import { ifDefined } from 'lit/directives/if-defined.js';
-import { MinidRadioGroup } from '../components/radio-group.component';
+import { RadioProps } from './Radio.stories';
 
-type RadioButtonProps = {
-  label?: string;
-  name?: string;
-  value?: string;
-  checked?: boolean;
-  disabled?: boolean;
-  labelhidden?: boolean;
-  size?: MinidRadioGroup['size'];
-  'mid-change': Event;
-  'mid-input': Event;
-};
-
-const meta: Meta<RadioButtonProps> = {
+const meta: Meta<RadioProps> = {
   title: 'Komponenter/Under arbeid/Radio Button',
   component: 'mid-radio-group',
 
@@ -30,14 +18,18 @@ const meta: Meta<RadioButtonProps> = {
       control: { type: 'radio' },
       options: ['sm', 'md', 'lg'],
     },
+    '--': { name: '-', control: { disable: true } },
     'mid-change': { control: { disable: true } },
     'mid-input': { control: { disable: true } },
+    base: { control: { disable: true } },
+    'form-control-label': { control: { disable: true } },
+    'form-control': { control: { disable: true } },
   },
 };
 
 export default meta;
 
-type Story = StoryObj<RadioButtonProps>;
+type Story = StoryObj<RadioProps>;
 
 export const Main: Story = {
   args: {
@@ -83,7 +75,7 @@ export const Main: Story = {
     labelhidden,
     size,
     disabled,
-  }: RadioButtonProps) => html`
+  }: RadioProps) => html`
     <mid-radio-group
       name="${ifDefined(name)}"
       value=${ifDefined(value)}
