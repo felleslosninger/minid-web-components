@@ -4,7 +4,7 @@ import { live } from 'lit/directives/live.js';
 import { stringConverter } from 'internal/string-converter';
 import { classMap } from 'lit/directives/class-map.js';
 import { styled } from 'mixins/tailwind.mixin.ts';
-import { FormControllerMixin } from 'mixins/form-controller.mixin.ts';
+import { ConstraintsValidationMixin } from 'mixins/form-controller.mixin.ts';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { HasSlotController } from 'src/internal/slot';
 
@@ -97,6 +97,8 @@ const styles = [
   `,
 ];
 
+let nextUniqueId = 0;
+
 /**
  *
  * @event mid-change - Emitted when a change to the input value is comitted by the user
@@ -116,10 +118,12 @@ const styles = [
  * @csspart password-toggle-button - The button for toggling password visibility
  */
 @customElement('mid-textfield')
-export class MinidTextfield extends FormControllerMixin(
+export class MinidTextfield extends ConstraintsValidationMixin(
   styled(LitElement, styles)
 ) {
-  private readonly hasSlotControler = new HasSlotController(this, 'label');
+  #inputId: string;
+  #descriptionId: string;
+  #hasSlotControler = new HasSlotController(this, 'label');
 
   @query('.input')
   input!: HTMLInputElement;
@@ -144,6 +148,9 @@ export class MinidTextfield extends FormControllerMixin(
    */
   @property({ type: Boolean })
   autofocus = false;
+
+  @property()
+  autocomplete?: AutoFill;
 
   /**
    *  The minimum length of input that will be considered valid.
@@ -226,6 +233,13 @@ export class MinidTextfield extends FormControllerMixin(
   @state()
   hasFocus = false;
 
+  constructor() {
+    super();
+    nextUniqueId++;
+    this.#inputId = `mid-textfield-input-${nextUniqueId}`;
+    this.#descriptionId = `mid-textfield-description-${nextUniqueId}`;
+  }
+
   private handleKeydown(event: KeyboardEvent) {
     const hasModifier =
       event.metaKey || event.ctrlKey || event.shiftKey || event.altKey;
@@ -260,10 +274,10 @@ export class MinidTextfield extends FormControllerMixin(
 
   private handleInput() {
     this.value = this.input.value;
+    this.setFormValue(this.value);
     this.dispatchEvent(
       new Event('mid-input', { bubbles: true, composed: true })
     );
-    this.setFormValue(this.value);
   }
 
   private handleFocus() {
@@ -305,7 +319,7 @@ export class MinidTextfield extends FormControllerMixin(
     const md = this.size === 'md';
     const sm = this.size === 'sm';
 
-    const hasLabelSlot = this.hasSlotControler.test('label');
+    const hasLabelSlot = this.#hasSlotControler.test('label');
     const hasLabel = !!this.label || !!hasLabelSlot;
     const hasClearIcon = this.clearable && !this.disabled && !this.readonly;
     const isClearIconVisible =
@@ -329,7 +343,7 @@ export class MinidTextfield extends FormControllerMixin(
         })}"
       >
         <label
-          for="input"
+          for="${this.#inputId}"
           class="${classMap({
             'sr-only': this.hidelabel || !hasLabel,
             'fds-label': true,
@@ -340,34 +354,38 @@ export class MinidTextfield extends FormControllerMixin(
             'fds-label--lg': lg,
           })}"
         >
-          ${!this.readonly
-            ? nothing
-            : html`<mid-icon
-                class="fds-textfield__readonly__icon"
-                library="system"
-                name="padlock-locked-fill"
-              ></mid-icon>`}
+          ${
+            !this.readonly
+              ? nothing
+              : html`<mid-icon
+                  class="fds-textfield__readonly__icon"
+                  library="system"
+                  name="padlock-locked-fill"
+                ></mid-icon>`
+          }
           <slot name="label"> ${this.label} </slot>
         </label>
-        ${!this.description
-          ? nothing
-          : html`
-              <div
-                id="description"
-                part="description"
-                class="${classMap({
-                  description: true,
-                  'fds-paragraph': true,
-                  'sr-only': this.hidelabel,
-                  'fds-paragraph--sm': sm,
-                  'fds-paragraph--md': md,
-                  'fds-paragraph--lg': lg,
-                  'fds-textfield__description': true,
-                })}"
-              >
-                ${this.description}
-              </div>
-            `}
+        ${
+          !this.description
+            ? nothing
+            : html`
+                <div
+                  id="${this.#descriptionId}"
+                  part="description"
+                  class="${classMap({
+                    description: true,
+                    'fds-paragraph': true,
+                    'sr-only': this.hidelabel,
+                    'fds-paragraph--sm': sm,
+                    'fds-paragraph--md': md,
+                    'fds-paragraph--lg': lg,
+                    'fds-textfield__description': true,
+                  })}"
+                >
+                  ${this.description}
+                </div>
+              `
+        }
         <div
           part="base"
           class="${classMap({
@@ -381,17 +399,20 @@ export class MinidTextfield extends FormControllerMixin(
             <slot name="prefix"></slot>
           </span>
           <input
-            id="input"
+            id="${this.#inputId}"
             class="input"
             part="input"
             .value=${live(this.value)}
             ?disabled=${this.disabled}
             ?readonly=${this.readonly}
             ?autofocus=${this.autofocus}
-            type=${this.type === 'password' && this.passwordvisible
-              ? 'text'
-              : this.type}
-            aria-describedby="description"
+            autocomplete=${ifDefined(this.autocomplete as any)}
+            type=${
+              this.type === 'password' && this.passwordvisible
+                ? 'text'
+                : this.type
+            }
+            aria-describedby="${this.#descriptionId}""
             placeholder=${ifDefined(this.placeholder)}
             minlength=${ifDefined(this.minlength)}
             maxlength=${ifDefined(this.maxlength)}
@@ -403,49 +424,58 @@ export class MinidTextfield extends FormControllerMixin(
             @blur=${this.handleBlur}
             @keydown=${this.handleKeydown}
           />
-          ${isClearIconVisible
-            ? html`
-                <button
-                  part="clear-button"
-                  class="${classMap({
-                    'clear-button': true,
-                    'clear-button--sm': sm,
-                    'clear-button--md': md,
-                    'clear-button--lg': lg,
-                  })}"
-                  type="button"
-                  aria-label="Tøm"
-                  @click=${this.handleClearClick}
-                >
-                  <mid-icon name="xmark" library="system"></mid-icon>
-                </button>
-              `
-            : ''}
-          ${this.passwordtoggle && !this.disabled
-            ? html`
-                <button
-                  part="password-toggle-button"
-                  class="${classMap({
-                    'clear-button': true,
-                    'clear-button--sm': sm,
-                    'clear-button--md': md,
-                    'clear-button--lg': lg,
-                  })}"
-                  type="button"
-                  aria-label=${this.passwordvisible
-                    ? 'skjul passord'
-                    : 'vis passord'}
-                  @click=${this.handlePasswordToggle}
-                  tabindex="-1"
-                >
-                  ${this.passwordvisible
-                    ? html`
-                        <mid-icon name="eye-slash" library="system"></mid-icon>
-                      `
-                    : html` <mid-icon name="eye" library="system"></mid-icon> `}
-                </button>
-              `
-            : ''}
+          ${
+            isClearIconVisible
+              ? html`
+                  <button
+                    part="clear-button"
+                    class="${classMap({
+                      'clear-button': true,
+                      'clear-button--sm': sm,
+                      'clear-button--md': md,
+                      'clear-button--lg': lg,
+                    })}"
+                    type="button"
+                    aria-label="Tøm"
+                    @click=${this.handleClearClick}
+                  >
+                    <mid-icon name="xmark" library="system"></mid-icon>
+                  </button>
+                `
+              : ''
+          }
+          ${
+            this.passwordtoggle && !this.disabled
+              ? html`
+                  <button
+                    part="password-toggle-button"
+                    class="${classMap({
+                      'clear-button': true,
+                      'clear-button--sm': sm,
+                      'clear-button--md': md,
+                      'clear-button--lg': lg,
+                    })}"
+                    type="button"
+                    aria-label=${this.passwordvisible
+                      ? 'skjul passord'
+                      : 'vis passord'}
+                    @click=${this.handlePasswordToggle}
+                    tabindex="-1"
+                  >
+                    ${this.passwordvisible
+                      ? html`
+                          <mid-icon
+                            name="eye-slash"
+                            library="system"
+                          ></mid-icon>
+                        `
+                      : html`
+                          <mid-icon name="eye" library="system"></mid-icon>
+                        `}
+                  </button>
+                `
+              : ''
+          }
           <span part="suffix" class="suffix">
             <slot name="suffix"></slot>
           </span>

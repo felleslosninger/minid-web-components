@@ -79,7 +79,7 @@ export const ConstraintsValidationMixin = <
     }
 
     setValidity(
-      validity: ValidityState,
+      validity: ValidityStateFlags,
       message?: string,
       anchor?: HTMLElement
     ) {
