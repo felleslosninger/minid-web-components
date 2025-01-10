@@ -6,6 +6,7 @@ import { classMap } from 'lit/directives/class-map.js';
 import { styled } from 'mixins/tailwind.mixin.ts';
 import { FormControllerMixin } from 'mixins/form-controller.mixin.ts';
 import { ifDefined } from 'lit/directives/if-defined.js';
+import { HasSlotController } from 'src/internal/slot';
 
 const styles = [
   css`
@@ -13,8 +14,16 @@ const styles = [
       display: block;
     }
 
+    .form-control {
+      display: block;
+    }
+
     .form-control:has(input:disabled) {
       opacity: 0.3;
+    }
+
+    .fds-label {
+      margin-bottom: 0.5rem;
     }
 
     .field {
@@ -98,6 +107,7 @@ const styles = [
  *
  * @slot prefix - Used for decoration to the left of the input
  * @slot suffix - Used for decoration to the right of the input
+ * @slot label - The input's label. Alternatively, you can use the `label` attribute.
  *
  * @csspart base - The fields's base wrapper.
  * @csspart input - The internal `<input>` element.
@@ -109,6 +119,8 @@ const styles = [
 export class MinidTextfield extends FormControllerMixin(
   styled(LitElement, styles)
 ) {
+  private readonly hasSlotControler = new HasSlotController(this, 'label');
+
   @query('.input')
   input!: HTMLInputElement;
 
@@ -293,6 +305,8 @@ export class MinidTextfield extends FormControllerMixin(
     const md = this.size === 'md';
     const sm = this.size === 'sm';
 
+    const hasLabelSlot = this.hasSlotControler.test('label');
+    const hasLabel = !!this.label || !!hasLabelSlot;
     const hasClearIcon = this.clearable && !this.disabled && !this.readonly;
     const isClearIconVisible =
       hasClearIcon && (typeof this.value === 'number' || this.value.length > 0);
@@ -314,29 +328,27 @@ export class MinidTextfield extends FormControllerMixin(
           'fds-textfield--lg': lg,
         })}"
       >
-        ${!this.label
-          ? nothing
-          : html`<label
-              for="input"
-              class="${classMap({
-                'sr-only': this.hidelabel,
-                'fds-label': true,
-                'fds-label--medium-weight': true,
-                'fds-textfield__label': true,
-                'fds-label--sm': sm,
-                'fds-label--md': md,
-                'fds-label--lg': lg,
-              })}"
-            >
-              ${!this.readonly
-                ? nothing
-                : html`<mid-icon
-                    class="fds-textfield__readonly__icon"
-                    library="system"
-                    name="padlock-locked-fill"
-                  ></mid-icon>`}
-              ${this.label}
-            </label>`}
+        <label
+          for="input"
+          class="${classMap({
+            'sr-only': this.hidelabel || !hasLabel,
+            'fds-label': true,
+            'fds-label--medium-weight': true,
+            'fds-textfield__label': true,
+            'fds-label--sm': sm,
+            'fds-label--md': md,
+            'fds-label--lg': lg,
+          })}"
+        >
+          ${!this.readonly
+            ? nothing
+            : html`<mid-icon
+                class="fds-textfield__readonly__icon"
+                library="system"
+                name="padlock-locked-fill"
+              ></mid-icon>`}
+          <slot name="label"> ${this.label} </slot>
+        </label>
         ${!this.description
           ? nothing
           : html`

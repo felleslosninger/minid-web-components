@@ -6,6 +6,7 @@ import { ifDefined } from 'lit/directives/if-defined.js';
 
 type TextfieldProps = {
   label?: string;
+  labelAttr?: string;
   value?: string;
   placeholder?: string;
   type?: 'text';
@@ -52,6 +53,11 @@ const meta = {
     minlength: { type: 'number' },
     maxlength: { type: 'number' },
     placeholder: { type: 'string' },
+    labelAttr: {
+      name: 'label',
+      type: 'string',
+      table: { category: 'attributes', defaultValue: { summary: '' } },
+    },
     type: {
       control: { type: 'select' },
       options: [
@@ -94,10 +100,11 @@ type Story = StoryObj<TextfieldProps>;
 // More on writing stories with args: https://storybook.js.org/docs/writing-stories/args
 export const Main: Story = {
   args: {
-    label: 'Tekst input',
+    labelAttr: 'Tekst input',
   },
   decorators: [(story) => html`<div class="w-80">${story()}</div>`],
   render: ({
+    labelAttr,
     label,
     placeholder,
     size,
@@ -129,7 +136,7 @@ export const Main: Story = {
       ?passwordvisible=${passwordvisible}
       ?invalid=${invalid}
       description=${ifDefined(description)}
-      label="${ifDefined(label)}"
+      label="${ifDefined(labelAttr)}"
       value=${ifDefined(value)}
       placeholder=${ifDefined(placeholder)}
       type=${ifDefined(type)}
@@ -141,5 +148,6 @@ export const Main: Story = {
     >
       ${prefix ? html`<span slot="prefix">${prefix}</span>` : nothing}
       ${suffix ? html`<span slot="suffix">${suffix}</span>` : nothing}
+      ${label ? html`<span slot="label">${label}</span>` : nothing}
     </mid-textfield>`,
 };
