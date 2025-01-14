@@ -4,7 +4,7 @@
   "type": "module",
   "module": "./dist/index.js",
   "main": "./dist/index.js",
-  "types": "dist/index.d.ts",
+  "types": "./dist/index.d.ts",
   "files": [
     "dist"
   ],
@@ -65,6 +65,10 @@
       "import": "./dist/popup.component.js",
       "types": "./dist/popup.component.d.ts"
     },
+    "./qr-code": {
+      "import": "./dist/qr-code.component.js",
+      "types": "./dist/qr-code.component.d.ts,"
+    },
     "./spinner": {
       "import": "./dist/spinner.component.js",
       "types": "./dist/spinner.component.d.ts"
@@ -111,7 +115,7 @@
   },
   "devDependencies": {
     "@custom-elements-manifest/analyzer": "^0.10.3",
-    "@digdir/designsystemet-theme": "^0.15.3",
+    "@digdir/designsystemet-theme": "^1.0.0-next.46",
     "@floating-ui/dom": "^1.6.10",
     "@navikt/aksel-icons": "^7.1.2",
     "@storybook/addon-controls": "^8.3.6",

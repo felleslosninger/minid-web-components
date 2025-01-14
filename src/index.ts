@@ -1,4 +1,5 @@
 import './styles/global.css';
+import './styles/tailwind.preset.ts';
 
 export {
   registerIconLibrary,
@@ -15,7 +16,7 @@ export { MinidAlert };
 import { MinidButton } from './components/button.component.ts';
 export { MinidButton };
 
-import { MinidCheckbox } from './components/checkbox.component';
+import { MinidCheckbox } from './components/checkbox.component.ts';
 export { MinidCheckbox };
 
 import { MinidCodeInput } from './components/code-input.component.ts';
@@ -66,7 +67,7 @@ export { MinidQrCode };
 import { MinidSearch } from './components/search.component.ts';
 export { MinidSearch };
 
-import { MinidSpinner } from './components/spinner.component';
+import { MinidSpinner } from './components/spinner.component.ts';
 export { MinidSpinner };
 
 import { MinidTextfield } from './components/textfield.component.ts';
