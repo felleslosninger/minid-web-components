@@ -1,5 +1,4 @@
 import './styles/global.css';
-import './styles/tailwind.preset.ts';
 
 export {
   registerIconLibrary,

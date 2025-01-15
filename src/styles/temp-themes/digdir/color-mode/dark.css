@@ -1,7 +1,3 @@
-/**
- * These files are generated from design tokens defind using Token Studio
- */
-
 @layer ds.theme.color-mode.dark {
   [data-ds-color-mode='dark'] {
     --ds-global-blue-1: #031d30;

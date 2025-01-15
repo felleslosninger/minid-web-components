@@ -1,4 +1,4 @@
-@import './temp-themes/digdir.css';
+@import url('./temp-themes/digdir.css');
 
 @supports (scrollbar-gutter: stable) {
   .mid-scroll-lock {

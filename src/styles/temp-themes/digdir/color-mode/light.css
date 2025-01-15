@@ -1,7 +1,3 @@
-/**
- * These files are generated from design tokens defind using Token Studio
- */
-
 @layer ds.theme.color-mode.light {
   :root,
   [data-ds-color-mode='light'] {
