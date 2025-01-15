@@ -46,6 +46,5 @@ const label = ({ size, spacing, weight }: labelProps) => {
       weight=${ifDefined(weight)}
       >Vennligst skriv inn kontonummer og pin-kode
     </mid-label>
-    <p class="leading text-4xl text-heading-lg">hallo hallo</p>
   `;
 };
