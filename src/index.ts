@@ -6,6 +6,8 @@ export {
 } from './components/icon/icon-library.ts';
 export { countryLabelsNO } from './components/utilities/countries.ts';
 
+export { dsTailwindPreset } from './styles/tailwind.preset.ts';
+
 import { CountdownComponent } from './components/countdown.component.ts';
 export { CountdownComponent };
 
@@ -15,7 +17,7 @@ export { MinidAlert };
 import { MinidButton } from './components/button.component.ts';
 export { MinidButton };
 
-import { MinidCheckbox } from './components/checkbox.component';
+import { MinidCheckbox } from './components/checkbox.component.ts';
 export { MinidCheckbox };
 
 import { MinidCodeInput } from './components/code-input.component.ts';
@@ -66,7 +68,7 @@ export { MinidQrCode };
 import { MinidSearch } from './components/search.component.ts';
 export { MinidSearch };
 
-import { MinidSpinner } from './components/spinner.component';
+import { MinidSpinner } from './components/spinner.component.ts';
 export { MinidSpinner };
 
 import { MinidTextfield } from './components/textfield.component.ts';

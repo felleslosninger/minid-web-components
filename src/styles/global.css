@@ -1,3 +1,5 @@
+@import url('./temp-themes/digdir.css');
+
 @supports (scrollbar-gutter: stable) {
   .mid-scroll-lock {
     scrollbar-gutter: var(--mid-scroll-lock-gutter) !important;
