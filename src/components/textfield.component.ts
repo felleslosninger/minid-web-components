@@ -4,14 +4,19 @@ import { live } from 'lit/directives/live.js';
 import { stringConverter } from 'internal/string-converter';
 import { classMap } from 'lit/directives/class-map.js';
 import { styled } from 'mixins/tailwind.mixin.ts';
-import { ConstraintsValidationMixin } from 'mixins/form-controller.mixin.ts';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { HasSlotController } from 'src/internal/slot';
+import { FormControlMixin } from 'src/mixins/form-control.mixin';
+import { requiredValidator } from 'src/mixins/validators';
 
 const styles = [
   css`
     :host {
       display: block;
+    }
+
+    :host(:invalid) .input {
+      background-color: hotpink;
     }
 
     .form-control {
@@ -86,13 +91,24 @@ const styles = [
       font-size: 28px;
     }
 
-    .fds-focus:focus-within {
+    /* .fds-focus:focus-within {
+      box-shadow: var(--ds--focus, var(--dsc-focus-boxShadow));
+      outline-offset: var(--ds--focus, var(--dsc-focus-border-width));
+      outline: var(--ds--focus, var(--dsc-focus-outline));
+    }*/
+    /* .fds-focus:focus-within {
       --fds-focus-border-width: 3px;
       outline: var(--fds-focus-border-width) solid
         var(--fds-semantic-border-focus-outline);
       outline-offset: var(--fds-focus-border-width);
       box-shadow: 0 0 0 var(--fds-focus-border-width)
         var(--fds-semantic-border-focus-boxshadow);
+    } */
+    .field:focus-within {
+      background-color: rebeccapurple;
+      box-shadow: var(--ds--focus, var(--dsc-focus-boxShadow));
+      outline-offset: var(--ds--focus, var(--dsc-focus-border-width));
+      outline: var(--ds--focus, var(--dsc-focus-outline));
     }
   `,
 ];
@@ -118,13 +134,33 @@ let nextUniqueId = 0;
  * @csspart password-toggle-button - The button for toggling password visibility
  */
 @customElement('mid-textfield')
-export class MinidTextfield extends ConstraintsValidationMixin(
+export class MinidTextfield extends FormControlMixin(
   styled(LitElement, styles)
 ) {
+  /**
+   * @ignore
+   */
   #inputId: string;
+
+  /**
+   * @ignore
+   */
   #descriptionId: string;
+
+  /**
+   * @ignore
+   */
   #hasSlotControler = new HasSlotController(this, 'label');
 
+  /**
+   * @ignore
+   */
+  @query('.error-message')
+  errorMessageDiv!: HTMLDivElement;
+
+  /**
+   * @ignore
+   */
   @query('.input')
   input!: HTMLInputElement;
 
@@ -225,6 +261,18 @@ export class MinidTextfield extends ConstraintsValidationMixin(
   readonly = false;
 
   /**
+   * A regular expression pattern to validate input against.
+   */
+  @property()
+  pattern?: string;
+
+  /**
+   * Makes the input required
+   */
+  @property({ type: Boolean })
+  required = true;
+
+  /**
    * Visually hides `label` and `description` (still available for screen readers)
    */
   @property({ type: Boolean })
@@ -238,6 +286,30 @@ export class MinidTextfield extends ConstraintsValidationMixin(
     nextUniqueId++;
     this.#inputId = `mid-textfield-input-${nextUniqueId}`;
     this.#descriptionId = `mid-textfield-description-${nextUniqueId}`;
+  }
+
+  /**
+   * @ignore
+   */
+  static formControlValidators = [requiredValidator];
+
+  validityCallback(validationKey: string): string | void {
+    if (validationKey === 'valueMissing') {
+      console.log('🚨 Value is missing');
+    }
+  }
+
+  /**
+   * @ignore
+   */
+  get validationTarget() {
+    return this.input;
+  }
+
+  validationMessageCallback(message: string): void {
+    if (this.errorMessageDiv) {
+      this.errorMessageDiv.innerText = message;
+    }
   }
 
   private handleKeydown(event: KeyboardEvent) {
@@ -274,7 +346,7 @@ export class MinidTextfield extends ConstraintsValidationMixin(
 
   private handleInput() {
     this.value = this.input.value;
-    this.setFormValue(this.value);
+    this.setValue(this.value);
     this.dispatchEvent(
       new Event('mid-input', { bubbles: true, composed: true })
     );
@@ -311,6 +383,7 @@ export class MinidTextfield extends ConstraintsValidationMixin(
   }
 
   focus() {
+    this.hasFocus = true;
     this.input.focus();
   }
 
@@ -418,6 +491,7 @@ export class MinidTextfield extends ConstraintsValidationMixin(
             maxlength=${ifDefined(this.maxlength)}
             min=${ifDefined(this.min)}
             max=${ifDefined(this.max)}
+            pattern=${ifDefined(this.pattern)}
             @input=${this.handleInput}
             @change=${this.handleChange}
             @focus=${this.handleFocus}
@@ -481,6 +555,7 @@ export class MinidTextfield extends ConstraintsValidationMixin(
           </span>
         </div>
       </div>
+      <div class="error-message"></div>
     `;
   }
 }
