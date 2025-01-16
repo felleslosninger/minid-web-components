@@ -8,6 +8,7 @@ import { ifDefined } from 'lit/directives/if-defined.js';
 import { HasSlotController } from 'src/internal/slot';
 import { FormControlMixin } from 'src/mixins/form-control.mixin';
 import { requiredValidator } from 'src/mixins/validators';
+import { watch } from 'src/internal/watch';
 
 const styles = [
   css`
@@ -16,7 +17,8 @@ const styles = [
     }
 
     :host(:invalid) .input {
-      background-color: hotpink;
+      /* border-color: var(--fds-semantic-border-danger-default); */
+      /* box-shadow: inset 0 0 0 1px var(--fds-semantic-border-danger-default); */
     }
 
     .form-control {
@@ -33,6 +35,16 @@ const styles = [
 
     .field {
       padding: 0;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      border-radius: var(--fds-border_radius-medium);
+      box-sizing: border-box;
+      flex: 0 1 auto;
+      font: inherit;
+      font-family: inherit;
+      padding: 0 var(--fds-spacing-3);
+      position: relative;
+      width: 100%;
     }
 
     .input {
@@ -105,7 +117,7 @@ const styles = [
         var(--fds-semantic-border-focus-boxshadow);
     } */
     .field:focus-within {
-      background-color: rebeccapurple;
+      /* background-color: rebeccapurple; */
       box-shadow: var(--ds--focus, var(--dsc-focus-boxShadow));
       outline-offset: var(--ds--focus, var(--dsc-focus-border-width));
       outline: var(--ds--focus, var(--dsc-focus-outline));
@@ -387,6 +399,11 @@ export class MinidTextfield extends FormControlMixin(
     this.input.focus();
   }
 
+  @watch('value')
+  handleValueUpdate() {
+    this.setValue(this.value);
+  }
+
   override render() {
     const lg = this.size === 'lg';
     const md = this.size === 'md';
@@ -464,8 +481,10 @@ export class MinidTextfield extends FormControlMixin(
           class="${classMap({
             field: true,
             'fds-textfield__field': true,
-            'fds-textfield__input': true,
+            'fds-textfield--error': true,
             'fds-focus': this.hasFocus,
+            'border-danger': this.showError,
+            'shadow-danger': this.showError,
           })}"
         >
           <span class="prefix">
@@ -518,44 +537,39 @@ export class MinidTextfield extends FormControlMixin(
                 `
               : ''
           }
-          ${
-            this.passwordtoggle && !this.disabled
-              ? html`
-                  <button
-                    part="password-toggle-button"
-                    class="${classMap({
-                      'clear-button': true,
-                      'clear-button--sm': sm,
-                      'clear-button--md': md,
-                      'clear-button--lg': lg,
-                    })}"
-                    type="button"
-                    aria-label=${this.passwordvisible
-                      ? 'skjul passord'
-                      : 'vis passord'}
-                    @click=${this.handlePasswordToggle}
-                    tabindex="-1"
-                  >
-                    ${this.passwordvisible
-                      ? html`
-                          <mid-icon
-                            name="eye-slash"
-                            library="system"
-                          ></mid-icon>
-                        `
-                      : html`
-                          <mid-icon name="eye" library="system"></mid-icon>
-                        `}
-                  </button>
-                `
-              : ''
-          }
+        ${
+          this.passwordtoggle && !this.disabled
+            ? html`
+                <button
+                  part="password-toggle-button"
+                  class="${classMap({
+                    'clear-button': true,
+                    'clear-button--sm': sm,
+                    'clear-button--md': md,
+                    'clear-button--lg': lg,
+                  })}"
+                  type="button"
+                  aria-label=${this.passwordvisible
+                    ? 'skjul passord'
+                    : 'vis passord'}
+                  @click=${this.handlePasswordToggle}
+                  tabindex="-1"
+                >
+                  ${this.passwordvisible
+                    ? html`
+                        <mid-icon name="eye-slash" library="system"></mid-icon>
+                      `
+                    : html` <mid-icon name="eye" library="system"></mid-icon> `}
+                </button>
+              `
+            : ''
+        }
           <span part="suffix" class="suffix">
             <slot name="suffix"></slot>
           </span>
         </div>
       </div>
-      <div class="error-message"></div>
+      <div class="error-message text-danger-subtle"></div>
     `;
   }
 }

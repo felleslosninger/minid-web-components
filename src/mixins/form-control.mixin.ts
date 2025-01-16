@@ -1,4 +1,5 @@
 import { LitElement } from 'lit';
+import { property } from 'lit/decorators.js';
 import { IControlHost } from 'types/control-host';
 import { FormControlInterface } from 'types/form-control';
 import { FormValue } from 'types/form-value';
