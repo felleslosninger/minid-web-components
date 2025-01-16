@@ -6,7 +6,8 @@ export {
 } from './components/icon/icon-library.ts';
 export { countryLabelsNO } from './components/utilities/countries.ts';
 
-export { dsTailwindPreset } from './styles/tailwind.preset.ts';
+// import dsTailwindPreset from './styles/tailwind.preset.ts';
+// export { dsTailwindPreset };
 
 import { CountdownComponent } from './components/countdown.component.ts';
 export { CountdownComponent };

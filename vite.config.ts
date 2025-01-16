@@ -6,6 +6,7 @@ import tailwindcss from 'tailwindcss';
 import { externalizeDeps } from 'vite-plugin-externalize-deps';
 import { glob } from 'glob';
 
+// eslint-disable-next-line no-empty-pattern
 export default defineConfig(({}) => {
   return {
     build: {
@@ -17,9 +18,10 @@ export default defineConfig(({}) => {
       sourcemap: true,
       emptyOutDir: true,
       lib: {
-        entry: glob.sync(
-          resolve(__dirname, 'src/{**/*.component.ts,index.ts}')
-        ),
+        entry: glob.sync([
+          resolve(__dirname, 'src/{**/*.component.ts,index.ts}'),
+          resolve(__dirname, 'src/styles/tailwind.preset.ts'),
+        ]),
         name: 'MinID-Elements',
         formats: ['es'],
         fileName: (_format, entryName) => `${entryName}.js`,
