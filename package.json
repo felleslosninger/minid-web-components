@@ -1,10 +1,10 @@
 {
   "name": "@felleslosninger/minid-elements",
-  "version": "0.0.69",
+  "version": "0.0.71",
   "type": "module",
   "module": "./dist/index.js",
   "main": "./dist/index.js",
-  "types": "dist/index.d.ts",
+  "types": "./dist/index.d.ts",
   "files": [
     "dist"
   ],
@@ -64,6 +64,10 @@
     "./popup": {
       "import": "./dist/popup.component.js",
       "types": "./dist/popup.component.d.ts"
+    },
+    "./qr-code": {
+      "import": "./dist/qr-code.component.js",
+      "types": "./dist/qr-code.component.d.ts,"
     },
     "./spinner": {
       "import": "./dist/spinner.component.js",
