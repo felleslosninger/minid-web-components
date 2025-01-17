@@ -15,11 +15,14 @@ type TextfieldProps = {
   suffix?: string;
   disabled?: boolean;
   readonly?: boolean;
+  required?: boolean;
   description?: string;
   clearable?: boolean;
   hidelabel?: boolean;
   passwordtoggle?: boolean;
   passwordvisible?: boolean;
+  pattern?: string;
+  autocomplete?: string;
   autofocus?: boolean;
   minlength?: number;
   maxlength?: number;
@@ -52,7 +55,9 @@ const meta = {
     max: { type: 'number' },
     minlength: { type: 'number' },
     maxlength: { type: 'number' },
+    autocomplete: { type: 'string' },
     placeholder: { type: 'string' },
+    pattern: { type: 'string' },
     labelAttr: {
       name: 'label',
       type: 'string',
@@ -101,8 +106,22 @@ type Story = StoryObj<TextfieldProps>;
 export const Main: Story = {
   args: {
     labelAttr: 'Tekst input',
+    required: true,
   },
-  decorators: [(story) => html`<div class="w-80">${story()}</div>`],
+  decorators: [
+    (story) =>
+      html`<div class="w-80">${story()}</div>
+        <script lang="ts">
+          var lol = document.querySelector('.w-80');
+          lol.addEventListener('mid-error-hide', console.log);
+          lol.addEventListener('mid-error-show', console.log);
+          lol.addEventListener('invalid', (event) => {
+            event.preventDefault(); // stop it's effects here
+            event.stopPropagation();
+          });
+          MinidTextfield.formControlValidators = [requiredValidator];
+        </script> `,
+  ],
   render: ({
     labelAttr,
     label,
@@ -116,9 +135,12 @@ export const Main: Story = {
     clearable,
     hidelabel,
     readonly,
+    required,
     description,
     passwordtoggle,
     passwordvisible,
+    pattern,
+    autocomplete,
     autofocus,
     min,
     max,
@@ -131,14 +153,17 @@ export const Main: Story = {
       ?autofocus=${autofocus}
       ?clearable=${clearable}
       ?readonly=${readonly}
+      ?required=${required}
       ?hideLabel=${hidelabel}
       ?passwordtoggle=${passwordtoggle}
       ?passwordvisible=${passwordvisible}
       ?invalid=${invalid}
+      autocomplete=${ifDefined(autocomplete)}
       description=${ifDefined(description)}
       label="${ifDefined(labelAttr)}"
       value=${ifDefined(value)}
       placeholder=${ifDefined(placeholder)}
+      pattern=${ifDefined(pattern)}
       type=${ifDefined(type)}
       size=${ifDefined(size)}
       min=${ifDefined(min)}

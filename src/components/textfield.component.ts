@@ -5,10 +5,16 @@ import { stringConverter } from 'internal/string-converter';
 import { classMap } from 'lit/directives/class-map.js';
 import { styled } from 'mixins/tailwind.mixin.ts';
 import { ifDefined } from 'lit/directives/if-defined.js';
-import { HasSlotController } from 'src/internal/slot';
-import { FormControlMixin } from 'src/mixins/form-control.mixin';
-import { requiredValidator } from 'src/mixins/validators';
-import { watch } from 'src/internal/watch';
+import { HasSlotController } from '../../src/internal/slot';
+import { FormControlMixin } from '../../src/mixins/form-control.mixin';
+import {
+  maxLengthValidator,
+  minLengthValidator,
+  patternValidator,
+  programmaticValidator,
+  requiredValidator,
+} from '../../src/mixins/validators';
+import { watch } from '../../src/internal/watch';
 
 const styles = [
   css`
@@ -34,17 +40,14 @@ const styles = [
     }
 
     .field {
-      padding: 0;
-      -webkit-appearance: none;
-      -moz-appearance: none;
-      border-radius: var(--fds-border_radius-medium);
-      box-sizing: border-box;
-      flex: 0 1 auto;
-      font: inherit;
-      font-family: inherit;
-      padding: 0 var(--fds-spacing-3);
-      position: relative;
-      width: 100%;
+      /* padding: 0; */
+      /* border-radius: var(--fds-border_radius-medium); */
+      /* box-sizing: border-box; */
+      /* flex: 0 1 auto; */
+      /* font: inherit; */
+      /* font-family: inherit; */
+      /* position: relative; */
+      /* width: 100%; */
     }
 
     .input {
@@ -75,14 +78,6 @@ const styles = [
       border-radius: 4px;
     }
 
-    .clear-button {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: calc(1em + 1rem * 2);
-      border-radius: 4px;
-    }
-
     .fds-textfield__readonly__icon svg {
       font-size: 1.2em;
     }
@@ -90,17 +85,6 @@ const styles = [
     .clear-button:not(:disabled, [aria-disabled]):hover mid-icon {
       border-radius: 4px;
       background: var(--fds-semantic-surface-action-subtle-hover);
-    }
-
-    .clear-button--sm {
-      font-size: 20px;
-    }
-
-    .clear-button--md {
-      font-size: 24px;
-    }
-    .clear-button--lg {
-      font-size: 28px;
     }
 
     /* .fds-focus:focus-within {
@@ -118,9 +102,9 @@ const styles = [
     } */
     .field:focus-within {
       /* background-color: rebeccapurple; */
-      box-shadow: var(--ds--focus, var(--dsc-focus-boxShadow));
+      /* box-shadow: var(--ds--focus, var(--dsc-focus-boxShadow));
       outline-offset: var(--ds--focus, var(--dsc-focus-border-width));
-      outline: var(--ds--focus, var(--dsc-focus-outline));
+      outline: var(--ds--focus, var(--dsc-focus-outline)); */
     }
   `,
 ];
@@ -197,6 +181,9 @@ export class MinidTextfield extends FormControlMixin(
   @property({ type: Boolean })
   autofocus = false;
 
+  /**
+   * User agent autocomplete hint
+   */
   @property()
   autocomplete?: AutoFill;
 
@@ -282,13 +269,22 @@ export class MinidTextfield extends FormControlMixin(
    * Makes the input required
    */
   @property({ type: Boolean })
-  required = true;
+  required = false;
 
   /**
    * Visually hides `label` and `description` (still available for screen readers)
    */
   @property({ type: Boolean })
   hidelabel = false;
+
+  @property()
+  overrideErrorMessage = '';
+
+  @state()
+  errorStyling = false;
+
+  @state()
+  errorMessage = '';
 
   @state()
   hasFocus = false;
@@ -303,11 +299,26 @@ export class MinidTextfield extends FormControlMixin(
   /**
    * @ignore
    */
-  static formControlValidators = [requiredValidator];
+  static get formControlValidators() {
+    return [
+      requiredValidator,
+      programmaticValidator,
+      maxLengthValidator,
+      minLengthValidator,
+      patternValidator,
+    ];
+  }
 
   validityCallback(validationKey: string): string | void {
+    console.log(validationKey);
+
     if (validationKey === 'valueMissing') {
       console.log('🚨 Value is missing');
+      return 'boooya';
+    }
+    if (validationKey === 'pattern') {
+      console.log('🚨 pattern');
+      return 'what?';
     }
   }
 
@@ -319,8 +330,9 @@ export class MinidTextfield extends FormControlMixin(
   }
 
   validationMessageCallback(message: string): void {
+    this.errorStyling = !!message;
     if (this.errorMessageDiv) {
-      this.errorMessageDiv.innerText = message;
+      this.errorMessage = message;
     }
   }
 
@@ -479,13 +491,11 @@ export class MinidTextfield extends FormControlMixin(
         <div
           part="base"
           class="${classMap({
-            field: true,
             'fds-textfield__field': true,
-            'fds-textfield--error': true,
-            'fds-focus': this.hasFocus,
-            'border-danger': this.showError,
-            'shadow-danger': this.showError,
-          })}"
+            'border-neutral': !this.errorStyling,
+            'border-danger': this.errorStyling,
+          })}
+          field border outline outline-transparent focus-within:outline-offset-3 focus-within:outline-3 focus-within:shadow-focus-inner focus-within:outline-focus-outer "
         >
           <span class="prefix">
             <slot name="prefix"></slot>
@@ -522,13 +532,12 @@ export class MinidTextfield extends FormControlMixin(
               ? html`
                   <button
                     part="clear-button"
-                    class="${classMap({
-                      'clear-button': true,
-                      'clear-button--sm': sm,
-                      'clear-button--md': md,
-                      'clear-button--lg': lg,
-                    })}"
                     type="button"
+                    class="${classMap({
+                      'text-6': sm,
+                      'text-7': md,
+                      'text-8': lg,
+                    })} flex w-[calc(1em+1rem*2)] items-center justify-center rounded"
                     aria-label="Tøm"
                     @click=${this.handleClearClick}
                   >
@@ -542,13 +551,12 @@ export class MinidTextfield extends FormControlMixin(
             ? html`
                 <button
                   part="password-toggle-button"
-                  class="${classMap({
-                    'clear-button': true,
-                    'clear-button--sm': sm,
-                    'clear-button--md': md,
-                    'clear-button--lg': lg,
-                  })}"
                   type="button"
+                  class="${classMap({
+                    'text-6': sm,
+                    'text-7': md,
+                    'text-8': lg,
+                  })} flex w-[calc(1em+1rem*2)] items-center justify-center rounded"
                   aria-label=${this.passwordvisible
                     ? 'skjul passord'
                     : 'vis passord'}
@@ -569,7 +577,9 @@ export class MinidTextfield extends FormControlMixin(
           </span>
         </div>
       </div>
-      <div class="error-message text-danger-subtle"></div>
+      <div class="pt-2 error-message text-danger-subtle">
+        ${this.overrideErrorMessage || this.errorMessage}
+      </div>
     `;
   }
 }

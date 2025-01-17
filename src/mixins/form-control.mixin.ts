@@ -1,14 +1,13 @@
 import { LitElement } from 'lit';
-import { property } from 'lit/decorators.js';
-import { IControlHost } from 'types/control-host';
-import { FormControlInterface } from 'types/form-control';
-import { FormValue } from 'types/form-value';
-import { Constructor } from 'types/mixin-constructor';
+import { IControlHost } from '../types/control-host';
+import { FormControlInterface } from '../types/form-control';
+import { FormValue } from '../types/form-value';
+import { Constructor } from '../types/mixin-constructor';
 import {
   CustomValidityState,
   validationMessageCallback,
   Validator,
-} from 'types/validator.type';
+} from '../types/validator.type';
 
 /**
  *
@@ -140,26 +139,11 @@ export function FormControlMixin<
     #abortController?: AbortController;
 
     /**
-     * @ignore
-     */
-    #previousAbortController?: AbortController;
-
-    /**
      * Used for tracking if a validation target has been set to manage focus
      * when the control's validity is reported
      * @ignore
      */
     #awaitingValidationTarget = true;
-
-    /**
-     * All of the controls within a root with a matching local name and form name
-     * @ignore
-     */
-    get #formValidationGroup(): NodeListOf<FormControl> {
-      const rootNode = this.getRootNode() as HTMLElement;
-      const selector = `${this.localName}[name="${this.getAttribute('name')}"]`;
-      return rootNode.querySelectorAll<FormControl>(selector);
-    }
 
     /**
      * Acts as a cache for the current value so the value can be re-evaluated
@@ -310,6 +294,8 @@ export function FormControlMixin<
      * @ignore
      */
     setValue(value: FormValue): void {
+      console.log('🥵 Setting value');
+
       this.#forceError = false;
       this.validationMessageCallback?.('');
       this.#value = value;
@@ -420,6 +406,8 @@ export function FormControlMixin<
      * @ignore
      */
     #shouldShowError(): boolean {
+      console.log('🚀 should show error called');
+
       if (this.hasAttribute('disabled')) {
         return false;
       }
@@ -434,8 +422,14 @@ export function FormControlMixin<
        */
       if (showError && this.internals.states) {
         this.internals.states.add('--show-error');
+        this.internals.states.add('--invalid');
+        new CustomEvent('mid-error-show', { bubbles: true, composed: true });
       } else if (this.internals.states) {
         this.internals.states.delete('--show-error');
+        this.internals.states.delete('--invalid');
+        this.dispatchEvent(
+          new CustomEvent('mid-error-hide', { bubbles: true, composed: true })
+        );
       }
 
       return showError;
@@ -464,7 +458,6 @@ export function FormControlMixin<
        */
       if (this.#abortController) {
         this.#abortController.abort();
-        this.#previousAbortController = this.#abortController;
       }
 
       /**
@@ -589,6 +582,8 @@ export function FormControlMixin<
       value: FormValue
     ): string {
       /** If the validity callback exists and returns, use that as the result */
+      console.log('validity callback: ', this.validityCallback);
+
       if (this.validityCallback) {
         const message = this.validityCallback(validator.key || 'customError');
 
