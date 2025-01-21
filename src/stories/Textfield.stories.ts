@@ -28,7 +28,7 @@ type TextfieldProps = {
   maxlength?: number;
   min?: number;
   max?: number;
-  invalid?: boolean;
+  invalidmessage?: string;
   input: Part;
   base: Part;
   'form-control': Part;
@@ -57,7 +57,6 @@ const meta = {
     maxlength: { type: 'number' },
     autocomplete: { type: 'string' },
     placeholder: { type: 'string' },
-    pattern: { type: 'string' },
     labelAttr: {
       name: 'label',
       type: 'string',
@@ -113,11 +112,13 @@ export const Main: Story = {
       html`<div class="w-80">${story()}</div>
         <script lang="ts">
           var lol = document.querySelector('.w-80');
-          lol.addEventListener('mid-error-hide', console.log);
-          lol.addEventListener('mid-error-show', console.log);
+          // lol.addEventListener('mid-invalid-hide', console.log);
+          // lol.addEventListener('mid-invalid-show', console.log);
+          lol.addEventListener('mid-valid-change', console.log);
           lol.addEventListener('invalid', (event) => {
-            event.preventDefault(); // stop it's effects here
+            event.preventDefault();
             event.stopPropagation();
+            console.log('invalid: ', event);
           });
           MinidTextfield.formControlValidators = [requiredValidator];
         </script> `,
@@ -146,7 +147,7 @@ export const Main: Story = {
     max,
     minlength,
     maxlength,
-    invalid,
+    invalidmessage,
   }: TextfieldProps) =>
     html`<mid-textfield
       ?disabled=${disabled}
@@ -157,7 +158,7 @@ export const Main: Story = {
       ?hideLabel=${hidelabel}
       ?passwordtoggle=${passwordtoggle}
       ?passwordvisible=${passwordvisible}
-      ?invalid=${invalid}
+      invalidmessage=${ifDefined(invalidmessage)}
       autocomplete=${ifDefined(autocomplete)}
       description=${ifDefined(description)}
       label="${ifDefined(labelAttr)}"

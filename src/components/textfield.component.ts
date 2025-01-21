@@ -118,6 +118,7 @@ let nextUniqueId = 0;
  * @event mid-clear - Emitted when the input value is cleared
  * @event mid-focus - Emitted when input element is focused
  * @event mid-blur - Emitted when focus moves away from input element
+ * @event {detail: { validity: ValidityState }} mid-valid-change - Emitted when the error message should be updated
  *
  * @slot prefix - Used for decoration to the left of the input
  * @slot suffix - Used for decoration to the right of the input
@@ -214,8 +215,8 @@ export class MinidTextfield extends FormControlMixin(
   /**
    * Activate error styling on the input element
    */
-  @property({ type: Boolean })
-  invalid = false;
+  @property()
+  invalidmessage = '';
 
   @property()
   type:
@@ -277,15 +278,6 @@ export class MinidTextfield extends FormControlMixin(
   @property({ type: Boolean })
   hidelabel = false;
 
-  @property()
-  overrideErrorMessage = '';
-
-  @state()
-  errorStyling = false;
-
-  @state()
-  errorMessage = '';
-
   @state()
   hasFocus = false;
 
@@ -309,19 +301,6 @@ export class MinidTextfield extends FormControlMixin(
     ];
   }
 
-  validityCallback(validationKey: string): string | void {
-    console.log(validationKey);
-
-    if (validationKey === 'valueMissing') {
-      console.log('🚨 Value is missing');
-      return 'boooya';
-    }
-    if (validationKey === 'pattern') {
-      console.log('🚨 pattern');
-      return 'what?';
-    }
-  }
-
   /**
    * @ignore
    */
@@ -329,11 +308,8 @@ export class MinidTextfield extends FormControlMixin(
     return this.input;
   }
 
-  validationMessageCallback(message: string): void {
-    this.errorStyling = !!message;
-    if (this.errorMessageDiv) {
-      this.errorMessage = message;
-    }
+  validationMessageCallback(_: string): void {
+    // this.invalidmessage = message;
   }
 
   private handleKeydown(event: KeyboardEvent) {
@@ -434,7 +410,6 @@ export class MinidTextfield extends FormControlMixin(
           'form-control': true,
           'fds-paragraph': true,
           'fds-textfield': true,
-          'fds-textfield--error': this.invalid,
           'fds-textfield--readonly': this.readonly,
           'fds-paragraph--sm': sm,
           'fds-paragraph--md': md,
@@ -492,8 +467,8 @@ export class MinidTextfield extends FormControlMixin(
           part="base"
           class="${classMap({
             'fds-textfield__field': true,
-            'border-neutral': !this.errorStyling,
-            'border-danger': this.errorStyling,
+            'border-neutral': !this.invalidmessage,
+            'border-danger': this.invalidmessage,
           })}
           field border outline outline-transparent focus-within:outline-offset-3 focus-within:outline-3 focus-within:shadow-focus-inner focus-within:outline-focus-outer "
         >
@@ -578,7 +553,7 @@ export class MinidTextfield extends FormControlMixin(
         </div>
       </div>
       <div class="pt-2 error-message text-danger-subtle">
-        ${this.overrideErrorMessage || this.errorMessage}
+        ${this.invalidmessage}
       </div>
     `;
   }

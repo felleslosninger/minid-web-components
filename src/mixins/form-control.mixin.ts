@@ -247,6 +247,8 @@ export function FormControlMixin<
       return this.internals.validity;
     }
 
+    previousShowError = false;
+
     /**
      * The validation message shown by a given Validator object. If the control
      * is in a valid state this should be falsy.
@@ -406,7 +408,7 @@ export function FormControlMixin<
      * @ignore
      */
     #shouldShowError(): boolean {
-      console.log('🚀 should show error called');
+      console.log('🔺 should show error called');
 
       if (this.hasAttribute('disabled')) {
         return false;
@@ -420,17 +422,47 @@ export function FormControlMixin<
        * At the time of writing Firefox doesn't support states
        * TODO: Remove when check for states when fully support is in place
        */
+      console.log('previous', this.previousShowError, 'current', showError);
+
       if (showError && this.internals.states) {
         this.internals.states.add('--show-error');
         this.internals.states.add('--invalid');
-        new CustomEvent('mid-error-show', { bubbles: true, composed: true });
+        if (this.previousShowError === false) {
+          this?.dispatchEvent(
+            new CustomEvent('mid-valid-change', {
+              bubbles: true,
+              composed: true,
+              detail: { validity: this.validity },
+            })
+          );
+          this.previousShowError = showError;
+        }
       } else if (this.internals.states) {
         this.internals.states.delete('--show-error');
         this.internals.states.delete('--invalid');
-        this.dispatchEvent(
-          new CustomEvent('mid-error-hide', { bubbles: true, composed: true })
-        );
+
+        if (this.previousShowError === true) {
+          this?.dispatchEvent(
+            new CustomEvent('mid-valid-change', {
+              bubbles: true,
+              composed: true,
+              detail: { validity: this.validity },
+            })
+          );
+          this.previousShowError = showError;
+        }
       }
+
+      // if (this.previousShowError !== showError) {
+      //   this?.dispatchEvent(
+      //     new CustomEvent('mid-valid-change', {
+      //       bubbles: true,
+      //       composed: true,
+      //       detail: { validity: this.validity },
+      //     })
+      //   );
+      //   this.previousShowError = showError;
+      // }
 
       return showError;
     }
@@ -582,7 +614,6 @@ export function FormControlMixin<
       value: FormValue
     ): string {
       /** If the validity callback exists and returns, use that as the result */
-      console.log('validity callback: ', this.validityCallback);
 
       if (this.validityCallback) {
         const message = this.validityCallback(validator.key || 'customError');

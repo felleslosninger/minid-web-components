@@ -1,5 +1,5 @@
 import { LitElement } from 'lit';
-import { Constructor } from 'types/mixin-constructor';
+import { Constructor } from '../types/mixin-constructor';
 
 export interface FormAssociatedMixinInterface {
   internals: ElementInternals;
