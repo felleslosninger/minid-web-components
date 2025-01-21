@@ -429,7 +429,7 @@ export function FormControlMixin<
         this.internals.states.add('--invalid');
         if (this.previousShowError === false) {
           this?.dispatchEvent(
-            new CustomEvent('mid-valid-change', {
+            new CustomEvent('mid-invalid-show', {
               bubbles: true,
               composed: true,
               detail: { validity: this.validity },
@@ -443,7 +443,7 @@ export function FormControlMixin<
 
         if (this.previousShowError === true) {
           this?.dispatchEvent(
-            new CustomEvent('mid-valid-change', {
+            new CustomEvent('mid-invalid-hide', {
               bubbles: true,
               composed: true,
               detail: { validity: this.validity },

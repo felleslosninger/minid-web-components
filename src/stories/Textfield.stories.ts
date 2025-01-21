@@ -106,19 +106,32 @@ export const Main: Story = {
   args: {
     labelAttr: 'Tekst input',
     required: true,
+    pattern: '^[a-zA-Z0-9]{3,30}$',
   },
   decorators: [
     (story) =>
       html`<div class="w-80">${story()}</div>
         <script lang="ts">
           var lol = document.querySelector('.w-80');
+          var textfield = document.querySelector('.text-field');
           // lol.addEventListener('mid-invalid-hide', console.log);
           // lol.addEventListener('mid-invalid-show', console.log);
-          lol.addEventListener('mid-valid-change', console.log);
+          lol.addEventListener('mid-invalid-show', (event) => {
+            const { valueMissing, patternMismatch } = event.detail.validity;
+            console.log('valid change: ', event.detail.validity);
+            textfield.invalidmessage =
+              'Dette feltet er påkrevd req: ' +
+              valueMissing +
+              ' patt: ' +
+              patternMismatch;
+          });
+          lol.addEventListener('mid-invalid-hide', (event) => {
+            const { valueMissing, patternMismatch } = event.detail.validity;
+            console.log('valid change: ', event.detail.validity);
+            textfield.invalidmessage = '';
+          });
           lol.addEventListener('invalid', (event) => {
-            event.preventDefault();
-            event.stopPropagation();
-            console.log('invalid: ', event);
+            console.log('invalid: ', event.detail.validity);
           });
           MinidTextfield.formControlValidators = [requiredValidator];
         </script> `,
@@ -150,6 +163,7 @@ export const Main: Story = {
     invalidmessage,
   }: TextfieldProps) =>
     html`<mid-textfield
+      class="text-field"
       ?disabled=${disabled}
       ?autofocus=${autofocus}
       ?clearable=${clearable}
