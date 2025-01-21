@@ -1,9 +1,9 @@
 import { css, html, LitElement, nothing } from 'lit';
 import { customElement, property, query, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
-import { styled } from 'mixins/tailwind.mixin.ts';
-import { MinidMenuItem } from 'src/components/menu-item.component';
-import { scrollIntoView } from 'src/internal/scroll';
+import { styled } from '../mixins/tailwind.mixin.ts';
+import { MinidMenuItem } from './menu-item.component';
+import { scrollIntoView } from '../internal/scroll';
 
 const styles = [
   css`

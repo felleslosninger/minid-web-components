@@ -6,8 +6,8 @@ import {
   queryAssignedNodes,
 } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
-import { styled } from 'src/mixins/tailwind.mixin';
-import { FormControllerMixin } from 'mixins/form-controller.mixin.ts';
+import { styled } from '../mixins/tailwind.mixin';
+import { FormControllerMixin } from '../mixins/form-controller.mixin.ts';
 
 @customElement('mid-checkbox')
 export class MinidCheckbox extends FormControllerMixin(styled(LitElement)) {
@@ -31,7 +31,7 @@ export class MinidCheckbox extends FormControllerMixin(styled(LitElement)) {
 
   #handleChange(event: Event) {
     this.checked = (event.target as HTMLInputElement).checked;
-    if(this.checked) {
+    if (this.checked) {
       this.setFormValue('on', 'checked');
     } else {
       this.setFormValue(null);

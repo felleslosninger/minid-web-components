@@ -1,4 +1,4 @@
-import { FormValue } from 'src/types/form-value';
+import { FormValue } from './form-value';
 
 /** Validation message callback */
 export type validationMessageCallback = (

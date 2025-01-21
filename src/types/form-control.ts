@@ -1,5 +1,5 @@
 import { IElementInternals } from 'element-internals-polyfill';
-import { FormValue } from 'src/types/form-value';
+import { FormValue } from './form-value';
 
 /** Interface of exported FormControl behavior */
 export interface FormControlInterface {

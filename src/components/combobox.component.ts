@@ -6,21 +6,21 @@ import {
   queryAssignedElements,
   state,
 } from 'lit/decorators.js';
-import 'components/popup.component';
+import './popup.component';
 import { styled } from 'mixins/tailwind.mixin.ts';
-import { MinidPopup } from 'components/popup.component';
-import { waitForEvent } from 'src/internal/event';
-import { watch } from 'src/internal/watch';
+import { MinidPopup } from './popup.component';
+import { waitForEvent } from '../internal/event';
+import { watch } from '../internal/watch';
 import {
   getAnimation,
   setDefaultAnimation,
-} from 'src/components/utilities/animation-registry';
-import { animateTo, stopAnimations } from 'src/internal/animate';
-import { getTabbableBoundary } from 'src/internal/tabbable';
-import { MinidButton } from 'src/components/button.component';
-import { MinidMenu } from 'src/components/menu.component';
-import { MinidPhoneInput } from 'src/components/phone-input.component';
-import { MinidTextfield } from 'src/components/textfield.component';
+} from '../components/utilities/animation-registry';
+import { animateTo, stopAnimations } from '../internal/animate';
+import { getTabbableBoundary } from '../internal/tabbable';
+import { MinidButton } from '../components/button.component';
+import { MinidMenu } from '../components/menu.component';
+import { MinidPhoneInput } from '../components/phone-input.component';
+import { MinidTextfield } from '../components/textfield.component';
 
 const styles = [
   css`

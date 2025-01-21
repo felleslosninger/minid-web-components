@@ -1,7 +1,7 @@
 import { css, html, LitElement, nothing } from 'lit';
 import { customElement, property, query, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
-import { styled } from 'src/mixins/tailwind.mixin';
+import { styled } from '../mixins/tailwind.mixin';
 import {
   AsYouType,
   formatIncompletePhoneNumber,
@@ -16,8 +16,8 @@ import {
   templateFormatter,
   templateParser,
 } from 'input-format';
-import { watch } from 'src/internal/watch';
-import { FormControllerMixin } from 'src/mixins/form-controller.mixin';
+import { watch } from '../internal/watch';
+import { FormControllerMixin } from '../mixins/form-controller.mixin';
 
 const styles = [
   css`

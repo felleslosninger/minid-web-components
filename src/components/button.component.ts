@@ -3,8 +3,8 @@ import { customElement, property, query } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { html, literal } from 'lit/static-html.js';
-import { styled } from 'mixins/tailwind.mixin.ts';
-import { FormControllerMixin } from 'mixins/form-controller.mixin.ts';
+import { styled } from '../mixins/tailwind.mixin.ts';
+import { FormControllerMixin } from '../mixins/form-controller.mixin.ts';
 import './spinner.component';
 
 const styles = [
