@@ -84,7 +84,7 @@ export class MinidCodeInput extends ConstraintsValidationMixin(
    * Display custom error message, and force invalid state
    */
   @property({ type: String, attribute: 'error-message' })
-  _forcedErrorMessage?: string;
+  _forcedErrorMessage = '';
 
   /**
    * The length of the code input
@@ -201,10 +201,7 @@ export class MinidCodeInput extends ConstraintsValidationMixin(
       this.inputRef.value?.style.setProperty(`--char-${i + 1}-color`, color);
     }
 
-    if (
-      _changedProperties.has('_forcedErrorMessage') &&
-      this._forcedErrorMessage
-    ) {
+    if (_changedProperties.has('_forcedErrorMessage')) {
       this.setCustomValidity(this._forcedErrorMessage);
     }
 
@@ -233,8 +230,26 @@ export class MinidCodeInput extends ConstraintsValidationMixin(
     this.setValidity({} as ValidityState);
   }
 
+  private handleKeydown(event: KeyboardEvent) {
+    const hasModifier =
+      event.metaKey || event.ctrlKey || event.shiftKey || event.altKey;
+
+    // Pressing enter when focused on an input should submit the form like a native input, but we wait a tick before
+    // submitting to allow users to cancel the keydown event if they need to
+    if (event.key === 'Enter' && !hasModifier) {
+      setTimeout(() => {
+        //
+        // When using an Input Method Editor (IME), pressing enter will cause the form to submit unexpectedly. One way
+        // to check for this is to look at event.isComposing, which will be true when the IME is open.
+        if (!event.defaultPrevented && !event.isComposing) {
+          this.internals.form?.requestSubmit();
+        }
+      });
+    }
+  }
+
   handleSlotchange(e: Event) {
-    let slot = e.target as HTMLSlotElement;
+    const slot = e.target as HTMLSlotElement;
     const childNodes = slot.assignedNodes({ flatten: true });
 
     this._localErrorNode = this._findErrorMessageNode(childNodes);
@@ -267,7 +282,7 @@ export class MinidCodeInput extends ConstraintsValidationMixin(
           ${ref(this.inputRef)}
           class="${classMap({
             'w-full': true,
-            error: this.renderError,
+            error: this._forcedErrorMessage,
           })}"
           .value=${live(this.value)}
           autocomplete="${'one-time-code' as any}"
@@ -291,6 +306,7 @@ export class MinidCodeInput extends ConstraintsValidationMixin(
           @focusin="${() => {
             this.onFocusIn();
           }}"
+          @keydown="${this.handleKeydown}"
           @click="${this.onClick}"
           ?disabled="${live(this.disabled)}"
           ?required="${live(this.required)}"
