@@ -102,12 +102,12 @@ export class MinidTextfield extends FormControlMixin(
   /**
    * @ignore
    */
-  #inputId: string;
+  inputId!: string;
 
   /**
    * @ignore
    */
-  #descriptionId: string;
+  descriptionId!: string;
 
   /**
    * @ignore
@@ -274,8 +274,8 @@ export class MinidTextfield extends FormControlMixin(
   constructor() {
     super();
     nextUniqueId++;
-    this.#inputId = `mid-textfield-input-${nextUniqueId}`;
-    this.#descriptionId = `mid-textfield-description-${nextUniqueId}`;
+    this.inputId = `mid-textfield-input-${nextUniqueId}`;
+    this.descriptionId = `mid-textfield-description-${nextUniqueId}`;
   }
 
   override connectedCallback(): void {
@@ -366,6 +366,7 @@ export class MinidTextfield extends FormControlMixin(
   @watch('value')
   handleValueUpdate() {
     this.setValue(this.value);
+    console.log('lol');
   }
 
   override render() {
@@ -396,7 +397,7 @@ export class MinidTextfield extends FormControlMixin(
         })}"
       >
         <label
-          for="${this.#inputId}"
+          for="${this.inputId}"
           class="${classMap({
             'sr-only': this.hidelabel || !hasLabel,
             'fds-label': true,
@@ -423,7 +424,7 @@ export class MinidTextfield extends FormControlMixin(
             ? nothing
             : html`
                 <div
-                  id="${this.#descriptionId}"
+                  id="${this.descriptionId}"
                   part="description"
                   class="${classMap({
                     description: true,
@@ -452,7 +453,7 @@ export class MinidTextfield extends FormControlMixin(
             <slot name="prefix"></slot>
           </span>
           <input
-            id="${this.#inputId}"
+            id="${this.inputId}"
             class="input"
             part="input"
             .value=${live(this.value)}
@@ -465,7 +466,7 @@ export class MinidTextfield extends FormControlMixin(
                 ? 'text'
                 : this.type
             }
-            aria-describedby="${this.#descriptionId}""
+            aria-describedby="${this.descriptionId}""
             placeholder=${ifDefined(this.placeholder)}
             minlength=${ifDefined(this.minlength)}
             maxlength=${ifDefined(this.maxlength)}
