@@ -1,8 +1,7 @@
-import { Config } from 'tailwindcss';
-
-export const dsTailwindPreset = {
+/** @type {import("tailwindcss").Config} */
+export default {
   darkMode: 'class',
-  content: ['./index.html', './src/**/*.{html,js,ts}'],
+  content: [],
   theme: {
     fontFamily: {
       sans: ['inter', 'Arial', 'sans-serif'],
@@ -697,4 +696,4 @@ export const dsTailwindPreset = {
       },
     },
   },
-} satisfies Config;
+};

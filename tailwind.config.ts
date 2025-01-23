@@ -1,6 +1,6 @@
 // import { minidWebComponents } from './src/tailwind.plugin';
 import type { Config } from 'tailwindcss';
-import { dsTailwindPreset } from './src/styles/tailwind.preset';
+import * as tailwindPreset from './src/styles/tailwind.preset';
 
 const blue = {
   1: '#fefeff',
@@ -516,11 +516,10 @@ const focus = {
 
 /** @type {import("tailwindcss").Config} */
 export default {
-  // plugins: [minidWebComponents()],
   plugins: [],
   darkMode: 'class',
   content: ['./src/**/*.ts'],
-  presets: [dsTailwindPreset],
+  presets: [tailwindPreset],
   theme: {
     fontFamily: {
       sans: ['inter', 'Arial', 'sans-serif'],
