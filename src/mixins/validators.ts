@@ -26,8 +26,6 @@ export const programmaticValidator: Validator = {
     return instance.error;
   },
   isValid(instance: HTMLElement & { error: string }): boolean {
-    console.log(instance.error);
-
     return !instance.error;
   },
 };

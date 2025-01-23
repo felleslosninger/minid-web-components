@@ -22,11 +22,6 @@ const styles = [
       display: block;
     }
 
-    :host(:invalid) .input {
-      /* border-color: var(--fds-semantic-border-danger-default); */
-      /* box-shadow: inset 0 0 0 1px var(--fds-semantic-border-danger-default); */
-    }
-
     .form-control {
       display: block;
     }
@@ -37,17 +32,6 @@ const styles = [
 
     .fds-label {
       margin-bottom: 0.5rem;
-    }
-
-    .field {
-      /* padding: 0; */
-      /* border-radius: var(--fds-border_radius-medium); */
-      /* box-sizing: border-box; */
-      /* flex: 0 1 auto; */
-      /* font: inherit; */
-      /* font-family: inherit; */
-      /* position: relative; */
-      /* width: 100%; */
     }
 
     .input {
@@ -86,26 +70,6 @@ const styles = [
       border-radius: 4px;
       background: var(--fds-semantic-surface-action-subtle-hover);
     }
-
-    /* .fds-focus:focus-within {
-      box-shadow: var(--ds--focus, var(--dsc-focus-boxShadow));
-      outline-offset: var(--ds--focus, var(--dsc-focus-border-width));
-      outline: var(--ds--focus, var(--dsc-focus-outline));
-    }*/
-    /* .fds-focus:focus-within {
-      --fds-focus-border-width: 3px;
-      outline: var(--fds-focus-border-width) solid
-        var(--fds-semantic-border-focus-outline);
-      outline-offset: var(--fds-focus-border-width);
-      box-shadow: 0 0 0 var(--fds-focus-border-width)
-        var(--fds-semantic-border-focus-boxshadow);
-    } */
-    .field:focus-within {
-      /* background-color: rebeccapurple; */
-      /* box-shadow: var(--ds--focus, var(--dsc-focus-boxShadow));
-      outline-offset: var(--ds--focus, var(--dsc-focus-border-width));
-      outline: var(--ds--focus, var(--dsc-focus-outline)); */
-    }
   `,
 ];
 
@@ -118,7 +82,8 @@ let nextUniqueId = 0;
  * @event mid-clear - Emitted when the input value is cleared
  * @event mid-focus - Emitted when input element is focused
  * @event mid-blur - Emitted when focus moves away from input element
- * @event {detail: { validity: ValidityState }} mid-valid-change - Emitted when the error message should be updated
+ * @event {detail: { validity: ValidityState }} mid-invalid-hide - Emitted when the error message should be hidden
+ * @event {detail: { validity: ValidityState }} mid-invalid-show - Emitted when the error message should be shown
  *
  * @slot prefix - Used for decoration to the left of the input
  * @slot suffix - Used for decoration to the right of the input
@@ -147,7 +112,12 @@ export class MinidTextfield extends FormControlMixin(
   /**
    * @ignore
    */
-  #hasSlotControler = new HasSlotController(this, 'label');
+  hasSlotControler = new HasSlotController(this, 'label');
+
+  /**
+   * @ignore
+   */
+  #initialValue = '';
 
   /**
    * @ignore
@@ -213,7 +183,7 @@ export class MinidTextfield extends FormControlMixin(
   max?: number | string;
 
   /**
-   * Activate error styling on the input element
+   * Error message to display when the input is invalid, also activates invalid styling
    */
   @property()
   invalidmessage = '';
@@ -281,13 +251,6 @@ export class MinidTextfield extends FormControlMixin(
   @state()
   hasFocus = false;
 
-  constructor() {
-    super();
-    nextUniqueId++;
-    this.#inputId = `mid-textfield-input-${nextUniqueId}`;
-    this.#descriptionId = `mid-textfield-description-${nextUniqueId}`;
-  }
-
   /**
    * @ignore
    */
@@ -308,8 +271,16 @@ export class MinidTextfield extends FormControlMixin(
     return this.input;
   }
 
-  validationMessageCallback(_: string): void {
-    // this.invalidmessage = message;
+  constructor() {
+    super();
+    nextUniqueId++;
+    this.#inputId = `mid-textfield-input-${nextUniqueId}`;
+    this.#descriptionId = `mid-textfield-description-${nextUniqueId}`;
+  }
+
+  override connectedCallback(): void {
+    super.connectedCallback();
+    this.#initialValue = this.value;
   }
 
   private handleKeydown(event: KeyboardEvent) {
@@ -387,6 +358,11 @@ export class MinidTextfield extends FormControlMixin(
     this.input.focus();
   }
 
+  resetFormControl() {
+    this.invalidmessage = '';
+    this.value = this.#initialValue;
+  }
+
   @watch('value')
   handleValueUpdate() {
     this.setValue(this.value);
@@ -397,7 +373,7 @@ export class MinidTextfield extends FormControlMixin(
     const md = this.size === 'md';
     const sm = this.size === 'sm';
 
-    const hasLabelSlot = this.#hasSlotControler.test('label');
+    const hasLabelSlot = this.hasSlotControler.test('label');
     const hasLabel = !!this.label || !!hasLabelSlot;
     const hasClearIcon = this.clearable && !this.disabled && !this.readonly;
     const isClearIconVisible =
@@ -539,10 +515,13 @@ export class MinidTextfield extends FormControlMixin(
                   tabindex="-1"
                 >
                   ${this.passwordvisible
-                    ? html`
-                        <mid-icon name="eye-slash" library="system"></mid-icon>
-                      `
-                    : html` <mid-icon name="eye" library="system"></mid-icon> `}
+                    ? html` <mid-icon
+                        name="eye-slash"
+                        library="system"
+                      ></mid-icon>`
+                    : html`
+                        <mid-icon name="eye" library="system"> </mid-icon>
+                      `}
                 </button>
               `
             : ''

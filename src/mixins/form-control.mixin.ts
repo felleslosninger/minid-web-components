@@ -194,7 +194,9 @@ export function FormControlMixin<
      * @private
      * @ignore
      */
-    #onInvalid = (): void => {
+    #onInvalid = (event?: Event): void => {
+      event?.preventDefault();
+      event?.stopImmediatePropagation();
       if (this.#awaitingValidationTarget && this.validationTarget) {
         this.internals.setValidity(
           this.validity,
@@ -247,7 +249,11 @@ export function FormControlMixin<
       return this.internals.validity;
     }
 
-    previousShowError = false;
+    /**
+     * If the element previously showed a validation error
+     * @ignore
+     */
+    #previousShowError = false;
 
     /**
      * The validation message shown by a given Validator object. If the control
@@ -296,8 +302,6 @@ export function FormControlMixin<
      * @ignore
      */
     setValue(value: FormValue): void {
-      console.log('🥵 Setting value');
-
       this.#forceError = false;
       this.validationMessageCallback?.('');
       this.#value = value;
@@ -408,8 +412,6 @@ export function FormControlMixin<
      * @ignore
      */
     #shouldShowError(): boolean {
-      console.log('🔺 should show error called');
-
       if (this.hasAttribute('disabled')) {
         return false;
       }
@@ -418,16 +420,11 @@ export function FormControlMixin<
         this.#forceError ||
         (this.#touched && !this.validity.valid && !this.#focused);
 
-      /**
-       * At the time of writing Firefox doesn't support states
-       * TODO: Remove when check for states when fully support is in place
-       */
-      console.log('previous', this.previousShowError, 'current', showError);
-
-      if (showError && this.internals.states) {
+      if (showError) {
         this.internals.states.add('--show-error');
         this.internals.states.add('--invalid');
-        if (this.previousShowError === false) {
+
+        if (!this.#previousShowError) {
           this?.dispatchEvent(
             new CustomEvent('mid-invalid-show', {
               bubbles: true,
@@ -435,13 +432,13 @@ export function FormControlMixin<
               detail: { validity: this.validity },
             })
           );
-          this.previousShowError = showError;
+          this.#previousShowError = showError;
         }
-      } else if (this.internals.states) {
+      } else {
         this.internals.states.delete('--show-error');
         this.internals.states.delete('--invalid');
 
-        if (this.previousShowError === true) {
+        if (this.#previousShowError) {
           this?.dispatchEvent(
             new CustomEvent('mid-invalid-hide', {
               bubbles: true,
@@ -449,20 +446,9 @@ export function FormControlMixin<
               detail: { validity: this.validity },
             })
           );
-          this.previousShowError = showError;
+          this.#previousShowError = showError;
         }
       }
-
-      // if (this.previousShowError !== showError) {
-      //   this?.dispatchEvent(
-      //     new CustomEvent('mid-valid-change', {
-      //       bubbles: true,
-      //       composed: true,
-      //       detail: { validity: this.validity },
-      //     })
-      //   );
-      //   this.previousShowError = showError;
-      // }
 
       return showError;
     }
@@ -630,7 +616,9 @@ export function FormControlMixin<
       }
     }
 
-    /** Reset control state when the form is reset */
+    /**
+     * Reset control state when the form is reset
+     */
     formResetCallback() {
       this.#touched = false;
       this.#forceError = false;

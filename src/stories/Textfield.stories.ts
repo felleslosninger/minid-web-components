@@ -1,12 +1,13 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import '../components/textfield.component';
-import '../components/icon/icon.component';
+import '../components/button.component';
 import { html, nothing, Part } from 'lit';
 import { ifDefined } from 'lit/directives/if-defined.js';
 
 type TextfieldProps = {
   label?: string;
   labelAttr?: string;
+  name?: string;
   value?: string;
   placeholder?: string;
   type?: 'text';
@@ -39,6 +40,10 @@ type TextfieldProps = {
   'mid-clear': Event;
   'mid-focus': Event;
   'mid-blur': Event;
+  'mid-invalid-show': Event;
+  'mid-invalid-hide': Event;
+  '#inputId': never;
+  '#descriptionId': never;
 };
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories
@@ -61,6 +66,10 @@ const meta = {
       name: 'label',
       type: 'string',
       table: { category: 'attributes', defaultValue: { summary: '' } },
+    },
+    name: {
+      type: 'string',
+      table: { category: 'attributes' },
     },
     type: {
       control: { type: 'select' },
@@ -85,11 +94,15 @@ const meta = {
     'mid-clear': { control: { disable: true } },
     'mid-focus': { control: { disable: true } },
     'mid-blur': { control: { disable: true } },
+    'mid-invalid-show': { control: { disable: true } },
+    'mid-invalid-hide': { control: { disable: true } },
     'form-control': { control: { disable: true } },
     'clear-button': { control: { disable: true } },
     'password-toggle-button': { control: { disable: true } },
     input: { control: { disable: true } },
     base: { control: { disable: true } },
+    '#descriptionId': { table: { disable: true } },
+    '#inputId': { table: { disable: true } },
   },
   parameters: {
     controls: {
@@ -106,34 +119,55 @@ export const Main: Story = {
   args: {
     labelAttr: 'Tekst input',
     required: true,
-    pattern: '^[a-zA-Z0-9]{3,30}$',
+    pattern: '^[a-zA-Z0-9]{5,30}$',
+    name: 'textfield-data',
+    value: 'initialValue',
   },
   decorators: [
     (story) =>
-      html`<div class="w-80">${story()}</div>
+      html`<form
+          class="flex w-80 flex-col gap-4"
+          @reset=${() => {
+            document.querySelector('.output')!.textContent = '';
+          }}
+          @submit=${(event: SubmitEvent) => {
+            event.preventDefault();
+
+            const target = event.target as HTMLFormElement;
+            const valid = target.reportValidity();
+            const formData = new FormData(target);
+            const data = Object.fromEntries(formData);
+
+            console.log(valid, data);
+            document.querySelector('.output')!.textContent = JSON.stringify({
+              ...data,
+            });
+          }}
+        >
+          ${story()}
+          <div class="flex flex-row-reverse items-end justify-end gap-4">
+            <pre class="output"></pre>
+            <mid-button type="submit"> Submit </mid-button>
+            <mid-button variant="secondary" type="reset"> Reset </mid-button>
+          </div>
+        </form>
         <script lang="ts">
-          var lol = document.querySelector('.w-80');
-          var textfield = document.querySelector('.text-field');
-          // lol.addEventListener('mid-invalid-hide', console.log);
-          // lol.addEventListener('mid-invalid-show', console.log);
-          lol.addEventListener('mid-invalid-show', (event) => {
-            const { valueMissing, patternMismatch } = event.detail.validity;
-            console.log('valid change: ', event.detail.validity);
-            textfield.invalidmessage =
-              'Dette feltet er påkrevd req: ' +
-              valueMissing +
-              ' patt: ' +
-              patternMismatch;
+          const textfield = document.querySelector('mid-textfield');
+
+          textfield.addEventListener('mid-invalid-show', (event) => {
+            console.log(event);
+            if (event.detail.validity.patternMismatch) {
+              textfield.invalidmessage = 'Invalid pattern';
+            } else if (event.detail.validity.valueMissing) {
+              textfield.invalidmessage = 'Value is required';
+            } else {
+              textfield.invalidmessage = 'Invalid input';
+            }
           });
-          lol.addEventListener('mid-invalid-hide', (event) => {
-            const { valueMissing, patternMismatch } = event.detail.validity;
-            console.log('valid change: ', event.detail.validity);
+          textfield.addEventListener('mid-invalid-hide', (event) => {
+            console.log(event);
             textfield.invalidmessage = '';
           });
-          lol.addEventListener('invalid', (event) => {
-            console.log('invalid: ', event.detail.validity);
-          });
-          MinidTextfield.formControlValidators = [requiredValidator];
         </script> `,
   ],
   render: ({
@@ -143,6 +177,7 @@ export const Main: Story = {
     size,
     type,
     value,
+    name,
     prefix,
     suffix,
     disabled,
@@ -163,7 +198,6 @@ export const Main: Story = {
     invalidmessage,
   }: TextfieldProps) =>
     html`<mid-textfield
-      class="text-field"
       ?disabled=${disabled}
       ?autofocus=${autofocus}
       ?clearable=${clearable}
@@ -177,6 +211,7 @@ export const Main: Story = {
       description=${ifDefined(description)}
       label="${ifDefined(labelAttr)}"
       value=${ifDefined(value)}
+      name=${ifDefined(name)}
       placeholder=${ifDefined(placeholder)}
       pattern=${ifDefined(pattern)}
       type=${ifDefined(type)}
