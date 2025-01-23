@@ -1,18 +1,18 @@
 import { css, html, LitElement } from 'lit';
 import { customElement, property, query, state } from 'lit/decorators.js';
 import { styled } from '../mixins/tailwind.mixin.js';
-import 'components/icon/icon.component.js';
-import 'components/button.component.js';
-import 'components/popup.component.js';
-import { waitForEvent } from 'src/internal/event.js';
-import { MinidPopup } from 'components/popup.component.js';
+import './icon/icon.component.js';
+import './button.component.js';
+import './popup.component.js';
+import { waitForEvent } from '../internal/event.js';
+import { MinidPopup } from './popup.component.js';
 import { classMap } from 'lit/directives/class-map.js';
-import { watch } from 'src/internal/watch.js';
+import { watch } from '../internal/watch.js';
 import {
   getAnimation,
   setDefaultAnimation,
-} from 'src/components/utilities/animation-registry.js';
-import { stopAnimations, animateTo } from 'src/internal/animate.js';
+} from '../components/utilities/animation-registry.js';
+import { stopAnimations, animateTo } from '../internal/animate.js';
 
 const styles = [
   css`

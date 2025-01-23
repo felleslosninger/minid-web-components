@@ -25,8 +25,8 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "types": [
-      "vite/client",
-//      "@types/webappsec-credential-management"
+      "vite/client"
+      //      "@types/webappsec-credential-management"
     ],
     "baseUrl": ".",
     "paths": {
@@ -34,12 +34,11 @@
       "components/*": ["./src/components/*"],
       "internal/*": ["./src/internal/*"],
       "mixins/*": ["./src/mixins/*"],
-      "css/*": ["./src/css/*"]
+      "css/*": ["./src/css/*"],
+      "types/*": ["./src/types/*"]
     }
   },
-  "include": [
-    "src/**/*.ts"
-  ],
+  "include": ["src/**/*.ts"],
   "exclude": ["src/**/*.stories.ts", "src/stories"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

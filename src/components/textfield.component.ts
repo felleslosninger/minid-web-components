@@ -4,8 +4,17 @@ import { live } from 'lit/directives/live.js';
 import { stringConverter } from 'internal/string-converter';
 import { classMap } from 'lit/directives/class-map.js';
 import { styled } from 'mixins/tailwind.mixin.ts';
-import { FormControllerMixin } from 'mixins/form-controller.mixin.ts';
 import { ifDefined } from 'lit/directives/if-defined.js';
+import { HasSlotController } from '../../src/internal/slot';
+import { FormControlMixin } from '../../src/mixins/form-control.mixin';
+import {
+  maxLengthValidator,
+  minLengthValidator,
+  patternValidator,
+  programmaticValidator,
+  requiredValidator,
+} from '../../src/mixins/validators';
+import { watch } from '../../src/internal/watch';
 
 const styles = [
   css`
@@ -13,12 +22,16 @@ const styles = [
       display: block;
     }
 
+    .form-control {
+      display: block;
+    }
+
     .form-control:has(input:disabled) {
       opacity: 0.3;
     }
 
-    .field {
-      padding: 0;
+    .fds-label {
+      margin-bottom: 0.5rem;
     }
 
     .input {
@@ -49,14 +62,6 @@ const styles = [
       border-radius: 4px;
     }
 
-    .clear-button {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: calc(1em + 1rem * 2);
-      border-radius: 4px;
-    }
-
     .fds-textfield__readonly__icon svg {
       font-size: 1.2em;
     }
@@ -65,28 +70,10 @@ const styles = [
       border-radius: 4px;
       background: var(--fds-semantic-surface-action-subtle-hover);
     }
-
-    .clear-button--sm {
-      font-size: 20px;
-    }
-
-    .clear-button--md {
-      font-size: 24px;
-    }
-    .clear-button--lg {
-      font-size: 28px;
-    }
-
-    .fds-focus:focus-within {
-      --fds-focus-border-width: 3px;
-      outline: var(--fds-focus-border-width) solid
-        var(--fds-semantic-border-focus-outline);
-      outline-offset: var(--fds-focus-border-width);
-      box-shadow: 0 0 0 var(--fds-focus-border-width)
-        var(--fds-semantic-border-focus-boxshadow);
-    }
   `,
 ];
+
+let nextUniqueId = 0;
 
 /**
  *
@@ -95,9 +82,12 @@ const styles = [
  * @event mid-clear - Emitted when the input value is cleared
  * @event mid-focus - Emitted when input element is focused
  * @event mid-blur - Emitted when focus moves away from input element
+ * @event {detail: { validity: ValidityState }} mid-invalid-hide - Emitted when the error message should be hidden
+ * @event {detail: { validity: ValidityState }} mid-invalid-show - Emitted when the error message should be shown
  *
  * @slot prefix - Used for decoration to the left of the input
  * @slot suffix - Used for decoration to the right of the input
+ * @slot label - The input's label. Alternatively, you can use the `label` attribute.
  *
  * @csspart base - The fields's base wrapper.
  * @csspart input - The internal `<input>` element.
@@ -106,9 +96,38 @@ const styles = [
  * @csspart password-toggle-button - The button for toggling password visibility
  */
 @customElement('mid-textfield')
-export class MinidTextfield extends FormControllerMixin(
+export class MinidTextfield extends FormControlMixin(
   styled(LitElement, styles)
 ) {
+  /**
+   * @ignore
+   */
+  inputId!: string;
+
+  /**
+   * @ignore
+   */
+  descriptionId!: string;
+
+  /**
+   * @ignore
+   */
+  hasSlotControler = new HasSlotController(this, 'label');
+
+  /**
+   * @ignore
+   */
+  #initialValue = '';
+
+  /**
+   * @ignore
+   */
+  @query('.error-message')
+  errorMessageDiv!: HTMLDivElement;
+
+  /**
+   * @ignore
+   */
   @query('.input')
   input!: HTMLInputElement;
 
@@ -132,6 +151,12 @@ export class MinidTextfield extends FormControllerMixin(
    */
   @property({ type: Boolean })
   autofocus = false;
+
+  /**
+   * User agent autocomplete hint
+   */
+  @property()
+  autocomplete?: AutoFill;
 
   /**
    *  The minimum length of input that will be considered valid.
@@ -158,10 +183,10 @@ export class MinidTextfield extends FormControllerMixin(
   max?: number | string;
 
   /**
-   * Activate error styling on the input element
+   * Error message to display when the input is invalid, also activates invalid styling
    */
-  @property({ type: Boolean })
-  invalid = false;
+  @property()
+  invalidmessage = '';
 
   @property()
   type:
@@ -206,6 +231,18 @@ export class MinidTextfield extends FormControllerMixin(
   readonly = false;
 
   /**
+   * A regular expression pattern to validate input against.
+   */
+  @property()
+  pattern?: string;
+
+  /**
+   * Makes the input required
+   */
+  @property({ type: Boolean })
+  required = false;
+
+  /**
    * Visually hides `label` and `description` (still available for screen readers)
    */
   @property({ type: Boolean })
@@ -213,6 +250,38 @@ export class MinidTextfield extends FormControllerMixin(
 
   @state()
   hasFocus = false;
+
+  /**
+   * @ignore
+   */
+  static get formControlValidators() {
+    return [
+      requiredValidator,
+      programmaticValidator,
+      maxLengthValidator,
+      minLengthValidator,
+      patternValidator,
+    ];
+  }
+
+  /**
+   * @ignore
+   */
+  get validationTarget() {
+    return this.input;
+  }
+
+  constructor() {
+    super();
+    nextUniqueId++;
+    this.inputId = `mid-textfield-input-${nextUniqueId}`;
+    this.descriptionId = `mid-textfield-description-${nextUniqueId}`;
+  }
+
+  override connectedCallback(): void {
+    super.connectedCallback();
+    this.#initialValue = this.value;
+  }
 
   private handleKeydown(event: KeyboardEvent) {
     const hasModifier =
@@ -248,10 +317,10 @@ export class MinidTextfield extends FormControllerMixin(
 
   private handleInput() {
     this.value = this.input.value;
+    this.setValue(this.value);
     this.dispatchEvent(
       new Event('mid-input', { bubbles: true, composed: true })
     );
-    this.setFormValue(this.value);
   }
 
   private handleFocus() {
@@ -285,7 +354,18 @@ export class MinidTextfield extends FormControllerMixin(
   }
 
   focus() {
+    this.hasFocus = true;
     this.input.focus();
+  }
+
+  resetFormControl() {
+    this.invalidmessage = '';
+    this.value = this.#initialValue;
+  }
+
+  @watch('value')
+  handleValueUpdate() {
+    this.setValue(this.value);
   }
 
   override render() {
@@ -293,6 +373,8 @@ export class MinidTextfield extends FormControllerMixin(
     const md = this.size === 'md';
     const sm = this.size === 'sm';
 
+    const hasLabelSlot = this.hasSlotControler.test('label');
+    const hasLabel = !!this.label || !!hasLabelSlot;
     const hasClearIcon = this.clearable && !this.disabled && !this.readonly;
     const isClearIconVisible =
       hasClearIcon && (typeof this.value === 'number' || this.value.length > 0);
@@ -304,7 +386,6 @@ export class MinidTextfield extends FormControllerMixin(
           'form-control': true,
           'fds-paragraph': true,
           'fds-textfield': true,
-          'fds-textfield--error': this.invalid,
           'fds-textfield--readonly': this.readonly,
           'fds-paragraph--sm': sm,
           'fds-paragraph--md': md,
@@ -314,112 +395,119 @@ export class MinidTextfield extends FormControllerMixin(
           'fds-textfield--lg': lg,
         })}"
       >
-        ${!this.label
-          ? nothing
-          : html`<label
-              for="input"
-              class="${classMap({
-                'sr-only': this.hidelabel,
-                'fds-label': true,
-                'fds-label--medium-weight': true,
-                'fds-textfield__label': true,
-                'fds-label--sm': sm,
-                'fds-label--md': md,
-                'fds-label--lg': lg,
-              })}"
-            >
-              ${!this.readonly
-                ? nothing
-                : html`<mid-icon
-                    class="fds-textfield__readonly__icon"
-                    library="system"
-                    name="padlock-locked-fill"
-                  ></mid-icon>`}
-              ${this.label}
-            </label>`}
-        ${!this.description
-          ? nothing
-          : html`
-              <div
-                id="description"
-                part="description"
-                class="${classMap({
-                  description: true,
-                  'fds-paragraph': true,
-                  'sr-only': this.hidelabel,
-                  'fds-paragraph--sm': sm,
-                  'fds-paragraph--md': md,
-                  'fds-paragraph--lg': lg,
-                  'fds-textfield__description': true,
-                })}"
-              >
-                ${this.description}
-              </div>
-            `}
+        <label
+          for="${this.inputId}"
+          class="${classMap({
+            'sr-only': this.hidelabel || !hasLabel,
+            'fds-label': true,
+            'fds-label--medium-weight': true,
+            'fds-textfield__label': true,
+            'fds-label--sm': sm,
+            'fds-label--md': md,
+            'fds-label--lg': lg,
+          })}"
+        >
+          ${
+            !this.readonly
+              ? nothing
+              : html`<mid-icon
+                  class="fds-textfield__readonly__icon"
+                  library="system"
+                  name="padlock-locked-fill"
+                ></mid-icon>`
+          }
+          <slot name="label"> ${this.label} </slot>
+        </label>
+        ${
+          !this.description
+            ? nothing
+            : html`
+                <div
+                  id="${this.descriptionId}"
+                  part="description"
+                  class="${classMap({
+                    description: true,
+                    'fds-paragraph': true,
+                    'sr-only': this.hidelabel,
+                    'fds-paragraph--sm': sm,
+                    'fds-paragraph--md': md,
+                    'fds-paragraph--lg': lg,
+                    'fds-textfield__description': true,
+                  })}"
+                >
+                  ${this.description}
+                </div>
+              `
+        }
         <div
           part="base"
           class="${classMap({
-            field: true,
             'fds-textfield__field': true,
-            'fds-textfield__input': true,
-            'fds-focus': this.hasFocus,
-          })}"
+            'border-neutral': !this.invalidmessage,
+            'border-danger': this.invalidmessage,
+          })}
+          field border outline outline-transparent focus-within:outline-offset-3 focus-within:outline-3 focus-within:shadow-focus-inner focus-within:outline-focus-outer "
         >
           <span class="prefix">
             <slot name="prefix"></slot>
           </span>
           <input
-            id="input"
+            id="${this.inputId}"
             class="input"
             part="input"
             .value=${live(this.value)}
             ?disabled=${this.disabled}
             ?readonly=${this.readonly}
             ?autofocus=${this.autofocus}
-            type=${this.type === 'password' && this.passwordvisible
-              ? 'text'
-              : this.type}
-            aria-describedby="description"
+            autocomplete=${ifDefined(this.autocomplete as any)}
+            type=${
+              this.type === 'password' && this.passwordvisible
+                ? 'text'
+                : this.type
+            }
+            aria-describedby="${this.descriptionId}""
             placeholder=${ifDefined(this.placeholder)}
             minlength=${ifDefined(this.minlength)}
             maxlength=${ifDefined(this.maxlength)}
             min=${ifDefined(this.min)}
             max=${ifDefined(this.max)}
+            pattern=${ifDefined(this.pattern)}
             @input=${this.handleInput}
             @change=${this.handleChange}
             @focus=${this.handleFocus}
             @blur=${this.handleBlur}
             @keydown=${this.handleKeydown}
           />
-          ${isClearIconVisible
-            ? html`
-                <button
-                  part="clear-button"
-                  class="${classMap({
-                    'clear-button': true,
-                    'clear-button--sm': sm,
-                    'clear-button--md': md,
-                    'clear-button--lg': lg,
-                  })}"
-                  type="button"
-                  aria-label="Tøm"
-                  @click=${this.handleClearClick}
-                >
-                  <mid-icon name="xmark" library="system"></mid-icon>
-                </button>
-              `
-            : ''}
-          ${this.passwordtoggle && !this.disabled
+          ${
+            isClearIconVisible
+              ? html`
+                  <button
+                    part="clear-button"
+                    type="button"
+                    class="${classMap({
+                      'text-6': sm,
+                      'text-7': md,
+                      'text-8': lg,
+                    })} flex w-[calc(1em+1rem*2)] items-center justify-center rounded"
+                    aria-label="Tøm"
+                    @click=${this.handleClearClick}
+                  >
+                    <mid-icon name="xmark" library="system"></mid-icon>
+                  </button>
+                `
+              : ''
+          }
+        ${
+          this.passwordtoggle && !this.disabled
             ? html`
                 <button
                   part="password-toggle-button"
-                  class="${classMap({
-                    'clear-button': true,
-                    'clear-button--sm': sm,
-                    'clear-button--md': md,
-                    'clear-button--lg': lg,
-                  })}"
                   type="button"
+                  class="${classMap({
+                    'text-6': sm,
+                    'text-7': md,
+                    'text-8': lg,
+                  })} flex w-[calc(1em+1rem*2)] items-center justify-center rounded"
                   aria-label=${this.passwordvisible
                     ? 'skjul passord'
                     : 'vis passord'}
@@ -427,17 +515,24 @@ export class MinidTextfield extends FormControllerMixin(
                   tabindex="-1"
                 >
                   ${this.passwordvisible
-                    ? html`
-                        <mid-icon name="eye-slash" library="system"></mid-icon>
-                      `
-                    : html` <mid-icon name="eye" library="system"></mid-icon> `}
+                    ? html` <mid-icon
+                        name="eye-slash"
+                        library="system"
+                      ></mid-icon>`
+                    : html`
+                        <mid-icon name="eye" library="system"> </mid-icon>
+                      `}
                 </button>
               `
-            : ''}
+            : ''
+        }
           <span part="suffix" class="suffix">
             <slot name="suffix"></slot>
           </span>
         </div>
+      </div>
+      <div class="pt-2 error-message text-danger-subtle">
+        ${this.invalidmessage}
       </div>
     `;
   }

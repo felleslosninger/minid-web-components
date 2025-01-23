@@ -1,5 +1,5 @@
 import { LitElement } from 'lit';
-import { Constructor } from './mixin-constructor.type';
+import { Constructor } from '../types/mixin-constructor';
 
 export interface FormAssociatedMixinInterface {
   internals: ElementInternals;
@@ -26,6 +26,7 @@ export const FormControllerMixin = <TBase extends Constructor<LitElement>>(
 
     constructor(...args: any[]) {
       super(...(args as ConstructorParameters<typeof Base>));
+      // @ts-expect-error missing some u
       this.internals = this.attachInternals();
     }
 
@@ -79,7 +80,7 @@ export const ConstraintsValidationMixin = <
     }
 
     setValidity(
-      validity: ValidityState,
+      validity: ValidityStateFlags,
       message?: string,
       anchor?: HTMLElement
     ) {

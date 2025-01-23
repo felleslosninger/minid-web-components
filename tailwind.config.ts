@@ -558,6 +558,7 @@ export default {
       },
       boxShadow: {
         'focus-visible': '0 0 0 3px #00347d',
+        danger: 'inset 0 0 0 1px var(--fds-semantic-border-danger-default)',
       },
       animation: {
         dash: 'dash 1.4s cubic-bezier(0.2,-0.01, 0.51, 0.96) infinite',

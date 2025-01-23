@@ -1,7 +1,7 @@
 import { CSSResultArray, LitElement, unsafeCSS } from 'lit';
 import tailwindStyles from '../styles/tailwind.css?inline';
 import dsStyles from '@digdir/designsystemet-css?inline';
-import { Constructor } from './mixin-constructor.type';
+import { Constructor } from '../types/mixin-constructor';
 
 export const tailwindCssStyles = unsafeCSS(tailwindStyles);
 export const dsCssStyles = unsafeCSS(dsStyles);
