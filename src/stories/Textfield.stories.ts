@@ -42,8 +42,8 @@ type TextfieldProps = {
   'mid-blur': Event;
   'mid-invalid-show': Event;
   'mid-invalid-hide': Event;
-  '#inputId': never;
-  '#descriptionId': never;
+  inputId: never;
+  descriptionId: never;
 };
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories
@@ -101,8 +101,8 @@ const meta = {
     'password-toggle-button': { control: { disable: true } },
     input: { control: { disable: true } },
     base: { control: { disable: true } },
-    '#descriptionId': { table: { disable: true } },
-    '#inputId': { table: { disable: true } },
+    descriptionId: { table: { disable: true } },
+    inputId: { table: { disable: true } },
   },
   parameters: {
     controls: {

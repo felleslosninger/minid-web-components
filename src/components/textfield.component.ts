@@ -366,7 +366,6 @@ export class MinidTextfield extends FormControlMixin(
   @watch('value')
   handleValueUpdate() {
     this.setValue(this.value);
-    console.log('lol');
   }
 
   override render() {
