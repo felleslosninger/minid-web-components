@@ -2,10 +2,12 @@ import { defineConfig } from 'vite';
 import { hmrPlugin, presets } from 'vite-plugin-web-components-hmr';
 import { resolve } from 'path';
 import dts from 'vite-plugin-dts';
-import tailwindcss from 'tailwindcss';
+// @ts-expect-error lolwhat
+import tailwindcss from '@tailwindcss/vite';
 import { externalizeDeps } from 'vite-plugin-externalize-deps';
 import { glob } from 'glob';
 
+// eslint-disable-next-line no-empty-pattern
 export default defineConfig(({}) => {
   return {
     build: {
@@ -41,12 +43,8 @@ export default defineConfig(({}) => {
         include: ['./src/**/*.ts'],
         presets: [presets.lit],
       }),
+      tailwindcss(),
     ],
-    css: {
-      postcss: {
-        plugins: [tailwindcss],
-      },
-    },
     resolve: {
       alias: {
         src: '/src',

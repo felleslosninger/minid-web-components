@@ -343,13 +343,13 @@ export class MinidPhoneInput extends FormControllerMixin(
             ${this.country
               ? html`
                   <mid-icon
-                    class="h-4 w-6 overflow-hidden rounded"
+                    class="h-4 w-6 overflow-hidden rounded-sm"
                     library="country"
                     name="${this.country}"
                   ></mid-icon>
                 `
               : html`<div
-                  class="h-4 w-6 overflow-hidden rounded bg-surface-neutral-active"
+                  class="h-4 w-6 overflow-hidden rounded-sm bg-surface-neutral-active"
                 ></div>`}
             <mid-icon name="chevron-down"></mid-icon>
           </button>

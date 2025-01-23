@@ -97,7 +97,7 @@ export const Main: Story = {
           .map((country) => {
             return html`<mid-menu-item value=${country}>
               <mid-icon
-                class="h-4 w-6 overflow-hidden rounded"
+                class="h-4 w-6 overflow-hidden rounded-sm"
                 library="country"
                 name="${country}"
               ></mid-icon>
