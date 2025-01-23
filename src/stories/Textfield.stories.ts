@@ -152,7 +152,7 @@ export const Main: Story = {
           </div>
         </form>
         <script lang="ts">
-          const textfield = document.querySelector('mid-textfield');
+          var textfield = document.querySelector('mid-textfield');
 
           textfield.addEventListener('mid-invalid-show', (event) => {
             console.log(event);
