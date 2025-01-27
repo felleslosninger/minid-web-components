@@ -6,6 +6,7 @@ import dts from 'vite-plugin-dts';
 import tailwindcss from '@tailwindcss/vite';
 import { externalizeDeps } from 'vite-plugin-externalize-deps';
 import { glob } from 'glob';
+import postcssLit from 'rollup-plugin-postcss-lit';
 
 // eslint-disable-next-line no-empty-pattern
 export default defineConfig(({}) => {
@@ -20,7 +21,10 @@ export default defineConfig(({}) => {
       emptyOutDir: true,
       lib: {
         entry: glob.sync(
-          resolve(__dirname, 'src/{**/*.component.ts,index.ts}')
+          resolve(
+            __dirname,
+            'src/{**/*.component.ts,index.ts,src/styles/ds-tailwind.theme.css}'
+          )
         ),
         name: 'MinID-Elements',
         formats: ['es'],
@@ -43,6 +47,7 @@ export default defineConfig(({}) => {
         include: ['./src/**/*.ts'],
         presets: [presets.lit],
       }),
+      postcssLit(),
       tailwindcss(),
     ],
     resolve: {
