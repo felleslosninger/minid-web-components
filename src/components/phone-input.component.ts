@@ -334,7 +334,7 @@ export class MinidPhoneInput extends FormControllerMixin(
         <div part="base" class="flex">
           <button
             part="country-button"
-            class="country-button fds-focus flex h-full items-center border border-text-action-active pl-3"
+            class="country-button fds-focus flex h-full items-center border pl-3"
             iconstyled
             variant="tertiary"
             @click=${this.handleCountryClick}
@@ -349,7 +349,7 @@ export class MinidPhoneInput extends FormControllerMixin(
                   ></mid-icon>
                 `
               : html`<div
-                  class="h-4 w-6 overflow-hidden rounded bg-surface-neutral-active"
+                  class="bg-neutral-surface-active h-4 w-6 overflow-hidden rounded"
                 ></div>`}
             <mid-icon name="chevron-down"></mid-icon>
           </button>

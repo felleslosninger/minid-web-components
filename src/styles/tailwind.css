@@ -1,91 +1,38 @@
-@layer tw-base, ds, tw-rest;
+@import 'tailwindcss';
+@import './designsystemet-tailwind.css';
 
-@layer tw-base {
-  @tailwind base;
+@custom-variant dark (&:is(.dark *));
 
-  @layer base {
-    *:focus-visible {
-      @apply outline-none;
-      @apply shadow-focus-visible;
-    }
+@layer base {
+  *:focus-visible {
+    @apply outline-hidden;
+    @apply shadow-focus-visible;
   }
 }
 
-@layer tw-rest {
-  @tailwind components;
-  @tailwind utilities;
+@theme inline {
+  --outline-offset-3: 3px;
 
-  @layer components {
-    .link {
-      @apply inline-flex;
-      @apply items-center;
-      @apply gap-1;
-      @apply text-text-action;
-      @apply underline;
-      @apply decoration-1;
-      @apply underline-offset-4;
-      @apply visited:text-text-visited;
-      @apply hover:text-surface-action-hover;
+  --outline-width-3: 3px;
+
+  --shadow-focus-visible: 0 0 0 3px #00347d;
+  --shadow-danger: inset 0 0 0 1px var(--fds-semantic-border-danger-default);
+
+  --animate-dash: dash 1.4s cubic-bezier(0.2, -0.01, 0.51, 0.96) infinite;
+  --animate-spin-slow: spin 2.2s linear infinite;
+
+  @keyframes dash {
+    0% {
+      stroke-dasharray: 1, 150;
+      stroke-dashoffset: 0;
     }
-
-    .btn {
-      @apply flex;
-      @apply place-items-center;
-      @apply gap-1;
-      @apply rounded;
-      @apply border;
-      @apply border-transparent;
-      @apply bg-surface-action;
-      @apply px-4;
-      @apply py-2;
-      @apply text-lg;
-      @apply text-white;
-      @apply hover:bg-surface-action-hover;
-      @apply disabled:cursor-not-allowed;
-      @apply disabled:border-transparent;
-      @apply disabled:bg-surface-action/50;
+    50% {
+      stroke-dasharray: 90, 150;
+      stroke-dashoffset: -35;
     }
-
-    .btn-primary {
-    }
-
-    .btn-secondary {
-      @apply bg-transparent;
-      @apply hover:bg-transparent;
-      @apply border;
-      @apply border-border-action;
-      @apply text-text-action;
-      @apply hover:text-text-action-hover;
-      @apply hover:bg-background-accent-subtle;
-    }
-
-    .btn-tertiary {
-      @apply text-text-action;
-      @apply bg-transparent;
-      @apply active:bg-surface-accent-hover;
-      @apply active:text-text-action-active;
-      @apply hover:bg-background-action-subtle;
-      @apply hover:text-text-action-hover;
-    }
-
-    .btn-sm {
-      @apply text-sm;
-    }
-
-    .btn-lg {
-      @apply text-xl;
-    }
-
-    .page-card {
-      @apply bg-background-neutral;
-      @apply rounded-lg;
-      @apply border;
-      @apply border-border-neutral-subtle/60;
-      @apply md:shadow-lg;
-      @apply px-6;
-      @apply py-6;
-      @apply md:px-14;
-      @apply md:py-14;
+    100% {
+      stroke-dasharray: 90, 150;
+      stroke-dashoffset: -124;
     }
   }
 }

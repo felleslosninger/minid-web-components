@@ -74,19 +74,24 @@ type Story = StoryObj<ModalProps>;
 
 export const Main: Story = {
   args: {},
-  render: ({ open, footerSlot, heading, ...rest }: ModalProps) => {
+  render: ({
+    open,
+    footerSlot,
+    heading,
+    'mid-request-close': requestClose,
+    '--': defaultSlot,
+  }: ModalProps) => {
     return html`
       <mid-button class="modal-button">Modal</mid-button>
       <mid-modal
         ?open=${open}
         class="modal"
         @mid-request-close=${(event) =>
-          rest['mid-request-close'] === 'preventDefault' &&
-          event.preventDefault()}
+          requestClose === 'preventDefault' && event.preventDefault()}
       >
         <span slot="heading"> ${heading ?? 'Bekreft handling'} </span>
         <mid-paragraph
-          >${rest['--'] ??
+          >${defaultSlot ??
           'Er du sikker på at du vil utføre denne handlingen? Det er ikke sikkert at handlingen kan reverseres.'}
         </mid-paragraph>
         ${footerSlot

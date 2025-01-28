@@ -22,7 +22,6 @@ const styles = [
     .dialog {
       max-width: var(--max-width);
       max-height: unset;
-      padding: var(--body-spacing);
     }
 
     .dialog[open] {
@@ -40,10 +39,6 @@ const styles = [
 
     .footer {
       justify-content: flex-end;
-    }
-
-    .close-button mid-icon {
-      font-size: 1.75rem;
     }
 
     @keyframes fade-out {
@@ -217,7 +212,7 @@ export class MinidModal extends styled(LitElement, styles) {
       <dialog
         part="base"
         id="dialog"
-        class="dialog fds-modal"
+        class="dialog fds-modal m-auto"
         @cancel=${this.handleDialogCancel}
         @click=${this.handleBackdropClick}
       >
@@ -228,9 +223,9 @@ export class MinidModal extends styled(LitElement, styles) {
           <button
             autofocus
             @click="${() => this.requestClose('close-button')}"
-            class="close-button fds-btn fds-focus fds-btn--md fds-btn--tertiary fds-btn--second fds-btn--icon-only fds-modal__header__button"
+            class="fds-btn fds-focus fds-btn--md fds-btn--tertiary fds-btn--second fds-btn--icon-only fds-modal__header__button"
           >
-            <mid-icon name="xmark"></mid-icon>
+            <mid-icon class="text-[1.75rem]" name="xmark"></mid-icon>
           </button>
         </header>
         <article part="body" class="fds-modal__content modal-content">

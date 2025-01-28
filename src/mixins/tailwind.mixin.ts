@@ -1,10 +1,7 @@
-import { CSSResultArray, LitElement, unsafeCSS } from 'lit';
+import { CSSResultArray, LitElement } from 'lit';
 import tailwindStyles from '../styles/tailwind.css?inline';
 import dsStyles from '@digdir/designsystemet-css?inline';
 import { Constructor } from '../types/mixin-constructor';
-
-export const tailwindCssStyles = unsafeCSS(tailwindStyles);
-export const dsCssStyles = unsafeCSS(dsStyles);
 
 export const styled = <T extends Constructor<LitElement>>(
   superClass: T,
@@ -14,16 +11,5 @@ export const styled = <T extends Constructor<LitElement>>(
     /**
      * @ignore
      */
-    static styles = [
-      tailwindCssStyles,
-      dsCssStyles,
-      elementCss,
-    ] satisfies CSSResultArray;
+    static styles = [tailwindStyles, dsStyles, elementCss];
   };
-
-export class MinidElement extends LitElement {
-  static override styles = [
-    tailwindCssStyles,
-    dsCssStyles,
-  ] satisfies CSSResultArray;
-}

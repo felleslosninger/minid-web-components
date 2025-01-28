@@ -2,10 +2,13 @@ import { defineConfig } from 'vite';
 import { hmrPlugin, presets } from 'vite-plugin-web-components-hmr';
 import { resolve } from 'path';
 import dts from 'vite-plugin-dts';
-import tailwindcss from 'tailwindcss';
+// @ts-expect-error cannot find type definition for some reason
+import tailwindcss from '@tailwindcss/vite';
 import { externalizeDeps } from 'vite-plugin-externalize-deps';
 import { glob } from 'glob';
+import postcssLit from 'rollup-plugin-postcss-lit';
 
+// eslint-disable-next-line no-empty-pattern
 export default defineConfig(({}) => {
   return {
     build: {
@@ -17,9 +20,10 @@ export default defineConfig(({}) => {
       sourcemap: true,
       emptyOutDir: true,
       lib: {
-        entry: glob.sync(
-          resolve(__dirname, 'src/{**/*.component.ts,index.ts}')
-        ),
+        entry: glob.sync([
+          resolve(__dirname, 'src/{**/*.component.ts,index.ts}'),
+          resolve(__dirname, 'src/styles/designsystemet-tailwind.css'),
+        ]),
         name: 'MinID-Elements',
         formats: ['es'],
         fileName: (_format, entryName) => `${entryName}.js`,
@@ -41,12 +45,9 @@ export default defineConfig(({}) => {
         include: ['./src/**/*.ts'],
         presets: [presets.lit],
       }),
+      postcssLit(),
+      tailwindcss(),
     ],
-    css: {
-      postcss: {
-        plugins: [tailwindcss],
-      },
-    },
     resolve: {
       alias: {
         src: '/src',

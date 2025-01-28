@@ -59,7 +59,7 @@ export class MinidCodeInput2 extends styled(LitElement, styles) {
     return html`
       <input
         id=${'code-input-' + index}
-        class="bg-background-neutral-subtle"
+        class="bg-neutral-subtle"
         min="0"
         max="9"
         size="1"
