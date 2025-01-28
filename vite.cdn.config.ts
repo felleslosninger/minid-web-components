@@ -1,12 +1,13 @@
 import { defineConfig } from 'vite';
 import { resolve } from 'path';
-import tailwindcss from 'tailwindcss';
-import { glob } from "glob"
+import { glob } from 'glob';
+import tailwindcss from '@tailwindcss/vite';
+import postcssLit from 'rollup-plugin-postcss-lit';
 //import * as path from 'node:path';
 
+// eslint-disable-next-line no-empty-pattern
 export default defineConfig(({}) => {
   return {
-
     build: {
       minify: 'esbuild',
       cssCodeSplit: true,
@@ -18,12 +19,15 @@ export default defineConfig(({}) => {
       outDir: 'dist-cdn',
 
       lib: {
-        entry: glob.sync(resolve(__dirname, 'src/{**/\*.component.ts,index.ts}')),
+        entry: glob.sync([
+          resolve(__dirname, 'src/{**/*.component.ts,index.ts}'),
+          resolve(__dirname, 'src/styles/designsystemet-tailwind.css'),
+        ]),
         name: 'MinID-Elements',
         formats: ['es'],
-        fileName: (_format, entryName) => `${entryName.replace(/\.component$/, '')}.js`,
+        fileName: (_format, entryName) =>
+          `${entryName.replace(/\.component$/, '')}.js`,
       },
-
     },
 
     rollupOptions: {
@@ -32,14 +36,8 @@ export default defineConfig(({}) => {
       },
     },
 
+    plugins: [tailwindcss(), postcssLit()],
 
-    plugins: [
-    ],
-    css: {
-      postcss: {
-        plugins: [tailwindcss],
-      },
-    },
     resolve: {
       alias: {
         src: '/src',

@@ -2,10 +2,10 @@ import { defineConfig } from 'vite';
 import { hmrPlugin, presets } from 'vite-plugin-web-components-hmr';
 import { resolve } from 'path';
 import dts from 'vite-plugin-dts';
-// @ts-expect-error cannot find type definition for some reason
-import tailwindcss from '@tailwindcss/vite';
 import { externalizeDeps } from 'vite-plugin-externalize-deps';
 import { glob } from 'glob';
+// @ts-expect-error cannot find type definition for some reason
+import tailwindcss from '@tailwindcss/vite';
 import postcssLit from 'rollup-plugin-postcss-lit';
 
 // eslint-disable-next-line no-empty-pattern
