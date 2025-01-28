@@ -2,7 +2,7 @@ import { defineConfig } from 'vite';
 import { hmrPlugin, presets } from 'vite-plugin-web-components-hmr';
 import { resolve } from 'path';
 import dts from 'vite-plugin-dts';
-// @ts-expect-error lolwhat
+// @ts-expect-error cannot find type definition for some reason
 import tailwindcss from '@tailwindcss/vite';
 import { externalizeDeps } from 'vite-plugin-externalize-deps';
 import { glob } from 'glob';
@@ -20,12 +20,10 @@ export default defineConfig(({}) => {
       sourcemap: true,
       emptyOutDir: true,
       lib: {
-        entry: glob.sync(
-          resolve(
-            __dirname,
-            'src/{**/*.component.ts,index.ts,src/styles/ds-tailwind.theme.css}'
-          )
-        ),
+        entry: glob.sync([
+          resolve(__dirname, 'src/{**/*.component.ts,index.ts}'),
+          resolve(__dirname, 'src/styles/designsystemet-tailwind.css'),
+        ]),
         name: 'MinID-Elements',
         formats: ['es'],
         fileName: (_format, entryName) => `${entryName}.js`,

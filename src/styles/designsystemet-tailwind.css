@@ -190,6 +190,8 @@
   /******************************
     * Color                       *
     ******************************/
+  --color-*: initial;
+  --color-white: var(--ds-global-white);
   --color-blue-1: var(--ds-global-blue-1);
   --color-blue-2: var(--ds-global-blue-2);
   --color-blue-3: var(--ds-global-blue-3);

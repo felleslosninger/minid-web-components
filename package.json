@@ -87,6 +87,9 @@
     "./code-input": {
       "import": "./dist/code-input.component.js",
       "types": "./dist/code-input.component.d.ts"
+    },
+    "./designsystemet-tailwind": {
+      "import": "./dist/designsystemet-tailwind.css"
     }
   },
   "repository": {
