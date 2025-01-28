@@ -31,7 +31,6 @@ export const Main: Story = {
 
   render: ({ href, label, inverted, target }: LinkProps) => html`
     <mid-link
-      class="text-body-md"
       href=${ifDefined(href)}
       target=${ifDefined(target)}
       ?inverted=${inverted}

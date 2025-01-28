@@ -124,7 +124,7 @@ export class MinidRadio extends styled(LitElement, styles) {
     this.setAttribute('role', 'presentation');
     this.setAttribute('aria-disabled', this.disabled ? 'true' : 'false');
 
-    this.classList.add('rounded-sm');
+    this.classList.add('rounded');
   }
 
   private handleBlur() {

@@ -303,7 +303,7 @@ export class MinidMenu extends styled(LitElement, styles) {
               <input
                 @input=${this.handleFilterItems}
                 @keydown=${this.handleKeyDown}
-                class="filter-input h-8 w-full rounded-sm px-2"
+                class="filter-input h-8 w-full rounded px-2"
                 type="search"
               />
             </div>`}
