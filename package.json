@@ -1,6 +1,6 @@
 {
   "name": "@felleslosninger/minid-elements",
-  "version": "0.0.72",
+  "version": "0.0.73",
   "type": "module",
   "module": "./dist/index.js",
   "main": "./dist/index.js",
