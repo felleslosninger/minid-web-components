@@ -403,45 +403,47 @@
   --color-brand3-base: var(--ds-color-brand3-base-default);
   --color-brand3-base-hover: var(--ds-color-brand3-base-hover);
   --color-brand3-base-contrast: var(--ds-color-brand3-base-contrast-default);
-
   --color-brand3-base-contrast-subtle: var(
     --ds-color-brand3-base-contrast-subtle
   );
+
   --color-danger-surface-tinted: var(--ds-color-danger-surface-tinted);
   --color-danger-surface-hover: var(--ds-color-danger-surface-hover);
   --color-danger-surface-active: var(--ds-color-danger-surface-active);
   --color-danger-base: var(--ds-color-danger-base-default);
   --color-danger-base-hover: var(--ds-color-danger-base-hover);
   --color-danger-base-active: var(--ds-color-danger-base-active);
-  --color-danger-base-contrast: var(--ds-color-danger-contrast-default)
-    --color-danger-base-contrast-subtle: var(--ds-color-danger-contrast-subtle)
-    --color-info-surface-tinted: var(--ds-color-info-surface-tinted);
+  --color-danger-base-contrast: var(--ds-color-danger-contrast-default);
+  --color-danger-base-contrast-subtle: var(--ds-color-danger-contrast-subtle);
+
+  --color-info-surface-tinted: var(--ds-color-info-surface-tinted);
   --color-info-surface-hover: var(--ds-color-info-surface-hover);
   --color-info-surface-active: var(--ds-color-info-surface-active);
   --color-info-base: var(--ds-color-info-base-default);
   --color-info-base-hover: var(--ds-color-info-base-hover);
   --color-info-base-active: var(--ds-color-info-base-active);
-  --color-info-base-contrast: var(--ds-color-info-contrast-default)
-    --color-info-base-contrast-subtle: var(--ds-color-info-contrast-subtle)
-    --color-success-surface-tinted: var(--ds-color-success-surface-tinted);
+  --color-info-base-contrast: var(--ds-color-info-contrast-default);
+  --color-info-base-contrast-subtle: var(--ds-color-info-contrast-subtle);
+
+  --color-success-surface-tinted: var(--ds-color-success-surface-tinted);
   --color-success-surface-hover: var(--ds-color-success-surface-hover);
   --color-success-surface-active: var(--ds-color-success-surface-active);
   --color-success-base: var(--ds-color-success-base-default);
   --color-success-base-hover: var(--ds-color-success-base-hover);
   --color-success-base-active: var(--ds-color-success-base-active);
-  --color-success-base-contrast: var(--ds-color-success-contrast-default)
-    --color-success-base-contrast-subtle:
-    var(--ds-color-success-contrast-subtle) --color-warning-surface-tinted:
-    var(--ds-color-warning-surface-tinted);
+  --color-success-base-contrast: var(--ds-color-success-contrast-default);
+  --color-success-base-contrast-subtle: var(--ds-color-success-contrast-subtle);
+
+  --color-warning-surface-tinted: var(--ds-color-warning-surface-tinted);
   --color-warning-surface-hover: var(--ds-color-warning-surface-hover);
   --color-warning-surface-active: var(--ds-color-warning-surface-active);
   --color-warning-base: var(--ds-color-warning-base-default);
   --color-warning-base-hover: var(--ds-color-warning-base-hover);
   --color-warning-base-active: var(--ds-color-warning-base-active);
-  --color-warning-base-contrast: var(--ds-color-warning-contrast-default)
-    --color-warning-base-contrast-subtle:
-    var(--ds-color-warning-contrast-subtle) --color-focus-inner:
-    var(--ds-color-focus-inner);
+  --color-warning-base-contrast: var(--ds-color-warning-contrast-default);
+  --color-warning-base-contrast-subtle: var(--ds-color-warning-contrast-subtle);
+
+  --color-focus-inner: var(--ds-color-focus-inner);
   --color-focus-outer: var(--ds-color-focus-outer);
 
   /* background color */
