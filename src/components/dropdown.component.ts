@@ -89,8 +89,6 @@ export class MinidDropdown extends styled(LitElement, styles) {
    * @ignore
    */
   #handleClickOutside = (event: Event) => {
-    console.log(this, event.composedPath());
-
     if (!event.composedPath().includes(this)) {
       this.#toggleDropdownOpen(event, false);
     }
