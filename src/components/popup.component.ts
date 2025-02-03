@@ -756,9 +756,24 @@ export class MinidPopup extends styled(LitElement, styles) {
     }
   };
 
+  #handleAnchorClick() {
+    // to make sure clicking another element's anchor closes current element's dropdown menu
+    this.dispatchEvent(
+      new CustomEvent('mid-anchor-click', {
+        bubbles: true,
+        composed: true,
+        detail: { id: this.id },
+      })
+    );
+  }
+
   render() {
     return html`
-      <slot name="anchor" @slotchange=${this.handleAnchorChange}></slot>
+      <slot
+        name="anchor"
+        @slotchange=${this.handleAnchorChange}
+        @click=${this.#handleAnchorClick}
+      ></slot>
 
       <span
         part="hover-bridge"

@@ -1,8 +1,10 @@
 import { css, html, LitElement } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { customElement, property, state } from 'lit/decorators.js';
 import 'components/popup.component';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { styled } from 'mixins/tailwind.mixin.ts';
+
+let nextUniqueID = 0;
 
 const styles = [
   css`
@@ -30,6 +32,9 @@ const styles = [
  */
 @customElement('mid-dropdown')
 export class MinidDropdown extends styled(LitElement, styles) {
+  @state()
+  popupId = `mid-dropdown-${nextUniqueID++}`;
+
   @property({ type: Boolean, reflect: true })
   open = false;
 
@@ -100,15 +105,31 @@ export class MinidDropdown extends styled(LitElement, styles) {
 
     if (this.open) {
       addEventListener('click', this.#handleClickOutside);
+      addEventListener(
+        'mid-anchor-click',
+        this.handleAnchorClick as EventListener
+      );
     } else {
+      this.blur();
+      removeEventListener(
+        'mid-anchor-click',
+        this.handleAnchorClick as EventListener
+      );
       removeEventListener('click', this.#handleClickOutside);
     }
   }
 
+  handleAnchorClick = (event: CustomEvent<{ id: string }>) => {
+    // to make sure clicking another element's anchor closes current element's dropdown menu
+    if (event.detail.id !== this.popupId) {
+      this.#toggleDropdownOpen(event, false);
+    }
+  };
+
   override render() {
     return html`
       <mid-popup
-        id="dropdown"
+        id="${this.popupId}"
         class="popup"
         distance=${this.distance}
         placement="${this.placement}"
@@ -126,7 +147,7 @@ export class MinidDropdown extends styled(LitElement, styles) {
         <slot slot="anchor" name="trigger"> </slot>
         <div
           aria-hidden=${this.open ? 'false' : 'true'}
-          aria-labelledby="dropdown"
+          aria-labelledby="${this.popupId}"
         >
           <slot part="panel"></slot>
         </div>
