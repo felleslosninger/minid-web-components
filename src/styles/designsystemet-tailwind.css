@@ -191,7 +191,8 @@
     * Color                       *
     ******************************/
   --color-*: initial;
-  --color-white: var(--ds-global-white);
+  --color-white: #fff;
+  --color-black: #000;
   --color-blue-1: var(--ds-global-blue-1);
   --color-blue-2: var(--ds-global-blue-2);
   --color-blue-3: var(--ds-global-blue-3);
@@ -288,19 +289,6 @@
   --color-yellow-contrast-1: var(--ds-global-yellow-contrast-1);
   --color-yellow-contrast-2: var(--ds-global-yellow-contrast-2);
 
-  --color-accent-1: var(--ds-color-accent-1);
-  --color-accent-2: var(--ds-color-accent-2);
-  --color-accent-3: var(--ds-color-accent-3);
-  --color-accent-4: var(--ds-color-accent-4);
-  --color-accent-5: var(--ds-color-accent-5);
-  --color-accent-6: var(--ds-color-accent-6);
-  --color-accent-7: var(--ds-color-accent-7);
-  --color-accent-8: var(--ds-color-accent-8);
-  --color-accent-9: var(--ds-color-accent-9);
-  --color-accent-10: var(--ds-color-accent-10);
-  --color-accent-11: var(--ds-color-accent-11);
-  --color-accent-12: var(--ds-color-accent-12);
-  --color-accent-13: var(--ds-color-accent-13);
   --color-accent-surface-tinted: var(--ds-color-accent-surface-tinted);
   --color-accent-surface-hover: var(--ds-color-accent-surface-hover);
   --color-accent-surface-active: var(--ds-color-accent-surface-active);
@@ -312,19 +300,6 @@
     --ds-color-accent-base-contrast-subtle
   );
 
-  --color-neutral-1: var(--ds-color-neutral-1);
-  --color-neutral-2: var(--ds-color-neutral-2);
-  --color-neutral-3: var(--ds-color-neutral-3);
-  --color-neutral-4: var(--ds-color-neutral-4);
-  --color-neutral-5: var(--ds-color-neutral-5);
-  --color-neutral-6: var(--ds-color-neutral-6);
-  --color-neutral-7: var(--ds-color-neutral-7);
-  --color-neutral-8: var(--ds-color-neutral-8);
-  --color-neutral-9: var(--ds-color-neutral-9);
-  --color-neutral-10: var(--ds-color-neutral-10);
-  --color-neutral-11: var(--ds-color-neutral-11);
-  --color-neutral-12: var(--ds-color-neutral-12);
-  --color-neutral-13: var(--ds-color-neutral-13);
   --color-neutral-surface-tinted: var(--ds-color-neutral-surface-tinted);
   --color-neutral-surface-hover: var(--ds-color-neutral-surface-hover);
   --color-neutral-surface-active: var(--ds-color-neutral-surface-active);
@@ -336,19 +311,6 @@
     --ds-color-neutral-base-contrast-subtle
   );
 
-  --color-brand1-1: var(--ds-color-brand1-1);
-  --color-brand1-2: var(--ds-color-brand1-2);
-  --color-brand1-3: var(--ds-color-brand1-3);
-  --color-brand1-4: var(--ds-color-brand1-4);
-  --color-brand1-5: var(--ds-color-brand1-5);
-  --color-brand1-6: var(--ds-color-brand1-6);
-  --color-brand1-7: var(--ds-color-brand1-7);
-  --color-brand1-8: var(--ds-color-brand1-8);
-  --color-brand1-9: var(--ds-color-brand1-9);
-  --color-brand1-10: var(--ds-color-brand1-10);
-  --color-brand1-11: var(--ds-color-brand1-11);
-  --color-brand1-12: var(--ds-color-brand1-12);
-  --color-brand1-13: var(--ds-color-brand1-13);
   --color-brand1-surface-tinted: var(--ds-color-brand1-surface-tinted);
   --color-brand1-surface-hover: var(--ds-color-brand1-surface-hover);
   --color-brand1-surface-active: var(--ds-color-brand1-surface-active);
@@ -360,19 +322,6 @@
     --ds-color-brand1-base-contrast-subtle
   );
 
-  --color-brand2-1: var(--ds-color-brand2-1);
-  --color-brand2-2: var(--ds-color-brand2-2);
-  --color-brand2-3: var(--ds-color-brand2-3);
-  --color-brand2-4: var(--ds-color-brand2-4);
-  --color-brand2-5: var(--ds-color-brand2-5);
-  --color-brand2-6: var(--ds-color-brand2-6);
-  --color-brand2-7: var(--ds-color-brand2-7);
-  --color-brand2-8: var(--ds-color-brand2-8);
-  --color-brand2-9: var(--ds-color-brand2-9);
-  --color-brand2-10: var(--ds-color-brand2-10);
-  --color-brand2-11: var(--ds-color-brand2-11);
-  --color-brand2-12: var(--ds-color-brand2-12);
-  --color-brand2-13: var(--ds-color-brand2-13);
   --color-brand2-surface-tinted: var(--ds-color-brand2-surface-tinted);
   --color-brand2-surface-hover: var(--ds-color-brand2-surface-hover);
   --color-brand2-surface-active: var(--ds-color-brand2-surface-active);
@@ -384,19 +333,6 @@
     --ds-color-brand2-base-contrast-subtle
   );
 
-  --color-brand3-1: var(--ds-color-brand3-1);
-  --color-brand3-2: var(--ds-color-brand3-2);
-  --color-brand3-3: var(--ds-color-brand3-3);
-  --color-brand3-4: var(--ds-color-brand3-4);
-  --color-brand3-5: var(--ds-color-brand3-5);
-  --color-brand3-6: var(--ds-color-brand3-6);
-  --color-brand3-7: var(--ds-color-brand3-7);
-  --color-brand3-8: var(--ds-color-brand3-8);
-  --color-brand3-9: var(--ds-color-brand3-9);
-  --color-brand3-10: var(--ds-color-brand3-10);
-  --color-brand3-11: var(--ds-color-brand3-11);
-  --color-brand3-12: var(--ds-color-brand3-12);
-  --color-brand3-13: var(--ds-color-brand3-13);
   --color-brand3-surface-tinted: var(--ds-color-brand3-surface-tinted);
   --color-brand3-surface-hover: var(--ds-color-brand3-surface-hover);
   --color-brand3-surface-active: var(--ds-color-brand3-surface-active);
@@ -413,8 +349,10 @@
   --color-danger-base: var(--ds-color-danger-base-default);
   --color-danger-base-hover: var(--ds-color-danger-base-hover);
   --color-danger-base-active: var(--ds-color-danger-base-active);
-  --color-danger-base-contrast: var(--ds-color-danger-contrast-default);
-  --color-danger-base-contrast-subtle: var(--ds-color-danger-contrast-subtle);
+  --color-danger-base-contrast: var(--ds-color-danger-base-contrast-default);
+  --color-danger-base-contrast-subtle: var(
+    --ds-color-danger-base-contrast-subtle
+  );
 
   --color-info-surface-tinted: var(--ds-color-info-surface-tinted);
   --color-info-surface-hover: var(--ds-color-info-surface-hover);
@@ -422,8 +360,8 @@
   --color-info-base: var(--ds-color-info-base-default);
   --color-info-base-hover: var(--ds-color-info-base-hover);
   --color-info-base-active: var(--ds-color-info-base-active);
-  --color-info-base-contrast: var(--ds-color-info-contrast-default);
-  --color-info-base-contrast-subtle: var(--ds-color-info-contrast-subtle);
+  --color-info-base-contrast: var(--ds-color-info-base-contrast-default);
+  --color-info-base-contrast-subtle: var(--ds-color-info-base-contrast-subtle);
 
   --color-success-surface-tinted: var(--ds-color-success-surface-tinted);
   --color-success-surface-hover: var(--ds-color-success-surface-hover);
@@ -431,8 +369,10 @@
   --color-success-base: var(--ds-color-success-base-default);
   --color-success-base-hover: var(--ds-color-success-base-hover);
   --color-success-base-active: var(--ds-color-success-base-active);
-  --color-success-base-contrast: var(--ds-color-success-contrast-default);
-  --color-success-base-contrast-subtle: var(--ds-color-success-contrast-subtle);
+  --color-success-base-contrast: var(--ds-color-success-base-contrast-default);
+  --color-success-base-contrast-subtle: var(
+    --ds-color-success-base-contrast-subtle
+  );
 
   --color-warning-surface-tinted: var(--ds-color-warning-surface-tinted);
   --color-warning-surface-hover: var(--ds-color-warning-surface-hover);
@@ -440,8 +380,10 @@
   --color-warning-base: var(--ds-color-warning-base-default);
   --color-warning-base-hover: var(--ds-color-warning-base-hover);
   --color-warning-base-active: var(--ds-color-warning-base-active);
-  --color-warning-base-contrast: var(--ds-color-warning-contrast-default);
-  --color-warning-base-contrast-subtle: var(--ds-color-warning-contrast-subtle);
+  --color-warning-base-contrast: var(--ds-color-warning-base-contrast-default);
+  --color-warning-base-contrast-subtle: var(
+    --ds-color-warning-base-contrast-subtle
+  );
 
   --color-focus-inner: var(--ds-color-focus-inner);
   --color-focus-outer: var(--ds-color-focus-outer);
