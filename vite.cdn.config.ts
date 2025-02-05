@@ -1,7 +1,6 @@
 import { defineConfig } from 'vite';
 import { resolve } from 'path';
 import { glob } from 'glob';
-import tailwindcss from '@tailwindcss/vite';
 import postcssLit from 'rollup-plugin-postcss-lit';
 //import * as path from 'node:path';
 
@@ -36,7 +35,7 @@ export default defineConfig(({}) => {
       },
     },
 
-    plugins: [tailwindcss(), postcssLit()],
+    plugins: [postcssLit()],
 
     resolve: {
       alias: {
