@@ -59,17 +59,29 @@ const styles = [
   `,
 ];
 
+let nextUniqueId = 0;
+
 @customElement('mid-code-input')
 export class MinidCodeInput extends ConstraintsValidationMixin(
   styled(LitElement, styles)
 ) {
-  caretColor = '#EEE';
-  caretHighlightColor = '#bee3f5';
+  caretColor = 'var(--color-neutral-surface-tinted)';
+  caretHighlightColor = 'var(--color-accent-surface-active)';
+  inputId = `mid-code-input-${nextUniqueId++}`;
 
   public inputRef: Ref<HTMLInputElement> = createRef();
 
   @property({ type: String, reflect: true })
   value = '';
+
+  @property()
+  label = '';
+
+  /**
+   * Visually hides `label` (still available for screen readers)
+   */
+  @property({ type: Boolean })
+  hidelabel = false;
 
   @property({ type: Boolean })
   required = false;
@@ -278,8 +290,18 @@ export class MinidCodeInput extends ConstraintsValidationMixin(
   override render() {
     return html`
       <div class="flex flex-col">
+        <label
+          class="${classMap({
+            'sr-only': this.hidelabel,
+            'font-medium': true,
+            'mb-2': !!this.label,
+          })}"
+          for="${this.inputId}"
+          >${this.label}</label
+        >
         <input
           ${ref(this.inputRef)}
+          id=${this.inputId}
           class="${classMap({
             'w-full': true,
             error: this._forcedErrorMessage,
@@ -308,8 +330,8 @@ export class MinidCodeInput extends ConstraintsValidationMixin(
           }}"
           @keydown="${this.handleKeydown}"
           @click="${this.onClick}"
-          ?disabled="${live(this.disabled)}"
-          ?required="${live(this.required)}"
+          ?disabled="${this.disabled}"
+          ?required="${this.required}"
           minlength=${this.length}
           maxlength="${this.length}"
         />

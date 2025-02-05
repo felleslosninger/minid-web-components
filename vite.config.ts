@@ -4,8 +4,6 @@ import { resolve } from 'path';
 import dts from 'vite-plugin-dts';
 import { externalizeDeps } from 'vite-plugin-externalize-deps';
 import { glob } from 'glob';
-// @ts-expect-error cannot find type definition for some reason
-import tailwindcss from '@tailwindcss/vite';
 import postcssLit from 'rollup-plugin-postcss-lit';
 
 // eslint-disable-next-line no-empty-pattern
@@ -46,7 +44,6 @@ export default defineConfig(({}) => {
         presets: [presets.lit],
       }),
       postcssLit(),
-      tailwindcss(),
     ],
     resolve: {
       alias: {
