@@ -1,14 +1,10 @@
 import { customElement, property, state } from 'lit/decorators.js';
 import { css, HTMLTemplateResult, LitElement } from 'lit';
-import { styled } from 'src/mixins/tailwind.mixin';
-import { watch } from 'src/internal/watch.ts';
-import {
-  getIconLibrary,
-  unwatchIcon,
-  watchIcon,
-} from 'src/components/icon/icon-library.ts';
+import { styled } from '../../mixins/tailwind.mixin';
+import { watch } from '../../internal/watch.ts';
 import { isTemplateResult } from 'lit/directive-helpers.js';
 import { MidIconName } from '../../types/icon-name';
+import { systemIcons } from './system.icon-library.ts';
 
 const styles = [
   css`
@@ -37,11 +33,6 @@ type SVGResult =
 
 let parser: DOMParser;
 const iconCache = new Map<string, Promise<SVGResult>>();
-
-interface IconSource {
-  url?: string;
-  fromLibrary: boolean;
-}
 
 /**
  *
@@ -85,7 +76,7 @@ export class MinidIcon extends styled(LitElement, styles) {
    *  @default nav-aksel
    */
   @property({ reflect: true })
-  library = 'nav-aksel';
+  library: 'system' | 'country' | 'nav-aksel' = 'nav-aksel';
 
   /**
    * @ignore
@@ -141,34 +132,9 @@ export class MinidIcon extends styled(LitElement, styles) {
     }
   }
 
-  connectedCallback() {
-    super.connectedCallback();
-    watchIcon(this);
-  }
-
   firstUpdated() {
     this.#hasRendered = true;
     this.setIcon();
-  }
-
-  disconnectedCallback() {
-    super.disconnectedCallback();
-    unwatchIcon(this);
-  }
-
-  private getIconSource(): IconSource {
-    const library = getIconLibrary(this.library);
-    if (this.name && library) {
-      return {
-        url: library.resolver(this.name),
-        fromLibrary: true,
-      };
-    }
-
-    return {
-      url: this.src,
-      fromLibrary: false,
-    };
   }
 
   @watch('alt')
@@ -186,19 +152,37 @@ export class MinidIcon extends styled(LitElement, styles) {
 
   @watch(['name', 'src', 'library'])
   async setIcon() {
-    const { url, fromLibrary } = this.getIconSource();
-    const library = fromLibrary ? getIconLibrary(this.library) : undefined;
-
-    if (!url) {
+    if (!this.library && !this.name && !this.src) {
       this.svg = null;
       return;
     }
 
-    let iconResolver = iconCache.get(url);
+    let iconResolver = iconCache.get(`${this.library}-${this.name}`);
+    const iconKey = `${this.library}-${this.name}`;
 
     if (!iconResolver) {
-      iconResolver = this.resolveIcon(url);
-      iconCache.set(url, iconResolver);
+      let svgUrl: string;
+
+      if (this.src) {
+        iconResolver = this.resolveIcon(this.src);
+        iconCache.set(iconKey, iconResolver);
+      } else if (this.library === 'nav-aksel') {
+        svgUrl = await import(`../../assets/icons/${this.name}.svg`).then(
+          (result) => result.default
+        );
+        iconResolver = this.resolveIcon(svgUrl);
+        iconCache.set(iconKey, iconResolver);
+      } else if (this.library === 'country') {
+        svgUrl = await import(`../../assets/flags/${this.name}.svg`).then(
+          (result) => result.default
+        );
+        iconResolver = this.resolveIcon(svgUrl);
+        iconCache.set(iconKey, iconResolver);
+      } else if (this.library === 'system') {
+        svgUrl = `data:image/svg+xml,${encodeURIComponent(systemIcons[this.name as keyof typeof systemIcons])}`;
+        iconResolver = this.resolveIcon(svgUrl);
+        iconCache.set(iconKey, iconResolver);
+      }
     }
 
     // If we haven't rendered yet, exit early. This avoids unnecessary work due to watching multiple props.
@@ -208,29 +192,21 @@ export class MinidIcon extends styled(LitElement, styles) {
 
     const svg = await iconResolver;
 
-    if (svg === RETRYABLE_ERROR) {
-      iconCache.delete(url);
+    if (!svg) {
+      return;
     }
 
-    if (url !== this.getIconSource().url) {
+    if (svg === RETRYABLE_ERROR) {
+      iconCache.delete(iconKey);
+    }
+
+    if (iconKey !== `${this.library}-${this.name}`) {
       // If the url has changed while fetching the icon, ignore this request
       return;
     }
 
     if (isTemplateResult(svg)) {
       this.svg = svg;
-
-      if (library) {
-        // Using a templateResult requires the SVG to be written to the DOM first before we can grab the SVGElement
-        // to be passed to the library's mutator function.
-        await this.updateComplete;
-
-        const shadowSVG = this.shadowRoot!.querySelector("[part='svg']")!;
-
-        if (typeof library.mutator === 'function' && shadowSVG) {
-          library.mutator(shadowSVG as SVGElement);
-        }
-      }
 
       return;
     }
@@ -245,7 +221,6 @@ export class MinidIcon extends styled(LitElement, styles) {
         break;
       default:
         this.svg = svg.cloneNode(true) as SVGElement;
-        library?.mutator?.(this.svg);
         this.dispatchEvent(
           new Event('mid-load', { bubbles: true, composed: true })
         );

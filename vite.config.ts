@@ -13,7 +13,6 @@ export default defineConfig(({}) => {
       minify: false,
       cssCodeSplit: true,
       cssMinify: false,
-
       target: 'es2021',
       sourcemap: true,
       emptyOutDir: true,
