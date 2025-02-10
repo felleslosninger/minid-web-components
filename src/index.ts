@@ -1,9 +1,5 @@
 import './styles/global.css';
 
-export {
-  registerIconLibrary,
-  unregisterIconLibrary,
-} from './components/icon/icon-library.ts';
 export { countryLabelsNO } from './components/utilities/countries.ts';
 
 import { CountdownComponent } from './components/countdown.component.ts';
