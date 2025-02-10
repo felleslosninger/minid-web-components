@@ -49,6 +49,10 @@
       "import": "./dist/label.component.js",
       "types": "./dist/label.component.d.ts"
     },
+    "./link": {
+      "import": "./dist/link.component.js",
+      "types": "./dist/link.component.d.ts"
+    },
     "./menu": {
       "import": "./dist/menu.component.js",
       "types": "./dist/menu.component.d.ts"
@@ -56,6 +60,10 @@
     "./menu-item": {
       "import": "./dist/menu-item.component.js",
       "types": "./dist/menu-item.component.d.ts"
+    },
+    "./modal": {
+      "import": "./dist/modal.component.js",
+      "types": "./dist/modal.component.d.ts"
     },
     "./paragraph": {
       "import": "./dist/paragraph.component.js",

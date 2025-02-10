@@ -2,8 +2,8 @@ import { css, html, LitElement } from 'lit';
 import { customElement, property, query } from 'lit/decorators.js';
 import { styled } from 'mixins/tailwind.mixin.ts';
 import { ifDefined } from 'lit/directives/if-defined.js';
-import './button.component';
-import { MinidButton } from './button.component';
+import './button/button.component';
+import { MinidButton } from './button/button.component';
 import { classMap } from 'lit/directives/class-map.js';
 
 const style = [

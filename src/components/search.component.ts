@@ -3,7 +3,7 @@ import { customElement, property, query } from 'lit/decorators.js';
 import { styled } from 'src/mixins/tailwind.mixin';
 import './textfield.component';
 import './icon/icon.component';
-import './button.component';
+import './button/button.component.ts';
 import { live } from 'lit/directives/live.js';
 import { MinidTextfield } from './textfield.component.ts';
 import { debounce } from 'src/internal/debounce.ts';

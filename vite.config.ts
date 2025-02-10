@@ -18,7 +18,7 @@ export default defineConfig(({}) => {
       emptyOutDir: true,
       lib: {
         entry: glob.sync([
-          resolve(__dirname, 'src/{**/*.component.ts,index.ts}'),
+          resolve(__dirname, 'src/components/{**/*.ts}'),
           resolve(__dirname, 'src/styles/designsystemet-tailwind.css'),
         ]),
         name: 'MinID-Elements',

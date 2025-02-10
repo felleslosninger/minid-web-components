@@ -2,7 +2,7 @@ import { css, html, LitElement } from 'lit';
 import { customElement, property, query, state } from 'lit/decorators.js';
 import { styled } from '../mixins/tailwind.mixin.js';
 import './icon/icon.component.js';
-import './button.component.js';
+import './button/button.component.js';
 import './popup.component.js';
 import { waitForEvent } from '../internal/event.js';
 import { MinidPopup } from './popup.component.js';

@@ -8,8 +8,7 @@ export { CountdownComponent };
 import { MinidAlert } from './components/alert.component.ts';
 export { MinidAlert };
 
-import { MinidButton } from './components/button.component.ts';
-export { MinidButton };
+export { MinidButton } from './components/button/button.ts';
 
 import { MinidCheckbox } from './components/checkbox.component.ts';
 export { MinidCheckbox };
@@ -56,7 +55,7 @@ export { MinidPhoneInput };
 import { MinidPopup } from './components/popup.component.ts';
 export { MinidPopup };
 
-import { MinidQrCode } from './components/qr-code.componet.ts';
+import { MinidQrCode } from './components/qr-code.component.ts';
 export { MinidQrCode };
 
 import { MinidSearch } from './components/search.component.ts';
@@ -75,7 +74,6 @@ declare global {
   interface HTMLElementTagNameMap {
     'countdown-component': CountdownComponent;
     'mid-alert': MinidAlert;
-    'mid-button': MinidButton;
     'mid-checkbox': MinidCheckbox;
     'mid-code-input': MinidCodeInput;
     'mid-combobox': MinidCombobox;
