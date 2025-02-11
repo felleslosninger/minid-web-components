@@ -8,7 +8,7 @@ export { CountdownComponent };
 import { MinidAlert } from './components/alert.component.ts';
 export { MinidAlert };
 
-export { MinidButton } from './components/button/button.ts';
+export { MinidButton } from './components/button/index.ts';
 
 import { MinidCheckbox } from './components/checkbox.component.ts';
 export { MinidCheckbox };
@@ -61,38 +61,10 @@ export { MinidQrCode };
 import { MinidSearch } from './components/search.component.ts';
 export { MinidSearch };
 
-import { MinidSpinner } from './components/spinner.component.ts';
-export { MinidSpinner };
+export { MinidSpinner } from './components/spinner';
 
 import { MinidTextfield } from './components/textfield.component.ts';
 export { MinidTextfield };
 
 import { MinidTooltip } from './components/tooltip.component.ts';
 export { MinidTooltip };
-
-declare global {
-  interface HTMLElementTagNameMap {
-    'countdown-component': CountdownComponent;
-    'mid-alert': MinidAlert;
-    'mid-checkbox': MinidCheckbox;
-    'mid-code-input': MinidCodeInput;
-    'mid-combobox': MinidCombobox;
-    'mid-dropdown': MinidDropdown;
-    'mid-heading': MinidHeading;
-    'mid-helptext': MinidHelptext;
-    'mid-icon': MinidIcon;
-    'mid-label': MinidLabel;
-    'mid-link': MinidLink;
-    'mid-menu-item': MinidMenuItem;
-    'mid-menu': MinidMenu;
-    'mid-modal': MinidModal;
-    'mid-paragraph': MinidParagraph;
-    'mid-phone-input': MinidPhoneInput;
-    'mid-popup': MinidPopup;
-    'mid-qr-code': MinidQrCode;
-    'mid-search': MinidSearch;
-    'mid-spinner': MinidSpinner;
-    'mid-textfield': MinidTextfield;
-    'mid-tooltip': MinidTooltip;
-  }
-}

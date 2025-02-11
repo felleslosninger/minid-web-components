@@ -22,8 +22,8 @@
       "types": "./dist/alert.component.d.ts"
     },
     "./button": {
-      "import": "./dist/button.component.js",
-      "types": "./dist/button.component.d.ts"
+      "import": "./dist/components/button.js",
+      "types": "./dist/button.d.ts"
     },
     "./checkbox": {
       "import": "./dist/checkbox.component.js",
