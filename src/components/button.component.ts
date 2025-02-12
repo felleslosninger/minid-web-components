@@ -3,9 +3,15 @@ import { customElement, property, query } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { html, literal } from 'lit/static-html.js';
-import { styled } from '../../mixins/tailwind.mixin.ts';
-import { FormControllerMixin } from '../../mixins/form-controller.mixin.ts';
-import '../spinner';
+import { styled } from '../mixins/tailwind.mixin.ts';
+import { FormControllerMixin } from '../mixins/form-controller.mixin.ts';
+import './spinner.component.ts';
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'mid-button': MinidButton;
+  }
+}
 
 const styles = [
   css`
@@ -30,6 +36,9 @@ const styles = [
   `,
 ];
 
+/**
+ * A regular old button
+ */
 @customElement('mid-button')
 export class MinidButton extends FormControllerMixin(
   styled(LitElement, styles)

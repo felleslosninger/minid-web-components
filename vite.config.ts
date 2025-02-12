@@ -10,13 +10,13 @@ const generateEntries = () => {
   const entries = {};
 
   const componentFiles = glob.sync(
-    path.resolve(__dirname, 'src/components/**/index.ts')
+    path.resolve(__dirname, '**/*.component.ts')
   );
 
   componentFiles.forEach((file) => {
     const name = path
       .relative(path.resolve(__dirname, 'src/components'), file)
-      .replace(/\/index.ts$/, ''); // Get relative path and remove extension
+      .replace('.component.ts', ''); // Get relative path and remove extension
     entries[`components/${name}`] = file; // Create entry with nested paths
   });
 
@@ -25,7 +25,6 @@ const generateEntries = () => {
   );
 
   utilityFiles.forEach((file) => {
-    console.log(entries);
     const name = path
       .relative(path.resolve(__dirname, 'src/components/utilities'), file)
       .replace(/\.ts$/, ''); // Get relative path and remove extension
@@ -39,6 +38,34 @@ const generateEntries = () => {
       .replace(/\.ts$/, ''); // Get relative path and remove extension
     entries[`utilities/${name}`] = file; // Create entry with nested paths
   });
+
+  const iconFiles = glob.sync(
+    path.resolve(__dirname, 'src/assets/icons/*.svg')
+  );
+  iconFiles.forEach((file) => {
+    const name = path.relative(
+      path.resolve(__dirname, 'src/assets/icons'),
+      file
+    );
+
+    entries[`icons/${name}`] = file; // Create entry with nested paths
+  });
+
+  const flagFiles = glob.sync(
+    path.resolve(__dirname, 'src/assets/flags/*.svg')
+  );
+  flagFiles.forEach((file) => {
+    const name = path
+      .relative(path.resolve(__dirname, 'src/assets/flags'), file)
+      .replace('.svg', ''); // Get relative path and remove extension
+    entries[`flags/${name}`] = file; // Create entry with nested paths
+  });
+
+  entries['index'] = path.resolve(__dirname, 'src/index.ts');
+  entries['designsystemet-tailwind'] = path.resolve(
+    __dirname,
+    'src/styles/designsystemet-tailwind.css'
+  );
 
   return entries;
 };
@@ -63,36 +90,13 @@ export default defineConfig(({}) => {
     },
     rollupOptions: {
       external: ['^lit$'],
-      input: () => {
-        const entries = {};
-
-        const componentFiles = glob.sync(
-          path.resolve(__dirname, 'src/components/**')
-        );
-
-        componentFiles.forEach((file) => {
-          const name = path
-            .relative(path.resolve(__dirname, 'src/components'), file)
-            .replace(/\.ts$/, ''); // Get relative path and remove extension
-          entries[`components/${name}`] = file; // Create entry with nested paths
-        });
-        return entries;
-      },
-      output: {
-        entryFileNames: `assets/[name]-[hash].js`,
-        chunkFileNames: `assets/[name]-[hash].js`,
-        assetFileNames: `assets/[name]-[hash].[ext]`,
-        dir: 'dist',
-        format: 'es',
-        preserveModules: true,
-        globals: {
-          lit: 'Lit',
-        },
-      },
     },
     plugins: [
       externalizeDeps(),
-      dts({ rollupTypes: true }),
+      dts({
+        // rollupTypes: true,
+        exclude: glob.sync([path.resolve('src/assets/icons')]),
+      }),
       hmrPlugin({
         include: ['./src/**/*.ts'],
         presets: [presets.lit],

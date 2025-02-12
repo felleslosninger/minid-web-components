@@ -16,6 +16,12 @@ import {
 } from '../components/utilities/animation-registry.js';
 import { waitForEvent } from '../internal/event.js';
 
+declare global {
+  interface HTMLElementTagNameMap {
+    'mid-tooltip': MinidTooltip;
+  }
+}
+
 const styles = [
   css`
     :host {

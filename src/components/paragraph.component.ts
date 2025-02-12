@@ -3,6 +3,12 @@ import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { styled } from 'src/mixins/tailwind.mixin';
 
+declare global {
+  interface HTMLElementTagNameMap {
+    'mid-paragraph': MinidParagraph;
+  }
+}
+
 /**
  * A paragraph
  */

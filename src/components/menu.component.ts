@@ -5,6 +5,12 @@ import { styled } from '../mixins/tailwind.mixin.ts';
 import { MinidMenuItem } from './menu-item.component';
 import { scrollIntoView } from '../internal/scroll';
 
+declare global {
+  interface HTMLElementTagNameMap {
+    'mid-menu': MinidMenu;
+  }
+}
+
 const styles = [
   css`
     :host {

@@ -16,6 +16,12 @@ import {
 } from '../../src/mixins/validators';
 import { watch } from '../../src/internal/watch';
 
+declare global {
+  interface HTMLElementTagNameMap {
+    'mid-textfield': MinidTextfield;
+  }
+}
+
 const styles = [
   css`
     :host {

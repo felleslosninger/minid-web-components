@@ -5,6 +5,12 @@ import { live } from 'lit/directives/live.js';
 import { watch } from 'src/internal/watch';
 import { styled } from 'src/mixins/tailwind.mixin';
 
+declare global {
+  interface HTMLElementTagNameMap {
+    'mid-radio': MinidRadio;
+  }
+}
+
 const styles = [
   css`
     :host {

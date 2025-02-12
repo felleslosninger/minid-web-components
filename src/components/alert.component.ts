@@ -13,6 +13,12 @@ import { waitForEvent } from 'src/internal/event';
 import { animateTo, stopAnimations } from 'src/internal/animate';
 import { MidIconName } from 'src/types/icon-name';
 
+declare global {
+  interface HTMLElementTagNameMap {
+    'mid-alert': MinidAlert;
+  }
+}
+
 const toastStack = Object.assign(document.createElement('div'), {
   className: 'mid-toast-stack',
 });

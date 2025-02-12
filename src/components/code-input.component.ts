@@ -7,6 +7,12 @@ import { webOtpApiClose, webOtpApiInit } from './utilities/web-otp-api';
 import { styled } from '../mixins/tailwind.mixin';
 import { ConstraintsValidationMixin } from '../mixins/form-controller.mixin';
 
+declare global {
+  interface HTMLElementTagNameMap {
+    'mid-code-input': MinidCodeInput;
+  }
+}
+
 const styles = [
   css`
     :host {

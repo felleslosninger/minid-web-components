@@ -9,6 +9,12 @@ import { classMap } from 'lit/directives/class-map.js';
 import { styled } from '../mixins/tailwind.mixin';
 import { FormControllerMixin } from '../mixins/form-controller.mixin.ts';
 
+declare global {
+  interface HTMLElementTagNameMap {
+    'mid-checkbox': MinidCheckbox;
+  }
+}
+
 @customElement('mid-checkbox')
 export class MinidCheckbox extends FormControllerMixin(styled(LitElement)) {
   @property({ type: Boolean })

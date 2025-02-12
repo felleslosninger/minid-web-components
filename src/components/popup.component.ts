@@ -26,6 +26,12 @@ import { customElement, property, query } from 'lit/decorators.js';
 import { styled } from 'mixins/tailwind.mixin';
 import { offsetParent } from 'composed-offset-position';
 
+declare global {
+  interface HTMLElementTagNameMap {
+    'mid-popup': MinidPopup;
+  }
+}
+
 export interface VirtualElement {
   getBoundingClientRect: () => DOMRect;
   contextElement?: Element;

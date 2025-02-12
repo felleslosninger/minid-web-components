@@ -8,6 +8,12 @@ import { classMap } from 'lit/directives/class-map.js';
 import { watch } from 'src/internal/watch';
 import { MinidRadio } from 'src/components/radio.component';
 
+declare global {
+  interface HTMLElementTagNameMap {
+    'mid-radio-group': MinidRadioGroup;
+  }
+}
+
 const styles = [
   css`
     :host {

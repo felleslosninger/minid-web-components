@@ -4,6 +4,12 @@ import { styled } from 'src/mixins/tailwind.mixin';
 import { classMap } from 'lit/directives/class-map.js';
 import { LitElement } from 'lit';
 
+declare global {
+  interface HTMLElementTagNameMap {
+    'mid-heading': MinidHeading;
+  }
+}
+
 @customElement('mid-heading')
 export class MinidHeading extends styled(LitElement) {
   /**

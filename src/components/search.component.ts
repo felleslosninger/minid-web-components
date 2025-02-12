@@ -3,10 +3,16 @@ import { customElement, property, query } from 'lit/decorators.js';
 import { styled } from 'src/mixins/tailwind.mixin';
 import './textfield.component';
 import './icon/icon.component';
-import './button/button.component.ts';
+import './button.component.ts';
 import { live } from 'lit/directives/live.js';
 import { MinidTextfield } from './textfield.component.ts';
 import { debounce } from 'src/internal/debounce.ts';
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'mid-search': MinidSearch;
+  }
+}
 
 /**
  * @event mid-change - Emitted when a change to the input value is comitted by the user

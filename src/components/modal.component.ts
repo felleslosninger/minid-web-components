@@ -11,6 +11,12 @@ import {
 import { animateTo, stopAnimations } from 'src/internal/animate';
 import { lockBodyScrolling, unlockBodyScrolling } from 'src/internal/scroll';
 
+declare global {
+  interface HTMLElementTagNameMap {
+    'mid-modal': MinidModal;
+  }
+}
+
 const styles = [
   css`
     :host {

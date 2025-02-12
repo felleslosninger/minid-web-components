@@ -5,6 +5,12 @@ import { ifDefined } from 'lit/directives/if-defined.js';
 import { watch } from 'src/internal/watch';
 import { styled } from 'src/mixins/tailwind.mixin';
 
+declare global {
+  interface HTMLElementTagNameMap {
+    'mid-radio-button': MinidRadioButton;
+  }
+}
+
 /**
  *
  * @slot -- The radio button's label.

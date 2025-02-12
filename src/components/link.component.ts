@@ -5,6 +5,12 @@ import { ifDefined } from 'lit/directives/if-defined.js';
 import { styled } from 'src/mixins/tailwind.mixin';
 import './icon/icon.component';
 
+declare global {
+  interface HTMLElementTagNameMap {
+    'mid-link': MinidLink;
+  }
+}
+
 const styles = [
   css`
     .fds-link {
