@@ -13,10 +13,6 @@
       "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
     },
-    "./icon": {
-      "import": "./dist/components/icon.js",
-      "types": "./dist/components/icon.component.d.ts"
-    },
     "./alert": {
       "import": "./dist/components/alert.js",
       "types": "./dist/components/alert.component.d.ts"
@@ -28,6 +24,10 @@
     "./checkbox": {
       "import": "./dist/components/checkbox.js",
       "types": "./dist/components/checkbox.component.d.ts"
+    },
+    "./code-input": {
+      "import": "./dist/components/code-input.js",
+      "types": "./dist/components/code-input.component.d.ts"
     },
     "./countdown": {
       "import": "./dist/components/countdown.js",
@@ -44,6 +44,10 @@
     "./helptext": {
       "import": "./dist/components/helptext.js",
       "types": "./dist/components/helptext.component.d.ts"
+    },
+    "./icon": {
+      "import": "./dist/components/icon.js",
+      "types": "./dist/components/icon.component.d.ts"
     },
     "./label": {
       "import": "./dist/components/label.js",
@@ -69,6 +73,10 @@
       "import": "./dist/components/paragraph.js",
       "types": "./dist/components/paragraph.component.d.ts"
     },
+    "./phone-input": {
+      "import": "./dist/components/phone-input.js",
+      "types": "./dist/components/phone-input.component.d.ts"
+    },
     "./popup": {
       "import": "./dist/components/popup.js",
       "types": "./dist/components/popup.component.d.ts"
@@ -81,9 +89,6 @@
       "import": "./dist/components/spinner.js",
       "types": "./dist/components/spinner.component.d.ts"
     },
-    "./styles": {
-      "import": "./dist/index.css"
-    },
     "./textfield": {
       "import": "./dist/components/textfield.js",
       "types": "./dist/components/textfield.component.d.ts"
@@ -92,9 +97,8 @@
       "import": "./dist/components/tooltip.js",
       "types": "./dist/components/tooltip.component.d.ts"
     },
-    "./code-input": {
-      "import": "./dist/components/code-input.js",
-      "types": "./dist/components/code-input.component.d.ts"
+    "./styles": {
+      "import": "./dist/index.css"
     },
     "./designsystemet-tailwind": {
       "import": "./dist/designsystemet-tailwind.css"

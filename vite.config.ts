@@ -39,28 +39,6 @@ const generateEntries = () => {
     entries[`utilities/${name}`] = file; // Create entry with nested paths
   });
 
-  const iconFiles = glob.sync(
-    path.resolve(__dirname, 'src/assets/icons/*.svg')
-  );
-  iconFiles.forEach((file) => {
-    const name = path.relative(
-      path.resolve(__dirname, 'src/assets/icons'),
-      file
-    );
-
-    entries[`icons/${name}`] = file; // Create entry with nested paths
-  });
-
-  const flagFiles = glob.sync(
-    path.resolve(__dirname, 'src/assets/flags/*.svg')
-  );
-  flagFiles.forEach((file) => {
-    const name = path
-      .relative(path.resolve(__dirname, 'src/assets/flags'), file)
-      .replace('.svg', ''); // Get relative path and remove extension
-    entries[`flags/${name}`] = file; // Create entry with nested paths
-  });
-
   entries['index'] = path.resolve(__dirname, 'src/index.ts');
   entries['designsystemet-tailwind'] = path.resolve(
     __dirname,
