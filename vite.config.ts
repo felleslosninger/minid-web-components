@@ -27,7 +27,7 @@ const generateEntries = () => {
   utilityFiles.forEach((file) => {
     const name = path
       .relative(path.resolve(__dirname, 'src/components/utilities'), file)
-      .replace(/\.ts$/, ''); // Get relative path and remove extension
+      .replace('.ts', ''); // Get relative path and remove extension
     entries[`utilities/${name}`] = file; // Create entry with nested paths
   });
 
@@ -35,7 +35,7 @@ const generateEntries = () => {
   mixinFiles.forEach((file) => {
     const name = path
       .relative(path.resolve(__dirname, 'src/mixins'), file)
-      .replace(/\.ts$/, ''); // Get relative path and remove extension
+      .replace('.ts', ''); // Get relative path and remove extension
     entries[`utilities/${name}`] = file; // Create entry with nested paths
   });
 
