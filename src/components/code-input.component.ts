@@ -136,11 +136,6 @@ export class MinidCodeInput extends ConstraintsValidationMixin(
       this.autoFillEventHandler.bind(this)
     );
     this.calcInputStyle();
-
-    if (this.validity.customError && !this._localErrorNode) {
-      // trigger built-in visual feedback only if no custom error slot is set
-      this.reportValidity();
-    }
   }
 
   override disconnectedCallback() {
