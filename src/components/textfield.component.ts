@@ -251,6 +251,12 @@ export class MinidTextfield extends FormControlMixin(
   @state()
   hasFocus = false;
 
+  @state()
+  showInvalidMessage = false;
+
+  @property()
+  overrideerror = '';
+
   /**
    * @ignore
    */
@@ -368,6 +374,44 @@ export class MinidTextfield extends FormControlMixin(
     this.setValue(this.value);
   }
 
+  @watch('overrideerror', { waitUntilFirstUpdate: true })
+  handleOverrideErrorUpdate() {
+    if (this.overrideerror) {
+      this.forceError();
+    }
+  }
+
+  validationMessageCallback(message: string): void {
+    this.showInvalidMessage = !!message;
+    const event = this.showInvalidMessage
+      ? 'mid-invalid-show'
+      : 'mid-invalid-hide';
+    this.dispatchEvent(
+      new CustomEvent(event, {
+        bubbles: true,
+        composed: true,
+        detail: { validity: this.validity },
+      })
+    );
+
+    console.log(
+      `🔺 ${this.validity.valid}`,
+      `message: ${this.invalidmessage}`,
+      this.validity
+    );
+  }
+
+  // @watch('invalidmessage', { waitUntilFirstUpdate: true })
+  // handleInvalidMessageUpdate() {
+  //   console.log('custom validity', this.invalidmessage);
+
+  //   // this.input.setCustomValidity(this.invalidmessage);
+  //   this.internals.setValidity(
+  //     { customError: !!this.invalidmessage },
+  //     this.invalidmessage
+  //   );
+  // }
+
   override render() {
     const lg = this.size === 'lg';
     const md = this.size === 'md';
@@ -407,46 +451,43 @@ export class MinidTextfield extends FormControlMixin(
             'fds-label--lg': lg,
           })}"
         >
-          ${
-            !this.readonly
-              ? nothing
-              : html`<mid-icon
-                  class="fds-textfield__readonly__icon"
-                  library="system"
-                  name="padlock-locked-fill"
-                ></mid-icon>`
-          }
+          ${!this.readonly
+            ? nothing
+            : html`<mid-icon
+                class="fds-textfield__readonly__icon"
+                library="system"
+                name="padlock-locked-fill"
+              ></mid-icon>`}
           <slot name="label"> ${this.label} </slot>
         </label>
-        ${
-          !this.description
-            ? nothing
-            : html`
-                <div
-                  id="${this.descriptionId}"
-                  part="description"
-                  class="${classMap({
-                    description: true,
-                    'fds-paragraph': true,
-                    'sr-only': this.hidelabel,
-                    'fds-paragraph--sm': sm,
-                    'fds-paragraph--md': md,
-                    'fds-paragraph--lg': lg,
-                    'fds-textfield__description': true,
-                  })}"
-                >
-                  ${this.description}
-                </div>
-              `
-        }
+        ${!this.description
+          ? nothing
+          : html`
+              <div
+                id="${this.descriptionId}"
+                part="description"
+                class="${classMap({
+                  description: true,
+                  'fds-paragraph': true,
+                  'sr-only': this.hidelabel,
+                  'fds-paragraph--sm': sm,
+                  'fds-paragraph--md': md,
+                  'fds-paragraph--lg': lg,
+                  'fds-textfield__description': true,
+                })}"
+              >
+                ${this.description}
+              </div>
+            `}
         <div
           part="base"
           class="${classMap({
             'fds-textfield__field': true,
-            'border-neutral': !this.invalidmessage,
-            'border-danger': this.invalidmessage,
-          })}
-          field border outline outline-transparent focus-within:outline-offset-3 focus-within:outline-3 focus-within:shadow-focus-inner focus-within:outline-focus-outer "
+            'border-neutral': !this.showInvalidMessage,
+            'border-danger': this.showInvalidMessage,
+            border: !this.showInvalidMessage,
+            'border-2': this.showInvalidMessage,
+          })} field focus-within:shadow-focus-inner focus-within:outline-focus-outer outline-2 outline-transparent focus-within:outline-3 focus-within:outline-offset-3"
         >
           <span class="prefix">
             <slot name="prefix"></slot>
@@ -460,12 +501,11 @@ export class MinidTextfield extends FormControlMixin(
             ?readonly=${this.readonly}
             ?autofocus=${this.autofocus}
             autocomplete=${ifDefined(this.autocomplete as any)}
-            type=${
-              this.type === 'password' && this.passwordvisible
-                ? 'text'
-                : this.type
-            }
-            aria-describedby="${this.descriptionId}""
+            type=${this.type === 'password' && this.passwordvisible
+              ? 'text'
+              : this.type}
+            aria-describedby="${this.descriptionId}"
+            aria-errormessage="error-message"
             placeholder=${ifDefined(this.placeholder)}
             minlength=${ifDefined(this.minlength)}
             maxlength=${ifDefined(this.maxlength)}
@@ -478,27 +518,24 @@ export class MinidTextfield extends FormControlMixin(
             @blur=${this.handleBlur}
             @keydown=${this.handleKeydown}
           />
-          ${
-            isClearIconVisible
-              ? html`
-                  <button
-                    part="clear-button"
-                    type="button"
-                    class="${classMap({
-                      'text-6': sm,
-                      'text-7': md,
-                      'text-8': lg,
-                    })} flex w-[calc(1em+1rem*2)] items-center justify-center rounded"
-                    aria-label="Tøm"
-                    @click=${this.handleClearClick}
-                  >
-                    <mid-icon name="xmark" library="system"></mid-icon>
-                  </button>
-                `
-              : ''
-          }
-        ${
-          this.passwordtoggle && !this.disabled
+          ${isClearIconVisible
+            ? html`
+                <button
+                  part="clear-button"
+                  type="button"
+                  class="${classMap({
+                    'text-6': sm,
+                    'text-7': md,
+                    'text-8': lg,
+                  })} flex w-[calc(1em+1rem*2)] items-center justify-center rounded"
+                  aria-label="Tøm"
+                  @click=${this.handleClearClick}
+                >
+                  <mid-icon name="xmark" library="system"></mid-icon>
+                </button>
+              `
+            : ''}
+          ${this.passwordtoggle && !this.disabled
             ? html`
                 <button
                   part="password-toggle-button"
@@ -524,14 +561,23 @@ export class MinidTextfield extends FormControlMixin(
                       `}
                 </button>
               `
-            : ''
-        }
+            : ''}
           <span part="suffix" class="suffix">
             <slot name="suffix"></slot>
           </span>
         </div>
       </div>
-      <div class="pt-2 error-message text-danger-subtle">
+      <div
+        class="${classMap({
+          hidden: !this.showInvalidMessage,
+        })} error-message text-danger-subtle flex pt-2"
+        id="error-message"
+        aria-live="polite"
+      >
+        <mid-icon
+          name="xmark-octagon-fill"
+          class="align-center flex text-xl"
+        ></mid-icon>
         ${this.invalidmessage}
       </div>
     `;

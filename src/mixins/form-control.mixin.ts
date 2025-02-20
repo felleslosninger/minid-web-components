@@ -183,9 +183,7 @@ export function FormControlMixin<
       }
       const showError = this.#shouldShowError();
       if (this.validationMessageCallback) {
-        this.validationMessageCallback(
-          showError ? this.internals.validationMessage : ''
-        );
+        this.validationMessageCallback(showError ? this.validationMessage : '');
       }
     };
 
@@ -209,7 +207,7 @@ export function FormControlMixin<
       this.#forceError = true;
       this.#shouldShowError();
       this?.validationMessageCallback?.(
-        this.showError ? this.internals.validationMessage : ''
+        this.showError ? this.validationMessage : ''
       );
     };
 
@@ -248,12 +246,6 @@ export function FormControlMixin<
     get validity(): ValidityState {
       return this.internals.validity;
     }
-
-    /**
-     * If the element previously showed a validation error
-     * @ignore
-     */
-    #previousShowError = false;
 
     /**
      * The validation message shown by a given Validator object. If the control
@@ -312,6 +304,11 @@ export function FormControlMixin<
       if (this.valueChangedCallback) {
         this.valueChangedCallback(valueToUpdate);
       }
+      this.#shouldShowError();
+    }
+
+    forceError(): void {
+      this.#forceError = true;
       this.#shouldShowError();
     }
 
@@ -420,34 +417,14 @@ export function FormControlMixin<
         this.#forceError ||
         (this.#touched && !this.validity.valid && !this.#focused);
 
+      console.log('👀😵 showError', showError);
+
       if (showError) {
         this.internals.states.add('--show-error');
         this.internals.states.add('--invalid');
-
-        if (!this.#previousShowError) {
-          this?.dispatchEvent(
-            new CustomEvent('mid-invalid-show', {
-              bubbles: true,
-              composed: true,
-              detail: { validity: this.validity },
-            })
-          );
-          this.#previousShowError = showError;
-        }
       } else {
         this.internals.states.delete('--show-error');
         this.internals.states.delete('--invalid');
-
-        if (this.#previousShowError) {
-          this?.dispatchEvent(
-            new CustomEvent('mid-invalid-hide', {
-              bubbles: true,
-              composed: true,
-              detail: { validity: this.validity },
-            })
-          );
-          this.#previousShowError = showError;
-        }
       }
 
       return showError;

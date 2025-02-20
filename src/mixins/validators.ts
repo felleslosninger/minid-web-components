@@ -21,12 +21,16 @@ export const requiredValidator: Validator = {
 };
 
 export const programmaticValidator: Validator = {
-  attribute: 'error',
-  message(instance: HTMLElement & { error: string }): string {
-    return instance.error;
+  attribute: 'overrideerror',
+  message(instance: HTMLElement & { overrideerror: string }): string {
+    return instance.overrideerror;
   },
-  isValid(instance: HTMLElement & { error: string }): boolean {
-    return !instance.error;
+  isValid(instance: HTMLElement & { overrideerror: string }): boolean {
+    console.log(
+      'Programmatic validation in progress 🦄🌈🧙‍♂️🚀🎨',
+      instance.overrideerror
+    );
+    return !instance.overrideerror;
   },
 };
 

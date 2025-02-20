@@ -19,5 +19,6 @@ export interface FormControlInterface {
   validityCallback(validationKey: string): string | void;
   validationMessageCallback(message: string): void;
   setValue(value: FormValue): void;
+  forceError(): void;
   shouldFormValueUpdate?(): boolean;
 }
