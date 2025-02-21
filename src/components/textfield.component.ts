@@ -15,6 +15,7 @@ import {
   requiredValidator,
 } from '../mixins/validators';
 import { watch } from '../internal/watch';
+import { validationMessageCallback } from '../types/validator.type';
 
 const styles = [
   css`
@@ -257,6 +258,9 @@ export class MinidTextfield extends FormControlMixin(
   @property()
   overrideerror = '';
 
+  @property({ type: Object })
+  errorMessages: { [key: string]: validationMessageCallback } = {};
+
   /**
    * @ignore
    */
@@ -389,6 +393,8 @@ export class MinidTextfield extends FormControlMixin(
 
   validationMessageCallback(message: string): void {
     this.showInvalidMessage = !!message;
+
+    console.log(this.errorMessages['valueMissing']?.(this, this.value));
 
     const event = this.showInvalidMessage
       ? 'mid-invalid-show'

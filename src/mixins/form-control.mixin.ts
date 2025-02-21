@@ -152,6 +152,8 @@ export function FormControlMixin<
      */
     #value: FormValue = '';
 
+    errorMessages: { [key: string]: (value: FormValue) => string } = {};
+
     /**
      * Set this[touched] and this[focused]
      * to true when the element is focused
