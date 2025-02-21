@@ -195,6 +195,8 @@ export function FormControlMixin<
     #onInvalid = (event?: Event): void => {
       event?.preventDefault();
       event?.stopImmediatePropagation();
+      console.log('🥵 now it is invalid');
+
       if (this.#awaitingValidationTarget && this.validationTarget) {
         this.internals.setValidity(
           this.validity,
@@ -205,9 +207,9 @@ export function FormControlMixin<
       }
       this.#touched = true;
       this.#forceError = true;
-      this.#shouldShowError();
+      const showError = this.#shouldShowError();
       this?.validationMessageCallback?.(
-        this.showError ? this.validationMessage : ''
+        showError ? this.validationMessage : ''
       );
     };
 
@@ -270,6 +272,8 @@ export function FormControlMixin<
       newValue: string
     ): void {
       super.attributeChangedCallback?.(name, oldValue, newValue);
+
+      console.log('attribute changed: ', name);
 
       /**
        * Check to see if a Validator is associated with the changed attribute.

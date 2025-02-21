@@ -5,16 +5,16 @@ import { stringConverter } from 'internal/string-converter';
 import { classMap } from 'lit/directives/class-map.js';
 import { styled } from 'mixins/tailwind.mixin.ts';
 import { ifDefined } from 'lit/directives/if-defined.js';
-import { HasSlotController } from '../../src/internal/slot';
-import { FormControlMixin } from '../../src/mixins/form-control.mixin';
+import { HasSlotController } from '../internal/slot';
+import { FormControlMixin } from '../mixins/form-control.mixin';
 import {
   maxLengthValidator,
   minLengthValidator,
   patternValidator,
   programmaticValidator,
   requiredValidator,
-} from '../../src/mixins/validators';
-import { watch } from '../../src/internal/watch';
+} from '../mixins/validators';
+import { watch } from '../internal/watch';
 
 const styles = [
   css`
@@ -301,7 +301,7 @@ export class MinidTextfield extends FormControlMixin(
         // When using an Input Method Editor (IME), pressing enter will cause the form to submit unexpectedly. One way
         // to check for this is to look at event.isComposing, which will be true when the IME is open.
         if (!event.defaultPrevented && !event.isComposing) {
-          this.internals.form?.requestSubmit();
+          this.form.requestSubmit();
         }
       });
     }
@@ -381,8 +381,15 @@ export class MinidTextfield extends FormControlMixin(
     }
   }
 
+  setMessage(message: string) {
+    console.log('lol im totally setting the message now🤷🏻‍♂️');
+
+    this.invalidmessage = message;
+  }
+
   validationMessageCallback(message: string): void {
     this.showInvalidMessage = !!message;
+
     const event = this.showInvalidMessage
       ? 'mid-invalid-show'
       : 'mid-invalid-hide';
@@ -390,14 +397,23 @@ export class MinidTextfield extends FormControlMixin(
       new CustomEvent(event, {
         bubbles: true,
         composed: true,
-        detail: { validity: this.validity },
+        detail: {
+          validity: this.validity,
+          setMessage: this.setMessage.bind(this),
+        },
       })
     );
 
     console.log(
       `🔺 ${this.validity.valid}`,
       `message: ${this.invalidmessage}`,
-      this.validity
+      Object.entries(this.validity)
+        .map(([key, value]) => {
+          if (value) {
+            return key + ' 😱';
+          }
+        })
+        .join(', ')
     );
   }
 
@@ -570,15 +586,12 @@ export class MinidTextfield extends FormControlMixin(
       <div
         class="${classMap({
           hidden: !this.showInvalidMessage,
-        })} error-message text-danger-subtle flex pt-2"
+        })} error-message text-danger-subtle flex gap-1 pt-2"
         id="error-message"
         aria-live="polite"
       >
-        <mid-icon
-          name="xmark-octagon-fill"
-          class="align-center flex text-xl"
-        ></mid-icon>
-        ${this.invalidmessage}
+        <mid-icon name="xmark-octagon-fill" class="mt-1 text-xl"></mid-icon>
+        ${this.overrideerror || this.invalidmessage}
       </div>
     `;
   }
