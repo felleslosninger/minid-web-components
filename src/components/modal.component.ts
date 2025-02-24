@@ -1,15 +1,15 @@
 import { css, html, LitElement } from 'lit';
 import { customElement, property, query } from 'lit/decorators.js';
-import { waitForEvent } from 'src/internal/event';
-import { watch } from 'src/internal/watch';
-import { styled } from 'src/mixins/tailwind.mixin';
+import { waitForEvent } from '../internal/event';
+import { watch } from '../internal/watch';
+import { styled } from '../mixins/tailwind.mixin';
 import './icon/icon.component';
 import {
   getAnimation,
   setDefaultAnimation,
-} from 'src/components/utilities/animation-registry';
-import { animateTo, stopAnimations } from 'src/internal/animate';
-import { lockBodyScrolling, unlockBodyScrolling } from 'src/internal/scroll';
+} from '../utilities/animation-registry';
+import { animateTo, stopAnimations } from '../internal/animate';
+import { lockBodyScrolling, unlockBodyScrolling } from '../internal/scroll';
 
 declare global {
   interface HTMLElementTagNameMap {

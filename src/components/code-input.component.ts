@@ -3,7 +3,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { createRef, ref, Ref } from 'lit/directives/ref.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { live } from 'lit/directives/live.js';
-import { webOtpApiClose, webOtpApiInit } from './utilities/web-otp-api';
+import { webOtpApiClose, webOtpApiInit } from '../utilities/web-otp-api';
 import { styled } from '../mixins/tailwind.mixin';
 import { ConstraintsValidationMixin } from '../mixins/form-controller.mixin';
 

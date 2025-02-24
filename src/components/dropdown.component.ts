@@ -1,8 +1,8 @@
 import { css, html, LitElement } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import 'components/popup.component';
 import { ifDefined } from 'lit/directives/if-defined.js';
-import { styled } from 'mixins/tailwind.mixin.ts';
+import { styled } from '../mixins/tailwind.mixin.ts';
+import './popup.component';
 
 declare global {
   interface HTMLElementTagNameMap {

@@ -2,7 +2,7 @@ import { css, html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
-import { styled } from 'src/mixins/tailwind.mixin';
+import { styled } from '../mixins/tailwind.mixin';
 import './icon/icon.component';
 
 declare global {

@@ -1,11 +1,10 @@
 import './styles/global.css';
-export { CountdownComponent } from './components/countdown.component.ts';
-export { countryLabelsNO } from './components/utilities/countries.ts';
 export { MinidAlert } from './components/alert.component.ts';
 export { MinidButton } from './components/button.component.ts';
 export { MinidCheckbox } from './components/checkbox.component.ts';
 export { MinidCodeInput } from './components/code-input.component.ts';
 export { MinidCombobox } from './components/combobox.component.ts';
+export { MinidCountdown } from './components/countdown.component.ts';
 export { MinidDropdown } from './components/dropdown.component.ts';
 export { MinidHeading } from './components/heading.component.ts';
 export { MinidHelptext } from './components/helptext.component.ts';

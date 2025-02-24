@@ -13,6 +13,12 @@
       "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
     },
+    "./styles": {
+      "import": "./dist/index.css"
+    },
+    "./designsystemet-tailwind": {
+      "import": "./dist/designsystemet-tailwind.css"
+    },
     "./alert": {
       "import": "./dist/components/alert.js",
       "types": "./dist/components/alert.component.d.ts"
@@ -28,6 +34,10 @@
     "./code-input": {
       "import": "./dist/components/code-input.js",
       "types": "./dist/components/code-input.component.d.ts"
+    },
+    "./combobox": {
+      "import": "./dist/components/combobox.js",
+      "types": "./dist/components/combobox.component.d.ts"
     },
     "./countdown": {
       "import": "./dist/components/countdown.js",
@@ -46,8 +56,8 @@
       "types": "./dist/components/helptext.component.d.ts"
     },
     "./icon": {
-      "import": "./dist/components/icon.js",
-      "types": "./dist/components/icon.component.d.ts"
+      "import": "./dist/components/icon/icon.js",
+      "types": "./dist/components/icon/icon.component.d.ts"
     },
     "./label": {
       "import": "./dist/components/label.js",
@@ -85,6 +95,10 @@
       "import": "./dist/components/qr-code.js",
       "types": "./dist/components/qr-code.component.d.ts,"
     },
+    "./search": {
+      "import": "./dist/components/search.js",
+      "types": "./dist/components/search.component.d.ts"
+    },
     "./spinner": {
       "import": "./dist/components/spinner.js",
       "types": "./dist/components/spinner.component.d.ts"
@@ -96,12 +110,6 @@
     "./tooltip": {
       "import": "./dist/components/tooltip.js",
       "types": "./dist/components/tooltip.component.d.ts"
-    },
-    "./styles": {
-      "import": "./dist/index.css"
-    },
-    "./designsystemet-tailwind": {
-      "import": "./dist/designsystemet-tailwind.css"
     }
   },
   "repository": {

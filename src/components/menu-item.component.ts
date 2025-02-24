@@ -1,6 +1,6 @@
 import { css, html, LitElement } from 'lit';
 import { customElement, property, query } from 'lit/decorators.js';
-import { styled } from 'mixins/tailwind.mixin.ts';
+import { styled } from '../mixins/tailwind.mixin.ts';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import './button.component';
 import { MinidButton } from './button.component';

@@ -20,13 +20,11 @@ const generateEntries = () => {
     entries[`components/${name}`] = file; // Create entry with nested paths
   });
 
-  const utilityFiles = glob.sync(
-    path.resolve(__dirname, 'src/components/utilities/*.ts')
-  );
+  const utilityFiles = glob.sync(path.resolve(__dirname, 'src/utilities/*.ts'));
 
   utilityFiles.forEach((file) => {
     const name = path
-      .relative(path.resolve(__dirname, 'src/components/utilities'), file)
+      .relative(path.resolve(__dirname, 'src/utilities'), file)
       .replace('.ts', ''); // Get relative path and remove extension
     entries[`utilities/${name}`] = file; // Create entry with nested paths
   });
@@ -36,7 +34,15 @@ const generateEntries = () => {
     const name = path
       .relative(path.resolve(__dirname, 'src/mixins'), file)
       .replace('.ts', ''); // Get relative path and remove extension
-    entries[`utilities/${name}`] = file; // Create entry with nested paths
+    entries[`mixins/${name}`] = file; // Create entry with nested paths
+  });
+
+  const internalFiles = glob.sync(path.resolve(__dirname, 'src/internal/*.ts'));
+  internalFiles.forEach((file) => {
+    const name = path
+      .relative(path.resolve(__dirname, 'src/internal'), file)
+      .replace('.ts', ''); // Get relative path and remove extension
+    entries[`internal/${name}`] = file; // Create entry with nested paths
   });
 
   entries['index'] = path.resolve(__dirname, 'src/index.ts');

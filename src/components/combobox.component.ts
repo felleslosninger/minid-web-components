@@ -7,14 +7,14 @@ import {
   state,
 } from 'lit/decorators.js';
 import './popup.component';
-import { styled } from 'mixins/tailwind.mixin.ts';
+import { styled } from '../mixins/tailwind.mixin.ts';
 import { MinidPopup } from './popup.component';
 import { waitForEvent } from '../internal/event';
 import { watch } from '../internal/watch';
 import {
   getAnimation,
   setDefaultAnimation,
-} from '../components/utilities/animation-registry';
+} from '../utilities/animation-registry';
 import { animateTo, stopAnimations } from '../internal/animate';
 import { getTabbableBoundary } from '../internal/tabbable';
 import { MinidButton } from './button.component';

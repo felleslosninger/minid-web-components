@@ -23,7 +23,7 @@ import {
 import { classMap } from 'lit/directives/class-map.js';
 import { css, html, LitElement } from 'lit';
 import { customElement, property, query } from 'lit/decorators.js';
-import { styled } from 'mixins/tailwind.mixin';
+import { styled } from '../mixins/tailwind.mixin';
 import { offsetParent } from 'composed-offset-position';
 
 declare global {
