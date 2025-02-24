@@ -1,20 +1,19 @@
 import { css, html, LitElement, nothing } from 'lit';
 import { customElement, property, query, state } from 'lit/decorators.js';
 import { live } from 'lit/directives/live.js';
-import { stringConverter } from 'internal/string-converter';
+import { stringConverter } from '../internal/string-converter';
 import { classMap } from 'lit/directives/class-map.js';
-import { styled } from 'mixins/tailwind.mixin.ts';
+import { styled } from '../mixins/tailwind.mixin.ts';
 import { ifDefined } from 'lit/directives/if-defined.js';
-import { HasSlotController } from '../../src/internal/slot';
-import { FormControlMixin } from '../../src/mixins/form-control.mixin';
+import { HasSlotController } from '../internal/slot';
+import { FormControlMixin } from '../mixins/form-control.mixin';
 import {
   maxLengthValidator,
   minLengthValidator,
   patternValidator,
-  programmaticValidator,
   requiredValidator,
-} from '../../src/mixins/validators';
-import { watch } from '../../src/internal/watch';
+} from '../mixins/validators';
+import { watch } from '../internal/watch';
 
 const styles = [
   css`
@@ -257,7 +256,6 @@ export class MinidTextfield extends FormControlMixin(
   static get formControlValidators() {
     return [
       requiredValidator,
-      programmaticValidator,
       maxLengthValidator,
       minLengthValidator,
       patternValidator,
@@ -295,7 +293,7 @@ export class MinidTextfield extends FormControlMixin(
         // When using an Input Method Editor (IME), pressing enter will cause the form to submit unexpectedly. One way
         // to check for this is to look at event.isComposing, which will be true when the IME is open.
         if (!event.defaultPrevented && !event.isComposing) {
-          this.internals.form?.requestSubmit();
+          this.form.requestSubmit();
         }
       });
     }
@@ -363,6 +361,10 @@ export class MinidTextfield extends FormControlMixin(
     this.value = this.#initialValue;
   }
 
+  forceError(message?: string): void {
+    super.forceError(message);
+  }
+
   @watch('value')
   handleValueUpdate() {
     this.setValue(this.value);
@@ -407,46 +409,43 @@ export class MinidTextfield extends FormControlMixin(
             'fds-label--lg': lg,
           })}"
         >
-          ${
-            !this.readonly
-              ? nothing
-              : html`<mid-icon
-                  class="fds-textfield__readonly__icon"
-                  library="system"
-                  name="padlock-locked-fill"
-                ></mid-icon>`
-          }
+          ${!this.readonly
+            ? nothing
+            : html`<mid-icon
+                class="fds-textfield__readonly__icon"
+                library="system"
+                name="padlock-locked-fill"
+              ></mid-icon>`}
           <slot name="label"> ${this.label} </slot>
         </label>
-        ${
-          !this.description
-            ? nothing
-            : html`
-                <div
-                  id="${this.descriptionId}"
-                  part="description"
-                  class="${classMap({
-                    description: true,
-                    'fds-paragraph': true,
-                    'sr-only': this.hidelabel,
-                    'fds-paragraph--sm': sm,
-                    'fds-paragraph--md': md,
-                    'fds-paragraph--lg': lg,
-                    'fds-textfield__description': true,
-                  })}"
-                >
-                  ${this.description}
-                </div>
-              `
-        }
+        ${!this.description
+          ? nothing
+          : html`
+              <div
+                id="${this.descriptionId}"
+                part="description"
+                class="${classMap({
+                  description: true,
+                  'fds-paragraph': true,
+                  'sr-only': this.hidelabel,
+                  'fds-paragraph--sm': sm,
+                  'fds-paragraph--md': md,
+                  'fds-paragraph--lg': lg,
+                  'fds-textfield__description': true,
+                })}"
+              >
+                ${this.description}
+              </div>
+            `}
         <div
           part="base"
           class="${classMap({
             'fds-textfield__field': true,
             'border-neutral': !this.invalidmessage,
             'border-danger': this.invalidmessage,
-          })}
-          field border outline outline-transparent focus-within:outline-offset-3 focus-within:outline-3 focus-within:shadow-focus-inner focus-within:outline-focus-outer "
+            border: !this.invalidmessage,
+            'border-2': this.invalidmessage,
+          })} field focus-within:shadow-focus-inner focus-within:outline-focus-outer outline-2 outline-transparent focus-within:outline-3 focus-within:outline-offset-3"
         >
           <span class="prefix">
             <slot name="prefix"></slot>
@@ -460,12 +459,11 @@ export class MinidTextfield extends FormControlMixin(
             ?readonly=${this.readonly}
             ?autofocus=${this.autofocus}
             autocomplete=${ifDefined(this.autocomplete as any)}
-            type=${
-              this.type === 'password' && this.passwordvisible
-                ? 'text'
-                : this.type
-            }
-            aria-describedby="${this.descriptionId}""
+            type=${this.type === 'password' && this.passwordvisible
+              ? 'text'
+              : this.type}
+            aria-describedby="${this.descriptionId}"
+            aria-errormessage="error-message"
             placeholder=${ifDefined(this.placeholder)}
             minlength=${ifDefined(this.minlength)}
             maxlength=${ifDefined(this.maxlength)}
@@ -478,27 +476,24 @@ export class MinidTextfield extends FormControlMixin(
             @blur=${this.handleBlur}
             @keydown=${this.handleKeydown}
           />
-          ${
-            isClearIconVisible
-              ? html`
-                  <button
-                    part="clear-button"
-                    type="button"
-                    class="${classMap({
-                      'text-6': sm,
-                      'text-7': md,
-                      'text-8': lg,
-                    })} flex w-[calc(1em+1rem*2)] items-center justify-center rounded"
-                    aria-label="Tøm"
-                    @click=${this.handleClearClick}
-                  >
-                    <mid-icon name="xmark" library="system"></mid-icon>
-                  </button>
-                `
-              : ''
-          }
-        ${
-          this.passwordtoggle && !this.disabled
+          ${isClearIconVisible
+            ? html`
+                <button
+                  part="clear-button"
+                  type="button"
+                  class="${classMap({
+                    'text-6': sm,
+                    'text-7': md,
+                    'text-8': lg,
+                  })} flex w-[calc(1em+1rem*2)] items-center justify-center rounded"
+                  aria-label="Tøm"
+                  @click=${this.handleClearClick}
+                >
+                  <mid-icon name="xmark" library="system"></mid-icon>
+                </button>
+              `
+            : ''}
+          ${this.passwordtoggle && !this.disabled
             ? html`
                 <button
                   part="password-toggle-button"
@@ -524,14 +519,20 @@ export class MinidTextfield extends FormControlMixin(
                       `}
                 </button>
               `
-            : ''
-        }
+            : ''}
           <span part="suffix" class="suffix">
             <slot name="suffix"></slot>
           </span>
         </div>
       </div>
-      <div class="pt-2 error-message text-danger-subtle">
+      <div
+        class="${classMap({
+          hidden: !this.invalidmessage,
+        })} error-message text-danger-subtle flex gap-1 pt-2"
+        id="error-message"
+        aria-live="polite"
+      >
+        <mid-icon name="xmark-octagon-fill" class="mt-1 text-xl"></mid-icon>
         ${this.invalidmessage}
       </div>
     `;
