@@ -74,13 +74,16 @@ export default defineConfig(({}) => {
     },
     rollupOptions: {
       external: ['^lit$'],
+      output: {
+        preserveModules: true,
+        globals: {
+          lit: 'Lit',
+        },
+      },
     },
     plugins: [
       externalizeDeps(),
-      dts({
-        // rollupTypes: true,
-        exclude: glob.sync([path.resolve('src/assets/icons')]),
-      }),
+      dts(),
       hmrPlugin({
         include: ['./src/**/*.ts'],
         presets: [presets.lit],
