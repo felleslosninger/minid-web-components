@@ -22,3 +22,4 @@ export { MinidSearch } from './components/search.component.ts';
 export { MinidSpinner } from './components/spinner.component.ts';
 export { MinidTextfield } from './components/textfield.component.ts';
 export { MinidTooltip } from './components/tooltip.component.ts';
+export { countryLabelsNO } from './utilities/countries.ts';
