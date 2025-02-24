@@ -20,20 +20,6 @@ export const requiredValidator: Validator = {
   },
 };
 
-export const programmaticValidator: Validator = {
-  attribute: 'overrideerror',
-  message(instance: HTMLElement & { overrideerror: string }): string {
-    return instance.overrideerror;
-  },
-  isValid(instance: HTMLElement & { overrideerror: string }): boolean {
-    console.log(
-      'Programmatic validation in progress 🦄🌈🧙‍♂️🚀🎨',
-      instance.overrideerror
-    );
-    return !instance.overrideerror;
-  },
-};
-
 export const minLengthValidator: Validator = {
   attribute: 'minlength',
   key: 'tooShort',

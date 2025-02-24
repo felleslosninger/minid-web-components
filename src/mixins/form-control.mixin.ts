@@ -152,8 +152,6 @@ export function FormControlMixin<
      */
     #value: FormValue = '';
 
-    errorMessages: { [key: string]: (value: FormValue) => string } = {};
-
     /**
      * Set this[touched] and this[focused]
      * to true when the element is focused
@@ -184,9 +182,11 @@ export function FormControlMixin<
         this.#forceError = true;
       }
       const showError = this.#shouldShowError();
+
       if (this.validationMessageCallback) {
         this.validationMessageCallback(showError ? this.validationMessage : '');
       }
+      this.#dispatchInvalidEvent(showError);
     };
 
     /**
@@ -197,7 +197,6 @@ export function FormControlMixin<
     #onInvalid = (event?: Event): void => {
       event?.preventDefault();
       event?.stopImmediatePropagation();
-      console.log('🥵 now it is invalid');
 
       if (this.#awaitingValidationTarget && this.validationTarget) {
         this.internals.setValidity(
@@ -213,6 +212,7 @@ export function FormControlMixin<
       this?.validationMessageCallback?.(
         showError ? this.validationMessage : ''
       );
+      this.#dispatchInvalidEvent(showError);
     };
 
     /**
@@ -275,8 +275,6 @@ export function FormControlMixin<
     ): void {
       super.attributeChangedCallback?.(name, oldValue, newValue);
 
-      console.log('attribute changed: ', name);
-
       /**
        * Check to see if a Validator is associated with the changed attribute.
        * If one exists, call control's validate function which will perform
@@ -310,10 +308,19 @@ export function FormControlMixin<
       if (this.valueChangedCallback) {
         this.valueChangedCallback(valueToUpdate);
       }
-      this.#shouldShowError();
+      const showError = this.#shouldShowError();
+      this.#dispatchInvalidEvent(showError);
     }
 
-    forceError(): void {
+    /**
+     * Forces the control to show an error state. If a message is passed in,
+     * it will be set as the control's internal validity state message.
+     * @param message { string | undefined } - The message for internals validity state
+     */
+    forceError(message?: string) {
+      if (message) {
+        this.#setValidityWithOptionalTarget({ customError: true }, message);
+      }
       this.#forceError = true;
       this.#shouldShowError();
     }
@@ -422,8 +429,6 @@ export function FormControlMixin<
       const showError =
         this.#forceError ||
         (this.#touched && !this.validity.valid && !this.#focused);
-
-      console.log('👀😵 showError', showError);
 
       if (showError) {
         this.internals.states.add('--show-error');
@@ -607,9 +612,21 @@ export function FormControlMixin<
       this.#forceError = false;
       this.#shouldShowError();
       this.resetFormControl?.();
+      const showError = this.#shouldShowError();
+      this.validationMessageCallback?.(showError ? this.validationMessage : '');
+      this.#dispatchInvalidEvent(showError);
+    }
 
-      this.validationMessageCallback?.(
-        this.#shouldShowError() ? this.validationMessage : ''
+    #dispatchInvalidEvent(showError: boolean) {
+      const event = showError ? 'mid-invalid-show' : 'mid-invalid-hide';
+      this.dispatchEvent(
+        new CustomEvent(event, {
+          bubbles: true,
+          composed: true,
+          detail: {
+            validity: this.validity,
+          },
+        })
       );
     }
   }

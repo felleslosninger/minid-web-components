@@ -1,9 +1,9 @@
 import { css, html, LitElement, nothing } from 'lit';
 import { customElement, property, query, state } from 'lit/decorators.js';
 import { live } from 'lit/directives/live.js';
-import { stringConverter } from 'internal/string-converter';
+import { stringConverter } from '../internal/string-converter';
 import { classMap } from 'lit/directives/class-map.js';
-import { styled } from 'mixins/tailwind.mixin.ts';
+import { styled } from '../mixins/tailwind.mixin.ts';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { HasSlotController } from '../internal/slot';
 import { FormControlMixin } from '../mixins/form-control.mixin';
@@ -11,11 +11,9 @@ import {
   maxLengthValidator,
   minLengthValidator,
   patternValidator,
-  programmaticValidator,
   requiredValidator,
 } from '../mixins/validators';
 import { watch } from '../internal/watch';
-import { validationMessageCallback } from '../types/validator.type';
 
 const styles = [
   css`
@@ -252,22 +250,12 @@ export class MinidTextfield extends FormControlMixin(
   @state()
   hasFocus = false;
 
-  @state()
-  showInvalidMessage = false;
-
-  @property()
-  overrideerror = '';
-
-  @property({ type: Object })
-  errorMessages: { [key: string]: validationMessageCallback } = {};
-
   /**
    * @ignore
    */
   static get formControlValidators() {
     return [
       requiredValidator,
-      programmaticValidator,
       maxLengthValidator,
       minLengthValidator,
       patternValidator,
@@ -373,66 +361,14 @@ export class MinidTextfield extends FormControlMixin(
     this.value = this.#initialValue;
   }
 
+  forceError(message?: string): void {
+    super.forceError(message);
+  }
+
   @watch('value')
   handleValueUpdate() {
     this.setValue(this.value);
   }
-
-  @watch('overrideerror', { waitUntilFirstUpdate: true })
-  handleOverrideErrorUpdate() {
-    if (this.overrideerror) {
-      this.forceError();
-    }
-  }
-
-  setMessage(message: string) {
-    console.log('lol im totally setting the message now🤷🏻‍♂️');
-
-    this.invalidmessage = message;
-  }
-
-  validationMessageCallback(message: string): void {
-    this.showInvalidMessage = !!message;
-
-    console.log(this.errorMessages['valueMissing']?.(this, this.value));
-
-    const event = this.showInvalidMessage
-      ? 'mid-invalid-show'
-      : 'mid-invalid-hide';
-    this.dispatchEvent(
-      new CustomEvent(event, {
-        bubbles: true,
-        composed: true,
-        detail: {
-          validity: this.validity,
-          setMessage: this.setMessage.bind(this),
-        },
-      })
-    );
-
-    console.log(
-      `🔺 ${this.validity.valid}`,
-      `message: ${this.invalidmessage}`,
-      Object.entries(this.validity)
-        .map(([key, value]) => {
-          if (value) {
-            return key + ' 😱';
-          }
-        })
-        .join(', ')
-    );
-  }
-
-  // @watch('invalidmessage', { waitUntilFirstUpdate: true })
-  // handleInvalidMessageUpdate() {
-  //   console.log('custom validity', this.invalidmessage);
-
-  //   // this.input.setCustomValidity(this.invalidmessage);
-  //   this.internals.setValidity(
-  //     { customError: !!this.invalidmessage },
-  //     this.invalidmessage
-  //   );
-  // }
 
   override render() {
     const lg = this.size === 'lg';
@@ -505,10 +441,10 @@ export class MinidTextfield extends FormControlMixin(
           part="base"
           class="${classMap({
             'fds-textfield__field': true,
-            'border-neutral': !this.showInvalidMessage,
-            'border-danger': this.showInvalidMessage,
-            border: !this.showInvalidMessage,
-            'border-2': this.showInvalidMessage,
+            'border-neutral': !this.invalidmessage,
+            'border-danger': this.invalidmessage,
+            border: !this.invalidmessage,
+            'border-2': this.invalidmessage,
           })} field focus-within:shadow-focus-inner focus-within:outline-focus-outer outline-2 outline-transparent focus-within:outline-3 focus-within:outline-offset-3"
         >
           <span class="prefix">
@@ -591,13 +527,13 @@ export class MinidTextfield extends FormControlMixin(
       </div>
       <div
         class="${classMap({
-          hidden: !this.showInvalidMessage,
+          hidden: !this.invalidmessage,
         })} error-message text-danger-subtle flex gap-1 pt-2"
         id="error-message"
         aria-live="polite"
       >
         <mid-icon name="xmark-octagon-fill" class="mt-1 text-xl"></mid-icon>
-        ${this.overrideerror || this.invalidmessage}
+        ${this.invalidmessage}
       </div>
     `;
   }
