@@ -430,10 +430,10 @@ export function FormControlMixin<
         this.#forceError ||
         (this.#touched && !this.validity.valid && !this.#focused);
 
-      if (showError) {
+      if (showError && this.internals.states) {
         this.internals.states.add('--show-error');
         this.internals.states.add('--invalid');
-      } else {
+      } else if (this.internals.states) {
         this.internals.states.delete('--show-error');
         this.internals.states.delete('--invalid');
       }
