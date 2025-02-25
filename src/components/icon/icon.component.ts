@@ -6,6 +6,12 @@ import { isTemplateResult } from 'lit/directive-helpers.js';
 import { MidIconName } from '../../types/icon-name';
 import { systemIcons } from './system.icon-library.ts';
 
+declare global {
+  interface HTMLElementTagNameMap {
+    'mid-icon': MinidIcon;
+  }
+}
+
 const styles = [
   css`
     :host {
@@ -75,7 +81,7 @@ export class MinidIcon extends styled(LitElement, styles) {
    * The name of a registered custom icon library.
    *  @default nav-aksel
    */
-  @property({ reflect: true })
+  @property()
   library: 'system' | 'country' | 'nav-aksel' = 'nav-aksel';
 
   /**

@@ -11,8 +11,14 @@ import { watch } from '../internal/watch.js';
 import {
   getAnimation,
   setDefaultAnimation,
-} from '../components/utilities/animation-registry.js';
+} from '../utilities/animation-registry.js';
 import { stopAnimations, animateTo } from '../internal/animate.js';
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'mid-helptext': MinidHelptext;
+  }
+}
 
 const styles = [
   css`

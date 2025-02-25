@@ -19,6 +19,12 @@ import {
 import { watch } from '../internal/watch';
 import { FormControllerMixin } from '../mixins/form-controller.mixin';
 
+declare global {
+  interface HTMLElementTagNameMap {
+    'mid-phone-input': MinidPhoneInput;
+  }
+}
+
 const styles = [
   css`
     :host {

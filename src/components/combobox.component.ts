@@ -7,20 +7,26 @@ import {
   state,
 } from 'lit/decorators.js';
 import './popup.component';
-import { styled } from 'mixins/tailwind.mixin.ts';
+import { styled } from '../mixins/tailwind.mixin.ts';
 import { MinidPopup } from './popup.component';
 import { waitForEvent } from '../internal/event';
 import { watch } from '../internal/watch';
 import {
   getAnimation,
   setDefaultAnimation,
-} from '../components/utilities/animation-registry';
+} from '../utilities/animation-registry';
 import { animateTo, stopAnimations } from '../internal/animate';
 import { getTabbableBoundary } from '../internal/tabbable';
-import { MinidButton } from '../components/button.component';
+import { MinidButton } from './button.component';
 import { MinidMenu } from '../components/menu.component';
 import { MinidPhoneInput } from '../components/phone-input.component';
 import { MinidTextfield } from '../components/textfield.component';
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'mid-combobox': MinidCombobox;
+  }
+}
 
 const styles = [
   css`

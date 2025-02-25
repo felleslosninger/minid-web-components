@@ -1,12 +1,18 @@
 import { css, html, LitElement, PropertyValues } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import { styled } from 'src/mixins/tailwind.mixin';
+import { styled } from '../mixins/tailwind.mixin';
 import './label.component';
-import { ConstraintsValidationMixin } from 'src/mixins/form-controller.mixin';
-import { MinidRadioButton } from 'src/components/radio-button.component';
+import { ConstraintsValidationMixin } from '../mixins/form-controller.mixin';
+import { MinidRadioButton } from '../components/radio-button.component';
 import { classMap } from 'lit/directives/class-map.js';
-import { watch } from 'src/internal/watch';
-import { MinidRadio } from 'src/components/radio.component';
+import { watch } from '../internal/watch';
+import { MinidRadio } from '../components/radio.component';
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'mid-radio-group': MinidRadioGroup;
+  }
+}
 
 const styles = [
   css`
