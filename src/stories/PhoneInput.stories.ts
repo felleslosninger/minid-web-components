@@ -8,7 +8,7 @@ import '../components/search.component';
 import '../components/icon/icon.component';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { CountryCode, getCountries } from 'libphonenumber-js';
-import { countryLabelsNO } from '../components/utilities/countries';
+import { countryLabelsNO } from '../utilities/countries';
 
 type PhoneInputProps = {
   'mid-country-click': Event;

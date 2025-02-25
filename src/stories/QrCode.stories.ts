@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
-import '../components/qr-code.componet';
+import '../components/qr-code.component';
 import { html } from 'lit';
 import { ifDefined } from 'lit/directives/if-defined.js';
 
