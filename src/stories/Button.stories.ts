@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import { ifDefined } from 'lit/directives/if-defined.js';
-import '../components/button';
-import { MinidButton } from '../components/button';
+import '../components/button.component';
+import { MinidButton } from '../components/button.component';
 
 type ButtonProps = {
   variant?: MinidButton['variant'];
