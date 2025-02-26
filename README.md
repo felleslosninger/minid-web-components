@@ -4,37 +4,7 @@ This repository contains a collection of web components built with Lit.
 
 ## Installation
 
-**1. Set up your environment:**
-
-Since this package is hosted in an internal GitHub repository, you'll need to configure your npm or yarn client to authenticate with a personal access token (PAT).
-
-* **Create a PAT:**
-    - Go to your GitHub settings.
-    - Navigate to "Developer settings" -> "Personal access tokens" -> "Tokens (classic)".
-    - Generate a new token with the `read:packages` scope.
-
-* **Configure npm:**
-    - Create or edit your `~/.npmrc` file:
-
-      ```
-      //npm.pkg.github.com/:_authToken=[YOUR_PERSONAL_ACCESS_TOKEN]
-      @felleslosninger:registry=https://npm.pkg.github.com/
-      ```
-
-* **Configure yarn:**
-    - Create or edit your `~/.yarnrc.yaml` file:
-
-      ```yaml
-      npmScopes: {
-        felleslosninger: {
-          npmRegistryServer: "https://npm.pkg.github.com"
-          npmAlwaysAuth: true
-          npmAuthToken: "[YOUR_PERSONAL_ACCESS_TOKEN]"
-        }
-      }
-      ```
-
-**2. Install the package:**
+**Install the package:**
 
    ```bash
    npm install @felleslosninger/minid-elements
@@ -55,7 +25,7 @@ import '@felleslosninger/minid-elements/button';
 ## Documentation
 View the complete component documentation and examples in our Storybook:
 
-[https://verbose-telegram-zwgl6jl.pages.github.io/](https://verbose-telegram-zwgl6jl.pages.github.io/)
+[https://elements.minid.no/](https://elements.minid.no/)
 
 ## Development
 If you're contributing to this project, follow these steps:
@@ -69,5 +39,5 @@ If you're contributing to this project, follow these steps:
 We welcome contributions! Please feel free to open issues and pull requests.
 
 ## License
-BSD 3-Clause License - See [LICENSE](LICENSE) for more information.
+MIT License - See [LICENSE](LICENSE) for more information.
 ```
