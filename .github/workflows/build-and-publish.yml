@@ -9,9 +9,7 @@ jobs:
   build-and-publish:
 
     permissions:
-      id-token: write
       contents: write
-      packages: write
 
     runs-on: ubuntu-latest
     steps:
@@ -22,6 +20,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20.x'
+          registry-url: 'https://registry.npmjs.org'
+          scope: '@felleslosninger'
+          token: ${{ secrets.NPM_TOKEN }}
 
       - name: Increment version
         run: |
@@ -50,16 +51,12 @@ jobs:
       - name: Build web components
         run: yarn build
 
-      - name: Configure GitHub Package Registry
-        run: |
-          npm config set //npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}
-          npm config set @felleslosninger:registry=https://npm.pkg.github.com/
-
       #################################
-      # Publish to GitHub Packages
+      # Publish to public npm repo
       ################################
-      - name: Publish to GitHub Packages
-        run: npm publish
+      - name: Publish to public npm repo
+        run: |
+          npm publish --access public
 
       #################################
       # Publish to MinID CDN
