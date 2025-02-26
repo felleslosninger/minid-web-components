@@ -1,6 +1,13 @@
 {
   "name": "@felleslosninger/minid-elements",
   "version": "0.0.88",
+  "description": "MinID Web Components",
+  "author": "Digitaliseringsdirektoratet",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/felleslosninger/minid-web-components/issues"
+  },
+  "homepage": "https://github.com/felleslosninger/minid-web-components#readme",
   "type": "module",
   "module": "./dist/index.js",
   "main": "./dist/index.js",
