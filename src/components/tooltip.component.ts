@@ -1,6 +1,6 @@
 import { css, html, LitElement } from 'lit';
 import { customElement, property, query } from 'lit/decorators.js';
-import { styled } from 'src/mixins/tailwind.mixin.js';
+import { styled } from '../mixins/tailwind.mixin.js';
 import './popup.component';
 import { classMap } from 'lit/directives/class-map.js';
 import { MinidPopup } from './popup.component';
@@ -13,8 +13,14 @@ import {
 import {
   getAnimation,
   setDefaultAnimation,
-} from '../components/utilities/animation-registry.js';
+} from '../utilities/animation-registry.js';
 import { waitForEvent } from '../internal/event.js';
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'mid-tooltip': MinidTooltip;
+  }
+}
 
 const styles = [
   css`

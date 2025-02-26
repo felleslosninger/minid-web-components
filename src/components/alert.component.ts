@@ -1,17 +1,23 @@
 import { css, html, LitElement, nothing } from 'lit';
 import { customElement, property, query, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
-import { styled } from 'src/mixins/tailwind.mixin.ts';
+import { styled } from '../mixins/tailwind.mixin.ts';
 import './icon/icon.component';
 import { ifDefined } from 'lit/directives/if-defined.js';
-import { watch } from 'src/internal/watch';
+import { watch } from '../internal/watch';
 import {
   getAnimation,
   setDefaultAnimation,
-} from 'src/components/utilities/animation-registry';
-import { waitForEvent } from 'src/internal/event';
-import { animateTo, stopAnimations } from 'src/internal/animate';
-import { MidIconName } from 'src/types/icon-name';
+} from '../utilities/animation-registry';
+import { waitForEvent } from '../internal/event';
+import { animateTo, stopAnimations } from '../internal/animate';
+import { MidIconName } from '../types/icon-name';
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'mid-alert': MinidAlert;
+  }
+}
 
 const toastStack = Object.assign(document.createElement('div'), {
   className: 'mid-toast-stack',

@@ -182,11 +182,11 @@ export function FormControlMixin<
         this.#forceError = true;
       }
       const showError = this.#shouldShowError();
+
       if (this.validationMessageCallback) {
-        this.validationMessageCallback(
-          showError ? this.internals.validationMessage : ''
-        );
+        this.validationMessageCallback(showError ? this.validationMessage : '');
       }
+      this.#dispatchInvalidEvent(showError);
     };
 
     /**
@@ -197,6 +197,7 @@ export function FormControlMixin<
     #onInvalid = (event?: Event): void => {
       event?.preventDefault();
       event?.stopImmediatePropagation();
+
       if (this.#awaitingValidationTarget && this.validationTarget) {
         this.internals.setValidity(
           this.validity,
@@ -207,10 +208,11 @@ export function FormControlMixin<
       }
       this.#touched = true;
       this.#forceError = true;
-      this.#shouldShowError();
+      const showError = this.#shouldShowError();
       this?.validationMessageCallback?.(
-        this.showError ? this.internals.validationMessage : ''
+        showError ? this.validationMessage : ''
       );
+      this.#dispatchInvalidEvent(showError);
     };
 
     /**
@@ -248,12 +250,6 @@ export function FormControlMixin<
     get validity(): ValidityState {
       return this.internals.validity;
     }
-
-    /**
-     * If the element previously showed a validation error
-     * @ignore
-     */
-    #previousShowError = false;
 
     /**
      * The validation message shown by a given Validator object. If the control
@@ -312,6 +308,20 @@ export function FormControlMixin<
       if (this.valueChangedCallback) {
         this.valueChangedCallback(valueToUpdate);
       }
+      const showError = this.#shouldShowError();
+      this.#dispatchInvalidEvent(showError);
+    }
+
+    /**
+     * Forces the control to show an error state. If a message is passed in,
+     * it will be set as the control's internal validity state message.
+     * @param message { string | undefined } - The message for internals validity state
+     */
+    forceError(message?: string) {
+      if (message) {
+        this.#setValidityWithOptionalTarget({ customError: true }, message);
+      }
+      this.#forceError = true;
       this.#shouldShowError();
     }
 
@@ -420,34 +430,12 @@ export function FormControlMixin<
         this.#forceError ||
         (this.#touched && !this.validity.valid && !this.#focused);
 
-      if (showError) {
+      if (showError && this.internals.states) {
         this.internals.states.add('--show-error');
         this.internals.states.add('--invalid');
-
-        if (!this.#previousShowError) {
-          this?.dispatchEvent(
-            new CustomEvent('mid-invalid-show', {
-              bubbles: true,
-              composed: true,
-              detail: { validity: this.validity },
-            })
-          );
-          this.#previousShowError = showError;
-        }
-      } else {
+      } else if (this.internals.states) {
         this.internals.states.delete('--show-error');
         this.internals.states.delete('--invalid');
-
-        if (this.#previousShowError) {
-          this?.dispatchEvent(
-            new CustomEvent('mid-invalid-hide', {
-              bubbles: true,
-              composed: true,
-              detail: { validity: this.validity },
-            })
-          );
-          this.#previousShowError = showError;
-        }
       }
 
       return showError;
@@ -624,9 +612,21 @@ export function FormControlMixin<
       this.#forceError = false;
       this.#shouldShowError();
       this.resetFormControl?.();
+      const showError = this.#shouldShowError();
+      this.validationMessageCallback?.(showError ? this.validationMessage : '');
+      this.#dispatchInvalidEvent(showError);
+    }
 
-      this.validationMessageCallback?.(
-        this.#shouldShowError() ? this.validationMessage : ''
+    #dispatchInvalidEvent(showError: boolean) {
+      const event = showError ? 'mid-invalid-show' : 'mid-invalid-hide';
+      this.dispatchEvent(
+        new CustomEvent(event, {
+          bubbles: true,
+          composed: true,
+          detail: {
+            validity: this.validity,
+          },
+        })
       );
     }
   }

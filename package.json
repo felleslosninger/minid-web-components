@@ -1,6 +1,6 @@
 {
   "name": "@felleslosninger/minid-elements",
-  "version": "0.0.81",
+  "version": "0.0.87",
   "type": "module",
   "module": "./dist/index.js",
   "main": "./dist/index.js",
@@ -13,83 +13,103 @@
       "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
     },
-    "./icon": {
-      "import": "./dist/icon.component.js",
-      "types": "./dist/icon.component.d.ts"
-    },
-    "./alert": {
-      "import": "./dist/alert.component.js",
-      "types": "./dist/alert.component.d.ts"
-    },
-    "./button": {
-      "import": "./dist/button.component.js",
-      "types": "./dist/button.component.d.ts"
-    },
-    "./checkbox": {
-      "import": "./dist/checkbox.component.js",
-      "types": "./dist/checkbox.component.d.ts"
-    },
-    "./countdown": {
-      "import": "./dist/countdown.component.js",
-      "types": "./dist/countdown.component.d.ts"
-    },
-    "./dropdown": {
-      "import": "./dist/dropdown.component.js",
-      "types": "./dist/dropdown.component.d.ts"
-    },
-    "./heading": {
-      "import": "./dist/heading.component.js",
-      "types": "./dist/heading.component.d.ts"
-    },
-    "./helptext": {
-      "import": "./dist/helptext.component.js",
-      "types": "./dist/helptext.component.d.ts"
-    },
-    "./label": {
-      "import": "./dist/label.component.js",
-      "types": "./dist/label.component.d.ts"
-    },
-    "./menu": {
-      "import": "./dist/menu.component.js",
-      "types": "./dist/menu.component.d.ts"
-    },
-    "./menu-item": {
-      "import": "./dist/menu-item.component.js",
-      "types": "./dist/menu-item.component.d.ts"
-    },
-    "./paragraph": {
-      "import": "./dist/paragraph.component.js",
-      "types": "./dist/paragraph.component.d.ts"
-    },
-    "./popup": {
-      "import": "./dist/popup.component.js",
-      "types": "./dist/popup.component.d.ts"
-    },
-    "./qr-code": {
-      "import": "./dist/qr-code.component.js",
-      "types": "./dist/qr-code.component.d.ts,"
-    },
-    "./spinner": {
-      "import": "./dist/spinner.component.js",
-      "types": "./dist/spinner.component.d.ts"
-    },
     "./styles": {
       "import": "./dist/index.css"
     },
-    "./textfield": {
-      "import": "./dist/textfield.component.js",
-      "types": "./dist/textfield.component.d.ts"
-    },
-    "./tooltip": {
-      "import": "./dist/tooltip.component.js",
-      "types": "./dist/tooltip.component.d.ts"
-    },
-    "./code-input": {
-      "import": "./dist/code-input.component.js",
-      "types": "./dist/code-input.component.d.ts"
-    },
     "./designsystemet-tailwind": {
       "import": "./dist/designsystemet-tailwind.css"
+    },
+    "./alert": {
+      "import": "./dist/components/alert.js",
+      "types": "./dist/components/alert.component.d.ts"
+    },
+    "./button": {
+      "import": "./dist/components/button.js",
+      "types": "./dist/components/button.component.d.ts"
+    },
+    "./checkbox": {
+      "import": "./dist/components/checkbox.js",
+      "types": "./dist/components/checkbox.component.d.ts"
+    },
+    "./code-input": {
+      "import": "./dist/components/code-input.js",
+      "types": "./dist/components/code-input.component.d.ts"
+    },
+    "./combobox": {
+      "import": "./dist/components/combobox.js",
+      "types": "./dist/components/combobox.component.d.ts"
+    },
+    "./countdown": {
+      "import": "./dist/components/countdown.js",
+      "types": "./dist/components/countdown.component.d.ts"
+    },
+    "./dropdown": {
+      "import": "./dist/components/dropdown.js",
+      "types": "./dist/components/dropdown.component.d.ts"
+    },
+    "./heading": {
+      "import": "./dist/components/heading.js",
+      "types": "./dist/components/heading.component.d.ts"
+    },
+    "./helptext": {
+      "import": "./dist/components/helptext.js",
+      "types": "./dist/components/helptext.component.d.ts"
+    },
+    "./icon": {
+      "import": "./dist/components/icon/icon.js",
+      "types": "./dist/components/icon/icon.component.d.ts"
+    },
+    "./label": {
+      "import": "./dist/components/label.js",
+      "types": "./dist/components/label.component.d.ts"
+    },
+    "./link": {
+      "import": "./dist/components/link.js",
+      "types": "./dist/components/link.component.d.ts"
+    },
+    "./menu": {
+      "import": "./dist/components/menu.js",
+      "types": "./dist/components/menu.component.d.ts"
+    },
+    "./menu-item": {
+      "import": "./dist/components/menu-item.js",
+      "types": "./dist/components/menu-item.component.d.ts"
+    },
+    "./modal": {
+      "import": "./dist/components/modal.js",
+      "types": "./dist/components/modal.component.d.ts"
+    },
+    "./paragraph": {
+      "import": "./dist/components/paragraph.js",
+      "types": "./dist/components/paragraph.component.d.ts"
+    },
+    "./phone-input": {
+      "import": "./dist/components/phone-input.js",
+      "types": "./dist/components/phone-input.component.d.ts"
+    },
+    "./popup": {
+      "import": "./dist/components/popup.js",
+      "types": "./dist/components/popup.component.d.ts"
+    },
+    "./qr-code": {
+      "import": "./dist/components/qr-code.js",
+      "types": "./dist/components/qr-code.component.d.ts,"
+    },
+    "./search": {
+      "import": "./dist/components/search.js",
+      "types": "./dist/components/search.component.d.ts"
+    },
+    "./spinner": {
+      "import": "./dist/components/spinner.js",
+      "types": "./dist/components/spinner.component.d.ts"
+    },
+    "./textfield": {
+      "import": "./dist/components/textfield.js",
+      "types": "./dist/components/textfield.component.d.ts"
+    },
+    "./tooltip": {
+      "import": "./dist/components/tooltip.js",
+      "types": "./dist/components/tooltip.component.d.ts"
     }
   },
   "repository": {

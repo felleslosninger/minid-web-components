@@ -20,16 +20,6 @@ export const requiredValidator: Validator = {
   },
 };
 
-export const programmaticValidator: Validator = {
-  attribute: 'error',
-  message(instance: HTMLElement & { error: string }): string {
-    return instance.error;
-  },
-  isValid(instance: HTMLElement & { error: string }): boolean {
-    return !instance.error;
-  },
-};
-
 export const minLengthValidator: Validator = {
   attribute: 'minlength',
   key: 'tooShort',

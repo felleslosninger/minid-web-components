@@ -1,6 +1,12 @@
 import { customElement } from 'lit/decorators.js';
 import { css, html, LitElement } from 'lit';
-import { styled } from 'mixins/tailwind.mixin';
+import { styled } from '../mixins/tailwind.mixin';
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'mid-spinner': MinidSpinner;
+  }
+}
 
 const styles = [
   css`

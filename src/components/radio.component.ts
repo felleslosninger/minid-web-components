@@ -2,8 +2,14 @@ import { css, html, LitElement } from 'lit';
 import { customElement, property, query } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { live } from 'lit/directives/live.js';
-import { watch } from 'src/internal/watch';
-import { styled } from 'src/mixins/tailwind.mixin';
+import { watch } from '../internal/watch';
+import { styled } from '../mixins/tailwind.mixin';
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'mid-radio': MinidRadio;
+  }
+}
 
 const styles = [
   css`

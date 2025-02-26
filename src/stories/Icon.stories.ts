@@ -4,6 +4,7 @@ import { html } from 'lit';
 import '../components/icon/icon.component';
 import { styleMap } from 'lit/directives/style-map.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
+import { MinidIcon } from '../components/icon/icon.component';
 
 export interface IconProps {
   name: MidIconName;
@@ -11,6 +12,7 @@ export interface IconProps {
   color?: string;
   alt?: string;
   src?: string;
+  library?: MinidIcon['library'];
   'mid-error'?: unknown;
   'mid-load'?: unknown;
 }
@@ -32,6 +34,10 @@ const meta = {
     src: {
       control: { type: 'text' },
     },
+    library: {
+      control: { type: 'select' },
+      options: ['nav-aksel', 'country', 'system'],
+    },
 
     color: { control: { type: 'color' } },
     'mid-error': { control: { disable: true } },
@@ -48,7 +54,7 @@ export const Main: Story = {
     name: 'books-fill',
     size: '4rem',
   },
-  render: ({ name, size, color, alt }: IconProps) =>
+  render: ({ name, size, color, alt, library }: IconProps) =>
     html`<mid-icon
       style="${styleMap({
         color: color,
@@ -56,5 +62,6 @@ export const Main: Story = {
       })}"
       name=${name}
       alt=${ifDefined(alt)}
+      library=${ifDefined(library)}
     ></mid-icon>`,
 };

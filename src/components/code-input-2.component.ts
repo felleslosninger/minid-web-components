@@ -1,6 +1,6 @@
 import { css, html, LitElement } from 'lit';
 import { customElement, property, queryAll } from 'lit/decorators.js';
-import { styled } from 'src/mixins/tailwind.mixin';
+import { styled } from '../mixins/tailwind.mixin';
 
 const styles = [css``];
 

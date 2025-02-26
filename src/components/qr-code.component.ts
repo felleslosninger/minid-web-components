@@ -1,7 +1,13 @@
 import { html, LitElement } from 'lit';
 import { customElement, property, query } from 'lit/decorators.js';
-import { styled } from 'src/mixins/tailwind.mixin';
+import { styled } from '../mixins/tailwind.mixin';
 import QRCode from 'qrcode';
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'mid-qr-code': MinidQrCode;
+  }
+}
 
 @customElement('mid-qr-code')
 export class MinidQrCode extends styled(LitElement) {
