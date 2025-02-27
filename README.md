@@ -1,6 +1,6 @@
 # @felleslosninger/minid-elements
 
-This repository contains a collection of web components built with Lit.
+This repository contains a collection of web components built with Lit. The web components are published at https://www.npmjs.com/package/@felleslosninger/minid-elements
 
 ## Installation
 
@@ -21,6 +21,28 @@ Import the desired components into your project:
 import '@felleslosninger/minid-elements/button';
 <mid-button variant="primary">Click me</mid-button>
 ```
+
+## CDN Usage
+Alternatively, you can use MinId Elements directly from our CDN. Here's an example of how to include the components in your HTML file:
+
+```html
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>MinID CDN Example</title>
+      <link rel="stylesheet" href="https://cdn.minid.no/minid-elements/latest/index.css" />
+      <link rel="stylesheet" href="https://cdn.minid.no/minid-elements/latest/theme/digdir/tokens.css" /> 
+      <script type="module" src="https://cdn.minid.no/minid-elements/latest/index.js"></script>
+    </head>
+    <body>
+      <mid-button>Click me</mid-button> 
+    </body>
+    </html>
+```
+This example demonstrates how to include the mid-button component. You can replace this with any other component from the MinId Elements library.
+
 
 ## Documentation
 View the complete component documentation and examples in our Storybook:
