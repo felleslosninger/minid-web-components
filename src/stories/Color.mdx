@@ -1,0 +1,32 @@
+import { Meta, Canvas, Title, Stories } from '@storybook/addon-docs';
+import * as stories from './Color.stories';
+
+<Meta title="Styling/Color" />
+
+# Color
+
+## Overview
+
+These examples give an overview of the color utility classes (background, text and border) and how they go together.
+
+### Default
+
+<Canvas of={stories.OverviewDefault} />
+
+### Subtle/tinted
+
+<Canvas of={stories.OverviewSubtle} />
+
+## Semantic
+
+### Base colors
+
+<Canvas of={stories.Base} />
+
+### Surface colors
+
+<Canvas of={stories.Surface} />
+
+## Global colors
+
+<Canvas of={stories.Global} />

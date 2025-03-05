@@ -11,7 +11,7 @@ const preview: Preview = {
   parameters: {
     options: {
       storySort: {
-        order: ['Introduction', '*'],
+        order: ['Introduction', 'Styling', '*'],
       },
     },
     controls: {
