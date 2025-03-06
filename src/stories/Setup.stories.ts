@@ -5,7 +5,7 @@ export interface TextProps {}
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories
 const meta = {
-  title: 'Styling/Tailwind',
+  title: 'Styling/Setup',
   argTypes: {},
 } satisfies Meta<TextProps>;
 

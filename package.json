@@ -129,8 +129,8 @@
     "build": "rimraf dist && tsc && npm run analyze && vite build",
     "build:cdn": "rimraf dist-cdn && tsc && vite build --config vite.cdn.config.js",
     "storybook": "storybook dev -p 6006",
-    "storybook-dev": "concurrently --kill-others \"npm run analyze -- --watch\" \"npm run storybook\"",
-    "build-storybook": "npm run build && rimraf storybook-static && npm run analyze && storybook build",
+    "storybook:dev": "concurrently --kill-others \"npm run analyze -- --watch\" \"npm run storybook\"",
+    "storybook:build": "npm run build && rimraf storybook-static && npm run analyze && storybook build",
     "analyze": "custom-elements-manifest analyze"
   },
   "dependencies": {

@@ -15,36 +15,38 @@ type Story = StoryObj<TextProps>;
 export const OverviewSubtle: Story = {
   decorators: [
     (story) =>
-      html`<div class="grid auto-rows-[40px] grid-cols-5 gap-1">
+      html`<div
+        class="grid auto-rows-[40px] grid-cols-5 gap-1 *:border-2 *:p-2"
+      >
         ${story()}
       </div> `,
   ],
   render: () => html`
-    <div class="bg-neutral-tinted border-neutral-subtle border-2 p-2">
+    <div class="bg-neutral-tinted border-neutral-subtle">
       <p class="text-neutral-subtle">Neutral</p>
     </div>
-    <div class="bg-accent-tinted border-accent-subtle border-2 p-2">
+    <div class="bg-accent-tinted border-accent-subtle">
       <p class="text-accent-subtle">Accent</p>
     </div>
-    <div class="bg-brand1-tinted border-brand1-subtle border-2 p-2">
+    <div class="bg-brand1-tinted border-brand1-subtle">
       <p class="text-brand1-subtle">Brand1</p>
     </div>
-    <div class="bg-brand2-tinted border-brand2-subtle border-2 p-2">
+    <div class="bg-brand2-tinted border-brand2-subtle">
       <p class="text-brand2-subtle">Brand2</p>
     </div>
-    <div class="bg-brand3-tinted border-brand3-subtle border-2 p-2">
+    <div class="bg-brand3-tinted border-brand3-subtle">
       <p class="text-brand3-subtle">Brand3</p>
     </div>
-    <div class="bg-info-tinted border-info-subtle border-2 p-2">
+    <div class="bg-info-tinted border-info-subtle">
       <p class="text-info-subtle">Info</p>
     </div>
-    <div class="bg-danger-tinted border-danger-subtle border-2 p-2">
+    <div class="bg-danger-tinted border-danger-subtle">
       <p class="text-danger-subtle">Danger</p>
     </div>
-    <div class="bg-success-tinted border-success-subtle border-2 p-2">
+    <div class="bg-success-tinted border-success-subtle">
       <p class="text-success-subtle">Success</p>
     </div>
-    <div class="bg-warning-tinted border-warning-subtle border-2 p-2">
+    <div class="bg-warning-tinted border-warning-subtle">
       <p class="text-warning-subtle">Warning</p>
     </div>
   `,
@@ -53,36 +55,38 @@ export const OverviewSubtle: Story = {
 export const OverviewDefault: Story = {
   decorators: [
     (story) =>
-      html`<div class="grid auto-rows-[40px] grid-cols-5 gap-1">
+      html`<div
+        class="grid auto-rows-[40px] grid-cols-5 gap-1 *:border-2 *:p-2"
+      >
         ${story()}
       </div> `,
   ],
   render: () => html`
-    <div class="bg-neutral border-neutral border-2 p-2">
+    <div class="bg-neutral border-neutral">
       <p class="text-neutral">Neutral</p>
     </div>
-    <div class="bg-accent border-accent border-2 p-2">
+    <div class="bg-accent border-accent">
       <p class="text-accent">Accent</p>
     </div>
-    <div class="bg-brand1 border-brand1 border-2 p-2">
+    <div class="bg-brand1 border-brand1">
       <p class="text-brand1">Brand1</p>
     </div>
-    <div class="bg-brand2 border-brand2 border-2 p-2">
+    <div class="bg-brand2 border-brand2">
       <p class="text-brand2">Brand2</p>
     </div>
-    <div class="bg-brand3 border-brand3 border-2 p-2">
+    <div class="bg-brand3 border-brand3">
       <p class="text-brand3">Brand3</p>
     </div>
-    <div class="bg-info border-info border-2 p-2">
+    <div class="bg-info border-info">
       <p class="text-info">Info</p>
     </div>
-    <div class="bg-danger border-danger border-2 p-2">
+    <div class="bg-danger border-danger">
       <p class="text-danger">Danger</p>
     </div>
-    <div class="bg-success border-success border-2 p-2">
+    <div class="bg-success border-success">
       <p class="text-success">Success</p>
     </div>
-    <div class="bg-warning border-warning border-2 p-2">
+    <div class="bg-warning border-warning">
       <p class="text-warning">Warning</p>
     </div>
   `,

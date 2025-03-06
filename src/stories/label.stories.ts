@@ -44,7 +44,7 @@ const label = ({ size, spacing, weight }: labelProps) => {
       size="${ifDefined(size)}"
       ?spacing=${spacing}
       weight=${ifDefined(weight)}
-      >Vennligst skriv inn kontonummer og pin-kode
+      >Vennligst skriv inn kortnummer og pin-kode
     </mid-label>
   `;
 };

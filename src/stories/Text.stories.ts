@@ -51,3 +51,43 @@ export const HeadingDefault: Story = {
     <h1 class="text-heading-2xl">Hello on you</h1>
   `,
 };
+
+export const TextColor: Story = {
+  decorators: [
+    (story) =>
+      html`<div class="grid auto-rows-[40px] grid-cols-5 gap-1">
+        ${story()}
+      </div> `,
+  ],
+  render: () => html`
+    <p class="text-neutral">Neutral</p>
+    <p class="text-accent">Accent</p>
+    <p class="text-brand1">Brand1</p>
+    <p class="text-brand2">Brand2</p>
+    <p class="text-brand3">Brand3</p>
+    <p class="text-info">Info</p>
+    <p class="text-danger">Danger</p>
+    <p class="text-success">Success</p>
+    <p class="text-warning">Warning</p>
+  `,
+};
+
+export const TextColorSubtle: Story = {
+  decorators: [
+    (story) =>
+      html`<div class="grid auto-rows-[40px] grid-cols-5 gap-1">
+        ${story()}
+      </div> `,
+  ],
+  render: () => html`
+    <p class="text-neutral-subtle">Neutral</p>
+    <p class="text-accent-subtle">Accent</p>
+    <p class="text-brand1-subtle">Brand1</p>
+    <p class="text-brand2-subtle">Brand2</p>
+    <p class="text-brand3-subtle">Brand3</p>
+    <p class="text-info-subtle">Info</p>
+    <p class="text-danger-subtle">Danger</p>
+    <p class="text-success-subtle">Success</p>
+    <p class="text-warning-subtle">Warning</p>
+  `,
+};
