@@ -337,6 +337,7 @@
   --color-brand3-surface-hover: var(--ds-color-brand3-surface-hover);
   --color-brand3-surface-active: var(--ds-color-brand3-surface-active);
   --color-brand3-base: var(--ds-color-brand3-base-default);
+  --color-brand3-base-active: var(--ds-color-brand3-base-active);
   --color-brand3-base-hover: var(--ds-color-brand3-base-hover);
   --color-brand3-base-contrast: var(--ds-color-brand3-base-contrast-default);
   --color-brand3-base-contrast-subtle: var(

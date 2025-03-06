@@ -164,7 +164,7 @@ export class MinidCodeInput extends ConstraintsValidationMixin(
     gradientStyle += `) no-repeat 0 0 / ${this.length * 3}ch 100%`;
     inputStyle?.setProperty('--otc-background', gradientStyle);
 
-    const gradientErrorStyle = `linear-gradient(90deg, rgba(179, 38, 30, 60%) calc(${this.length}ch / 2), transparent 0) 0 0 / 3ch 100%`;
+    const gradientErrorStyle = `linear-gradient(90deg, var(--color-danger-surface-active) calc(${this.length}ch / 2), transparent 0) 0 0 / 3ch 100%`;
     inputStyle?.setProperty('--otc-error-background', gradientErrorStyle);
 
     inputStyle?.setProperty('--otc-width', this.fontSize);
@@ -298,8 +298,8 @@ export class MinidCodeInput extends ConstraintsValidationMixin(
             'mb-2': !!this.label,
           })}"
           for="${this.inputId}"
-          >${this.label}</label
-        >
+          >${this.label}
+        </label>
         <input
           ${ref(this.inputRef)}
           id=${this.inputId}
