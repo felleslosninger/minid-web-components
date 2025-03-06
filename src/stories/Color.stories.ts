@@ -1,16 +1,16 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 
-export interface TextProps {}
+export interface ColorProps {}
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories
 const meta = {
   title: 'Styling/Color',
   argTypes: {},
-} satisfies Meta<TextProps>;
+} satisfies Meta<ColorProps>;
 
 export default meta;
-type Story = StoryObj<TextProps>;
+type Story = StoryObj<ColorProps>;
 
 export const OverviewSubtle: Story = {
   decorators: [
