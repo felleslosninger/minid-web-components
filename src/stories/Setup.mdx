@@ -3,15 +3,35 @@ import * as stories from './Setup.stories';
 
 <Meta title="Styling/Setup" />
 
-# Styling with Tailwind
+# Styling
 
-MinID elements provides a Tailwind theme based on[Designsystemet.](https://www.designsystemet.no/)
-You can use to style your components.
+MinID elements provides a Tailwind theme based on [Designsystemet.](https://www.designsystemet.no/)
 
-## Installation
+## Tailwind
 
-See the [Tailwind documentation](https://tailwindcss.com/docs/installation) for information on how to install. We recommend PostCSS if you are using Custom Components/Lit Components.
+See the [Tailwind documentation](https://tailwindcss.com/docs/installation) for information
+on how to install Tailwind. We recommend PostCSS if you are using Custom Components/Lit Components.
 
-```html
-<p class="text-body-md">Hello on you</p>
+To use the Tailwind theme in your application, simply import the theme in your `tailwind.css` file
+
+```css
+// tailwind.css
+@import 'tailwindcss';
+@import '@felleslosninger/minid-elements/designsystemet-tailwind';
 ```
+
+You can have a look at the raw theme file [here](https://github.com/felleslosninger/minid-web-components/blob/main/src/styles/designsystemet-tailwind.css)
+
+MiniID elements also has some global CSS that should be imported.
+
+```css
+// index.css
+@import '@digdir/designsystemet-theme';
+@import '@felleslosninger/minid-elements/styles';
+
+```
+
+You can generate your own theme with designsystemet CLI.
+
+More information on how to
+install and set up Designsystemet themes can be found [here](https://github.com/digdir/designsystemet)
