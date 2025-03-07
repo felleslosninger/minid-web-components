@@ -1,7 +1,7 @@
-import { html, LitElement } from 'lit';
+import { css, html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { classMap } from 'lit/directives/class-map.js';
 import { styled } from '../mixins/tailwind.mixin';
+import dsStyles from '@digdir/designsystemet-css/paragraph.css?inline';
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -9,38 +9,49 @@ declare global {
   }
 }
 
+const styles = [
+  dsStyles,
+  css`
+    :host {
+      display: block;
+    }
+  `,
+];
+
 /**
  * A paragraph
  */
 @customElement('mid-paragraph')
-export class MinidParagraph extends styled(LitElement) {
+export class MinidParagraph extends styled(LitElement, styles) {
   /**
-   * `'xs' = 14px`
-   * `'sm' = 16px`
-   * `'md' = 18px`
-   * `'lg' = 21px`
-   * @default 'md'
+   *
    */
   @property()
   size: 'xs' | 'sm' | 'md' | 'lg' = 'md';
 
   /**
    * Add margin below element
-   * @default false
    */
   @property({ type: Boolean })
   spacing = false;
 
+  @property()
+  variant: 'short' | 'long' | 'default' = 'default';
+
+  /**
+   * Margin bottom.
+   * Corresponds to `--ds-size-*`
+   */
+  @property({ type: Number })
+  mb: 0 | 1 | 2 | 3 | 4 | 5 | 6 = 0;
+
   override render() {
     return html`<p
-      class="${classMap({
-        'fds-paragraph': true,
-        'fds-paragraph--spacing': this.spacing,
-        'fds-paragraph--xs': this.size === 'xs',
-        'fds-paragraph--sm': this.size === 'sm',
-        'fds-paragraph--md': this.size === 'md',
-        'fds-paragraph--lg': this.size === 'lg',
-      })}"
+      class="ds-paragraph"
+      style="margin-bottom: var(--ds-size-${this.mb})"
+      data-variant=${this.variant}
+      data-size=${this.size}
+      ?spacing=${this.spacing}
     >
       <slot></slot>
     </p> `;

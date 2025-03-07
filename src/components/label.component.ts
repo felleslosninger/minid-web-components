@@ -1,8 +1,8 @@
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { classMap } from 'lit/directives/class-map.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { styled } from '../mixins/tailwind.mixin';
+import dsStyles from '@digdir/designsystemet-css/label.css?inline';
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -10,14 +10,16 @@ declare global {
   }
 }
 
+const styles = [dsStyles];
+
 @customElement('mid-label')
-export class MinidLabel extends styled(LitElement) {
+export class MinidLabel extends styled(LitElement, styles) {
   /**
    * Font size
    * @default 'md'
    */
   @property()
-  size: 'xs' | 'sm' | 'md' | 'lg' = 'md';
+  size?: 'sm' | 'md' | 'lg';
 
   @property()
   for?: string;
@@ -36,21 +38,21 @@ export class MinidLabel extends styled(LitElement) {
   @property()
   weight: 'medium' | 'normal' | 'semibold' = 'medium';
 
+  /**
+   * Margin bottom.
+   * Corresponds to `--ds-size-*`
+   */
+  @property({ type: Number })
+  mb: 0 | 1 | 2 | 3 | 4 | 5 | 6 = 0;
+
   override render() {
     return html`
       <label
+        class="ds-label"
+        style="margin-bottom: var(--ds-size-${this.mb})"
         for=${ifDefined(this.for)}
-        class=${classMap({
-          'fds-label': true,
-          'fds-label--spacing': this.spacing,
-          'fds-label--xs': this.size === 'xs',
-          'fds-label--sm': this.size === 'sm',
-          'fds-label--md': this.size === 'md',
-          'fds-label--lg': this.size === 'lg',
-          'fds-label--medium-weight': this.weight === 'medium',
-          'fds-label--regular-weight': this.weight === 'normal',
-          'fds-label--semibold-weight': this.weight === 'semibold',
-        })}
+        data-size=${ifDefined(this.size)}
+        data-weight=${this.weight}
       >
         <slot></slot>
       </label>

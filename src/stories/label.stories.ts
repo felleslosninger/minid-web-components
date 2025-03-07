@@ -9,6 +9,7 @@ type labelProps = {
   size?: MinidLabel['size'];
   weight?: MinidLabel['weight'];
   spacing?: boolean;
+  mb?: MinidLabel['mb'];
 };
 
 const meta: Meta = {
@@ -21,7 +22,13 @@ const meta: Meta = {
     },
     weight: {
       control: { type: 'radio' },
-      options: ['medium', 'normal', 'semibold'],
+      options: ['regular', 'medium', 'semibold'],
+    },
+    for: {
+      type: 'string',
+    },
+    mb: {
+      control: { type: 'number', min: 0, max: 6 },
     },
   },
 };
@@ -33,18 +40,19 @@ type Story = StoryObj<labelProps>;
 export const Main: Story = {
   render: (args) => label(args),
   args: {
-    size: 'md',
     spacing: false,
   },
 };
 
-const label = ({ size, spacing, weight }: labelProps) => {
+const label = ({ size, spacing, weight, mb }: labelProps) => {
   return html`
     <mid-label
       size="${ifDefined(size)}"
       ?spacing=${spacing}
       weight=${ifDefined(weight)}
-      >Vennligst skriv inn kortnummer og pin-kode
+      mb=${ifDefined(mb)}
+    >
+      Vennligst skriv inn kortnummer og pin-kode
     </mid-label>
   `;
 };

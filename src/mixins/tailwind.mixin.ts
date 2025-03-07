@@ -1,15 +1,14 @@
-import { CSSResultArray, LitElement } from 'lit';
-import tailwindStyles from '../styles/tailwind.css?inline';
-import dsStyles from '@digdir/designsystemet-css?inline';
+import { CSSResultArray, CSSResultOrNative, LitElement } from 'lit';
 import { Constructor } from '../types/mixin-constructor';
+import baseDsStyles from '@digdir/designsystemet-css/base.css?inline';
 
 export const styled = <T extends Constructor<LitElement>>(
   superClass: T,
-  elementCss: CSSResultArray = []
+  elementCss: Array<CSSResultOrNative | CSSResultArray | string> = []
 ): T =>
   class extends superClass {
     /**
      * @ignore
      */
-    static styles = [tailwindStyles, dsStyles, elementCss];
+    static styles = [baseDsStyles, elementCss];
   };

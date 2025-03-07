@@ -7,7 +7,9 @@ import { ifDefined } from 'lit/directives/if-defined.js';
 
 type ParagraphProps = {
   size?: MinidParagraph['size'];
+  variant?: MinidParagraph['variant'];
   spacing?: boolean;
+  mb?: MinidParagraph['mb'];
 };
 
 const meta: Meta = {
@@ -18,6 +20,13 @@ const meta: Meta = {
       control: { type: 'radio' },
       options: ['xs', 'sm', 'md', 'lg'],
     },
+    variant: {
+      control: { type: 'radio' },
+      options: ['short', 'default', 'long'],
+    },
+    mb: {
+      control: { type: 'number', min: 0, max: 6 },
+    },
   },
 };
 
@@ -26,8 +35,13 @@ export default meta;
 type Story = StoryObj<ParagraphProps>;
 
 export const Main: Story = {
-  render: ({ size, spacing }: ParagraphProps) => html`
-    <mid-paragraph size="${ifDefined(size)}" ?spacing=${spacing}>
+  render: ({ size, spacing, variant, mb }: ParagraphProps) => html`
+    <mid-paragraph
+      size=${ifDefined(size)}
+      ?spacing=${spacing}
+      variant=${ifDefined(variant)}
+      mb=${ifDefined(mb)}
+    >
       I et forsøk på å optimalisere ressursbruken, vil det bli iverksatt tiltak
       for å styrke den offentlige sektors bærekraftige utvikling. Gjennom
       implementering av strategiske handlingsplaner og evaluering av
@@ -38,7 +52,12 @@ export const Main: Story = {
       transparent system som sikrer innbyggernes rettigheter og tilgang til
       informasjon, i samsvar med offentlighetsloven.
     </mid-paragraph>
-    <mid-paragraph size="${ifDefined(size)}" ?spacing=${spacing}>
+    <mid-paragraph
+      size="${ifDefined(size)}"
+      ?spacing=${spacing}
+      variant=${ifDefined(variant)}
+      mb=${ifDefined(mb)}
+    >
       I et forsøk på å optimalisere ressursbruken, vil det bli iverksatt tiltak
       for å styrke den offentlige sektors bærekraftige utvikling. Gjennom
       implementering av strategiske handlingsplaner og evaluering av

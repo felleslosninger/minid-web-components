@@ -144,8 +144,8 @@
   },
   "devDependencies": {
     "@custom-elements-manifest/analyzer": "^0.10.3",
-    "@digdir/designsystemet-css": "^0.10.0",
-    "@digdir/designsystemet-theme": "^0.15.3",
+    "@digdir/designsystemet-css": "^1.0.1",
+    "@digdir/designsystemet-theme": "^1.0.1",
     "@floating-ui/dom": "^1.6.10",
     "@navikt/aksel-icons": "^7.1.2",
     "@storybook/addon-controls": "^8.6.0",

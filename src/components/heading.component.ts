@@ -1,17 +1,25 @@
 import { html, literal } from 'lit/static-html.js';
 import { customElement, property } from 'lit/decorators.js';
+import { css, LitElement } from 'lit';
+import dsStyles from '@digdir/designsystemet-css/heading.css?inline';
 import { styled } from '../mixins/tailwind.mixin';
-import { classMap } from 'lit/directives/class-map.js';
-import { LitElement } from 'lit';
-
 declare global {
   interface HTMLElementTagNameMap {
     'mid-heading': MinidHeading;
   }
 }
 
+const styles = [
+  dsStyles,
+  css`
+    :host {
+      display: block;
+    }
+  `,
+];
+
 @customElement('mid-heading')
-export class MinidHeading extends styled(LitElement) {
+export class MinidHeading extends styled(LitElement, styles) {
   /**
    * @default 1
    */
@@ -25,11 +33,11 @@ export class MinidHeading extends styled(LitElement) {
   size: '2xs' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' = 'md';
 
   /**
-   *
-   * @default false
+   * Margin bottom.
+   * Corresponds to `--ds-size-*`
    */
-  @property({ type: Boolean })
-  spacing = false;
+  @property({ type: Number })
+  mb: 0 | 1 | 2 | 3 | 4 | 5 | 6 = 0;
 
   override render() {
     const tag =
@@ -45,16 +53,12 @@ export class MinidHeading extends styled(LitElement) {
                 ? literal`h5`
                 : literal`h6`;
 
-    return html`<${tag} class="${classMap({
-      'fds-heading': true,
-      'fds-heading--spacing': this.spacing,
-      'fds-heading--2xs': this.size === '2xs',
-      'fds-heading--xs': this.size === 'xs',
-      'fds-heading--sm': this.size === 'sm',
-      'fds-heading--md': this.size === 'md',
-      'fds-heading--lg': this.size === 'lg',
-      'fds-heading--xl': this.size === 'xl',
-      'fds-heading--2xl': this.size === '2xl',
-    })}" ><slot></slot></${tag}>`;
+    return html`<${tag}
+      class="ds-heading"
+      data-size="${this.size}"
+      style="margin-bottom: var(--ds-size-${this.mb})"
+    >
+      <slot></slot>
+    </${tag}>`;
   }
 }

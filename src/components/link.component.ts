@@ -1,9 +1,8 @@
-import { css, html, LitElement } from 'lit';
+import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { classMap } from 'lit/directives/class-map.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { styled } from '../mixins/tailwind.mixin';
-import './icon/icon.component';
+import dsStyles from '@digdir/designsystemet-css/link.css?inline';
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -11,37 +10,34 @@ declare global {
   }
 }
 
-const styles = [
-  css`
-    .fds-link {
-      align-items: baseline;
-    }
-  `,
-];
+const styles = [dsStyles];
 
 @customElement('mid-link')
 export class MinidLink extends styled(LitElement, styles) {
   @property()
   href?: string;
 
-  /**
-   * White text for dark backgrounds
-   */
-  @property({ type: Boolean })
-  inverted = false;
+  @property()
+  size?: 'sm' | 'md' | 'lg';
 
   @property()
   target?: string;
 
+  /**
+   * Margin bottom.
+   * Corresponds to `--ds-size-*`
+   */
+  @property({ type: Number })
+  mb: 0 | 1 | 2 | 3 | 4 | 5 | 6 = 0;
+
   override render() {
     return html`
       <a
-        class="${classMap({
-          'fds-link': true,
-          'fds-link--inverted': this.inverted,
-        })}"
+        class="ds-link"
+        style="margin-bottom: var(--ds-size-${this.mb})"
         href=${ifDefined(this.href)}
         target=${ifDefined(this.target)}
+        data-size=${ifDefined(this.size)}
       >
         <slot></slot>
       </a>
