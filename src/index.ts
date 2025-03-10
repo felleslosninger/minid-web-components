@@ -9,7 +9,6 @@ export { MinidDropdown } from './components/dropdown.component.ts';
 export { MinidHeading } from './components/heading.component.ts';
 export { MinidHelptext } from './components/helptext.component.ts';
 export { MinidIcon } from './components/icon/icon.component.ts';
-export { MinidLabel } from './components/label.component.ts';
 export { MinidLink } from './components/link.component.ts';
 export { MinidMenu } from './components/menu.component.ts';
 export { MinidMenuItem } from './components/menu-item.component.ts';

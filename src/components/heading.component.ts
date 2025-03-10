@@ -20,15 +20,9 @@ const styles = [
 
 @customElement('mid-heading')
 export class MinidHeading extends styled(LitElement, styles) {
-  /**
-   * @default 1
-   */
   @property({ type: Number })
   level: 1 | 2 | 3 | 4 | 5 | 6 = 1;
 
-  /**
-   * @default 'md'
-   */
   @property()
   size: '2xs' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' = 'md';
 
@@ -37,7 +31,7 @@ export class MinidHeading extends styled(LitElement, styles) {
    * Corresponds to `--ds-size-*`
    */
   @property({ type: Number })
-  mb: 0 | 1 | 2 | 3 | 4 | 5 | 6 = 0;
+  spacing: 0 | 1 | 2 | 3 | 4 | 5 | 6 = 0;
 
   override render() {
     const tag =
@@ -56,7 +50,7 @@ export class MinidHeading extends styled(LitElement, styles) {
     return html`<${tag}
       class="ds-heading"
       data-size="${this.size}"
-      style="margin-bottom: var(--ds-size-${this.mb})"
+      style="margin-bottom: var(--ds-size-${this.spacing})"
     >
       <slot></slot>
     </${tag}>`;

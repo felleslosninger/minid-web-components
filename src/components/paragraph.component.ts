@@ -29,12 +29,6 @@ export class MinidParagraph extends styled(LitElement, styles) {
   @property()
   size: 'xs' | 'sm' | 'md' | 'lg' = 'md';
 
-  /**
-   * Add margin below element
-   */
-  @property({ type: Boolean })
-  spacing = false;
-
   @property()
   variant: 'short' | 'long' | 'default' = 'default';
 
@@ -43,12 +37,12 @@ export class MinidParagraph extends styled(LitElement, styles) {
    * Corresponds to `--ds-size-*`
    */
   @property({ type: Number })
-  mb: 0 | 1 | 2 | 3 | 4 | 5 | 6 = 0;
+  spacing: 0 | 1 | 2 | 3 | 4 | 5 | 6 = 0;
 
   override render() {
     return html`<p
       class="ds-paragraph"
-      style="margin-bottom: var(--ds-size-${this.mb})"
+      style="margin-bottom: var(--ds-size-${this.spacing})"
       data-variant=${this.variant}
       data-size=${this.size}
       ?spacing=${this.spacing}

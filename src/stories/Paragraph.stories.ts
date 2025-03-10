@@ -8,8 +8,7 @@ import { ifDefined } from 'lit/directives/if-defined.js';
 type ParagraphProps = {
   size?: MinidParagraph['size'];
   variant?: MinidParagraph['variant'];
-  spacing?: boolean;
-  mb?: MinidParagraph['mb'];
+  spacing?: MinidParagraph['spacing'];
 };
 
 const meta: Meta = {
@@ -24,7 +23,7 @@ const meta: Meta = {
       control: { type: 'radio' },
       options: ['short', 'default', 'long'],
     },
-    mb: {
+    spacing: {
       control: { type: 'number', min: 0, max: 6 },
     },
   },
@@ -35,12 +34,11 @@ export default meta;
 type Story = StoryObj<ParagraphProps>;
 
 export const Main: Story = {
-  render: ({ size, spacing, variant, mb }: ParagraphProps) => html`
+  render: ({ size, spacing, variant }: ParagraphProps) => html`
     <mid-paragraph
       size=${ifDefined(size)}
-      ?spacing=${spacing}
+      spacing=${ifDefined(spacing)}
       variant=${ifDefined(variant)}
-      mb=${ifDefined(mb)}
     >
       I et forsøk på å optimalisere ressursbruken, vil det bli iverksatt tiltak
       for å styrke den offentlige sektors bærekraftige utvikling. Gjennom
@@ -54,9 +52,8 @@ export const Main: Story = {
     </mid-paragraph>
     <mid-paragraph
       size="${ifDefined(size)}"
-      ?spacing=${spacing}
+      spacing=${ifDefined(spacing)}
       variant=${ifDefined(variant)}
-      mb=${ifDefined(mb)}
     >
       I et forsøk på å optimalisere ressursbruken, vil det bli iverksatt tiltak
       for å styrke den offentlige sektors bærekraftige utvikling. Gjennom

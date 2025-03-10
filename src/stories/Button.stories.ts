@@ -8,6 +8,7 @@ type ButtonProps = {
   variant?: MinidButton['variant'];
   size?: MinidButton['size'];
   type?: MinidButton['type'];
+  color?: string;
   label: string;
   href?: string;
   fullwidth?: boolean;
@@ -34,6 +35,10 @@ const meta = {
       control: { type: 'radio' },
       options: ['button', 'submit', 'reset'],
     },
+    color: {
+      control: { type: 'select' },
+      options: ['accent', 'neutral', 'danger'],
+    },
     href: {
       control: { type: 'text' },
     },
@@ -57,6 +62,7 @@ export const Main: Story = {
   render: ({
     variant,
     size,
+    color,
     label,
     type,
     href,
@@ -70,6 +76,7 @@ export const Main: Story = {
       @click=${onclick}
       type="${ifDefined(type)}"
       size=${ifDefined(size)}
+      data-color=${ifDefined(color)}
       variant=${ifDefined(variant)}
       href=${ifDefined(href)}
       loadingtext=${ifDefined(loadingtext)}

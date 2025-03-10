@@ -13,10 +13,9 @@ type AlertProps = {
   elevated: boolean;
   closable?: boolean;
   open?: boolean;
-  severity?: MinidAlert['severity'];
-  iconlabel?: string;
+  'data-color'?: MinidAlert['severity'];
+  'data-size'?: MinidAlert['size'];
   duration?: number;
-  size?: MinidAlert['size'];
   base: Part;
   '--': string;
   'mid-show': Event;
@@ -32,18 +31,16 @@ const meta = {
   title: 'Komponenter/Alert',
   component: 'mid-alert',
   argTypes: {
-    size: {
+    'data-size': {
       control: { type: 'radio' },
       options: ['sm', 'md', 'lg'],
     },
-    severity: {
+    'data-color': {
+      type: 'string',
       control: {
         type: 'radio',
       },
       options: ['warning', 'info', 'danger', 'success'],
-    },
-    iconlabel: {
-      control: { type: 'text' },
     },
     duration: { type: 'number' },
     base: { control: false },
@@ -75,6 +72,8 @@ const meta = {
   parameters: {
     controls: {
       exclude: [
+        'severity',
+        'size',
         'autoHideTimeout',
         'remainingTimeInterval',
         'countdownElement',
@@ -96,28 +95,28 @@ export const Main: Story = {
   },
   render: ({
     content,
-    severity,
+    'data-color': severity,
     title,
     elevated,
-    iconlabel,
-    size,
+    'data-size': size,
     duration,
     closable,
     open,
-    ...rest
+    '--': defaultSlot,
   }: AlertProps) => html`
     <mid-alert
       ?open=${open}
       ?elevated=${elevated}
       ?closable=${closable}
-      size=${ifDefined(size)}
-      iconlabel=${ifDefined(iconlabel)}
-      severity=${ifDefined(severity)}
       duration=${ifDefined(duration)}
+      data-color=${ifDefined(severity)}
+      data-size=${ifDefined(size)}
     >
-      ${rest['--']
-        ? html`<span>${rest['--']}</span>`
-        : html`<mid-heading spacing level="2" size="xs"> ${title} </mid-heading>
+      ${defaultSlot
+        ? html`<span>${defaultSlot}</span>`
+        : html`<mid-heading spacing="2" level="2" size="xs">
+              ${title}
+            </mid-heading>
             <mid-paragraph>${content}</mid-paragraph>`}
     </mid-alert>
   `,
@@ -134,22 +133,20 @@ export const Toast: Story = {
   ],
   render: ({
     content,
-    severity,
+    'data-color': severity,
     title,
     elevated,
-    iconlabel,
-    size,
+    'data-size': size,
     duration,
   }: AlertProps) => html`
     <mid-alert
       class="toast-alert"
       ?elevated=${elevated}
-      size=${ifDefined(size)}
-      iconlabel=${ifDefined(iconlabel)}
-      severity=${ifDefined(severity)}
       duration=${ifDefined(duration)}
+      data-size=${ifDefined(size)}
+      data-color=${ifDefined(severity)}
     >
-      <mid-heading spacing level="2" size="xs"> ${title} </mid-heading>
+      <mid-heading spacing="2" level="2" size="xs"> ${title} </mid-heading>
       <mid-paragraph>${content}</mid-paragraph>
     </mid-alert>
     <mid-button class="toast-button">Toast</mid-button>
@@ -174,7 +171,11 @@ export const ToastFactory: Story = {
       function notify(message, duration = 3000) {
         const alert = document.createElement('mid-alert');
         document.body.append(alert);
-        return alert.toast({ message }, duration);
+        return alert.toast(
+          { message, details: 'hello here are some things' },
+          duration,
+          'danger'
+        );
       }
 
       factoryButton.addEventListener('click', () => {

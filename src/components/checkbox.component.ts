@@ -6,8 +6,8 @@ import {
   queryAssignedNodes,
 } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
-import { styled } from '../mixins/tailwind.mixin';
 import { FormControllerMixin } from '../mixins/form-controller.mixin.ts';
+import './field.component.ts';
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -16,7 +16,7 @@ declare global {
 }
 
 @customElement('mid-checkbox')
-export class MinidCheckbox extends FormControllerMixin(styled(LitElement)) {
+export class MinidCheckbox extends FormControllerMixin(LitElement) {
   @property({ type: Boolean })
   checked = false;
 
@@ -68,7 +68,8 @@ export class MinidCheckbox extends FormControllerMixin(styled(LitElement)) {
     const lg = this.size === 'lg';
 
     return html`
-      <div
+      <mid-field
+        data-size="lg"
         class="${classMap({
           'fds-checkbox': true,
           'fds-paragraph': true,
@@ -83,7 +84,7 @@ export class MinidCheckbox extends FormControllerMixin(styled(LitElement)) {
       >
         <input
           id="checkbox"
-          class="fds-checkbox__input"
+          class="ds-input"
           type="checkbox"
           @change=${this.#handleChange}
           @click=${this.#handleClick}
@@ -105,6 +106,7 @@ export class MinidCheckbox extends FormControllerMixin(styled(LitElement)) {
           <slot></slot>
         </label>
         <div
+          data-field="description"
           class="${classMap({
             'fds-paragraph': true,
             'fds-checkbox__description': true,
@@ -118,7 +120,7 @@ export class MinidCheckbox extends FormControllerMixin(styled(LitElement)) {
             @slotchange=${this.#updateDescriptionHidden}
           ></slot>
         </div>
-      </div>
+      </mid-field>
     `;
   }
 }

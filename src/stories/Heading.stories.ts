@@ -6,7 +6,7 @@ import { ifDefined } from 'lit/directives/if-defined.js';
 
 type HeadingProps = {
   size?: MinidHeading['size'];
-  mb?: MinidHeading['mb'];
+  spacing?: MinidHeading['spacing'];
   level?: MinidHeading['level'];
 };
 
@@ -21,7 +21,7 @@ const meta: Meta = {
     level: {
       control: { type: 'number', min: 1, max: 6 },
     },
-    mb: {
+    spacing: {
       control: { type: 'number', min: 0, max: 6 },
     },
   },
@@ -32,11 +32,11 @@ export default meta;
 type Story = StoryObj<HeadingProps>;
 
 export const Main: Story = {
-  render: ({ size, mb, level }: HeadingProps) => html`
+  render: ({ size, spacing, level }: HeadingProps) => html`
     <mid-heading
       level=${ifDefined(level)}
       size="${ifDefined(size)}"
-      mb=${ifDefined(mb)}
+      spacing=${ifDefined(spacing)}
       >En Viktig Overskrift
     </mid-heading>
   `,

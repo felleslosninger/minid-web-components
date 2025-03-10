@@ -5,6 +5,7 @@ import { ifDefined } from 'lit/directives/if-defined.js';
 import { html, literal } from 'lit/static-html.js';
 import { styled } from '../mixins/tailwind.mixin.ts';
 import { FormControllerMixin } from '../mixins/form-controller.mixin.ts';
+import dsStyles from '@digdir/designsystemet-css/button.css?inline';
 import './spinner.component.ts';
 
 declare global {
@@ -14,24 +15,27 @@ declare global {
 }
 
 const styles = [
+  dsStyles,
   css`
     :host {
       width: auto;
     }
 
-    .btn-loading {
-      cursor: wait;
-    }
-
-    .btn-spinner-only {
+    .spinner-only {
       position: relative;
       gap: 0;
     }
 
-    .btn-spinner-only mid-spinner {
+    .spinner-only mid-spinner {
       position: absolute;
-      top: calc(50% - 0.5em);
-      left: calc(50% - 0.5em);
+    }
+
+    .invisible {
+      visibility: hidden;
+    }
+
+    .hidden {
+      display: none;
     }
   `,
 ];
@@ -59,13 +63,13 @@ export class MinidButton extends FormControllerMixin(
   variant: 'primary' | 'secondary' | 'tertiary' = 'primary';
 
   /**
-   * The size of the button. Defaults to 'md'
+   * The size of the button.
    */
   @property({ type: String })
-  size: 'md' | 'lg' | 'sm' = 'md';
+  size?: 'md' | 'lg' | 'sm';
 
   /**
-   * The type of the button. Defaults to normal 'button'
+   * The type of the button.
    */
   @property({ type: String })
   type: 'submit' | 'button' | 'reset' = 'button';
@@ -134,31 +138,38 @@ export class MinidButton extends FormControllerMixin(
     return html`<${tag}
       part="base"
       class="${classMap({
-        button: true,
-        'fds-focus': true,
-        'fds-btn': true,
-        'fds-btn--first': true,
-        'fds-btn--full-width': this.fullwidth,
-        'fds-btn--icon-only': this.iconstyled,
-        'fds-btn--primary': this.variant === 'primary',
-        'fds-btn--secondary': this.variant === 'secondary',
-        'fds-btn--tertiary': this.variant === 'tertiary',
-        'fds-btn--sm': this.size === 'sm',
-        'fds-btn--md': this.size === 'md',
-        'fds-btn--lg': this.size === 'lg',
-        'btn-loading': this.loading,
-        'btn-spinner-only': this.loading && !this.loadingtext,
+        'ds-button': true,
+        'spinner-only': this.loading && !this.loadingtext,
       })}"
+      href="${ifDefined(this.href)}"
       type=${this.type}
       ?disabled=${this.disabled}
-      href="${ifDefined(this.href)}"
+      ?data-fullwidth=${this.fullwidth}
+      ?data-icon=${this.iconstyled}
+      data-variant=${ifDefined(this.variant)}
+      data-size=${ifDefined(this.size)}
+      aria-busy=${this.loading}
+      aria-disabled=${this.loading}
     >
-      <slot class="${classMap({
-        invisible: this.loading && !this.loadingtext,
-        hidden: this.loading && this.loadingtext,
-      })}"></slot>
-      <span class="${classMap({ hidden: !this.loading })}">${this.loadingtext}</span>
-      ${this.loading ? html`<mid-spinner class="text-2xl" part="spinner"></mid-spinner>` : ''}
+      <slot
+        class="${classMap({
+          invisible: this.loading && !this.loadingtext,
+          hidden: this.loading && this.loadingtext,
+        })}"
+      ></slot>
+      <span
+        class="${classMap({ hidden: !this.loading })}"
+        >${this.loadingtext}</span
+      >
+      ${
+        this.loading
+          ? html`<mid-spinner
+              class="ds-spinner"
+              data-size="sm"
+              part="spinner"
+            ></mid-spinner>`
+          : ''
+      }
     </${tag}>`;
   }
 }

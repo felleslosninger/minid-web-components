@@ -4,10 +4,10 @@
 @custom-variant dark (&:is(.dark *));
 
 @layer base {
-  *:focus-visible {
+  /* *:focus-visible {
     @apply outline-hidden;
     @apply shadow-focus-visible;
-  }
+  } */
 }
 
 @theme inline {

@@ -1,11 +1,14 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import '../components/spinner.component';
 import { html } from 'lit';
-import { styleMap } from 'lit/directives/style-map.js';
+import { MinidSpinner } from '../components/spinner.component';
+import { ifDefined } from 'lit/directives/if-defined.js';
 
 type SpinnerProps = {
-  size?: string;
-  color?: string;
+  'data-size'?: MinidSpinner['size'];
+  'data-color'?: MinidSpinner['color'];
+  size: undefined;
+  color: undefined;
 };
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories
@@ -14,12 +17,26 @@ const meta = {
   tags: ['autodocs'],
   component: 'mid-spinner',
   argTypes: {
-    size: {
-      control: { type: 'text' },
+    'data-color': {
+      type: 'string',
+      control: { type: 'select' },
+      options: [
+        'neutral',
+        'accent',
+        'brand1',
+        'brand2',
+        'brand3',
+        'info',
+        'warning',
+        'danger',
+      ],
     },
-    color: {
-      control: { type: 'color' },
+    'data-size': {
+      control: { type: 'radio' },
+      options: ['2xs', 'xs', 'sm', 'md', 'lg', 'xl'],
     },
+    size: { table: { disable: true } },
+    color: { type: 'string', table: { disable: true } },
   },
 } satisfies Meta<SpinnerProps>;
 
@@ -28,14 +45,10 @@ type Story = StoryObj<SpinnerProps>;
 
 // More on writing stories with args: https://storybook.js.org/docs/writing-stories/args
 export const Main: Story = {
-  args: {
-    size: '4rem',
-  },
-  render: ({ size, color }: SpinnerProps) =>
+  args: {},
+  render: ({ 'data-size': size, 'data-color': color }: SpinnerProps) =>
     html`<mid-spinner
-      style="${styleMap({
-        'font-size': size,
-        color,
-      })}"
+      data-color=${ifDefined(color)}
+      data-size="${ifDefined(size)}"
     ></mid-spinner>`,
 };

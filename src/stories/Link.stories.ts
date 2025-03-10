@@ -11,7 +11,6 @@ type LinkProps = {
   href?: string;
   target?: string;
   size?: MinidLink['size'];
-  mb?: MinidLink['mb'];
 };
 
 const meta: Meta = {
@@ -23,9 +22,6 @@ const meta: Meta = {
     size: {
       control: 'radio',
       options: ['sm', 'md', 'lg'],
-    },
-    mb: {
-      control: { type: 'number', min: 0, max: 6 },
     },
   },
 };
@@ -40,17 +36,16 @@ export const Main: Story = {
     href: 'https://designsystemet.no/',
   },
   decorators: [(story) => html`<div class="grid gap-4">${story()}</div> `],
-  render: ({ href, label, target, size, mb }: LinkProps) => html`
+  render: ({ href, label, target, size }: LinkProps) => html`
     <mid-link
       href=${ifDefined(href)}
       target=${ifDefined(target)}
       size=${ifDefined(size)}
-      mb=${ifDefined(mb)}
     >
       ${label}
     </mid-link>
 
-    <mid-paragraph size=${ifDefined(size)} mb=${ifDefined(mb)}>
+    <mid-paragraph size=${ifDefined(size)}>
       Her brukes litt styles og sånn rett fra
       <mid-link href=${ifDefined(href)} target=${ifDefined(target)}>
         <mid-icon name="external-link"></mid-icon>

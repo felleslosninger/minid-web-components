@@ -3,7 +3,6 @@ import { customElement, property, query, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { styled } from '../mixins/tailwind.mixin.ts';
 import './icon/icon.component';
-import { ifDefined } from 'lit/directives/if-defined.js';
 import { watch } from '../internal/watch';
 import {
   getAnimation,
@@ -11,7 +10,10 @@ import {
 } from '../utilities/animation-registry';
 import { waitForEvent } from '../internal/event';
 import { animateTo, stopAnimations } from '../internal/animate';
-import { MidIconName } from '../types/icon-name';
+import './button.component';
+import './heading.component';
+import './paragraph.component';
+import dsStyles from '@digdir/designsystemet-css/alert.css?inline';
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -24,32 +26,29 @@ const toastStack = Object.assign(document.createElement('div'), {
 });
 
 const styles = [
+  dsStyles,
   css`
     [hidden] {
       display: none !important;
     }
 
-    .fds-alert__icon {
-      font-size: var(--fds-alert-icon-size);
+    .alert:has(.close-button) {
+      padding-inline-end: 5.5rem;
+    }
+
+    .elevated {
+      box-shadow: var(--ds-shadow-md);
     }
 
     .close-button {
+      appearance: none;
+      position: absolute;
+      align-items: center;
+      display: flex;
+      right: 10px;
+      top: 0;
+      height: 100%;
       font-size: 24px;
-      display: inline-flex;
-      align-self: center;
-      padding: 10px;
-      border-radius: 4px;
-      margin-top: -10px;
-      margin-bottom: -10px;
-      color: var(--fds-alert-icon-color);
-    }
-
-    .close-button:hover {
-      background-color: color-mix(
-        in srgb,
-        var(--fds-alert-icon-color) 20%,
-        var(--fds-alert-background)
-      );
     }
 
     .message-details {
@@ -57,17 +56,8 @@ const styles = [
       font-size: 0.875rem;
       line-height: 1.25rem;
       padding: 0.75rem;
-      background-color: color-mix(
-        in srgb,
-        var(--fds-alert-icon-color) 20%,
-        var(--fds-alert-background)
-      );
-      border-left: solid 4px
-        color-mix(
-          in srgb,
-          var(--fds-alert-border-color),
-          var(--fds-alert-background)
-        );
+      background-color: var(--ds-color-surface-hover);
+      border-left: solid 4px var(--ds-color-surface-active);
     }
 
     .message-details pre {
@@ -123,13 +113,13 @@ export class MinidAlert extends styled(LitElement, styles) {
   /**
    * Sets color and icon according to severity
    */
-  @property({ reflect: true })
+  @property({ reflect: true, attribute: 'data-color' })
   severity: 'warning' | 'info' | 'danger' | 'success' = 'info';
 
   /**
    * Sets size of icon, padding and font-size.
    */
-  @property({ reflect: true })
+  @property({ reflect: true, attribute: 'data-size' })
   size: 'sm' | 'md' | 'lg' = 'md';
 
   /**
@@ -137,13 +127,6 @@ export class MinidAlert extends styled(LitElement, styles) {
    */
   @property({ type: Boolean })
   elevated = false;
-
-  /**
-   * Sets the `aria-label` on the icon
-   * Use this to inform screenreaders of severity. Defaults to Norwegian.
-   */
-  @property({ type: String })
-  iconlabel?: string;
 
   @state()
   private remainingTime = this.duration;
@@ -282,6 +265,7 @@ export class MinidAlert extends styled(LitElement, styles) {
 
       if (severity) {
         this.severity = severity;
+        this.setAttribute('data-color', this.severity);
       }
 
       if (duration) {
@@ -331,72 +315,45 @@ export class MinidAlert extends styled(LitElement, styles) {
   }
 
   override render() {
-    const danger = this.severity === 'danger';
-    const warning = this.severity === 'warning';
-    const info = this.severity === 'info';
-    const success = this.severity === 'success';
-    const iconName: MidIconName =
-      (danger && 'xmark-octagon-fill') ||
-      (warning && 'exclamationmark-triangle-fill') ||
-      (success && 'checkmark-circle-fill') ||
-      'information-square-fill';
-    this.iconlabel ??=
-      (danger && 'Feil') ||
-      (warning && 'Advarsel') ||
-      (success && 'Suksess') ||
-      'Informasjon';
-
     return html`
       <div
         part="base"
         class="${classMap({
-          'fds-alert': true,
-          'fds-alert--sm': this.size === 'sm',
-          'fds-alert--md': this.size === 'md',
-          'fds-alert--lg': this.size === 'lg',
-          'fds-alert--warning': warning,
-          'fds-alert--success': success,
-          'fds-alert--info': info,
-          'fds-alert--danger': danger,
-          'fds-alert--elevated': this.elevated,
+          alert: true,
+          'ds-alert': true,
+          elevated: this.elevated,
         })}"
+        data-color=${this.severity}
         @mouseenter=${this.pauseAutoHide}
         @mouseleave=${this.resumeAutoHide}
       >
-        <mid-icon
-          class="fds-alert__icon"
-          name="${iconName}"
-          library="system"
-          alt=${ifDefined(this.iconlabel)}
-        ></mid-icon>
-        <div
-          aria-live="polite"
-          class=${classMap({
-            'fds-paragraph': true,
-            'fds-paragraph--sm': this.size === 'sm',
-            'fds-paragraph--md': this.size === 'md',
-            'fds-paragraph--lg': this.size === 'lg',
-          })}
-        >
+        <mid-paragraph size=${this.size} aria-live="polite">
           <slot>
             ${!this.notificationContent?.title
               ? nothing
-              : html`<h2 class="fds-heading fds-heading--xs">
-                  ${this.notificationContent?.title}
-                </h2>`}
+              : html`
+                  <mid-heading level="2" size="xs" spacing="2">
+                    ${this.notificationContent?.title}
+                  </mid-heading>
+                `}
             ${this.notificationContent?.message}
             ${!this.notificationContent?.details
               ? nothing
               : html`<div class="message-details">
                   <pre>${this.notificationContent?.details}</pre>
-                </div>`}
+                </div> `}
           </slot>
-        </div>
+        </mid-paragraph>
         ${this.closable
           ? html`
-              <button class="close-button" @click="${this.hide}">
+              <mid-button
+                iconstyled
+                variant="tertiary"
+                class="close-button"
+                @click="${this.hide}"
+              >
                 <mid-icon name="xmark"> </mid-icon>
-              </button>
+              </mid-button>
             `
           : nothing}
       </div>
