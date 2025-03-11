@@ -89,6 +89,7 @@ export const Main: Story = {
   },
   parameters: {
     layout: 'centered',
+    open: true,
   },
   decorators: (story) => html`<div class="m-44 flex">${story()}</div>`,
   render: ({
@@ -99,11 +100,11 @@ export const Main: Story = {
     size,
     distance,
     skidding,
-    ...rest
+    '--max-width': maxWidth,
   }: HelptextProps) => {
     return html`<mid-helptext
       style="${styleMap({
-        '--max-width': rest['--max-width'],
+        '--max-width': maxWidth,
       })}"
       ?open=${open}
       ?hoist=${hoist}

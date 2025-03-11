@@ -38,7 +38,6 @@ const meta = {
       control: { type: 'select' },
       options: ['nav-aksel', 'country', 'system'],
     },
-
     color: { control: { type: 'color' } },
     'mid-error': { control: { disable: true } },
     'mid-load': { control: { disable: true } },

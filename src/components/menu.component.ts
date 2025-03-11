@@ -4,6 +4,8 @@ import { classMap } from 'lit/directives/class-map.js';
 import { styled } from '../mixins/tailwind.mixin.ts';
 import { MinidMenuItem } from './menu-item.component';
 import { scrollIntoView } from '../internal/scroll';
+import dropdownStyles from '@digdir/designsystemet-css/dropdown.css?inline';
+import popoverStyles from '@digdir/designsystemet-css/popover.css?inline';
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -12,6 +14,8 @@ declare global {
 }
 
 const styles = [
+  dropdownStyles,
+  popoverStyles,
   css`
     :host {
       --max-height: none;
@@ -284,6 +288,8 @@ export class MinidMenu extends styled(LitElement, styles) {
       <div
         class="${classMap({
           panel: true,
+          'ds-dropdown': true,
+          'ds-popover': true,
           'fds-dropdownmenu': dropdown,
           'fds-dropdownmenu--md': dropdown,
           'fds-box--md-shadow': combobox,

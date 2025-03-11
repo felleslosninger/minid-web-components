@@ -8,7 +8,7 @@ type ButtonProps = {
   variant?: MinidButton['variant'];
   size?: MinidButton['size'];
   type?: MinidButton['type'];
-  color?: string;
+  'data-color'?: string;
   label: string;
   href?: string;
   fullwidth?: boolean;
@@ -35,7 +35,8 @@ const meta = {
       control: { type: 'radio' },
       options: ['button', 'submit', 'reset'],
     },
-    color: {
+    'data-color': {
+      type: 'string',
       control: { type: 'select' },
       options: ['accent', 'neutral', 'danger'],
     },
@@ -62,7 +63,7 @@ export const Main: Story = {
   render: ({
     variant,
     size,
-    color,
+    'data-color': color,
     label,
     type,
     href,
@@ -84,7 +85,8 @@ export const Main: Story = {
       ?disabled=${disabled}
       ?iconstyled=${iconstyled}
       ?loading=${loading}
-      >${label}
+    >
+      ${label}
     </mid-button>`;
   },
 };

@@ -5,11 +5,12 @@ import { ifDefined } from 'lit/directives/if-defined.js';
 import { MinidInput } from '../components/input.component';
 
 type InputProps = {
-  checked?: boolean;
+  value?: string;
+  label?: string;
+  labelAttr?: string;
   disabled?: boolean;
   readonly?: boolean;
   size?: MinidInput['size'];
-  label?: string;
   description?: string;
   type?: MinidInput['type'];
   validationmessage?: string;
@@ -48,6 +49,11 @@ const meta = {
         'week',
       ],
     },
+    labelAttr: {
+      name: 'label',
+      type: 'string',
+      table: { category: 'attributes', defaultValue: { summary: '' } },
+    },
     placeholder: { type: 'string' },
     autocomplete: { type: 'string' },
   },
@@ -58,15 +64,18 @@ type Story = StoryObj<InputProps>;
 
 export const Main: Story = {
   args: {
-    label: 'Godkjenn deling av dine personlige bankdata?',
-    description: 'Obs! Obs! Dette kan ikke reverseres',
+    labelAttr: 'Personlig informasjon',
+    description:
+      'Med personlig informasjon menes informasjon som er personlig.',
+    validationmessage: 'Personlig informasjon kan ikke være tomt',
   },
   render: ({
+    value,
+    label,
+    labelAttr,
     type,
-    checked,
     description,
     disabled,
-    label,
     readonly,
     size,
     validationmessage,
@@ -74,7 +83,8 @@ export const Main: Story = {
     hidelabel,
   }: InputProps) => html`
     <mid-input
-      ?checked=${checked}
+      value=${ifDefined(value)}
+      label=${ifDefined(labelAttr)}
       ?readonly=${readonly}
       ?disabled=${disabled}
       size=${ifDefined(size)}

@@ -171,11 +171,7 @@ export const ToastFactory: Story = {
       function notify(message, duration = 3000) {
         const alert = document.createElement('mid-alert');
         document.body.append(alert);
-        return alert.toast(
-          { message, details: 'hello here are some things' },
-          duration,
-          'danger'
-        );
+        return alert.toast({ message }, duration);
       }
 
       factoryButton.addEventListener('click', () => {

@@ -13,6 +13,7 @@ import {
   setDefaultAnimation,
 } from '../utilities/animation-registry.js';
 import { stopAnimations, animateTo } from '../internal/animate.js';
+import popoverStyles from '@digdir/designsystemet-css/popover.css?inline';
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -21,14 +22,29 @@ declare global {
 }
 
 const styles = [
+  popoverStyles,
   css`
     :host {
       --max-width: 20rem;
     }
 
+    button {
+      appearance: none;
+      border: 0;
+      background-color: transparent;
+      border-radius: 50%;
+      display: flex;
+      padding: 0;
+      outline-offset: 3px;
+    }
+
+    [hidden] {
+      display: none;
+    }
+
     .icon {
       font-size: var(--icon-size);
-      color: var(--fds-semantic-text-action-default);
+      color: var(--ds-color-base-default);
     }
 
     .icon.sm {
@@ -75,7 +91,7 @@ export class MinidHelptext extends styled(LitElement, styles) {
   /**
    * @ignore
    */
-  @query('.helptext__body')
+  @query('#heptext-body')
   body!: HTMLElement;
 
   /**
@@ -303,9 +319,9 @@ export class MinidHelptext extends styled(LitElement, styles) {
           <mid-icon
             name="questionmark-circle"
             library="system"
+            ?hidden=${this.filledIcon}
             class="${classMap({
               icon: true,
-              hidden: this.filledIcon,
               sm: this.size === 'sm',
               md: this.size === 'md',
               lg: this.size === 'lg',
@@ -314,9 +330,9 @@ export class MinidHelptext extends styled(LitElement, styles) {
           <mid-icon
             name="questionmark-circle-fill"
             library="system"
+            ?hidden=${!this.filledIcon}
             class="${classMap({
               icon: true,
-              hidden: !this.filledIcon,
               sm: this.size === 'sm',
               md: this.size === 'md',
               lg: this.size === 'lg',
@@ -326,7 +342,7 @@ export class MinidHelptext extends styled(LitElement, styles) {
 
         <div
           id="heptext-body"
-          class="helptext__body fds-paragraph fds-paragraph--md fds-popover fds-popover--info fds-popover--md fds-helptext__content"
+          class="ds-popover"
           aria-live=${this.open ? 'polite' : 'off'}
           role="status"
         >

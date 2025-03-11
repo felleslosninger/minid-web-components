@@ -1,19 +1,13 @@
 import { css, html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import inputStyles from '@digdir/designsystemet-css/input.css?inline';
-import fieldStyles from '@digdir/designsystemet-css/field.css?inline';
-import labelStyles from '@digdir/designsystemet-css/label.css?inline';
-import validationStyles from '@digdir/designsystemet-css/validation-message.css?inline';
 import { live } from 'lit/directives/live.js';
 import { styled } from '../mixins/tailwind.mixin';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { classMap } from 'lit/directives/class-map.js';
+import inputStyles from '../styles/input-styles';
 
 const styles = [
-  inputStyles,
-  fieldStyles,
-  labelStyles,
-  validationStyles,
+  ...inputStyles,
   css`
     .ds-validation-message {
       margin-top: var(--dsc-field-content-spacing);
@@ -23,12 +17,17 @@ const styles = [
 
 let nextUniqueId = 0;
 
+/**
+ * @slot prefix - Used for decoration to the left of the input
+ * @slot suffix - Used for decoration to the right of the input
+ * @slot label - The input's label. Alternatively, you can use the `label` attribute.
+ *
+ */
 @customElement('mid-input')
 export class MinidInput extends styled(LitElement, styles) {
-  #labelId = `mid-input-label-${++nextUniqueId}`;
-  #descriptionId = `mid-input-description-${nextUniqueId}`;
-  #validationId = `mid-input-validation-${nextUniqueId}`;
-  #inputId = `mid-input-${nextUniqueId}`;
+  private readonly descriptionId = `mid-input-description-${++nextUniqueId}`;
+  private readonly validationId = `mid-input-validation-${nextUniqueId}`;
+  private readonly inputId = `mid-input-${nextUniqueId}`;
 
   @property()
   value = '';
@@ -98,27 +97,30 @@ export class MinidInput extends styled(LitElement, styles) {
 
   override render() {
     return html`
-      <div slot="field" class="ds-field" data-size="${this.size}">
+      <div part="field" class="ds-field" data-size="${this.size}">
         <label
-          id=${this.#labelId}
-          for=${this.#inputId}
-          class="ds-label ${classMap({
+          for=${this.inputId}
+          class="${classMap({
             'ds-sr-only': this.hidelabel,
-          })}"
+          })} ds-label block"
         >
-          <slot name="label"> ${this.label} </slot>
+          <slot name="label">${this.label}</slot>
         </label>
 
-        <div id="${this.#descriptionId}" data-field="description">
+        <p
+          class="${classMap({ 'ds-sr-only': this.hidelabel })}"
+          id="${this.descriptionId}"
+          data-field="description"
+        >
           <slot name="description"> ${this.description} </slot>
-        </div>
+        </p>
         <input
           class="ds-input"
           part="input"
-          id=${this.#inputId}
+          id=${this.inputId}
           .value=${live(this.value)}
           aria-invalid=${this.validationmessage ? 'true' : 'false'}
-          aria-describedby="${this.#descriptionId} ${this.#validationId}"
+          aria-describedby="${this.descriptionId} ${this.validationId}"
           type="${this.type}"
           ?readonly=${this.readonly}
           ?disabled=${this.disabled}
@@ -127,12 +129,12 @@ export class MinidInput extends styled(LitElement, styles) {
         />
         <p
           class="ds-validation-message"
-          id="${this.#validationId}"
+          id="${this.validationId}"
           data-field="validation"
           aria-live="polite"
           ?hidden=${!this.validationmessage}
         >
-          Her har det skjedd en feil
+          ${this.validationmessage}
         </p>
       </div>
     `;

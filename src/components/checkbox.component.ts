@@ -1,13 +1,11 @@
 import { html, LitElement } from 'lit';
-import {
-  customElement,
-  property,
-  query,
-  queryAssignedNodes,
-} from 'lit/decorators.js';
+import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { FormControllerMixin } from '../mixins/form-controller.mixin.ts';
 import './field.component.ts';
+import inputStyles from '../styles/input-styles.ts';
+import { styled } from '../mixins/tailwind.mixin.ts';
+import { live } from 'lit/directives/live.js';
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -15,10 +13,29 @@ declare global {
   }
 }
 
+const styles = inputStyles;
+
+let nextUniqueId = 0;
+
+/**
+ * @event mid-change - Emitted when
+ */
 @customElement('mid-checkbox')
-export class MinidCheckbox extends FormControllerMixin(LitElement) {
+export class MinidCheckbox extends FormControllerMixin(
+  styled(LitElement, styles)
+) {
+  private readonly descriptionId = `mid-checkbox-description-${++nextUniqueId}`;
+  private readonly validationId = `mid-checkbox-validation-${nextUniqueId}`;
+  private readonly inputId = `mid-checkbox-${nextUniqueId}`;
+
+  @property()
+  value = 'on';
+
   @property({ type: Boolean })
   checked = false;
+
+  @property()
+  name = '';
 
   @property({ type: Boolean })
   disabled = false;
@@ -29,98 +46,82 @@ export class MinidCheckbox extends FormControllerMixin(LitElement) {
   @property({ type: String })
   size: 'sm' | 'md' | 'lg' = 'md';
 
-  @query('.fds-checkbox__description')
-  checkboxDescriptionElement!: HTMLDivElement;
+  /**
+   * Visually hides `label` and `description` (still available for screen readers)
+   */
+  @property({ type: Boolean })
+  hidelabel = false;
 
-  @queryAssignedNodes({ slot: 'description', flatten: true })
-  descriptionNodes?: NodeListOf<HTMLElement>;
+  @property()
+  validationmessage = '';
 
-  #handleChange(event: Event) {
+  @property({ type: Boolean })
+  invalid = false;
+
+  private handleChange(event: Event) {
     this.checked = (event.target as HTMLInputElement).checked;
     if (this.checked) {
-      this.setFormValue('on', 'checked');
+      this.setFormValue(this.value, 'checked');
     } else {
       this.setFormValue(null);
     }
-    this.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
+    this.dispatchEvent(
+      new Event('mid-change', { bubbles: true, composed: true })
+    );
   }
 
-  #handleClick(event: Event) {
+  private handleClick(event: Event) {
     if (this.readonly) {
       event.preventDefault();
     }
   }
 
-  #updateDescriptionHidden() {
-    this.checkboxDescriptionElement.style.display = !this.descriptionNodes
-      ?.length
-      ? 'none'
-      : 'block';
-  }
-
-  protected firstUpdated() {
-    this.#updateDescriptionHidden();
+  connectedCallback(): void {
+    super.connectedCallback();
+    this.classList.add('ds-field');
   }
 
   override render() {
-    const sm = this.size === 'sm';
-    const md = this.size === 'md';
-    const lg = this.size === 'lg';
-
     return html`
-      <mid-field
-        data-size="lg"
-        class="${classMap({
-          'fds-checkbox': true,
-          'fds-paragraph': true,
-          'fds-checkbox--readonly': this.readonly,
-          'fds-paragraph--sm': sm,
-          'fds-checkbox--sm': sm,
-          'fds-paragraph--md': md,
-          'fds-checkbox--md': md,
-          'fds-paragraph--lg': lg,
-          'fds-checkbox--lg': lg,
-        })}"
-      >
-        <input
-          id="checkbox"
-          class="ds-input"
-          type="checkbox"
-          @change=${this.#handleChange}
-          @click=${this.#handleClick}
-          ?disabled=${this.disabled}
-          ?checked=${this.checked}
-          ?readonly=${this.readonly}
-        />
+      <div class="ds-field" part="field" data-size="${this.size}">
         <label
-          for="checkbox"
-          class=${classMap({
-            'fds-label': true,
-            'fds-checkbox__label': true,
-            'fds-label--regular-weight': true,
-            'fds-label--sm': sm,
-            'fds-label--md': md,
-            'fds-label--lg': lg,
-          })}
+          for="${this.inputId}"
+          class="${classMap({
+            'ds-sr-only': this.hidelabel,
+          })} ds-label block"
         >
           <slot></slot>
         </label>
-        <div
+        <p
+          id=${this.descriptionId}
+          class="${classMap({ 'ds-sr-only': this.hidelabel })}"
           data-field="description"
-          class="${classMap({
-            'fds-paragraph': true,
-            'fds-checkbox__description': true,
-            'fds-paragraph--sm': sm,
-            'fds-paragraph--md': md,
-            'fds-paragraph--lg': lg,
-          })}"
         >
-          <slot
-            name="description"
-            @slotchange=${this.#updateDescriptionHidden}
-          ></slot>
-        </div>
-      </mid-field>
+          <slot name="description"></slot>
+        </p>
+        <input
+          .value=${live(this.value)}
+          name=${this.name}
+          id="${this.inputId}"
+          class="ds-input"
+          type="checkbox"
+          @change=${this.handleChange}
+          @click=${this.handleClick}
+          ?disabled=${this.disabled}
+          ?readonly=${this.readonly}
+          .checked=${live(this.checked)}
+          aria-invalid=${this.invalid}
+        />
+        <p
+          class="ds-validation-message"
+          id="${this.validationId}"
+          data-field="validation"
+          aria-live="polite"
+          ?hidden=${!this.validationmessage}
+        >
+          ${this.validationmessage}
+        </p>
+      </div>
     `;
   }
 }
