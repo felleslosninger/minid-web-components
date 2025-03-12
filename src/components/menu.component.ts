@@ -14,8 +14,6 @@ declare global {
 }
 
 const styles = [
-  dropdownStyles,
-  popoverStyles,
   css`
     :host {
       --max-height: none;
@@ -28,6 +26,8 @@ const styles = [
     ul {
       max-height: var(--max-height);
       overflow-y: auto;
+      margin: 0;
+      padding: 0;
     }
   `,
 ];

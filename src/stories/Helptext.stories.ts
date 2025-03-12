@@ -18,7 +18,7 @@ type HelptextProps = {
   'mid-after-show': unknown;
   'mid-after-hide': unknown;
   '--': Slottable;
-  '--max-width': string;
+  '--auto-size-available-width': string;
 };
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories
@@ -51,7 +51,7 @@ const meta = {
         'left-end',
       ],
     },
-    '--max-width': {
+    '--auto-size-available-width': {
       type: 'string',
     },
     'mid-after-hide': {
@@ -100,11 +100,11 @@ export const Main: Story = {
     size,
     distance,
     skidding,
-    '--max-width': maxWidth,
+    '--auto-size-available-width': maxWidth,
   }: HelptextProps) => {
     return html`<mid-helptext
       style="${styleMap({
-        '--max-width': maxWidth,
+        '--auto-size-available-width': maxWidth,
       })}"
       ?open=${open}
       ?hoist=${hoist}

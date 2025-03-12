@@ -25,6 +25,8 @@ import { css, html, LitElement } from 'lit';
 import { customElement, property, query } from 'lit/decorators.js';
 import { styled } from '../mixins/tailwind.mixin';
 import { offsetParent } from 'composed-offset-position';
+import popoverStyles from '@digdir/designsystemet-css/popover.css?inline';
+import dropdownStyles from '@digdir/designsystemet-css/dropdown.css?inline';
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -47,10 +49,11 @@ function isVirtualElement(e: unknown): e is VirtualElement {
 }
 
 const styles = [
+  dropdownStyles,
+  popoverStyles,
   css`
     :host {
-      --arrow-color: white;
-      --arrow-size: 6px;
+      --arrow-size: 7px;
 
       /*
         These properties are computed to account for the arrow's dimensions after being rotated 45º. The constant
@@ -65,6 +68,8 @@ const styles = [
     }
 
     .popup {
+      --arrow-color: var(--dsc-popover-background);
+      --arrow-border-color: var(--dsc-popover-border-color);
       position: absolute;
       isolation: isolate;
       max-width: var(--auto-size-available-width, none);
@@ -86,6 +91,9 @@ const styles = [
       height: calc(var(--arrow-size-diagonal) * 2);
       rotate: 45deg;
       background: var(--arrow-color);
+      border: 1px solid var(--arrow-border-color);
+      border-left: 0;
+      border-top: 0;
       z-index: 901;
     }
 
@@ -762,8 +770,8 @@ export class MinidPopup extends styled(LitElement, styles) {
     }
   };
 
-  #handleAnchorClick() {
-    // to make sure clicking another element's anchor closes current element's dropdown menu
+  private handleAnchorClick() {
+    // to make sure clicking another popup element's anchor closes current element's popup
     this.dispatchEvent(
       new CustomEvent('mid-anchor-click', {
         bubbles: true,
@@ -778,7 +786,7 @@ export class MinidPopup extends styled(LitElement, styles) {
       <slot
         name="anchor"
         @slotchange=${this.handleAnchorChange}
-        @click=${this.#handleAnchorClick}
+        @click=${this.handleAnchorClick}
       ></slot>
 
       <span
@@ -791,12 +799,13 @@ export class MinidPopup extends styled(LitElement, styles) {
 
       <div
         part="popup"
-        class=${classMap({
+        data-placement="${this.placement}"
+        class="${classMap({
           popup: true,
           'popup--active': this.active,
           'popup--fixed': this.strategy === 'fixed',
           'popup--has-arrow': this.arrow,
-        })}
+        })} ds-popover ds-popover--neutral"
       >
         <slot></slot>
         ${this.arrow

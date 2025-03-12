@@ -13,7 +13,6 @@ import {
   setDefaultAnimation,
 } from '../utilities/animation-registry.js';
 import { stopAnimations, animateTo } from '../internal/animate.js';
-import popoverStyles from '@digdir/designsystemet-css/popover.css?inline';
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -22,10 +21,9 @@ declare global {
 }
 
 const styles = [
-  popoverStyles,
   css`
     :host {
-      --max-width: 20rem;
+      --auto-size-available-width: 20rem;
     }
 
     button {
@@ -58,21 +56,6 @@ const styles = [
     .icon.lg {
       --icon-size: 2rem;
     }
-
-    .helptext__body {
-      width: max-content;
-      max-width: var(--max-width);
-    }
-
-    .popup {
-      --arrow-color: var(--fds-semantic-surface-info-subtle);
-    }
-
-    .popup::part(arrow) {
-      border: 1px solid var(--fds-semantic-border-info-default);
-      border-left: 0;
-      border-top: 0;
-    }
   `,
 ];
 
@@ -84,7 +67,7 @@ const styles = [
  *
  * @slot -- The default slot is for helptext content
  *
- * @cssproperty [--max-width=20rem] - Max width of the helptext content
+ * @cssproperty [--auto-size-available-width=20rem] - Max width of the helptext content
  */
 @customElement('mid-helptext')
 export class MinidHelptext extends styled(LitElement, styles) {

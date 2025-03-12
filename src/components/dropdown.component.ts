@@ -15,8 +15,6 @@ declare global {
 let nextUniqueID = 0;
 
 const styles = [
-  dropdownStyles,
-  popoverStyles,
   css`
     :host {
       display: flex;
@@ -142,7 +140,7 @@ export class MinidDropdown extends styled(LitElement, styles) {
     return html`
       <mid-popup
         id="${this.popupId}"
-        class="popup ds-popup"
+        class="popup"
         distance=${this.distance}
         placement="${this.placement}"
         skidding=${this.skidding}
