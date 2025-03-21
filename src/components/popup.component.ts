@@ -69,12 +69,15 @@ const styles = [
 
     .popup {
       --arrow-color: var(--dsc-popover-background);
-      --arrow-border-color: var(--dsc-popover-border-color);
       position: absolute;
       isolation: isolate;
       max-width: var(--auto-size-available-width, none);
       max-height: var(--auto-size-available-height, none);
       z-index: 900;
+    }
+
+    .popup::before {
+      display: none;
     }
 
     .popup--fixed {
@@ -236,7 +239,7 @@ export class MinidPopup extends styled(LitElement, styles) {
    * clipped, using a `fixed` position strategy can often workaround it.
    */
   @property({ reflect: true })
-  strategy: 'absolute' | 'fixed' = 'absolute';
+  strategy: 'absolute' | 'fixed' = 'fixed';
 
   /**
    * The distance in pixels from which to offset the panel away from its anchor.
@@ -376,6 +379,12 @@ export class MinidPopup extends styled(LitElement, styles) {
    * active.
    */
   @property({ attribute: 'hover-bridge', type: Boolean }) hoverBridge = false;
+
+  @property()
+  variant: 'default' | 'tinted' = 'default';
+
+  @property()
+  size: 'sm' | 'md' | 'lg' = 'md';
 
   async connectedCallback() {
     super.connectedCallback();
@@ -805,7 +814,9 @@ export class MinidPopup extends styled(LitElement, styles) {
           'popup--active': this.active,
           'popup--fixed': this.strategy === 'fixed',
           'popup--has-arrow': this.arrow,
-        })} ds-popover ds-popover--neutral"
+        })} ds-popover"
+        data-variant="${this.variant}"
+        data-size="${this.size}"
       >
         <slot></slot>
         ${this.arrow

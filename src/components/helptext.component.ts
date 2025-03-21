@@ -23,7 +23,7 @@ declare global {
 const styles = [
   css`
     :host {
-      --auto-size-available-width: 20rem;
+      --max-width: 20rem;
     }
 
     button {
@@ -56,6 +56,21 @@ const styles = [
     .icon.lg {
       --icon-size: 2rem;
     }
+
+    .helptext__body {
+      width: max-content;
+      max-width: var(--max-width);
+    }
+
+    .popup {
+      --arrow-color: var(--dsc-popover-background);
+    }
+
+    .popup::part(arrow) {
+      border: 1px solid var(--dsc-popover-border-color);
+      border-left: 0;
+      border-top: 0;
+    }
   `,
 ];
 
@@ -67,7 +82,7 @@ const styles = [
  *
  * @slot -- The default slot is for helptext content
  *
- * @cssproperty [--auto-size-available-width=20rem] - Max width of the helptext content
+ * @cssproperty [--max-width=20rem] - Max width of the helptext content
  */
 @customElement('mid-helptext')
 export class MinidHelptext extends styled(LitElement, styles) {
@@ -89,9 +104,6 @@ export class MinidHelptext extends styled(LitElement, styles) {
   @property({ type: Boolean, reflect: true })
   open = false;
 
-  /**
-   * Size of the icon
-   */
   @property()
   size: 'sm' | 'md' | 'lg' = 'md';
 
@@ -131,6 +143,9 @@ export class MinidHelptext extends styled(LitElement, styles) {
    */
   @property({ type: Boolean })
   hoist = false;
+
+  @property()
+  variant: 'default' | 'tinted' = 'default';
 
   @state()
   filledIcon = false;
@@ -284,7 +299,9 @@ export class MinidHelptext extends styled(LitElement, styles) {
         ?active=${this.open}
         placement=${this.placement}
         distance=${this.distance}
+        variant=${this.variant}
         skidding=${this.skidding}
+        size=${this.size}
         strategy=${this.hoist ? 'fixed' : 'absolute'}
         flip-fallback-placements=${'top-end bottom-end'}
         flip
@@ -325,7 +342,7 @@ export class MinidHelptext extends styled(LitElement, styles) {
 
         <div
           id="heptext-body"
-          class="ds-popover"
+          class="helptext__body"
           aria-live=${this.open ? 'polite' : 'off'}
           role="status"
         >

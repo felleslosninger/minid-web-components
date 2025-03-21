@@ -1,6 +1,5 @@
 import { html, LitElement } from 'lit';
 import { customElement, property, query } from 'lit/decorators.js';
-import { styled } from '../mixins/tailwind.mixin';
 import QRCode from 'qrcode';
 
 declare global {
@@ -10,7 +9,7 @@ declare global {
 }
 
 @customElement('mid-qr-code')
-export class MinidQrCode extends styled(LitElement) {
+export class MinidQrCode extends LitElement {
   @query('#qr-code')
   private canvas!: HTMLCanvasElement;
 

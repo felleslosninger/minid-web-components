@@ -3,7 +3,6 @@ import { html } from 'lit';
 import '../components/helptext.component';
 import { MinidHelptext } from '../components/helptext.component';
 import { ifDefined } from 'lit/directives/if-defined.js';
-import { styleMap } from 'lit/directives/style-map.js';
 
 type HelptextProps = {
   open?: boolean;
@@ -13,12 +12,14 @@ type HelptextProps = {
   size?: MinidHelptext['size'];
   skidding?: number;
   distance?: number;
+  variant?: MinidHelptext['variant'];
   'mid-show': unknown;
   'mid-hide': unknown;
   'mid-after-show': unknown;
   'mid-after-hide': unknown;
+  'data-color'?: string;
   '--': Slottable;
-  '--auto-size-available-width': string;
+  '--max-width': string;
 };
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories
@@ -26,11 +27,33 @@ const meta = {
   title: 'Komponenter/Helptext',
   component: 'mid-helptext',
   argTypes: {
+    'data-color': {
+      control: {
+        type: 'select',
+      },
+      options: [
+        'accent',
+        'neutral',
+        'brand1',
+        'brand2',
+        'brand3',
+        'danger',
+        'info',
+        'success',
+        'warning',
+      ],
+    },
     size: {
       control: {
         type: 'radio',
       },
       options: ['sm', 'md', 'lg'],
+    },
+    variant: {
+      control: {
+        type: 'radio',
+      },
+      options: ['default', 'tinted'],
     },
     placement: {
       control: {
@@ -51,7 +74,7 @@ const meta = {
         'left-end',
       ],
     },
-    '--auto-size-available-width': {
+    '--max-width': {
       type: 'string',
     },
     'mid-after-hide': {
@@ -86,12 +109,12 @@ export const Main: Story = {
   args: {
     content:
       'Noen ganger kan vi alle behøve litt hjelp. Da er det fint å ha en hjelpsom hjelpetekst til å forklarer hva det er som egentlig foregår.',
+    open: true,
   },
   parameters: {
     layout: 'centered',
-    open: true,
   },
-  decorators: (story) => html`<div class="m-44 flex">${story()}</div>`,
+  decorators: (story) => html`<div class="m-44">${story()}</div>`,
   render: ({
     open,
     content,
@@ -100,19 +123,22 @@ export const Main: Story = {
     size,
     distance,
     skidding,
-    '--auto-size-available-width': maxWidth,
+    variant,
+    '--max-width': maxWidth,
+    'data-color': color,
   }: HelptextProps) => {
     return html`<mid-helptext
-      style="${styleMap({
-        '--auto-size-available-width': maxWidth,
-      })}"
+      style="${ifDefined(maxWidth ? `--max-width: ${maxWidth}` : undefined)}"
       ?open=${open}
       ?hoist=${hoist}
       size=${ifDefined(size)}
       placement=${ifDefined(placement)}
       distance=${ifDefined(distance)}
       skidding=${ifDefined(skidding)}
-      >${content}
+      data-color=${ifDefined(color)}
+      variant=${ifDefined(variant)}
+    >
+      ${content}
     </mid-helptext>`;
   },
 };
