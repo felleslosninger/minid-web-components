@@ -15,6 +15,8 @@ import {
   setDefaultAnimation,
 } from '../utilities/animation-registry.js';
 import { waitForEvent } from '../internal/event.js';
+import popoverStyles from '@digdir/designsystemet-css/popover.css?inline';
+import tooltipStyles from '@digdir/designsystemet-css/tooltip.css?inline';
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -23,6 +25,8 @@ declare global {
 }
 
 const styles = [
+  popoverStyles,
+  tooltipStyles,
   css`
     :host {
       --max-width: 20rem;
@@ -33,14 +37,16 @@ const styles = [
     .tooltip__body {
       width: max-content;
       max-width: var(--max-width);
+      opacity: 1;
+      visibility: visible;
     }
 
     .tooltip {
-      --arrow-color: var(--fds-semantic-surface-neutral-inverted);
+      --arrow-color: white;
     }
 
     .tooltip.inverted {
-      --arrow-color: var(--fds-semantic-surface-neutral-subtle);
+      --arrow-color: black;
     }
   `,
 ];
@@ -376,10 +382,9 @@ export class MinidTooltip extends styled(LitElement, styles) {
           part="body"
           id="tooltip"
           class="${classMap({
-            'fds-tooltip': true,
             tooltip__body: true,
             'fds-tooltip--inverted': this.inverted,
-          })}"
+          })} ds-popover ds-tooltip"
           role="tooltip"
           aria-live=${this.open ? 'polite' : 'off'}
         >

@@ -20,7 +20,7 @@ const styles = [
 ];
 
 /**
- * Size and color can be adjusted with `font-size` and `color` css properties
+ *
  */
 @customElement('mid-spinner')
 export class MinidSpinner extends styled(LitElement, styles) {
