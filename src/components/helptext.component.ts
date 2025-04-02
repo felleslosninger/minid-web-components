@@ -62,10 +62,6 @@ const styles = [
       max-width: var(--max-width);
     }
 
-    .popup {
-      --arrow-color: var(--dsc-popover-background);
-    }
-
     .popup::part(arrow) {
       border: 1px solid var(--dsc-popover-border-color);
       border-left: 0;
@@ -145,7 +141,7 @@ export class MinidHelptext extends styled(LitElement, styles) {
   hoist = false;
 
   @property()
-  variant: 'default' | 'tinted' = 'default';
+  variant: 'default' | 'tinted' = 'tinted';
 
   @state()
   filledIcon = false;
