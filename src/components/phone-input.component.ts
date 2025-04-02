@@ -54,13 +54,10 @@ const styles = [
       border-bottom-left-radius: var(--fds-border_radius-medium);
     }
 
-    .fds-focus:focus-within {
-      --fds-focus-border-width: 3px;
-      outline: var(--fds-focus-border-width) solid
-        var(--fds-semantic-border-focus-outline);
-      outline-offset: var(--fds-focus-border-width);
-      box-shadow: 0 0 0 var(--fds-focus-border-width)
-        var(--fds-semantic-border-focus-boxshadow);
+    .fds-focus:focus-within,
+    .fds-focus:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 3px #00347d;
     }
   `,
 ];
@@ -312,6 +309,7 @@ export class MinidPhoneInput extends FormControllerMixin(
           'form-control': true,
           'fds-paragraph': true,
           'fds-textfield': true,
+          'flex-1': true,
           'fds-paragraph--sm': sm,
           'fds-paragraph--md': md,
           'fds-paragraph--lg': lg,
