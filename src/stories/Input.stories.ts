@@ -66,7 +66,7 @@ export const Main: Story = {
   args: {
     labelAttr: 'Personlig informasjon',
     description:
-      'Med personlig informasjon menes informasjon som er personlig.',
+      'Med personlig informasjon mener vi informasjon som er personlig.',
     validationmessage: 'Personlig informasjon kan ikke være tomt',
   },
   render: ({

@@ -9,6 +9,9 @@ import inputStyles from '../styles/input-styles';
 const styles = [
   ...inputStyles,
   css`
+    :host {
+      display: block;
+    }
     .ds-validation-message {
       margin-top: var(--dsc-field-content-spacing);
     }

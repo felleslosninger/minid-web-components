@@ -18,6 +18,7 @@ import {
 } from 'input-format';
 import { watch } from '../internal/watch';
 import { FormControllerMixin } from '../mixins/form-controller.mixin';
+import inputStyles from '../styles/input-styles';
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -26,8 +27,13 @@ declare global {
 }
 
 const styles = [
+  ...inputStyles,
   css`
     :host {
+      display: block;
+    }
+
+    .flex {
       display: flex;
     }
 
@@ -298,25 +304,12 @@ export class MinidPhoneInput extends FormControllerMixin(
   }
 
   override render() {
-    const lg = false;
-    const md = true;
-    const sm = false;
-
     return html`
       <div
         part="form-control"
         class="${classMap({
           'form-control': true,
-          'fds-paragraph': true,
-          'fds-textfield': true,
-          'flex-1': true,
-          'fds-paragraph--sm': sm,
-          'fds-paragraph--md': md,
-          'fds-paragraph--lg': lg,
-          'fds-textfield--sm': sm,
-          'fds-textfield--md': md,
-          'fds-textfield--lg': lg,
-        })}"
+        })} ds-field flex-1"
       >
         ${!this.label
           ? nothing
@@ -325,13 +318,7 @@ export class MinidPhoneInput extends FormControllerMixin(
               for="input"
               class="${classMap({
                 'sr-only': this.hidelabel,
-                'fds-label': true,
-                'fds-label--medium-weight': true,
-                'fds-textfield__label': true,
-                'fds-label--sm': sm,
-                'fds-label--md': md,
-                'fds-label--lg': lg,
-              })}"
+              })} ds-label block"
             >
               ${this.label}
             </label>`}
@@ -357,10 +344,9 @@ export class MinidPhoneInput extends FormControllerMixin(
                 ></div>`}
             <mid-icon name="chevron-down"></mid-icon>
           </button>
-
           <input
             id="input"
-            class="phone-number fds-textfield__field fds-textfield__input fds-focus"
+            class="phone-number ds-input"
             part="phone-number"
             type="tel"
             autocomplete="tel"

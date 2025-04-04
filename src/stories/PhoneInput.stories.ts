@@ -79,7 +79,6 @@ export const Main: Story = {
     <mid-combobox>
       <mid-phone-input
         slot="trigger"
-        class="phone-input w-full"
         country=${ifDefined(country)}
         value=${ifDefined(value)}
         label=${ifDefined(label)}

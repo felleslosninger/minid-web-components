@@ -157,8 +157,7 @@ export class MinidButton extends FormControllerMixin(
           hidden: this.loading && this.loadingtext,
         })}"
       ></slot>
-      <span
-        class="${classMap({ hidden: !this.loading })}"
+      <span class="${classMap({ hidden: !this.loading })}"
         >${this.loadingtext}</span
       >
       ${
