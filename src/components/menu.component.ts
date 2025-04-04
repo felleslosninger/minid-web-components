@@ -29,6 +29,14 @@ const styles = [
       margin: 0;
       padding: 0;
     }
+
+    .border-b {
+      border-bottom: 1px solid var(--fds-semantic-border-input-default);
+    }
+
+    .filter-input:focus-visible {
+      box-shadow: 0 0 0 3px #00347d;
+    }
   `,
 ];
 
