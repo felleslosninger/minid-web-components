@@ -2,8 +2,8 @@ import { css, html, LitElement } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { styled } from '../mixins/tailwind.mixin.ts';
-import dropdownStyles from '@digdir/designsystemet-css/dropdown.css?inline';
-import popoverStyles from '@digdir/designsystemet-css/popover.css?inline';
+// import dropdownStyles from '@digdir/designsystemet-css/dropdown.css?inline';
+// import popoverStyles from '@digdir/designsystemet-css/popover.css?inline';
 import './popup.component';
 
 declare global {

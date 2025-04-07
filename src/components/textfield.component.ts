@@ -14,6 +14,7 @@ import {
   requiredValidator,
 } from '../mixins/validators';
 import { watch } from '../internal/watch';
+import inputStyles from '../styles/input-styles';
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -76,6 +77,7 @@ const styles = [
       background: var(--fds-semantic-surface-action-subtle-hover);
     }
   `,
+  ...inputStyles,
 ];
 
 let nextUniqueId = 0;
@@ -388,31 +390,12 @@ export class MinidTextfield extends FormControlMixin(
       hasClearIcon && (typeof this.value === 'number' || this.value.length > 0);
 
     return html`
-      <div
-        part="form-control"
-        class="${classMap({
-          'form-control': true,
-          'fds-paragraph': true,
-          'fds-textfield': true,
-          'fds-textfield--readonly': this.readonly,
-          'fds-paragraph--sm': sm,
-          'fds-paragraph--md': md,
-          'fds-paragraph--lg': lg,
-          'fds-textfield--sm': sm,
-          'fds-textfield--md': md,
-          'fds-textfield--lg': lg,
-        })}"
-      >
+      <div part="field" aria-readonly=${this.readonly} class="ds-field">
         <label
           for="${this.inputId}"
           class="${classMap({
-            'sr-only': this.hidelabel || !hasLabel,
-            'fds-label': true,
-            'fds-label--medium-weight': true,
-            'fds-textfield__label': true,
-            'fds-label--sm': sm,
-            'fds-label--md': md,
-            'fds-label--lg': lg,
+            'ds-sr-only': this.hidelabel || !hasLabel,
+            'ds-label': true,
           })}"
         >
           ${!this.readonly
@@ -446,7 +429,6 @@ export class MinidTextfield extends FormControlMixin(
         <div
           part="base"
           class="${classMap({
-            'fds-textfield__field': true,
             'border-neutral': !this.invalidmessage,
             'border-danger': this.invalidmessage,
             border: !this.invalidmessage,
@@ -458,7 +440,7 @@ export class MinidTextfield extends FormControlMixin(
           </span>
           <input
             id="${this.inputId}"
-            class="input"
+            class="input ds-input"
             part="input"
             .value=${live(this.value)}
             ?disabled=${this.disabled}

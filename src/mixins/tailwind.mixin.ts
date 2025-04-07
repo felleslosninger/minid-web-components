@@ -11,6 +11,7 @@ export const styled = <T extends Constructor<LitElement>>(
      * @ignore
      */
     static styles = [
+      baseDsStyles,
       css`
         *,
         ::after,
@@ -46,7 +47,6 @@ export const styled = <T extends Constructor<LitElement>>(
           opacity: 1;
         }
       `,
-      baseDsStyles,
       elementCss,
     ];
   };

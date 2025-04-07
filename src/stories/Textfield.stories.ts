@@ -224,5 +224,5 @@ export const Main: Story = {
       ${prefix ? html`<span slot="prefix">${prefix}</span>` : nothing}
       ${suffix ? html`<span slot="suffix">${suffix}</span>` : nothing}
       ${label ? html`<span slot="label">${label}</span>` : nothing}
-    </mid-textfield>`,
+    </mid-textfield> `,
 };

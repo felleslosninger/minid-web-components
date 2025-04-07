@@ -4,8 +4,8 @@ import { classMap } from 'lit/directives/class-map.js';
 import { styled } from '../mixins/tailwind.mixin.ts';
 import { MinidMenuItem } from './menu-item.component';
 import { scrollIntoView } from '../internal/scroll';
-import dropdownStyles from '@digdir/designsystemet-css/dropdown.css?inline';
-import popoverStyles from '@digdir/designsystemet-css/popover.css?inline';
+// import dropdownStyles from '@digdir/designsystemet-css/dropdown.css?inline';
+// import popoverStyles from '@digdir/designsystemet-css/popover.css?inline';
 
 declare global {
   interface HTMLElementTagNameMap {
