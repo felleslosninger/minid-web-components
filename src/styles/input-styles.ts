@@ -6,9 +6,9 @@ import { css } from 'lit';
 
 export default [
   inputStyles,
-  fieldStyles,
   labelStyles,
   validationStyles,
+  fieldStyles,
   css`
     .block {
       display: block;

@@ -6,7 +6,7 @@ import { MinidButton } from '../components/button.component';
 
 type ButtonProps = {
   variant?: MinidButton['variant'];
-  size?: MinidButton['size'];
+  'data-size'?: 'sm' | 'md' | 'lg';
   type?: MinidButton['type'];
   'data-color'?: string;
   label: string;
@@ -23,7 +23,7 @@ const meta = {
   title: 'Komponenter/Button',
   component: 'mid-button',
   argTypes: {
-    size: {
+    'data-size': {
       control: { type: 'radio' },
       options: ['sm', 'md', 'lg'],
     },
@@ -62,7 +62,7 @@ export const Main: Story = {
   },
   render: ({
     variant,
-    size,
+    'data-size': size,
     'data-color': color,
     label,
     type,
@@ -76,7 +76,7 @@ export const Main: Story = {
     return html`<mid-button
       @click=${onclick}
       type="${ifDefined(type)}"
-      size=${ifDefined(size)}
+      data-size=${ifDefined(size)}
       data-color=${ifDefined(color)}
       variant=${ifDefined(variant)}
       href=${ifDefined(href)}

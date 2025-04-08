@@ -1,4 +1,4 @@
-import { css, html, LitElement, nothing } from 'lit';
+import { css, html, LitElement } from 'lit';
 import { customElement, property, query, state } from 'lit/decorators.js';
 import { live } from 'lit/directives/live.js';
 import { stringConverter } from '../internal/string-converter';
@@ -15,6 +15,7 @@ import {
 } from '../mixins/validators';
 import { watch } from '../internal/watch';
 import inputStyles from '../styles/input-styles';
+import './icon/icon.component.js';
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -23,6 +24,7 @@ declare global {
 }
 
 const styles = [
+  ...inputStyles,
   css`
     :host {
       display: block;
@@ -77,7 +79,6 @@ const styles = [
       background: var(--fds-semantic-surface-action-subtle-hover);
     }
   `,
-  ...inputStyles,
 ];
 
 let nextUniqueId = 0;
@@ -98,7 +99,7 @@ let nextUniqueId = 0;
  *
  * @csspart base - The fields's base wrapper.
  * @csspart input - The internal `<input>` element.
- * @csspart form-control - The form control that wraps the label, input, and help text.
+ * @csspart field - The form control that wraps the label, input, description and validation message.
  * @csspart clear-button - The clear button
  * @csspart password-toggle-button - The button for toggling password visibility
  */
@@ -106,15 +107,9 @@ let nextUniqueId = 0;
 export class MinidTextfield extends FormControlMixin(
   styled(LitElement, styles)
 ) {
-  /**
-   * @ignore
-   */
-  inputId!: string;
-
-  /**
-   * @ignore
-   */
-  descriptionId!: string;
+  private readonly inputId!: string;
+  private readonly descriptionId!: string;
+  private readonly validationId!: string;
 
   /**
    * @ignore
@@ -193,7 +188,7 @@ export class MinidTextfield extends FormControlMixin(
    * Error message to display when the input is invalid, also activates invalid styling
    */
   @property()
-  invalidmessage = '';
+  validationmessage = '';
 
   @property()
   type:
@@ -282,6 +277,7 @@ export class MinidTextfield extends FormControlMixin(
     nextUniqueId++;
     this.inputId = `mid-textfield-input-${nextUniqueId}`;
     this.descriptionId = `mid-textfield-description-${nextUniqueId}`;
+    this.validationId = `mid-textfield-validation-${nextUniqueId}`;
   }
 
   override connectedCallback(): void {
@@ -365,7 +361,7 @@ export class MinidTextfield extends FormControlMixin(
   }
 
   resetFormControl() {
-    this.invalidmessage = '';
+    this.validationmessage = '';
     this.value = this.#initialValue;
   }
 
@@ -398,41 +394,25 @@ export class MinidTextfield extends FormControlMixin(
             'ds-label': true,
           })}"
         >
-          ${!this.readonly
-            ? nothing
-            : html`<mid-icon
-                class="fds-textfield__readonly__icon"
-                library="system"
-                name="padlock-locked-fill"
-              ></mid-icon>`}
           <slot name="label"> ${this.label} </slot>
         </label>
-        ${!this.description
-          ? nothing
-          : html`
-              <div
-                id="${this.descriptionId}"
-                part="description"
-                class="${classMap({
-                  description: true,
-                  'fds-paragraph': true,
-                  'sr-only': this.hidelabel,
-                  'fds-paragraph--sm': sm,
-                  'fds-paragraph--md': md,
-                  'fds-paragraph--lg': lg,
-                  'fds-textfield__description': true,
-                })}"
-              >
-                ${this.description}
-              </div>
-            `}
+        <div
+          part="description"
+          id="${this.descriptionId}"
+          data-field="description"
+          class="${classMap({
+            'sr-only': this.hidelabel,
+          })}"
+        >
+          <slot name="description"> ${this.description} </slot>
+        </div>
         <div
           part="base"
           class="${classMap({
-            'border-neutral': !this.invalidmessage,
-            'border-danger': this.invalidmessage,
-            border: !this.invalidmessage,
-            'border-2': this.invalidmessage,
+            'border-neutral': !this.validationmessage,
+            'border-danger': this.validationmessage,
+            border: !this.validationmessage,
+            'border-2': this.validationmessage,
           })} field focus-within:shadow-focus-inner focus-within:outline-focus-outer outline-2 outline-transparent focus-within:outline-3 focus-within:outline-offset-3"
         >
           <span class="prefix">
@@ -440,7 +420,7 @@ export class MinidTextfield extends FormControlMixin(
           </span>
           <input
             id="${this.inputId}"
-            class="input ds-input"
+            class="input ds-input ds-search"
             part="input"
             .value=${live(this.value)}
             ?disabled=${this.disabled}
@@ -451,7 +431,8 @@ export class MinidTextfield extends FormControlMixin(
               ? 'text'
               : this.type}
             aria-describedby="${this.descriptionId}"
-            aria-errormessage="error-message"
+            aria-errormessage="${this.validationId}"
+            aria-invalid=${this.validationmessage ? 'true' : 'false'}
             placeholder=${ifDefined(this.placeholder)}
             minlength=${ifDefined(this.minlength)}
             maxlength=${ifDefined(this.maxlength)}
@@ -512,16 +493,15 @@ export class MinidTextfield extends FormControlMixin(
             <slot name="suffix"></slot>
           </span>
         </div>
-      </div>
-      <div
-        class="${classMap({
-          hidden: !this.invalidmessage,
-        })} error-message text-danger-subtle flex gap-1 pt-2"
-        id="error-message"
-        aria-live="polite"
-      >
-        <mid-icon name="xmark-octagon-fill" class="mt-1 text-xl"></mid-icon>
-        ${this.invalidmessage}
+        <p
+          class="ds-validation-message"
+          id="${this.validationId}"
+          data-field="validation"
+          aria-live="polite"
+          ?hidden=${!this.validationmessage}
+        >
+          ${this.validationmessage}
+        </p>
       </div>
     `;
   }

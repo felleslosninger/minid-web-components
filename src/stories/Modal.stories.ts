@@ -4,7 +4,7 @@ import '../components/button.component';
 import '../components/modal.component';
 import '../components/paragraph.component';
 
-type ModalProps = {
+type DialogProps = {
   open: boolean;
   'mid-show': Event;
   'mid-hide': Event;
@@ -24,8 +24,8 @@ type ModalProps = {
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories
 const meta = {
-  title: 'Komponenter/Modal',
-  component: 'mid-modal',
+  title: 'Komponenter/Dialog',
+  component: 'mid-dialog',
   argTypes: {
     'mid-request-close': {
       control: { type: 'select' },
@@ -65,10 +65,10 @@ const meta = {
       exclude: ['dialog', 'panel', 'handleDialogCancel'],
     },
   },
-} satisfies Meta<ModalProps>;
+} satisfies Meta<DialogProps>;
 
 export default meta;
-type Story = StoryObj<ModalProps>;
+type Story = StoryObj<DialogProps>;
 
 // More on writing stories with args: https://storybook.js.org/docs/writing-stories/args
 
@@ -80,10 +80,10 @@ export const Main: Story = {
     heading,
     'mid-request-close': requestClose,
     '--': defaultSlot,
-  }: ModalProps) => {
+  }: DialogProps) => {
     return html`
-      <mid-button class="modal-button">Modal</mid-button>
-      <mid-modal
+      <mid-button class="modal-button">Åpne en dialog</mid-button>
+      <mid-dialog
         ?open=${open}
         class="modal"
         @mid-request-close=${(event) =>
@@ -107,7 +107,7 @@ export const Main: Story = {
                 </mid-button>
               </div>
             `}
-      </mid-modal>
+      </mid-dialog>
       <script>
         var modalButton = document.querySelector('.modal-button');
         var cancelButton = document.querySelector('.cancel-button');

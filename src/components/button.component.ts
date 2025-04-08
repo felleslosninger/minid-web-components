@@ -18,7 +18,7 @@ const styles = [
   dsStyles,
   css`
     :host {
-      width: auto;
+      display: block;
     }
 
     .spinner-only {
@@ -61,12 +61,6 @@ export class MinidButton extends FormControllerMixin(
    */
   @property({ type: String })
   variant: 'primary' | 'secondary' | 'tertiary' = 'primary';
-
-  /**
-   * The size of the button.
-   */
-  @property({ type: String })
-  size?: 'md' | 'lg' | 'sm';
 
   /**
    * The type of the button.
@@ -141,13 +135,12 @@ export class MinidButton extends FormControllerMixin(
         'ds-button': true,
         'spinner-only': this.loading && !this.loadingtext,
       })}"
-      href="${ifDefined(this.href)}"
+      href=${ifDefined(this.href)}
       type=${this.type}
       ?disabled=${this.disabled}
       ?data-fullwidth=${this.fullwidth}
       ?data-icon=${this.iconstyled}
       data-variant=${ifDefined(this.variant)}
-      data-size=${ifDefined(this.size)}
       aria-busy=${this.loading}
       aria-disabled=${this.loading}
     >

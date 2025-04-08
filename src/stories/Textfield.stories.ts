@@ -3,6 +3,7 @@ import '../components/textfield.component';
 import '../components/button.component';
 import { html, nothing, Part } from 'lit';
 import { ifDefined } from 'lit/directives/if-defined.js';
+import { MinidTextfield } from '../components/textfield.component';
 
 type TextfieldProps = {
   label?: string;
@@ -10,8 +11,8 @@ type TextfieldProps = {
   name?: string;
   value?: string;
   placeholder?: string;
-  type?: 'text';
-  size?: 'sm' | 'md' | 'lg';
+  type?: MinidTextfield['type'];
+  'data-size'?: 'sm' | 'md' | 'lg';
   prefix?: string;
   suffix?: string;
   disabled?: boolean;
@@ -29,10 +30,10 @@ type TextfieldProps = {
   maxlength?: number;
   min?: number;
   max?: number;
-  invalidmessage?: string;
+  validationmessage?: string;
   input: Part;
   base: Part;
-  'form-control': Part;
+  field: Part;
   'clear-button': Part;
   'password-toggle-button': Part;
   'mid-change'?: Event;
@@ -44,6 +45,7 @@ type TextfieldProps = {
   'mid-invalid-hide': Event;
   inputId: never;
   descriptionId: never;
+  validationId: never;
 };
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories
@@ -52,7 +54,7 @@ const meta = {
   tags: ['autodocs'],
   component: 'mid-textfield',
   argTypes: {
-    size: {
+    'data-size': {
       control: { type: 'radio' },
       options: ['sm', 'md', 'lg'],
     },
@@ -96,13 +98,14 @@ const meta = {
     'mid-blur': { control: { disable: true } },
     'mid-invalid-show': { control: { disable: true } },
     'mid-invalid-hide': { control: { disable: true } },
-    'form-control': { control: { disable: true } },
+    field: { control: { disable: true } },
     'clear-button': { control: { disable: true } },
     'password-toggle-button': { control: { disable: true } },
     input: { control: { disable: true } },
     base: { control: { disable: true } },
     descriptionId: { table: { disable: true } },
     inputId: { table: { disable: true } },
+    validationId: { table: { disable: true } },
   },
   parameters: {
     controls: {
@@ -118,63 +121,14 @@ type Story = StoryObj<TextfieldProps>;
 export const Main: Story = {
   args: {
     labelAttr: 'Tekst input',
-    required: true,
-    pattern: '^[a-zA-Z0-9]{5,30}$',
-    name: 'textfield-data',
-    value: 'initialValue',
+    passwordtoggle: true,
+    type: 'password',
   },
-  decorators: [
-    (story) =>
-      html`<form
-          class="flex w-80 flex-col gap-4"
-          @reset=${() => {
-            document.querySelector('.output')!.textContent = '';
-          }}
-          @submit=${(event: SubmitEvent) => {
-            event.preventDefault();
-
-            const target = event.target as HTMLFormElement;
-            const valid = target.reportValidity();
-            const formData = new FormData(target);
-            const data = Object.fromEntries(formData);
-
-            console.log(valid, data);
-            document.querySelector('.output')!.textContent = JSON.stringify({
-              ...data,
-            });
-          }}
-        >
-          ${story()}
-          <div class="flex flex-row-reverse items-end justify-end gap-4">
-            <pre class="output"></pre>
-            <mid-button type="submit"> Submit </mid-button>
-            <mid-button variant="secondary" type="reset"> Reset </mid-button>
-          </div>
-        </form>
-        <script lang="ts">
-          var textfield = document.querySelector('mid-textfield');
-
-          textfield.addEventListener('mid-invalid-show', (event) => {
-            console.log(event);
-            if (event.detail.validity.patternMismatch) {
-              textfield.invalidmessage = 'Invalid pattern';
-            } else if (event.detail.validity.valueMissing) {
-              textfield.invalidmessage = 'Value is required';
-            } else {
-              textfield.invalidmessage = 'Invalid input';
-            }
-          });
-          textfield.addEventListener('mid-invalid-hide', (event) => {
-            console.log(event);
-            textfield.invalidmessage = '';
-          });
-        </script> `,
-  ],
   render: ({
     labelAttr,
     label,
     placeholder,
-    size,
+    'data-size': dataSize,
     type,
     value,
     name,
@@ -195,7 +149,7 @@ export const Main: Story = {
     max,
     minlength,
     maxlength,
-    invalidmessage,
+    validationmessage,
   }: TextfieldProps) =>
     html`<mid-textfield
       ?disabled=${disabled}
@@ -206,7 +160,7 @@ export const Main: Story = {
       ?hideLabel=${hidelabel}
       ?passwordtoggle=${passwordtoggle}
       ?passwordvisible=${passwordvisible}
-      invalidmessage=${ifDefined(invalidmessage)}
+      validationmessage=${ifDefined(validationmessage)}
       autocomplete=${ifDefined(autocomplete)}
       description=${ifDefined(description)}
       label="${ifDefined(labelAttr)}"
@@ -215,11 +169,11 @@ export const Main: Story = {
       placeholder=${ifDefined(placeholder)}
       pattern=${ifDefined(pattern)}
       type=${ifDefined(type)}
-      size=${ifDefined(size)}
       min=${ifDefined(min)}
       max=${ifDefined(max)}
       minlength=${ifDefined(minlength)}
       maxlength=${ifDefined(maxlength)}
+      data-size=${ifDefined(dataSize)}
     >
       ${prefix ? html`<span slot="prefix">${prefix}</span>` : nothing}
       ${suffix ? html`<span slot="suffix">${suffix}</span>` : nothing}

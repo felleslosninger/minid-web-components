@@ -10,14 +10,16 @@ import {
 } from '../utilities/animation-registry';
 import { animateTo, stopAnimations } from '../internal/animate';
 import { lockBodyScrolling, unlockBodyScrolling } from '../internal/scroll';
+import dialogStyles from '@digdir/designsystemet-css/dialog.css?inline';
 
 declare global {
   interface HTMLElementTagNameMap {
-    'mid-modal': MinidModal;
+    'mid-dialog': MinidDialog;
   }
 }
 
 const styles = [
+  dialogStyles,
   css`
     :host {
       --max-width: 40rem;
@@ -84,8 +86,8 @@ const styles = [
  * @animation modal.denyClose - The animation to use when closing the modal is prevented.
  *
  */
-@customElement('mid-modal')
-export class MinidModal extends styled(LitElement, styles) {
+@customElement('mid-dialog')
+export class MinidDialog extends styled(LitElement, styles) {
   @query('#dialog')
   dialog!: HTMLDialogElement;
 
@@ -218,7 +220,8 @@ export class MinidModal extends styled(LitElement, styles) {
       <dialog
         part="base"
         id="dialog"
-        class="dialog fds-modal m-auto"
+        class="dialog fds-modal ds-dialog m-auto"
+        data-modal="true"
         @cancel=${this.handleDialogCancel}
         @click=${this.handleBackdropClick}
       >

@@ -7,12 +7,15 @@ import './button.component.ts';
 import { live } from 'lit/directives/live.js';
 import { MinidTextfield } from './textfield.component.ts';
 import { debounce } from '../internal/debounce.ts';
+import searchStyles from '@digdir/designsystemet-css/search.css?inline';
 
 declare global {
   interface HTMLElementTagNameMap {
     'mid-search': MinidSearch;
   }
 }
+
+const styles = [searchStyles];
 
 /**
  * @event mid-change - Emitted when a change to the input value is comitted by the user
@@ -22,7 +25,7 @@ declare global {
  * @event mid-blur - Emitted when focus moves away from input element
  */
 @customElement('mid-search')
-export class MinidSearch extends styled(LitElement) {
+export class MinidSearch extends styled(LitElement, styles) {
   @query('mid-textfield')
   textField!: MinidTextfield;
 
@@ -58,6 +61,7 @@ export class MinidSearch extends styled(LitElement) {
   override render() {
     return html`
       <mid-textfield
+        class="ds-search"
         .value=${live(this.value)}
         type="search"
         size=${this.size}
@@ -68,13 +72,13 @@ export class MinidSearch extends styled(LitElement) {
         })}
         clearable
       >
-        <mid-icon
+        <!-- <mid-icon
           slot="prefix"
           class="text-2xl"
           library="system"
           name="magnifying-glass"
         >
-        </mid-icon>
+        </mid-icon> -->
       </mid-textfield>
     `;
   }

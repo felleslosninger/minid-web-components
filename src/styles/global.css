@@ -1,5 +1,5 @@
 /* @import url('./temp-themes/digdir.css'); */
-/* @import '@digdir/designsystemet-css/base'; */
+@import '@digdir/designsystemet-css/base';
 
 @supports (scrollbar-gutter: stable) {
   .mid-scroll-lock {
