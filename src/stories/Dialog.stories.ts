@@ -1,8 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html, Part } from 'lit';
 import '../components/button.component';
-import '../components/modal.component';
+import '../components/dialog.component';
 import '../components/paragraph.component';
+import '../components/heading.component';
 
 type DialogProps = {
   open: boolean;
@@ -86,10 +87,12 @@ export const Main: Story = {
       <mid-dialog
         ?open=${open}
         class="modal"
-        @mid-request-close=${(event) =>
+        @mid-request-close=${(event: Event) =>
           requestClose === 'preventDefault' && event.preventDefault()}
       >
-        <span slot="heading"> ${heading ?? 'Bekreft handling'} </span>
+        <mid-heading level="2" size="sm" slot="heading">
+          ${heading ?? 'Bekreft handling'}
+        </mid-heading>
         <mid-paragraph
           >${defaultSlot ??
           'Er du sikker på at du vil utføre denne handlingen? Det er ikke sikkert at handlingen kan reverseres.'}

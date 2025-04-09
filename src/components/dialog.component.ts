@@ -4,6 +4,7 @@ import { waitForEvent } from '../internal/event';
 import { watch } from '../internal/watch';
 import { styled } from '../mixins/tailwind.mixin';
 import './icon/icon.component';
+import './button.component';
 import {
   getAnimation,
   setDefaultAnimation,
@@ -25,6 +26,21 @@ const styles = [
       --max-width: 40rem;
       --footer-and-header-height: 140px;
       display: contents;
+    }
+
+    header {
+      display: flex;
+    }
+
+    .close-button {
+      place-self: flex-end;
+      margin-left: auto;
+      margin-bottom: 0.25rem;
+      transform: translate(0.25rem, -0.25rem);
+    }
+
+    .close-button > mid-icon {
+      font-size: 1.75rem;
     }
 
     .dialog {
@@ -226,16 +242,18 @@ export class MinidDialog extends styled(LitElement, styles) {
         @click=${this.handleBackdropClick}
       >
         <header part="header" class="fds-modal__header flex">
-          <h2 class="fds-heading fds-heading--xs">
-            <slot name="heading"></slot>
-          </h2>
-          <button
+          <slot name="heading"></slot>
+          <mid-button
+            class="close-button"
             autofocus
             @click="${() => this.requestClose('close-button')}"
-            class="fds-btn fds-focus fds-btn--md fds-btn--tertiary fds-btn--second fds-btn--icon-only fds-modal__header__button"
+            iconstyled
+            variant="tertiary"
+            data-color="neutral"
+            data-size="sm"
           >
             <mid-icon class="text-[1.75rem]" name="xmark"></mid-icon>
-          </button>
+          </mid-button>
         </header>
         <article part="body" class="fds-modal__content modal-content">
           <slot> </slot>

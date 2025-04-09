@@ -18,7 +18,7 @@ const styles = [
   dsStyles,
   css`
     :host {
-      display: block;
+      display: inline-flex;
     }
 
     .spinner-only {
@@ -92,6 +92,9 @@ export class MinidButton extends FormControllerMixin(
   @property({ type: Boolean })
   loading = false;
 
+  /**
+   * The text to shows on the button when loading is true
+   */
   @property()
   loadingtext = '';
 
@@ -118,7 +121,7 @@ export class MinidButton extends FormControllerMixin(
   /**
    * @ignore
    */
-  get #isLink() {
+  get isLink() {
     return !!this.href;
   }
 
@@ -127,7 +130,7 @@ export class MinidButton extends FormControllerMixin(
   }
 
   override render() {
-    const tag = this.#isLink ? literal`a` : literal`button`;
+    const tag = this.isLink ? literal`a` : literal`button`;
 
     return html`<${tag}
       part="base"
@@ -143,6 +146,7 @@ export class MinidButton extends FormControllerMixin(
       data-variant=${ifDefined(this.variant)}
       aria-busy=${this.loading}
       aria-disabled=${this.loading}
+      data-color=${'neutral'}
     >
       <slot
         class="${classMap({
@@ -150,9 +154,9 @@ export class MinidButton extends FormControllerMixin(
           hidden: this.loading && this.loadingtext,
         })}"
       ></slot>
-      <span class="${classMap({ hidden: !this.loading })}"
-        >${this.loadingtext}</span
-      >
+      <span class="${classMap({ hidden: !this.loading })}">
+        ${this.loadingtext}
+      </span>
       ${
         this.loading
           ? html`<mid-spinner

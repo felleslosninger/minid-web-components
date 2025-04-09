@@ -327,7 +327,7 @@ export class MinidAlert extends styled(LitElement, styles) {
         @mouseenter=${this.pauseAutoHide}
         @mouseleave=${this.resumeAutoHide}
       >
-        <mid-paragraph size=${this.size} aria-live="polite">
+        <div aria-live="polite">
           <slot>
             ${!this.notificationContent?.title
               ? nothing
@@ -343,7 +343,7 @@ export class MinidAlert extends styled(LitElement, styles) {
                   <pre>${this.notificationContent?.details}</pre>
                 </div> `}
           </slot>
-        </mid-paragraph>
+        </div>
         ${this.closable
           ? html`
               <mid-button

@@ -95,7 +95,7 @@ export const Main: Story = {
   },
   render: ({
     content,
-    'data-color': severity,
+    'data-color': dataColor,
     title,
     elevated,
     'data-size': size,
@@ -109,7 +109,7 @@ export const Main: Story = {
       ?elevated=${elevated}
       ?closable=${closable}
       duration=${ifDefined(duration)}
-      data-color=${ifDefined(severity)}
+      data-color=${ifDefined(dataColor)}
       data-size=${ifDefined(size)}
     >
       ${defaultSlot
@@ -117,7 +117,7 @@ export const Main: Story = {
         : html`<mid-heading spacing="2" level="2" size="xs">
               ${title}
             </mid-heading>
-            <mid-paragraph>${content}</mid-paragraph>`}
+            <p>${content}</p>`}
     </mid-alert>
   `,
 };
