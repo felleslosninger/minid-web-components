@@ -126,6 +126,7 @@
   "customElements": "custom-elements.json",
   "scripts": {
     "make-icons": "node ./scripts/make-icons.js",
+    "make-tailwind": "node ./scripts/make-tailwind-theme.js",
     "build": "rimraf dist && tsc && npm run analyze && vite build",
     "build:cdn": "rimraf dist-cdn && tsc && vite build --config vite.cdn.config.js",
     "storybook": "storybook dev -p 6006",
@@ -144,8 +145,8 @@
   },
   "devDependencies": {
     "@custom-elements-manifest/analyzer": "^0.10.3",
-    "@digdir/designsystemet-css": "^0.10.0",
-    "@digdir/designsystemet-theme": "^0.15.3",
+    "@digdir/designsystemet-css": "^1.0.3",
+    "@digdir/designsystemet-theme": "^1.0.3",
     "@floating-ui/dom": "^1.6.10",
     "@navikt/aksel-icons": "^7.1.2",
     "@storybook/addon-controls": "^8.6.0",
