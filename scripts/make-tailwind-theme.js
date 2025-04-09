@@ -34,9 +34,10 @@ const run = () => {
       .replaceAll('-default', '');
 
     const typographyRegex = /data-typography="primary"[\s\S]*?}/g;
-    const typography = typographyRegex.exec(data)[0].replaceAll('ds-', '');
+    const typography = typographyRegex.exec(data)[0].replaceAll('ds', '');
     const fontSizeRegex = /--([\w-]*font-size[\w-]*): (.+);/g;
-
+    const fontPropertiesRegex =
+      /--([\w-]*(?:font-weight|letter-spacing|line-height)[\w-]*): (.+);/g;
     // Extract CSS variables and their values
     const textColorRegex = /--([\w-]*text[\w-]*): (.+);/g;
     const backgroundColorRegex = /--([\w-]*background[\w-]*): (.+);/g;
@@ -49,11 +50,33 @@ const run = () => {
     const borderColors = {};
     const shadows = {};
     const fontSizes = {};
+    const fontProperties = {};
 
     let match;
 
+    // const shadows = shadowRegex.exec(data).reduce((obj, match) => {
+    //   obj[match[1].replace('ds-', '')] = match[2].trim();
+    // }, {});
+
     while ((match = shadowRegex.exec(data)) !== null) {
       shadows[match[1].replace('ds-', '')] = match[2].trim();
+    }
+
+    while ((match = fontSizeRegex.exec(typography)) !== null) {
+      fontSizes[match[1].replace('-font-size', '')] = match[2].trim();
+    }
+
+    while ((match = fontPropertiesRegex.exec(typography)) !== null) {
+      console.log(match[1], match[2]);
+
+      fontProperties[
+        `-${match[1]
+          .replace('-letter-spacing-', '-tracking-')
+          .replace('-line-height-', '-leading-')
+          .replace('-font-weight', '--font-weight')
+          .replace('-letter-spacing', '--letter-spacing')
+          .replace('-line-height', '--line-height')}`.replace('---', '--')
+      ] = match[2].trim();
     }
 
     while ((match = textColorRegex.exec(colors)) !== null) {
@@ -95,8 +118,17 @@ const run = () => {
     themeContent += '******************************/\n';
 
     themeContent += '  --font-*: initial;\n';
-    themeContent += `  --font-sans: 'Inter', 'Arial', ui-sans-serif, system-ui, sans-serif,\n`;
+    themeContent += `  --font-sans: 'Inter', 'Arial', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';\n`;
     themeContent += `  --font-sans--font-feature-settings: 'cv05' 1;\n`;
+    themeContent += `  --font-mono: IBM Plex Mono;\n`;
+
+    Object.entries(fontSizes).forEach(([key, value]) => {
+      themeContent += `  --text${key}: ${value};\n`;
+    });
+
+    Object.entries(fontProperties).forEach(([key, value]) => {
+      themeContent += `  ${key}: ${value};\n`;
+    });
 
     themeContent += '\n  /****************************** \n';
     themeContent += '  * Color \n   ';
