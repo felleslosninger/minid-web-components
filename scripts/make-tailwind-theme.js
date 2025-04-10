@@ -12,7 +12,7 @@ const run = () => {
   // Read the digdir.css file
   fs.readFile(cssThemeFile, 'utf-8', (err, data) => {
     if (err) {
-      console.error('Error reading digdir.css:', err);
+      console.error('Error reading css file:', err);
       return;
     }
 
@@ -33,12 +33,12 @@ const run = () => {
       .replaceAll('ds-', '')
       .replaceAll('-default', '');
 
+    // Extract CSS variables and their values
     const typographyRegex = /data-typography="primary"[\s\S]*?}/g;
     const typography = typographyRegex.exec(data)[0].replaceAll('ds', '');
-    const fontSizeRegex = /--([\w-]*font-size[\w-]*): (.+);/g;
+    const fontSizeRegex = /--([\w-]*(?:font-size|body|heading)[\w-]*): (.+);/g;
     const fontPropertiesRegex =
-      /--([\w-]*(?:font-weight|letter-spacing|line-height)[\w-]*): (.+);/g;
-    // Extract CSS variables and their values
+      /--([\w-]*(?:-font-weight-|-letter-spacing-|-line-height-)[\w-]*): (.+);/g;
     const textColorRegex = /--([\w-]*text[\w-]*): (.+);/g;
     const backgroundColorRegex = /--([\w-]*background[\w-]*): (.+);/g;
     const borderColorRegex = /--([\w-]*border[\w-]*): (.+);/g;
@@ -67,15 +67,10 @@ const run = () => {
     }
 
     while ((match = fontPropertiesRegex.exec(typography)) !== null) {
-      console.log(match[1], match[2]);
-
       fontProperties[
         `-${match[1]
-          .replace('-letter-spacing-', '-tracking-')
-          .replace('-line-height-', '-leading-')
-          .replace('-font-weight', '--font-weight')
-          .replace('-letter-spacing', '--letter-spacing')
-          .replace('-line-height', '--line-height')}`.replace('---', '--')
+          .replace('letter-spacing', 'tracking')
+          .replace('line-height', 'leading')}`
       ] = match[2].trim();
     }
 
