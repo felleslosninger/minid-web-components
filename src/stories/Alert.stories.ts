@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
-import { html, Part } from 'lit';
+import { html, nothing, Part } from 'lit';
 import '../components/alert.component';
 import '../components/heading.component';
 import '../components/paragraph.component';
@@ -32,6 +32,9 @@ const meta = {
   title: 'Komponenter/Alert',
   component: 'mid-alert',
   argTypes: {
+    title: {
+      type: 'string',
+    },
     size: {
       control: { type: 'radio' },
       options: ['sm', 'md', 'lg'],
@@ -90,8 +93,7 @@ type Story = StoryObj<AlertProps>;
 
 export const Main: Story = {
   args: {
-    title: 'Viktig informasjon!',
-    content: 'Dette er en viktig melding som krever umiddelbar oppmerksomhet.',
+    content: 'Dette er en viktig melding .',
     open: true,
   },
   render: ({
@@ -104,7 +106,7 @@ export const Main: Story = {
     duration,
     closable,
     open,
-    ...rest
+    '--': defaultSlot,
   }: AlertProps) => html`
     <mid-alert
       ?open=${open}
@@ -115,10 +117,12 @@ export const Main: Story = {
       severity=${ifDefined(severity)}
       duration=${ifDefined(duration)}
     >
-      ${rest['--']
-        ? html`<span>${rest['--']}</span>`
-        : html`<mid-heading spacing level="2" size="xs"> ${title} </mid-heading>
-            <mid-paragraph>${content}</mid-paragraph>`}
+      ${!title
+        ? nothing
+        : html` <mid-heading level="2" size="xs"> ${title} </mid-heading>`}
+      ${defaultSlot
+        ? html`${defaultSlot}`
+        : html`<mid-paragraph>${content}</mid-paragraph>`}
     </mid-alert>
   `,
 };
