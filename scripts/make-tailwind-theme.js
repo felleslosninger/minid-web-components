@@ -7,7 +7,7 @@ const run = () => {
   const projectRoot = path.dirname(__filename) + '/..';
   const cssThemeFile =
     projectRoot + '/node_modules/@digdir/designsystemet-theme/brand/digdir.css';
-  const destination = projectRoot + '/src/styles/theme.css';
+  const destination = projectRoot + '/src/styles/designsystemet-tailwind.css';
 
   // Read the digdir.css file
   fs.readFile(cssThemeFile, 'utf-8', (err, data) => {
@@ -159,7 +159,7 @@ const run = () => {
       themeContent += `  --border-${key}: ${value};\n`;
     });
 
-    themeContent += '}';
+    themeContent += '}\n';
 
     // Write the generated theme to the destination file
     fs.writeFile(destination, themeContent, 'utf-8', (writeErr) => {
