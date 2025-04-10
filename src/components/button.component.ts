@@ -16,22 +16,7 @@ declare global {
 const styles = [
   css`
     :host {
-      width: auto;
-    }
-
-    .btn-loading {
-      cursor: wait;
-    }
-
-    .btn-spinner-only {
-      position: relative;
-      gap: 0;
-    }
-
-    .btn-spinner-only mid-spinner {
-      position: absolute;
-      top: calc(50% - 0.5em);
-      left: calc(50% - 0.5em);
+      display: inline-flex;
     }
   `,
 ];
@@ -77,12 +62,6 @@ export class MinidButton extends FormControllerMixin(
   href: string | undefined;
 
   /**
-   * Whether the button should be full width
-   */
-  @property({ type: Boolean })
-  fullwidth = false;
-
-  /**
    * Whether the button is disabled
    */
   @property({ type: Boolean })
@@ -120,7 +99,7 @@ export class MinidButton extends FormControllerMixin(
   /**
    * @ignore
    */
-  get #isLink() {
+  get isLink() {
     return !!this.href;
   }
 
@@ -129,36 +108,72 @@ export class MinidButton extends FormControllerMixin(
   }
 
   override render() {
-    const tag = this.#isLink ? literal`a` : literal`button`;
+    const tag = this.isLink ? literal`a` : literal`button`;
+    const primary = this.variant === 'primary';
+    const secondary = this.variant === 'secondary';
+    const tertiary = this.variant === 'tertiary';
+    const sm = this.size === 'sm';
+    const md = this.size === 'md';
+    const lg = this.size === 'lg';
+    const spinnerOnly = this.loading && !this.loadingtext;
 
     return html`<${tag}
       part="base"
       class="${classMap({
-        button: true,
-        'fds-focus': true,
-        'fds-btn': true,
-        'fds-btn--first': true,
-        'fds-btn--full-width': this.fullwidth,
-        'fds-btn--icon-only': this.iconstyled,
-        'fds-btn--primary': this.variant === 'primary',
-        'fds-btn--secondary': this.variant === 'secondary',
-        'fds-btn--tertiary': this.variant === 'tertiary',
-        'fds-btn--sm': this.size === 'sm',
-        'fds-btn--md': this.size === 'md',
-        'fds-btn--lg': this.size === 'lg',
-        'btn-loading': this.loading,
-        'btn-spinner-only': this.loading && !this.loadingtext,
-      })}"
+        'w-12': this.iconstyled,
+        'h-12': this.iconstyled,
+        'py-2': !this.iconstyled,
+        'px-4': !this.iconstyled,
+        'bg-accent-base': primary,
+        'text-accent-base-contrast': primary,
+        'border-transparent': primary || tertiary,
+        'hover:bg-accent-base-hover': primary,
+        'active:bg-accent-base-active': primary,
+        'bg-transparent': secondary || tertiary,
+        'active:bg-accent-surface-active': secondary || tertiary,
+        'hover:bg-accent-surface-hover': secondary || tertiary,
+        'text-accent-subtle': secondary || tertiary,
+        'hover:text-accent': secondary || tertiary,
+        'border-accent-strong': secondary,
+        'fds-btn--secondary': secondary,
+        'fds-btn--tertiary': tertiary,
+        'text-body-sm': sm,
+        'text-body-md': md,
+        'text-body-lg': lg,
+        'cursor-wait': this.loading && !this.disabled,
+        'cursor-pointer': !this.loading && !this.disabled,
+        'cursor-not-allowed': this.disabled,
+        relative: spinnerOnly,
+        'gap-0': spinnerOnly,
+        'opacity-disabled': this.disabled && !this.loading,
+      })} grow focus-visible:focus-ring leading-sm flex h-fit min-h-12 min-w-12 items-center justify-center gap-2 rounded border font-medium"
       type=${this.type}
+      aria-busy=${this.loading}
       ?disabled=${this.disabled}
       href="${ifDefined(this.href)}"
     >
-      <slot class="${classMap({
-        invisible: this.loading && !this.loadingtext,
-        hidden: this.loading && this.loadingtext,
-      })}"></slot>
-      <span class="${classMap({ hidden: !this.loading })}">${this.loadingtext}</span>
-      ${this.loading ? html`<mid-spinner class="text-2xl" part="spinner"></mid-spinner>` : ''}
+      <slot
+        class="${classMap({
+          invisible: spinnerOnly,
+          hidden: this.loading && this.loadingtext,
+        })}"
+      ></slot>
+      <span class="${classMap({ hidden: !this.loading || !this.loadingtext })}">
+        ${this.loadingtext}
+      </span>
+      ${
+        this.loading
+          ? html`<mid-spinner
+              class="${classMap({
+                'text-[1.4rem]': true,
+                absolute: spinnerOnly,
+                'top-[calc(50%_-_0.5em)]': spinnerOnly,
+                'left-[calc(50%_-_0.5em)]': spinnerOnly,
+              })}"
+              part="spinner"
+            ></mid-spinner>`
+          : ''
+      }
     </${tag}>`;
   }
 }

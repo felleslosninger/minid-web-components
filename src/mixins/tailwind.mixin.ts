@@ -1,6 +1,5 @@
 import { CSSResultArray, LitElement } from 'lit';
-import tailwindStyles from '../styles/tailwind.css?inline';
-import dsStyles from '@digdir/designsystemet-css?inline';
+import tailwindStyles from '../styles/component-tailwind.css?inline';
 import { Constructor } from '../types/mixin-constructor';
 
 export const styled = <T extends Constructor<LitElement>>(
@@ -11,5 +10,5 @@ export const styled = <T extends Constructor<LitElement>>(
     /**
      * @ignore
      */
-    static styles = [tailwindStyles, dsStyles, elementCss];
+    static styles = [tailwindStyles, elementCss];
   };

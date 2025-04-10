@@ -3,13 +3,6 @@
 
 @custom-variant dark (&:is(.dark *));
 
-@layer base {
-  *:focus-visible {
-    @apply outline-hidden;
-    @apply shadow-focus-visible;
-  }
-}
-
 @theme inline {
   --outline-offset-3: 3px;
 

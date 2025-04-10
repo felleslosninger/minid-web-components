@@ -401,7 +401,7 @@ export class MinidTextfield extends FormControlMixin(
           'fds-textfield--sm': sm,
           'fds-textfield--md': md,
           'fds-textfield--lg': lg,
-        })}"
+        })} bg-accent-base"
       >
         <label
           for="${this.inputId}"
