@@ -63,7 +63,13 @@ const run = () => {
     }
 
     while ((match = fontSizeRegex.exec(typography)) !== null) {
-      fontSizes[match[1].replace('-font-size', '')] = match[2].trim();
+      fontSizes[
+        match[1]
+          .replace('-font-size', '')
+          .replace('-font-weight', '--font-weight')
+          .replace('-letter-spacing', '--letter-spacing')
+          .replace('-line-height', '--line-height')
+      ] = match[2].trim();
     }
 
     while ((match = fontPropertiesRegex.exec(typography)) !== null) {
