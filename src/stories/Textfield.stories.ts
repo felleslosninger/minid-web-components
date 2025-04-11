@@ -32,7 +32,7 @@ type TextfieldProps = {
   invalidmessage?: string;
   input: Part;
   base: Part;
-  'form-control': Part;
+  field: Part;
   'clear-button': Part;
   'password-toggle-button': Part;
   'mid-change'?: Event;
@@ -96,7 +96,7 @@ const meta = {
     'mid-blur': { control: { disable: true } },
     'mid-invalid-show': { control: { disable: true } },
     'mid-invalid-hide': { control: { disable: true } },
-    'form-control': { control: { disable: true } },
+    field: { control: { disable: true } },
     'clear-button': { control: { disable: true } },
     'password-toggle-button': { control: { disable: true } },
     input: { control: { disable: true } },
@@ -118,10 +118,10 @@ type Story = StoryObj<TextfieldProps>;
 export const Main: Story = {
   args: {
     labelAttr: 'Tekst input',
-    required: true,
-    pattern: '^[a-zA-Z0-9]{5,30}$',
+    // required: true,
+    // pattern: '^[a-zA-Z0-9]{5,30}$',
     name: 'textfield-data',
-    value: 'initialValue',
+    // value: 'initialValue',
   },
   decorators: [
     (story) =>
