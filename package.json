@@ -136,6 +136,7 @@
   },
   "dependencies": {
     "@floating-ui/dom": "^1.6.10",
+    "@u-elements/u-datalist": "^0.1.5",
     "composed-offset-position": "^0.0.6",
     "element-internals-polyfill": "^1.3.10",
     "input-format": "^0.3.11",

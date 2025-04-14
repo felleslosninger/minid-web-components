@@ -86,18 +86,19 @@ export class MinidMenuItem extends styled(LitElement, style) {
           </mid-button>
         `
       : html` <button
-          class=${classMap({
+          class="${classMap({
             button: true,
             'fds-label': true,
             'fds-label--md': true,
             'fds-label--medium-weight': true,
             'fds-combobox__option__label': true,
             'fds-combobox__option': true,
-            'focus-ring': this.active,
-          })}
+            'border-transparent': !this.active,
+            'bg-accent-tinted': this.active,
+            'border-accent-base': this.active,
+          })} block w-full rounded-sm border-l-[5px] px-3 py-2"
           variant="tertiary"
           href=${ifDefined(this.href)}
-          fullwidth
         >
           <div class="col-span-2 flex items-center gap-2">
             <slot></slot>

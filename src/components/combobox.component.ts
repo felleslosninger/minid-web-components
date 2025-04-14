@@ -493,8 +493,7 @@ export class MinidCombobox extends styled(LitElement, styles) {
           @keyup=${this.handleTriggerKeyUp}
           @slotchange=${this.handleTriggerSlotChange}
           @mid-country-click=${this.handleCountryClick}
-        >
-        </slot>
+        ></slot>
         <div
           aria-hidden=${this.open ? 'false' : 'true'}
           aria-labelledby="combobox"
