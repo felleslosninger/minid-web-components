@@ -159,25 +159,6 @@ const run = () => {
       themeContent += `  --border-${key}: ${value};\n`;
     });
 
-    themeContent +=
-      '\n  --animate-dash: dash 1.4s cubic-bezier(0.2, -0.01, 0.51, 0.96) infinite;\n';
-    themeContent += '  --animate-spin-slow: spin 2.2s linear infinite;\n';
-    themeContent += '  \n';
-    themeContent += '  @keyframes dash {\n';
-    themeContent += '    0% {\n';
-    themeContent += '      stroke-dasharray: 1, 150;\n';
-    themeContent += '      stroke-dashoffset: 0;\n';
-    themeContent += '    }\n';
-    themeContent += '    50% {\n';
-    themeContent += '      stroke-dasharray: 90, 150;\n';
-    themeContent += '      stroke-dashoffset: -35;\n';
-    themeContent += '    }\n';
-    themeContent += '    100% {\n';
-    themeContent += '      stroke-dasharray: 90, 150;\n';
-    themeContent += '      stroke-dashoffset: -124;\n';
-    themeContent += '    }\n';
-    themeContent += '  }\n';
-
     themeContent += '}\n';
 
     themeContent += '\n@utility focus-ring {\n';

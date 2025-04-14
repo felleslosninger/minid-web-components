@@ -50,6 +50,7 @@ const styles = [
   css`
     :host {
       --arrow-color: white;
+      --arrow-border-color: transparent;
       --arrow-size: 6px;
 
       /*
@@ -84,6 +85,9 @@ const styles = [
       position: absolute;
       width: calc(var(--arrow-size-diagonal) * 2);
       height: calc(var(--arrow-size-diagonal) * 2);
+      border: 1px solid var(--arrow-border-color);
+      /* border-top: 0; */
+      /* border-left: 0; */
       rotate: 45deg;
       background: var(--arrow-color);
       z-index: 901;

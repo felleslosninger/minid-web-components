@@ -1,4 +1,4 @@
-import { css, html, LitElement, nothing } from 'lit';
+import { css, html, LitElement } from 'lit';
 import { customElement, property, query, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { styled } from '../mixins/tailwind.mixin';
@@ -18,6 +18,7 @@ import {
 } from 'input-format';
 import { watch } from '../internal/watch';
 import { FormControllerMixin } from '../mixins/form-controller.mixin';
+import { HasSlotController } from '../internal/slot';
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -28,36 +29,7 @@ declare global {
 const styles = [
   css`
     :host {
-      display: flex;
-    }
-
-    .country-code,
-    .phone-number {
-      outline: none;
-      box-shadow: none;
-      background-color: transparent;
-    }
-
-    .phone-number {
-      border-top-left-radius: 0;
-      border-bottom-left-radius: 0;
-    }
-
-    .country-code {
-      border-right: 1px solid currentColor;
-    }
-
-    .country-button {
-      border: 1px solid var(--fds-semantic-border-input-default);
-      border-right: 0;
-      border-top-left-radius: var(--fds-border_radius-medium);
-      border-bottom-left-radius: var(--fds-border_radius-medium);
-    }
-
-    .fds-focus:focus-within,
-    .fds-focus:focus-visible {
-      outline: none;
-      box-shadow: 0 0 0 3px #00347d;
+      display: block;
     }
   `,
 ];
@@ -70,7 +42,7 @@ const styles = [
  * @event {Event} mid-focus - Emitted after input gains focus
  *
  * @part base - Select the container outside the country button and phone number input
- * @part form-control - Select the container around the label and the inputs
+ * @part field - Select the container around the label and the inputs
  * @part label - Select the label element
  * @part country-button - Select the country button
  * @part input - Select the phone number input
@@ -83,11 +55,9 @@ export class MinidPhoneInput extends FormControllerMixin(
   #skipCountryUpdate = false; // avoids unwanted update loop
   #currentEvent = new Event(''); // the event to be emitted after value is set
   #currentTemplate = '';
+  hasSlotControler = new HasSlotController(this, 'label');
 
-  /**
-   * @ignore
-   */
-  @query('.phone-number')
+  @query('#input')
   input!: HTMLInputElement;
 
   /**
@@ -302,43 +272,30 @@ export class MinidPhoneInput extends FormControllerMixin(
     const md = true;
     const sm = false;
 
+    const hasLabelSlot = this.hasSlotControler.test('label');
+    const hasLabel = !!this.label || !!hasLabelSlot;
+
     return html`
       <div
-        part="form-control"
+        part="field"
         class="${classMap({
-          'form-control': true,
-          'fds-paragraph': true,
-          'fds-textfield': true,
-          'flex-1': true,
-          'fds-paragraph--sm': sm,
-          'fds-paragraph--md': md,
-          'fds-paragraph--lg': lg,
-          'fds-textfield--sm': sm,
-          'fds-textfield--md': md,
-          'fds-textfield--lg': lg,
-        })}"
+          'text-body-sm': sm,
+          'text-body-md': md,
+          'text-body-lg': lg,
+        })} grow"
       >
-        ${!this.label
-          ? nothing
-          : html`<label
-              part="label"
-              for="input"
-              class="${classMap({
-                'sr-only': this.hidelabel,
-                'fds-label': true,
-                'fds-label--medium-weight': true,
-                'fds-textfield__label': true,
-                'fds-label--sm': sm,
-                'fds-label--md': md,
-                'fds-label--lg': lg,
-              })}"
-            >
-              ${this.label}
-            </label>`}
-        <div part="base" class="flex">
+        <label
+          for="input"
+          class="${classMap({
+            'sr-only': this.hidelabel || !hasLabel,
+          })} mb-2 inline-flex items-center gap-1 font-medium"
+        >
+          <slot name="label"> ${this.label} </slot>
+        </label>
+        <div part="base" class="flex h-12">
           <button
             part="country-button"
-            class="country-button fds-focus flex h-full items-center border pl-3"
+            class="border-neutral focus-visible:focus-ring flex h-full items-center rounded-l border border-r-0 pl-3"
             iconstyled
             variant="tertiary"
             @click=${this.handleCountryClick}
@@ -360,7 +317,7 @@ export class MinidPhoneInput extends FormControllerMixin(
 
           <input
             id="input"
-            class="phone-number fds-textfield__field fds-textfield__input fds-focus"
+            class="border-neutral p focus-visible:focus-ring grow rounded-r border px-3"
             part="phone-number"
             type="tel"
             autocomplete="tel"

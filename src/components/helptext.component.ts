@@ -72,15 +72,9 @@ const styles = [
  */
 @customElement('mid-helptext')
 export class MinidHelptext extends styled(LitElement, styles) {
-  /**
-   * @ignore
-   */
   @query('.helptext__body')
   body!: HTMLElement;
 
-  /**
-   * @ignore
-   */
   @query('mid-popup')
   popup!: MinidPopup;
 
@@ -160,16 +154,10 @@ export class MinidHelptext extends styled(LitElement, styles) {
     }
   }
 
-  /**
-   * @ignore
-   */
   private handleBlur = () => {
     this.hide();
   };
 
-  /**
-   * @ignore
-   */
   private handleClick = () => {
     if (this.open) {
       this.hide();
@@ -178,16 +166,10 @@ export class MinidHelptext extends styled(LitElement, styles) {
     }
   };
 
-  /**
-   * @ignore
-   */
   private handleFocus = () => {
     this.filledIcon = true;
   };
 
-  /**
-   * @ignore
-   */
   private handleDocumentKeyDown = (event: KeyboardEvent) => {
     // Pressing escape when a helptext is open should dismiss it
     if (event.key === 'Escape') {
@@ -196,16 +178,10 @@ export class MinidHelptext extends styled(LitElement, styles) {
     }
   };
 
-  /**
-   * @ignore
-   */
   private handleMouseOver = () => {
     this.filledIcon = true;
   };
 
-  /**
-   * @ignore
-   */
   private handleMouseOut = () => {
     if (!this.open) {
       this.filledIcon = false;

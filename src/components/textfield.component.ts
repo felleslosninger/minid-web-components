@@ -56,29 +56,11 @@ let nextUniqueId = 0;
 export class MinidTextfield extends FormControlMixin(
   styled(LitElement, styles)
 ) {
-  /**
-   * @ignore
-   */
-  inputId!: string;
+  private readonly inputId!: string;
+  private readonly descriptionId!: string;
+  private readonly hasSlotControler = new HasSlotController(this, 'label');
+  private initialValue = '';
 
-  /**
-   * @ignore
-   */
-  descriptionId!: string;
-
-  /**
-   * @ignore
-   */
-  hasSlotControler = new HasSlotController(this, 'label');
-
-  /**
-   * @ignore
-   */
-  #initialValue = '';
-
-  /**
-   * @ignore
-   */
   @query('.input')
   input!: HTMLInputElement;
 
@@ -202,9 +184,6 @@ export class MinidTextfield extends FormControlMixin(
   @state()
   hasFocus = false;
 
-  /**
-   * @ignore
-   */
   static get formControlValidators() {
     return [
       requiredValidator,
@@ -214,9 +193,6 @@ export class MinidTextfield extends FormControlMixin(
     ];
   }
 
-  /**
-   * @ignore
-   */
   get validationTarget() {
     return this.input;
   }
@@ -230,7 +206,7 @@ export class MinidTextfield extends FormControlMixin(
 
   override connectedCallback(): void {
     super.connectedCallback();
-    this.#initialValue = this.value;
+    this.initialValue = this.value;
   }
 
   private handleKeydown(event: KeyboardEvent) {
@@ -310,7 +286,7 @@ export class MinidTextfield extends FormControlMixin(
 
   resetFormControl() {
     this.invalidmessage = '';
-    this.value = this.#initialValue;
+    this.value = this.initialValue;
   }
 
   forceError(message?: string): void {

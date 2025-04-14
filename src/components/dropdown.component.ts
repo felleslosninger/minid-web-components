@@ -22,12 +22,12 @@ const styles = [
       --arrow-size: 8px;
     }
 
-    .popup::part(arrow) {
+    /* .popup::part(arrow) {
       z-index: 1501;
       border: 1px solid #cbcbcb;
       border-left: 0;
       border-top: 0;
-    }
+    } */
   `,
 ];
 
@@ -90,10 +90,6 @@ export class MinidDropdown extends styled(LitElement, styles) {
   @property({ type: Boolean })
   hoist = false;
 
-  /**
-   *
-   * @ignore
-   */
   #handleClickOutside = (event: Event) => {
     if (!event.composedPath().includes(this)) {
       this.#toggleDropdownOpen(event, false);
@@ -136,7 +132,7 @@ export class MinidDropdown extends styled(LitElement, styles) {
     return html`
       <mid-popup
         id="${this.popupId}"
-        class="popup"
+        class="popup [--arrow-size: 8px] [&::part(arrow)]:border-neutral-subtle"
         distance=${this.distance}
         placement="${this.placement}"
         skidding=${this.skidding}

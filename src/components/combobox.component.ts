@@ -43,32 +43,17 @@ const styles = [
  */
 @customElement('mid-combobox')
 export class MinidCombobox extends styled(LitElement, styles) {
-  /**
-   * @ignore
-   */
-  #closeWatcher?: CloseWatcher;
+  private closeWatcher?: CloseWatcher;
 
-  /**
-   * @ignore
-   */
   @query('#combobox')
   popup!: MinidPopup;
 
-  /**
-   * @ignore
-   */
   @query('.combobox__trigger')
   trigger!: HTMLSlotElement;
 
-  /**
-   * @ignore
-   */
   @query('.combobox__panel')
   panel!: HTMLSlotElement;
 
-  /**
-   * @ignore
-   */
   @queryAssignedElements({ slot: 'trigger' })
   triggerElements!: (MinidTextfield | MinidPhoneInput | HTMLInputElement)[];
 
@@ -200,7 +185,7 @@ export class MinidCombobox extends styled(LitElement, styles) {
 
   private handleDocumentKeyDown = (event: KeyboardEvent) => {
     // Close when escape or tab is pressed
-    if (event.key === 'Escape' && this.open && !this.#closeWatcher) {
+    if (event.key === 'Escape' && this.open && !this.closeWatcher) {
       event.stopPropagation();
       this.focusOnTrigger();
       this.hide();
@@ -364,9 +349,9 @@ export class MinidCombobox extends styled(LitElement, styles) {
 
   addOpenListeners() {
     if ('CloseWatcher' in window) {
-      this.#closeWatcher?.destroy();
-      this.#closeWatcher = new CloseWatcher();
-      this.#closeWatcher.onclose = () => {
+      this.closeWatcher?.destroy();
+      this.closeWatcher = new CloseWatcher();
+      this.closeWatcher.onclose = () => {
         this.hide();
         this.focusOnTrigger();
       };
@@ -379,7 +364,7 @@ export class MinidCombobox extends styled(LitElement, styles) {
   removeOpenListeners() {
     document.removeEventListener('keydown', this.handleDocumentKeyDown);
     document.removeEventListener('mousedown', this.handleDocumentMouseDown);
-    this.#closeWatcher?.destroy();
+    this.closeWatcher?.destroy();
   }
 
   /**

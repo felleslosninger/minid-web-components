@@ -16,23 +16,6 @@ const styles = [
     :host {
       --max-height: none;
     }
-
-    .panel {
-      padding: 0;
-    }
-
-    ul {
-      max-height: var(--max-height);
-      overflow-y: auto;
-    }
-
-    .border-b {
-      border-bottom: 1px solid var(--fds-semantic-border-input-default);
-    }
-
-    .filter-input:focus-visible {
-      box-shadow: 0 0 0 3px #00347d;
-    }
   `,
 ];
 
@@ -41,21 +24,12 @@ const styles = [
  */
 @customElement('mid-menu')
 export class MinidMenu extends styled(LitElement, styles) {
-  /**
-   * @ignore
-   */
   @query('slot')
   defaultSlot!: HTMLSlotElement;
 
-  /**
-   * @ignore
-   */
   @query('.filter-input')
   filterInput!: HTMLInputElement;
 
-  /**
-   * @ignore
-   */
   @query('.item-list')
   itemList!: HTMLUListElement;
 
@@ -291,7 +265,6 @@ export class MinidMenu extends styled(LitElement, styles) {
     return html`
       <div
         class="${classMap({
-          panel: true,
           'fds-dropdownmenu': dropdown,
           'fds-dropdownmenu--md': dropdown,
           'fds-box--md-shadow': combobox,
@@ -300,12 +273,12 @@ export class MinidMenu extends styled(LitElement, styles) {
           'fds-box--default-background': combobox,
           'fds-combobox__options-wrapper': combobox,
           'fds-combobox--md': combobox,
-        })}"
+        })} border-neutral-subtle rounded-md border shadow-md"
       >
         ${!this.searchable
           ? nothing
           : html`<div
-              class="filter-search flex items-center gap-2 border-b p-2"
+              class="border-neutral-subtle flex items-center gap-2 border-b p-2"
             >
               <mid-icon
                 slot="prefix"
@@ -317,11 +290,13 @@ export class MinidMenu extends styled(LitElement, styles) {
               <input
                 @input=${this.handleFilterItems}
                 @keydown=${this.handleKeyDown}
-                class="filter-input h-8 w-full rounded px-2"
+                class="filter-input focus-visible:outline-focus-outer h-8 w-full rounded px-2"
                 type="search"
               />
             </div>`}
-        <ul class="item-list p-2">
+        <ul
+          class="item-list max-h-[var(--max-height)] overflow-y-auto px-3 py-2"
+        >
           <slot
             @slotchange=${this.handleSlotChange}
             @click=${this.handleClick}

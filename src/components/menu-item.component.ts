@@ -27,14 +27,6 @@ const style = [
         var(--fds-semantic-border-focus-boxshadow);
     }
 
-    .fds-dropdownmenu__item {
-      display: flex;
-    }
-
-    mid-button::part(base) {
-      justify-content: flex-start;
-    }
-
     .button {
       display: block;
     }
@@ -42,9 +34,6 @@ const style = [
 ];
 @customElement('mid-menu-item')
 export class MinidMenuItem extends styled(LitElement, style) {
-  /**
-   * @ignore
-   */
   @query('.button')
   button!: MinidButton;
 
@@ -89,10 +78,9 @@ export class MinidMenuItem extends styled(LitElement, style) {
     return this.variant === 'dropdown'
       ? html`
           <mid-button
-            class="button"
+            class="flex w-full [&::part(base)]:justify-start"
             variant="tertiary"
             href=${ifDefined(this.href)}
-            fullwidth
           >
             <slot></slot>
           </mid-button>
@@ -105,7 +93,7 @@ export class MinidMenuItem extends styled(LitElement, style) {
             'fds-label--medium-weight': true,
             'fds-combobox__option__label': true,
             'fds-combobox__option': true,
-            'fds-combobox__option--active': this.active,
+            'focus-ring': this.active,
           })}
           variant="tertiary"
           href=${ifDefined(this.href)}

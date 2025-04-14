@@ -62,11 +62,8 @@ const styles = [
 
     .radio:checked {
       border-color: var(--color-checked);
-      background: radial-gradient(
-          circle closest-side,
-          currentcolor 45%,
-          transparent 50%
-        ),
+      background:
+        radial-gradient(circle closest-side, currentcolor 45%, transparent 50%),
         var(--color-checked);
     }
   `,
@@ -84,9 +81,6 @@ const styles = [
  */
 @customElement('mid-radio')
 export class MinidRadio extends styled(LitElement, styles) {
-  /**
-   * @ignore
-   */
   @query('.radio')
   element!: HTMLInputElement;
 

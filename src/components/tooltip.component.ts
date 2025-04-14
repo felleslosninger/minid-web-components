@@ -29,19 +29,6 @@ const styles = [
       --hide-delay: 0ms;
       --show-delay: 250ms;
     }
-
-    .tooltip__body {
-      width: max-content;
-      max-width: var(--max-width);
-    }
-
-    .tooltip {
-      --arrow-color: var(--fds-semantic-surface-neutral-inverted);
-    }
-
-    .tooltip.inverted {
-      --arrow-color: var(--fds-semantic-surface-neutral-subtle);
-    }
   `,
 ];
 
@@ -57,36 +44,21 @@ const styles = [
  * @csspart base - The component base wrapper. `<mid-popup> element
  * @csspart body - The tooltip body, where the content is rendered
  *
+ * @method show
+ * @method hide
+ *
  * @cssproperty [--max-width=20rem] - Max width of the tooltip content
  * @cssproperty [--hide-delay=0ms] - Delay for hiding the tooltip
  * @cssproperty [--show-delay=150ms] - Delay for showing the tooltip
  */
 @customElement('mid-tooltip')
 export class MinidTooltip extends styled(LitElement, styles) {
-  /**
-   * @ignore
-   */
   private hoverTimeout?: number;
-  /**
-   * @ignore
-   */
   private closeWatcher: CloseWatcher | null = null;
 
-  /**
-   * @ignore
-   */
-  @query('slot:not([name])')
-  defaultSlot!: HTMLSlotElement;
-
-  /**
-   * @ignore
-   */
-  @query('.tooltip__body')
+  @query('#body')
   body!: HTMLElement;
 
-  /**
-   * @ignore
-   */
   @query('mid-popup')
   popup!: MinidPopup;
 
@@ -117,6 +89,9 @@ export class MinidTooltip extends styled(LitElement, styles) {
     | 'left'
     | 'left-start'
     | 'left-end' = 'top';
+
+  @property()
+  size: 'sm' | 'md' | 'lg' = 'md';
 
   /**
    * Disables the tooltip so it won't show when triggered.
@@ -181,18 +156,12 @@ export class MinidTooltip extends styled(LitElement, styles) {
     }
   }
 
-  /**
-   * @ignore
-   */
   private handleBlur = () => {
     if (this.hasTrigger('focus')) {
       this.hide();
     }
   };
 
-  /**
-   * @ignore
-   */
   private handleClick = () => {
     if (this.hasTrigger('click')) {
       if (this.open) {
@@ -203,18 +172,12 @@ export class MinidTooltip extends styled(LitElement, styles) {
     }
   };
 
-  /**
-   * @ignore
-   */
   private handleFocus = () => {
     if (this.hasTrigger('focus')) {
       this.show();
     }
   };
 
-  /**
-   * @ignore
-   */
   private handleDocumentKeyDown = (event: KeyboardEvent) => {
     // Pressing escape when a tooltip is open should dismiss it
     if (event.key === 'Escape') {
@@ -223,9 +186,6 @@ export class MinidTooltip extends styled(LitElement, styles) {
     }
   };
 
-  /**
-   * @ignore
-   */
   private handleMouseOver = () => {
     if (this.hasTrigger('hover')) {
       const delay = parseDuration(
@@ -236,9 +196,6 @@ export class MinidTooltip extends styled(LitElement, styles) {
     }
   };
 
-  /**
-   * @ignore
-   */
   private handleMouseOut = () => {
     if (this.hasTrigger('hover')) {
       const delay = parseDuration(
@@ -249,9 +206,6 @@ export class MinidTooltip extends styled(LitElement, styles) {
     }
   };
 
-  /**
-   * @ignore
-   */
   private hasTrigger(triggerType: string) {
     const triggers = this.trigger.split(' ');
     return triggers.includes(triggerType);
@@ -353,15 +307,13 @@ export class MinidTooltip extends styled(LitElement, styles) {
         role="tooltip"
         ?active=${this.open}
         part="base"
-        exportparts="
-          popup:base__popup,
-          arrow:base__arrow
-        "
-        class=${classMap({
-          tooltip: true,
-          inverted: this.inverted,
-          'tooltip--open': this.open,
-        })}
+        class="${classMap({
+          '[--arrow-color:var(--color-neutral-base)]': !this.inverted,
+          '[--arrow-color:var(--color-neutral-surface)]': this.inverted,
+          'text-body-sm': this.size === 'sm',
+          'text-body-md': this.size === 'md',
+          'text-body-lg': this.size === 'lg',
+        })}"
         placement=${this.placement}
         distance=${this.distance}
         skidding=${this.skidding}
@@ -374,12 +326,13 @@ export class MinidTooltip extends styled(LitElement, styles) {
         <slot slot="anchor"></slot>
         <div
           part="body"
-          id="tooltip"
+          id="body"
           class="${classMap({
-            'fds-tooltip': true,
-            tooltip__body: true,
-            'fds-tooltip--inverted': this.inverted,
-          })}"
+            'bg-neutral': this.inverted,
+            'text-neutral': this.inverted,
+            'bg-neutral-base': !this.inverted,
+            'text-neutral-base-contrast': !this.inverted,
+          })} leading-sm w-max max-w-[var(--max-width)] rounded px-2 py-1"
           role="tooltip"
           aria-live=${this.open ? 'polite' : 'off'}
         >

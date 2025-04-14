@@ -22,7 +22,7 @@ type PhoneInputProps = {
   hidelabel?: boolean;
   labelPart: Part;
   base: Part;
-  'form-control': Part;
+  field: Part;
   'country-button': Part;
   input: Part;
 };
@@ -44,7 +44,7 @@ const meta: Meta = {
       table: { category: 'css shadow parts' },
     },
     base: { control: false },
-    'form-control': { control: false },
+    field: { control: false },
     'country-button': { control: false },
     input: { control: false },
     label: {

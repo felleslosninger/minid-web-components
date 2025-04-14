@@ -2,3 +2,23 @@
 @import '../styles/designsystemet-tailwind.css';
 
 @custom-variant slotted (& ::slotted(*));
+
+@theme {
+  --animate-dash: dash 1.4s cubic-bezier(0.2, -0.01, 0.51, 0.96) infinite;
+  --animate-spin-slow: spin 2.2s linear infinite;
+
+  @keyframes dash {
+    0% {
+      stroke-dasharray: 1, 150;
+      stroke-dashoffset: 0;
+    }
+    50% {
+      stroke-dasharray: 90, 150;
+      stroke-dashoffset: -35;
+    }
+    100% {
+      stroke-dasharray: 90, 150;
+      stroke-dashoffset: -124;
+    }
+  }
+}
