@@ -13,7 +13,7 @@ export { MinidLabel } from './components/label.component.ts';
 export { MinidLink } from './components/link.component.ts';
 export { MinidMenu } from './components/menu.component.ts';
 export { MinidMenuItem } from './components/menu-item.component.ts';
-export { MinidModal } from './components/modal.component.ts';
+export { MinidDialog } from './components/dialog.component.ts';
 export { MinidParagraph } from './components/paragraph.component.ts';
 export { MinidPhoneInput } from './components/phone-input.component.ts';
 export { MinidPopup } from './components/popup.component.ts';
