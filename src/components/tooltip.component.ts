@@ -332,7 +332,7 @@ export class MinidTooltip extends styled(LitElement, styles) {
             'text-neutral': this.inverted,
             'bg-neutral-base': !this.inverted,
             'text-neutral-base-contrast': !this.inverted,
-          })} leading-sm w-max max-w-[var(--max-width)] rounded px-2 py-1"
+          })} leading-sm w-max max-w-(--max-width) rounded px-2 py-1"
           role="tooltip"
           aria-live=${this.open ? 'polite' : 'off'}
         >

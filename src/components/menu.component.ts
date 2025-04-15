@@ -296,7 +296,7 @@ export class MinidMenu extends styled(LitElement, styles) {
               />
             </div>`}
         <ul
-          class="item-list max-h-[var(--max-height)] max-w-[var(--max-width)] overflow-y-auto px-2 py-3"
+          class="item-list max-h-(--max-height) max-w-(--max-width) overflow-y-auto px-2 py-3"
         >
           <slot
             @slotchange=${this.handleSlotChange}

@@ -135,8 +135,6 @@ export class MinidButton extends FormControllerMixin(
         'text-accent-subtle': secondary || tertiary,
         'hover:text-accent': secondary || tertiary,
         'border-accent-strong': secondary,
-        'fds-btn--secondary': secondary,
-        'fds-btn--tertiary': tertiary,
         'text-body-sm': sm,
         'text-body-md': md,
         'text-body-lg': lg,

@@ -274,7 +274,7 @@ export class MinidHelptext extends styled(LitElement, styles) {
             'text-body-sm': sm,
             'text-body-md': md,
             'text-body-lg': lg,
-          })} bg-info-tinted text-info border-info w-max max-w-[var(--max-width)] rounded border px-4 py-3"
+          })} bg-info-tinted text-info border-info w-max max-w-(--max-width) rounded border px-4 py-3"
           aria-live=${this.open ? 'polite' : 'off'}
           role="status"
         >

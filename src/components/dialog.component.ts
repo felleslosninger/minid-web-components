@@ -13,60 +13,27 @@ import { lockBodyScrolling, unlockBodyScrolling } from '../internal/scroll';
 
 declare global {
   interface HTMLElementTagNameMap {
-    'mid-modal': MinidModal;
+    'mid-dialog': MinidDialog;
   }
 }
 
 const styles = [
   css`
     :host {
-      --max-width: 40rem;
-      --footer-and-header-height: 140px;
-      display: contents;
-    }
-
-    .dialog {
-      max-width: var(--max-width);
-      max-height: unset;
-    }
-
-    .dialog[open] {
-      animation: none;
-    }
-
-    .dialog.closing::backdrop {
-      animation: fade-out 200ms ease-in forwards;
-    }
-
-    .modal-content {
-      max-height: calc(90vh - var(--footer-and-header-height));
-      overflow: auto;
-    }
-
-    .footer {
-      justify-content: flex-end;
-    }
-
-    @keyframes fade-out {
-      from {
-        opacity: 1;
-      }
-
-      to {
-        opacity: 0;
-      }
+      --width: 40rem;
+      display: block;
     }
   `,
 ];
 
 /**
  *
- * @event mid-show - Emitted when the modal opens.
- * @event mid-after-show - Emitted after the modal opens and all animations are complete.
- * @event mid-hide - Emitted when the modal closes.
- * @event mid-after-hide - Emitted after the modal closes and all animations are complete.
+ * @event mid-show - Emitted when the dialog opens.
+ * @event mid-after-show - Emitted after the dialog opens and all animations are complete.
+ * @event mid-hide - Emitted when the dialog closes.
+ * @event mid-after-hide - Emitted after the dialog closes and all animations are complete.
  * @event {{ source: 'close-button' | 'keyboard' | 'overlay' }} mid-request-close - Emitted when the user attempts to
- *   close the modal by clicking the close button, clicking the overlay, or pressing escape. Calling
+ *   close the dialog by clicking the close button, clicking the overlay, or pressing escape. Calling
  *   `event.preventDefault()` will keep the dialog open. Avoid using this unless closing the dialog will result in
  *   destructive behavior such as data loss.
  *
@@ -75,22 +42,19 @@ const styles = [
  * @csspart body - Select the `article` element
  * @csspart footer - Select the `footer` element
  *
- * @slot -- The default slot for the body content of the modal
+ * @slot -- The default slot for the body content of the dialog
  * @slot heading - The content inside the `h2` element
  * @slot footer - The content inside the `footer` element
  *
- * @animation modal.show - The animation to use when showing the modal.
- * @animation modal.hide - The animation to use when hiding the modal.
- * @animation modal.denyClose - The animation to use when closing the modal is prevented.
+ * @animation dialog.show - The animation to use when showing the dialog.
+ * @animation dialog.hide - The animation to use when hiding the dialog.
+ * @animation dialog.denyClose - The animation to use when closing the dialog is prevented.
  *
  */
-@customElement('mid-modal')
-export class MinidModal extends styled(LitElement, styles) {
+@customElement('mid-dialog')
+export class MinidDialog extends styled(LitElement, styles) {
   @query('#dialog')
   dialog!: HTMLDialogElement;
-
-  @query('.dialog')
-  panel!: HTMLElement;
 
   /**
    * Indicates whether or not the dialog is open. You can toggle this attribute to show and hide the dialog, or you can
@@ -116,8 +80,8 @@ export class MinidModal extends styled(LitElement, styles) {
     this.dispatchEvent(requestCloseEvent);
 
     if (requestCloseEvent.defaultPrevented) {
-      const { keyframes, options } = getAnimation(this, 'modal.denyClose');
-      animateTo(this.panel, keyframes, options);
+      const { keyframes, options } = getAnimation(this, 'dialog.denyClose');
+      animateTo(this.dialog, keyframes, options);
       return;
     }
 
@@ -153,9 +117,9 @@ export class MinidModal extends styled(LitElement, styles) {
 
       lockBodyScrolling(this);
 
-      const panelAnimation = getAnimation(this, 'modal.show');
+      const panelAnimation = getAnimation(this, 'dialog.show');
       await animateTo(
-        this.panel,
+        this.dialog,
         panelAnimation.keyframes,
         panelAnimation.options
       ),
@@ -169,19 +133,19 @@ export class MinidModal extends styled(LitElement, styles) {
       );
 
       await Promise.all([stopAnimations(this.dialog)]);
-      const panelAnimation = getAnimation(this, 'modal.hide');
+      const panelAnimation = getAnimation(this, 'dialog.hide');
 
       // The backdrop can only be animated with css because it's a pseudo element
-      // so we add a closing class to trigger it at the same time as the modal animation
-      this.panel.classList.add('closing');
+      // so we add a animation class to trigger it at the same time as the dialog animation
+      this.dialog.classList.add('backdrop:animate-fade-out');
       await animateTo(
-        this.panel,
+        this.dialog,
         panelAnimation.keyframes,
         panelAnimation.options
       );
-      this.panel.classList.remove('closing');
+      this.dialog.classList.remove('backdrop:animate-fade-out');
       this.dialog.close();
-      this.panel.hidden = false;
+      this.dialog.hidden = false;
       unlockBodyScrolling(this);
       this.dispatchEvent(
         new Event('mid-after-hide', { composed: true, bubbles: true })
@@ -190,7 +154,7 @@ export class MinidModal extends styled(LitElement, styles) {
   }
 
   /**
-   * Shows the modal.
+   * Shows the dialog.
    */
   async show() {
     if (this.open) {
@@ -202,7 +166,7 @@ export class MinidModal extends styled(LitElement, styles) {
   }
 
   /**
-   * Hides the modal
+   * Hides the dialog
    */
   async hide() {
     if (!this.open) {
@@ -218,26 +182,26 @@ export class MinidModal extends styled(LitElement, styles) {
       <dialog
         part="base"
         id="dialog"
-        class="dialog fds-modal m-auto"
+        class="text-body-md text-neutral m-auto max-h-[calc(100%---spacing(8))] w-(--width) max-w-[calc(100%---spacing(8))] flex-col rounded-lg p-6 shadow-xl backdrop:bg-black/50 open:flex open:animate-none"
         @cancel=${this.handleDialogCancel}
         @click=${this.handleBackdropClick}
       >
-        <header part="header" class="fds-modal__header flex">
-          <h2 class="fds-heading fds-heading--xs">
-            <slot name="heading"></slot>
-          </h2>
-          <button
-            autofocus
-            @click="${() => this.requestClose('close-button')}"
-            class="fds-btn fds-focus fds-btn--md fds-btn--tertiary fds-btn--second fds-btn--icon-only fds-modal__header__button"
-          >
-            <mid-icon class="text-[1.75rem]" name="xmark"></mid-icon>
-          </button>
+        <header part="header" class="text-heading-sm flex justify-between">
+          <slot name="heading"></slot>
+          <div class="h-0">
+            <button
+              autofocus
+              @click="${() => this.requestClose('close-button')}"
+              class="text-body-md focus-visible:focus-ring text-neutral hover:bg-neutral-surface-hover float-right flex size-12 -translate-y-3 translate-x-3 items-center justify-center rounded"
+            >
+              <mid-icon class="size-6" name="xmark"></mid-icon>
+            </button>
+          </div>
         </header>
-        <article part="body" class="fds-modal__content modal-content">
+        <div part="body" class="overflow-auto">
           <slot> </slot>
-        </article>
-        <footer part="footer" class="fds-modal__footer footer">
+        </div>
+        <footer part="footer">
           <slot name="footer"> </slot>
         </footer>
       </dialog>
@@ -245,7 +209,7 @@ export class MinidModal extends styled(LitElement, styles) {
   }
 }
 
-setDefaultAnimation('modal.show', {
+setDefaultAnimation('dialog.show', {
   keyframes: [
     { opacity: 0, scale: 0.8 },
     { opacity: 1, scale: 1 },
@@ -253,7 +217,7 @@ setDefaultAnimation('modal.show', {
   options: { duration: 250, easing: 'ease' },
 });
 
-setDefaultAnimation('modal.hide', {
+setDefaultAnimation('dialog.hide', {
   keyframes: [
     { opacity: 1, scale: 1 },
     { opacity: 0, scale: 0.8 },
@@ -261,7 +225,7 @@ setDefaultAnimation('modal.hide', {
   options: { duration: 250, easing: 'ease' },
 });
 
-setDefaultAnimation('modal.denyClose', {
+setDefaultAnimation('dialog.denyClose', {
   keyframes: [{ scale: 1 }, { scale: 1.03 }, { scale: 1 }],
   options: { duration: 100 },
 });
