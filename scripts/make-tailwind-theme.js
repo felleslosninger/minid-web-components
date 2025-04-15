@@ -54,10 +54,6 @@ const run = () => {
 
     let match;
 
-    // const shadows = shadowRegex.exec(data).reduce((obj, match) => {
-    //   obj[match[1].replace('ds-', '')] = match[2].trim();
-    // }, {});
-
     while ((match = shadowRegex.exec(data)) !== null) {
       shadows[match[1].replace('ds-', '')] = match[2].trim();
     }

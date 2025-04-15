@@ -44,8 +44,8 @@ const styles = [
  * @csspart base - The component base wrapper. `<mid-popup> element
  * @csspart body - The tooltip body, where the content is rendered
  *
- * @method show
- * @method hide
+ * @method show - Shows the tooltip
+ * @method hide - Hides the tooltip
  *
  * @cssproperty [--max-width=20rem] - Max width of the tooltip content
  * @cssproperty [--hide-delay=0ms] - Delay for hiding the tooltip

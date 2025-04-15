@@ -86,8 +86,8 @@ const styles = [
       width: calc(var(--arrow-size-diagonal) * 2);
       height: calc(var(--arrow-size-diagonal) * 2);
       border: 1px solid var(--arrow-border-color);
-      /* border-top: 0; */
-      /* border-left: 0; */
+      border-left-color: transparent;
+      border-top-color: transparent;
       rotate: 45deg;
       background: var(--arrow-color);
       z-index: 901;
@@ -170,7 +170,8 @@ const styles = [
  *
  * @cssproperty [--arrow-size=6px] - The size of the arrow. Note that an arrow won't be shown unless the `arrow`
  *  attribute is used.
- * @cssproperty [--arrow-color=var(--sl-color-neutral-0)] - The color of the arrow.
+ * @cssproperty [--arrow-color=white] - The color of the arrow.
+ * @cssproperty [--arrow-border-color=transparent] - The color for the arrow border
  * @cssproperty [--auto-size-available-width] - A read-only custom property that determines the amount of width the
  *  popup can be before overflowing. Useful for positioning child elements that need to overflow. This property is only
  *  available when using `auto-size`.

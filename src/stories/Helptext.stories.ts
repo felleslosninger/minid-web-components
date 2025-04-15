@@ -73,7 +73,17 @@ const meta = {
   },
   parameters: {
     controls: {
-      exclude: ['filledIcon'],
+      exclude: [
+        'body',
+        'popup',
+        'filledIcon',
+        'handleBlur',
+        'handleClick',
+        'handleFocus',
+        'handleDocumentKeyDown',
+        'handleMouseOver',
+        'handleMouseOut',
+      ],
     },
   },
 } satisfies Meta<HelptextProps>;
@@ -84,6 +94,7 @@ type Story = StoryObj<HelptextProps>;
 // More on writing stories with args: https://storybook.js.org/docs/writing-stories/args
 export const Main: Story = {
   args: {
+    open: true,
     content:
       'Noen ganger kan vi alle behøve litt hjelp. Da er det fint å ha en hjelpsom hjelpetekst til å forklarer hva det er som egentlig foregår.',
   },
@@ -99,11 +110,11 @@ export const Main: Story = {
     size,
     distance,
     skidding,
-    ...rest
+    '--max-width': maxWidth,
   }: HelptextProps) => {
     return html`<mid-helptext
       style="${styleMap({
-        '--max-width': rest['--max-width'],
+        '--max-width': maxWidth,
       })}"
       ?open=${open}
       ?hoist=${hoist}

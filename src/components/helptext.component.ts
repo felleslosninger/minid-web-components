@@ -25,38 +25,6 @@ const styles = [
     :host {
       --max-width: 20rem;
     }
-
-    .icon {
-      font-size: var(--icon-size);
-      color: var(--fds-semantic-text-action-default);
-    }
-
-    .icon.sm {
-      --icon-size: 1.5rem;
-    }
-
-    .icon.md {
-      --icon-size: 1.75rem;
-    }
-
-    .icon.lg {
-      --icon-size: 2rem;
-    }
-
-    .helptext__body {
-      width: max-content;
-      max-width: var(--max-width);
-    }
-
-    .popup {
-      --arrow-color: var(--fds-semantic-surface-info-subtle);
-    }
-
-    .popup::part(arrow) {
-      border: 1px solid var(--fds-semantic-border-info-default);
-      border-left: 0;
-      border-top: 0;
-    }
   `,
 ];
 
@@ -72,7 +40,7 @@ const styles = [
  */
 @customElement('mid-helptext')
 export class MinidHelptext extends styled(LitElement, styles) {
-  @query('.helptext__body')
+  @query('#helptext-body')
   body!: HTMLElement;
 
   @query('mid-popup')
@@ -143,7 +111,8 @@ export class MinidHelptext extends styled(LitElement, styles) {
     document.removeEventListener('keydown', this.handleDocumentKeyDown);
   }
 
-  firstUpdated() {
+  async firstUpdated() {
+    await this.updateComplete;
     this.body.hidden = !this.open;
 
     // If the helptext is visible on init, update its position
@@ -255,9 +224,12 @@ export class MinidHelptext extends styled(LitElement, styles) {
   }
 
   override render() {
+    const sm = this.size === 'sm';
+    const md = this.size === 'md';
+    const lg = this.size === 'lg';
     return html`
       <mid-popup
-        class="popup"
+        class="[--arrow-border-color:var(--border-color-info)] [--arrow-color:var(--background-color-info-tinted)]"
         ?active=${this.open}
         placement=${this.placement}
         distance=${this.distance}
@@ -273,36 +245,36 @@ export class MinidHelptext extends styled(LitElement, styles) {
           slot="anchor"
           aria-describedby="helptext-body"
           aria-label="Hjelpetekst"
-          class="fds-helptext--md fds-helptext__button fds-focus"
+          class="${classMap({
+            'text-6': sm,
+            'text-7': md,
+            'text-8': lg,
+          })} text-accent-base focus-visible:focus-ring flex rounded-full"
           @click="${this.handleClick}"
         >
           <mid-icon
             name="questionmark-circle"
             library="system"
             class="${classMap({
-              icon: true,
               hidden: this.filledIcon,
-              sm: this.size === 'sm',
-              md: this.size === 'md',
-              lg: this.size === 'lg',
             })}"
           ></mid-icon>
           <mid-icon
             name="questionmark-circle-fill"
             library="system"
             class="${classMap({
-              icon: true,
               hidden: !this.filledIcon,
-              sm: this.size === 'sm',
-              md: this.size === 'md',
-              lg: this.size === 'lg',
             })}"
           ></mid-icon>
         </button>
 
         <div
-          id="heptext-body"
-          class="helptext__body fds-paragraph fds-paragraph--md fds-popover fds-popover--info fds-popover--md fds-helptext__content"
+          id="helptext-body"
+          class="${classMap({
+            'text-body-sm': sm,
+            'text-body-md': md,
+            'text-body-lg': lg,
+          })} bg-info-tinted text-info border-info w-max max-w-[var(--max-width)] rounded border px-4 py-3"
           aria-live=${this.open ? 'polite' : 'off'}
           role="status"
         >
