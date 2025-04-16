@@ -1,5 +1,5 @@
 @import 'tailwindcss' source('../components');
-@import '../styles/designsystemet-tailwind.css';
+@import '../public/designsystemet-tailwind.css';
 
 @custom-variant slotted (& ::slotted(*));
 

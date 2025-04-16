@@ -1,5 +1,5 @@
 @import 'tailwindcss';
-@import './designsystemet-tailwind.css';
+@import '../public/designsystemet-tailwind.css';
 
 @custom-variant dark (&:is(.dark *));
 

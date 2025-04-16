@@ -1,9 +1,7 @@
-import { css, html, LitElement } from 'lit';
+import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { classMap } from 'lit/directives/class-map.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { styled } from '../mixins/tailwind.mixin';
-import './icon/icon.component';
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -11,24 +9,10 @@ declare global {
   }
 }
 
-const styles = [
-  css`
-    .fds-link {
-      align-items: baseline;
-    }
-  `,
-];
-
 @customElement('mid-link')
-export class MinidLink extends styled(LitElement, styles) {
+export class MinidLink extends styled(LitElement) {
   @property()
   href?: string;
-
-  /**
-   * White text for dark backgrounds
-   */
-  @property({ type: Boolean })
-  inverted = false;
 
   @property()
   target?: string;
@@ -36,10 +20,7 @@ export class MinidLink extends styled(LitElement, styles) {
   override render() {
     return html`
       <a
-        class="${classMap({
-          'fds-link': true,
-          'fds-link--inverted': this.inverted,
-        })}"
+        class="text-accent-subtle visited:text-link-visited focus-visible:bg-focus-outer inline-flex items-center gap-2 underline decoration-[.0625rem] underline-offset-[.27em] outline-0 focus-visible:text-white"
         href=${ifDefined(this.href)}
         target=${ifDefined(this.target)}
       >

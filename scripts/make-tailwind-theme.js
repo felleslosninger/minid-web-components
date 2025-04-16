@@ -7,7 +7,7 @@ const run = () => {
   const projectRoot = path.dirname(__filename) + '/..';
   const cssThemeFile =
     projectRoot + '/node_modules/@digdir/designsystemet-theme/brand/digdir.css';
-  const destination = projectRoot + '/src/styles/designsystemet-tailwind.css';
+  const destination = projectRoot + '/src/public/designsystemet-tailwind.css';
 
   // Read the digdir.css file
   fs.readFile(cssThemeFile, 'utf-8', (err, data) => {
@@ -89,7 +89,7 @@ const run = () => {
     }
 
     while ((match = variableRegex.exec(colors)) !== null) {
-      variables[match[1]] = match[2].trim();
+      variables[match[1].replace('link-color', 'color-link')] = match[2].trim();
     }
 
     // Generate the Tailwind theme content

@@ -1,12 +1,12 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import '../components/link.component';
+import '../components/icon/icon.component';
 import { ifDefined } from 'lit/directives/if-defined.js';
 
 type LinkProps = {
   label?: string;
   href?: string;
-  inverted?: boolean;
   target?: string;
 };
 
@@ -29,13 +29,14 @@ export const Main: Story = {
     href: 'https://designsystemet.no/',
   },
 
-  render: ({ href, label, inverted, target }: LinkProps) => html`
+  render: ({ href, label, target }: LinkProps) => html`
     <mid-link
+      class="text-body-md"
       href=${ifDefined(href)}
       target=${ifDefined(target)}
-      ?inverted=${inverted}
     >
       ${label}
+      <mid-icon class="text-6" name="external-link"></mid-icon>
     </mid-link>
   `,
 };

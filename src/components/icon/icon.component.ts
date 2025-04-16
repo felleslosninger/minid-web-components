@@ -159,20 +159,19 @@ export class MinidIcon extends styled(LitElement, styles) {
 
     let iconResolver = iconCache.get(`${this.library}-${this.name}`);
     const iconKey = `${this.library}-${this.name}`;
-
     if (!iconResolver) {
       let svgUrl: string;
       if (this.src) {
         iconResolver = this.resolveIcon(this.src);
         iconCache.set(iconKey, iconResolver);
       } else if (this.library === 'nav-aksel') {
-        svgUrl = await import(`/icons/${this.name}.svg`).then(
+        svgUrl = await import(`../../assets/icons/${this.name}.svg`).then(
           (result) => result.default
         );
         iconResolver = this.resolveIcon(svgUrl);
         iconCache.set(iconKey, iconResolver);
       } else if (this.library === 'country') {
-        svgUrl = await import(`/flags/${this.name}.svg`).then(
+        svgUrl = await import(`../../assets/flags/${this.name}.svg?`).then(
           (result) => result.default
         );
         iconResolver = this.resolveIcon(svgUrl);

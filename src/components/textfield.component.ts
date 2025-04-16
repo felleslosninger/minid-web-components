@@ -443,11 +443,14 @@ export class MinidTextfield extends FormControlMixin(
         <div
           class="${classMap({
             hidden: !this.invalidmessage,
-          })} text-danger-subtle mt-2 flex items-center gap-1"
+          })} text-danger-subtle mt-2 flex gap-1"
           id="error-message"
           aria-live="polite"
         >
-          <mid-icon name="xmark-octagon-fill" class="size-5"></mid-icon>
+          <mid-icon
+            name="xmark-octagon-fill"
+            class="mt-1 min-h-5 min-w-5"
+          ></mid-icon>
           ${this.invalidmessage}
         </div>
       </div>

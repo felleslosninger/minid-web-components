@@ -46,10 +46,6 @@ const generateEntries = () => {
   });
 
   entries['index'] = path.resolve(__dirname, 'src/index.ts');
-  entries['designsystemet-tailwind'] = path.resolve(
-    __dirname,
-    'src/styles/designsystemet-tailwind.css'
-  );
 
   return entries;
 };
@@ -57,7 +53,7 @@ const generateEntries = () => {
 // eslint-disable-next-line no-empty-pattern
 export default defineConfig(({}) => {
   return {
-    publicDir: 'src/assets',
+    publicDir: 'src/public',
     build: {
       minify: false,
       cssCodeSplit: true,
@@ -74,7 +70,8 @@ export default defineConfig(({}) => {
       },
     },
     rollupOptions: {
-      external: ['^lit$'],
+      external: ['^lit$', 'icons'],
+
       output: {
         preserveModules: true,
         globals: {
