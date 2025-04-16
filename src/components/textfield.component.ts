@@ -14,6 +14,7 @@ import {
   requiredValidator,
 } from '../mixins/validators';
 import { watch } from '../internal/watch';
+import './icon/icon.component.ts';
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -25,55 +26,6 @@ const styles = [
   css`
     :host {
       display: block;
-    }
-
-    .form-control {
-      display: block;
-    }
-
-    .form-control:has(input:disabled) {
-      opacity: 0.3;
-    }
-
-    .fds-label {
-      margin-bottom: 0.5rem;
-    }
-
-    .input {
-      width: 100%;
-      outline: none;
-      box-shadow: none;
-      background-color: transparent;
-      padding: 0 1rem;
-    }
-
-    .field:has(.input:disabled) {
-      opacity: var(--fds-opacity-disabled);
-    }
-
-    .suffix,
-    .prefix {
-      display: flex;
-      place-items: center;
-    }
-
-    .suffix ::slotted(*) {
-      margin-inline-end: 1rem !important; // global style for button is margin: 0
-      border-radius: 4px;
-    }
-
-    .prefix ::slotted(*) {
-      margin-inline-start: 1rem !important; // global style for button is margin: 0
-      border-radius: 4px;
-    }
-
-    .fds-textfield__readonly__icon svg {
-      font-size: 1.2em;
-    }
-
-    .clear-button:not(:disabled, [aria-disabled]):hover mid-icon {
-      border-radius: 4px;
-      background: var(--fds-semantic-surface-action-subtle-hover);
     }
   `,
 ];
@@ -94,9 +46,9 @@ let nextUniqueId = 0;
  * @slot suffix - Used for decoration to the right of the input
  * @slot label - The input's label. Alternatively, you can use the `label` attribute.
  *
- * @csspart base - The fields's base wrapper.
+ * @csspart base - The input's wrapper that has the input field styling.
  * @csspart input - The internal `<input>` element.
- * @csspart form-control - The form control that wraps the label, input, and help text.
+ * @csspart field - The element that wraps the label, input, and help text.
  * @csspart clear-button - The clear button
  * @csspart password-toggle-button - The button for toggling password visibility
  */
@@ -104,35 +56,11 @@ let nextUniqueId = 0;
 export class MinidTextfield extends FormControlMixin(
   styled(LitElement, styles)
 ) {
-  /**
-   * @ignore
-   */
-  inputId!: string;
+  private readonly inputId!: string;
+  private readonly descriptionId!: string;
+  private readonly hasSlotControler = new HasSlotController(this, 'label');
+  private initialValue = '';
 
-  /**
-   * @ignore
-   */
-  descriptionId!: string;
-
-  /**
-   * @ignore
-   */
-  hasSlotControler = new HasSlotController(this, 'label');
-
-  /**
-   * @ignore
-   */
-  #initialValue = '';
-
-  /**
-   * @ignore
-   */
-  @query('.error-message')
-  errorMessageDiv!: HTMLDivElement;
-
-  /**
-   * @ignore
-   */
   @query('.input')
   input!: HTMLInputElement;
 
@@ -256,9 +184,6 @@ export class MinidTextfield extends FormControlMixin(
   @state()
   hasFocus = false;
 
-  /**
-   * @ignore
-   */
   static get formControlValidators() {
     return [
       requiredValidator,
@@ -268,9 +193,6 @@ export class MinidTextfield extends FormControlMixin(
     ];
   }
 
-  /**
-   * @ignore
-   */
   get validationTarget() {
     return this.input;
   }
@@ -284,7 +206,7 @@ export class MinidTextfield extends FormControlMixin(
 
   override connectedCallback(): void {
     super.connectedCallback();
-    this.#initialValue = this.value;
+    this.initialValue = this.value;
   }
 
   private handleKeydown(event: KeyboardEvent) {
@@ -364,7 +286,7 @@ export class MinidTextfield extends FormControlMixin(
 
   resetFormControl() {
     this.invalidmessage = '';
-    this.value = this.#initialValue;
+    this.value = this.initialValue;
   }
 
   forceError(message?: string): void {
@@ -389,76 +311,63 @@ export class MinidTextfield extends FormControlMixin(
 
     return html`
       <div
-        part="form-control"
+        part="field"
         class="${classMap({
-          'form-control': true,
-          'fds-paragraph': true,
-          'fds-textfield': true,
-          'fds-textfield--readonly': this.readonly,
-          'fds-paragraph--sm': sm,
-          'fds-paragraph--md': md,
-          'fds-paragraph--lg': lg,
-          'fds-textfield--sm': sm,
-          'fds-textfield--md': md,
-          'fds-textfield--lg': lg,
+          'opacity-disabled': this.disabled,
+          'text-body-sm': sm,
+          'text-body-md': md,
+          'text-body-lg': lg,
         })}"
       >
         <label
           for="${this.inputId}"
           class="${classMap({
             'sr-only': this.hidelabel || !hasLabel,
-            'fds-label': true,
-            'fds-label--medium-weight': true,
-            'fds-textfield__label': true,
-            'fds-label--sm': sm,
-            'fds-label--md': md,
-            'fds-label--lg': lg,
-          })}"
+          })} mb-2 inline-flex items-center gap-1 font-medium"
         >
-          ${!this.readonly
-            ? nothing
-            : html`<mid-icon
-                class="fds-textfield__readonly__icon"
+          ${this.readonly
+            ? html`<mid-icon
+                class="size-5"
                 library="system"
                 name="padlock-locked-fill"
-              ></mid-icon>`}
+              ></mid-icon>`
+            : nothing}
           <slot name="label"> ${this.label} </slot>
         </label>
-        ${!this.description
-          ? nothing
-          : html`
+        ${this.description
+          ? html`
               <div
                 id="${this.descriptionId}"
                 part="description"
                 class="${classMap({
-                  description: true,
-                  'fds-paragraph': true,
                   'sr-only': this.hidelabel,
-                  'fds-paragraph--sm': sm,
-                  'fds-paragraph--md': md,
-                  'fds-paragraph--lg': lg,
-                  'fds-textfield__description': true,
-                })}"
+                })} text-neutral-subtle mb-2"
               >
                 ${this.description}
               </div>
-            `}
+            `
+          : nothing}
         <div
           part="base"
           class="${classMap({
-            'fds-textfield__field': true,
-            'border-neutral': !this.invalidmessage,
-            'border-danger': this.invalidmessage,
+            'border-neutral': !this.invalidmessage && !this.readonly,
+            'border-danger': this.invalidmessage && !this.readonly,
+            'border-neutral-subtle': this.readonly,
+            'bg-neutral-surface-tinted': this.readonly,
+            'bg-neutral-surface': !this.readonly,
             border: !this.invalidmessage,
             'border-2': this.invalidmessage,
-          })} field focus-within:shadow-focus-inner focus-within:outline-focus-outer outline-2 outline-transparent focus-within:outline-3 focus-within:outline-offset-3"
+          })} focus-within:focus-ring flex h-12 items-center rounded-md px-3"
         >
-          <span class="prefix">
+          <span class="slotted:!mr-2 slotted:rounded flex items-center">
             <slot name="prefix"></slot>
           </span>
           <input
             id="${this.inputId}"
-            class="input"
+            class="${classMap({
+              '[&::-webkit-search-cancel-button]:appearance-none':
+                this.type === 'search',
+            })} input grow focus-visible:outline-0"
             part="input"
             .value=${live(this.value)}
             ?disabled=${this.disabled}
@@ -487,15 +396,15 @@ export class MinidTextfield extends FormControlMixin(
                 <button
                   part="clear-button"
                   type="button"
-                  class="${classMap({
-                    'text-6': sm,
-                    'text-7': md,
-                    'text-8': lg,
-                  })} flex w-[calc(1em+1rem*2)] items-center justify-center rounded"
+                  class="focus-visible:focus-ring ml-2 flex items-center justify-center rounded-sm"
                   aria-label="Tøm"
                   @click=${this.handleClearClick}
                 >
-                  <mid-icon name="xmark" library="system"></mid-icon>
+                  <mid-icon
+                    class="size-7"
+                    library="system"
+                    name="xmark"
+                  ></mid-icon>
                 </button>
               `
             : ''}
@@ -504,11 +413,7 @@ export class MinidTextfield extends FormControlMixin(
                 <button
                   part="password-toggle-button"
                   type="button"
-                  class="${classMap({
-                    'text-6': sm,
-                    'text-7': md,
-                    'text-8': lg,
-                  })} flex w-[calc(1em+1rem*2)] items-center justify-center rounded"
+                  class="ml-2 flex items-center justify-center rounded-sm"
                   aria-label=${this.passwordvisible
                     ? 'skjul passord'
                     : 'vis passord'}
@@ -517,29 +422,34 @@ export class MinidTextfield extends FormControlMixin(
                 >
                   ${this.passwordvisible
                     ? html` <mid-icon
-                        name="eye-slash"
+                        class="size-7"
                         library="system"
+                        name="eye-slash"
                       ></mid-icon>`
                     : html`
-                        <mid-icon name="eye" library="system"> </mid-icon>
+                        <mid-icon
+                          class="size-7"
+                          library="system"
+                          name="eye"
+                        ></mid-icon>
                       `}
                 </button>
               `
             : ''}
-          <span part="suffix" class="suffix">
+          <span part="suffix" class="slotted:!ml-2 slotted:rounded">
             <slot name="suffix"></slot>
           </span>
         </div>
-      </div>
-      <div
-        class="${classMap({
-          hidden: !this.invalidmessage,
-        })} error-message text-danger-subtle flex gap-1 pt-2"
-        id="error-message"
-        aria-live="polite"
-      >
-        <mid-icon name="xmark-octagon-fill" class="mt-1 text-xl"></mid-icon>
-        ${this.invalidmessage}
+        <div
+          class="${classMap({
+            hidden: !this.invalidmessage,
+          })} text-danger-subtle mt-2 flex items-center gap-1"
+          id="error-message"
+          aria-live="polite"
+        >
+          <mid-icon name="xmark-octagon-fill" class="size-5"></mid-icon>
+          ${this.invalidmessage}
+        </div>
       </div>
     `;
   }

@@ -1,8 +1,9 @@
 import { css, html, LitElement } from 'lit';
-import { customElement, property, state } from 'lit/decorators.js';
+import { customElement, property } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { styled } from '../mixins/tailwind.mixin.ts';
 import './popup.component';
+import { classMap } from 'lit/directives/class-map.js';
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -10,23 +11,12 @@ declare global {
   }
 }
 
-let nextUniqueID = 0;
+let nextUniqueId = 0;
 
 const styles = [
   css`
     :host {
-      display: flex;
-    }
-
-    .popup {
-      --arrow-size: 8px;
-    }
-
-    .popup::part(arrow) {
-      z-index: 1501;
-      border: 1px solid #cbcbcb;
-      border-left: 0;
-      border-top: 0;
+      display: inline-flex;
     }
   `,
 ];
@@ -38,8 +28,7 @@ const styles = [
  */
 @customElement('mid-dropdown')
 export class MinidDropdown extends styled(LitElement, styles) {
-  @state()
-  popupId = `mid-dropdown-${nextUniqueID++}`;
+  private readonly popupId = `mid-dropdown-${nextUniqueId++}`;
 
   @property({ type: Boolean, reflect: true })
   open = false;
@@ -90,17 +79,13 @@ export class MinidDropdown extends styled(LitElement, styles) {
   @property({ type: Boolean })
   hoist = false;
 
-  /**
-   *
-   * @ignore
-   */
-  #handleClickOutside = (event: Event) => {
+  private handleClickOutside = (event: Event) => {
     if (!event.composedPath().includes(this)) {
-      this.#toggleDropdownOpen(event, false);
+      this.toggleDropdownOpen(event, false);
     }
   };
 
-  #toggleDropdownOpen(event: Event, open?: boolean) {
+  private toggleDropdownOpen(event: Event, open?: boolean) {
     event.stopPropagation();
 
     if (open !== undefined) {
@@ -110,7 +95,7 @@ export class MinidDropdown extends styled(LitElement, styles) {
     }
 
     if (this.open) {
-      addEventListener('click', this.#handleClickOutside);
+      addEventListener('click', this.handleClickOutside);
       addEventListener(
         'mid-anchor-click',
         this.handleAnchorClick as EventListener
@@ -121,14 +106,14 @@ export class MinidDropdown extends styled(LitElement, styles) {
         'mid-anchor-click',
         this.handleAnchorClick as EventListener
       );
-      removeEventListener('click', this.#handleClickOutside);
+      removeEventListener('click', this.handleClickOutside);
     }
   }
 
-  handleAnchorClick = (event: CustomEvent<{ id: string }>) => {
+  private handleAnchorClick = (event: CustomEvent<{ id: string }>) => {
     // to make sure clicking another element's anchor closes current element's dropdown menu
     if (event.detail.id !== this.popupId) {
-      this.#toggleDropdownOpen(event, false);
+      this.toggleDropdownOpen(event, false);
     }
   };
 
@@ -136,7 +121,11 @@ export class MinidDropdown extends styled(LitElement, styles) {
     return html`
       <mid-popup
         id="${this.popupId}"
-        class="popup"
+        class="${classMap({
+          'text-body-sm': this.size === 'sm',
+          'text-body-md': this.size === 'md',
+          'text-body-lg': this.size === 'lg',
+        })} [--arrow-border-color:var(--border-color-neutral-subtle)] [--arrow-size:8px]"
         distance=${this.distance}
         placement="${this.placement}"
         skidding=${this.skidding}
@@ -148,7 +137,7 @@ export class MinidDropdown extends styled(LitElement, styles) {
         sync=${ifDefined(this.sync)}
         ?active=${this.open}
         ?arrow=${this.arrow}
-        @click=${this.#toggleDropdownOpen}
+        @click=${this.toggleDropdownOpen}
       >
         <slot slot="anchor" name="trigger"> </slot>
         <div

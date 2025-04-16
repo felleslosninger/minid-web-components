@@ -49,9 +49,6 @@ const iconCache = new Map<string, Promise<SVGResult>>();
  */
 @customElement('mid-icon')
 export class MinidIcon extends styled(LitElement, styles) {
-  /**
-   * @ignore
-   */
   @state()
   private svg: SVGElement | HTMLTemplateResult | null = null;
 
@@ -84,10 +81,7 @@ export class MinidIcon extends styled(LitElement, styles) {
   @property()
   library: 'system' | 'country' | 'nav-aksel' = 'nav-aksel';
 
-  /**
-   * @ignore
-   */
-  #hasRendered = false;
+  private hasRendered = false;
 
   /**
    * Given a URL, this function returns the resulting SVG element or an appropriate error symbol.
@@ -139,7 +133,7 @@ export class MinidIcon extends styled(LitElement, styles) {
   }
 
   firstUpdated() {
-    this.#hasRendered = true;
+    this.hasRendered = true;
     this.setIcon();
   }
 
@@ -168,18 +162,17 @@ export class MinidIcon extends styled(LitElement, styles) {
 
     if (!iconResolver) {
       let svgUrl: string;
-
       if (this.src) {
         iconResolver = this.resolveIcon(this.src);
         iconCache.set(iconKey, iconResolver);
       } else if (this.library === 'nav-aksel') {
-        svgUrl = await import(`../../assets/icons/${this.name}.svg`).then(
+        svgUrl = await import(`/icons/${this.name}.svg`).then(
           (result) => result.default
         );
         iconResolver = this.resolveIcon(svgUrl);
         iconCache.set(iconKey, iconResolver);
       } else if (this.library === 'country') {
-        svgUrl = await import(`../../assets/flags/${this.name}.svg`).then(
+        svgUrl = await import(`/flags/${this.name}.svg`).then(
           (result) => result.default
         );
         iconResolver = this.resolveIcon(svgUrl);
@@ -192,7 +185,7 @@ export class MinidIcon extends styled(LitElement, styles) {
     }
 
     // If we haven't rendered yet, exit early. This avoids unnecessary work due to watching multiple props.
-    if (!this.#hasRendered) {
+    if (!this.hasRendered) {
       return;
     }
 

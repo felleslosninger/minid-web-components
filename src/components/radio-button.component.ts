@@ -22,9 +22,6 @@ declare global {
  */
 @customElement('mid-radio-button')
 export class MinidRadioButton extends styled(LitElement) {
-  /**
-   * @ignore
-   */
   @query('.radio')
   element!: HTMLButtonElement;
 

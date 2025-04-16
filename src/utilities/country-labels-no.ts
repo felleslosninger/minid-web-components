@@ -1,5 +1,5 @@
 import { CountryCode } from 'libphonenumber-js';
-export const countryLabelsNO: Record<CountryCode, string> = {
+const labels: Record<CountryCode, string> = {
   AC: 'Ascension Island',
   AD: 'Andorra',
   AE: 'De Forente Arabiske Emirater',
@@ -246,3 +246,5 @@ export const countryLabelsNO: Record<CountryCode, string> = {
   ZM: 'Zambia',
   ZW: 'Zimbabwe',
 };
+
+export default labels;

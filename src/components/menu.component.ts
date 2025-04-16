@@ -1,6 +1,5 @@
 import { css, html, LitElement, nothing } from 'lit';
 import { customElement, property, query, state } from 'lit/decorators.js';
-import { classMap } from 'lit/directives/class-map.js';
 import { styled } from '../mixins/tailwind.mixin.ts';
 import { MinidMenuItem } from './menu-item.component';
 import { scrollIntoView } from '../internal/scroll';
@@ -15,23 +14,7 @@ const styles = [
   css`
     :host {
       --max-height: none;
-    }
-
-    .panel {
-      padding: 0;
-    }
-
-    ul {
-      max-height: var(--max-height);
-      overflow-y: auto;
-    }
-
-    .border-b {
-      border-bottom: 1px solid var(--fds-semantic-border-input-default);
-    }
-
-    .filter-input:focus-visible {
-      box-shadow: 0 0 0 3px #00347d;
+      --max-width: none;
     }
   `,
 ];
@@ -41,21 +24,12 @@ const styles = [
  */
 @customElement('mid-menu')
 export class MinidMenu extends styled(LitElement, styles) {
-  /**
-   * @ignore
-   */
   @query('slot')
   defaultSlot!: HTMLSlotElement;
 
-  /**
-   * @ignore
-   */
   @query('.filter-input')
   filterInput!: HTMLInputElement;
 
-  /**
-   * @ignore
-   */
   @query('.item-list')
   itemList!: HTMLUListElement;
 
@@ -124,7 +98,7 @@ export class MinidMenu extends styled(LitElement, styles) {
     );
   }
 
-  handleFilterItems() {
+  private handleFilterItems() {
     this.filter((item) =>
       item.innerText
         .toLowerCase()
@@ -136,7 +110,7 @@ export class MinidMenu extends styled(LitElement, styles) {
     this.setCurrentItem(items[0]);
   }
 
-  #scrollOptionIntoView(item: MinidMenuItem): void {
+  private scrollOptionIntoView(item: MinidMenuItem): void {
     scrollIntoView(item, this.itemList, 'vertical', 'auto');
   }
 
@@ -179,7 +153,7 @@ export class MinidMenu extends styled(LitElement, styles) {
         }
 
         this.setCurrentItem(items[index]);
-        this.#scrollOptionIntoView(items[index]);
+        this.scrollOptionIntoView(items[index]);
 
         if (!this.searchable) {
           items[index].focus();
@@ -286,30 +260,18 @@ export class MinidMenu extends styled(LitElement, styles) {
   }
 
   override render() {
-    const combobox = this.variant === 'combobox';
-    const dropdown = this.variant === 'dropdown';
     return html`
       <div
-        class="${classMap({
-          panel: true,
-          'fds-dropdownmenu': dropdown,
-          'fds-dropdownmenu--md': dropdown,
-          'fds-box--md-shadow': combobox,
-          'fds-box--default-border-color': combobox,
-          'fds-box--md-border-radius': combobox,
-          'fds-box--default-background': combobox,
-          'fds-combobox__options-wrapper': combobox,
-          'fds-combobox--md': combobox,
-        })}"
+        class="text-body-md text-neutral border-neutral-subtle rounded-md border shadow-md"
       >
         ${!this.searchable
           ? nothing
           : html`<div
-              class="filter-search flex items-center gap-2 border-b p-2"
+              class="border-neutral-subtle flex items-center gap-2 border-b p-2"
             >
               <mid-icon
+                class="text-6"
                 slot="prefix"
-                class="text-2xl"
                 library="system"
                 name="magnifying-glass"
               >
@@ -317,11 +279,13 @@ export class MinidMenu extends styled(LitElement, styles) {
               <input
                 @input=${this.handleFilterItems}
                 @keydown=${this.handleKeyDown}
-                class="filter-input h-8 w-full rounded px-2"
+                class="filter-input border-neutral-subtle focus-visible:outline-focus-outer h-8 w-full rounded border px-2"
                 type="search"
               />
             </div>`}
-        <ul class="item-list p-2">
+        <ul
+          class="item-list max-h-(--max-height) max-w-(--max-width) overflow-y-auto px-2 py-3"
+        >
           <slot
             @slotchange=${this.handleSlotChange}
             @click=${this.handleClick}

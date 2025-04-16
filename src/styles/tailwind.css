@@ -3,36 +3,6 @@
 
 @custom-variant dark (&:is(.dark *));
 
-@layer base {
-  *:focus-visible {
-    @apply outline-hidden;
-    @apply shadow-focus-visible;
-  }
-}
-
 @theme inline {
-  --outline-offset-3: 3px;
-
-  --outline-width-3: 3px;
-
-  --shadow-focus-visible: 0 0 0 3px #00347d;
   --shadow-danger: inset 0 0 0 1px var(--fds-semantic-border-danger-default);
-
-  --animate-dash: dash 1.4s cubic-bezier(0.2, -0.01, 0.51, 0.96) infinite;
-  --animate-spin-slow: spin 2.2s linear infinite;
-
-  @keyframes dash {
-    0% {
-      stroke-dasharray: 1, 150;
-      stroke-dashoffset: 0;
-    }
-    50% {
-      stroke-dasharray: 90, 150;
-      stroke-dashoffset: -35;
-    }
-    100% {
-      stroke-dasharray: 90, 150;
-      stroke-dashoffset: -124;
-    }
-  }
 }

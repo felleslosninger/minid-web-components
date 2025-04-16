@@ -15,8 +15,11 @@ type TooltipProps = {
   disabled?: boolean;
   inverted: boolean;
   placement?: MinidTooltip['placement'];
+  size?: MinidTooltip['size'];
   distance?: number;
   skidding?: number;
+  show?: Function;
+  hide?: Function;
   '--': Slottable;
   content: Slottable;
   base: Part;
@@ -53,7 +56,6 @@ const meta = {
       control: { type: 'text' },
       table: { category: 'attributes' },
     },
-
     placement: {
       control: { type: 'select' },
       options: [
@@ -70,6 +72,10 @@ const meta = {
         'left-start',
         'left-end',
       ],
+    },
+    size: {
+      control: { type: 'radio' },
+      options: ['sm', 'md', 'lg'],
     },
     '--max-width': {
       type: 'string',
@@ -105,6 +111,34 @@ const meta = {
       name: '-',
       control: { disable: true },
     },
+    show: {
+      control: false,
+      table: { category: 'Methods' },
+      type: 'function',
+      description: 'Shows the tooltip.',
+    },
+    hide: {
+      control: false,
+      table: { category: 'Methods' },
+      type: 'function',
+      description: 'Hides the tooltip',
+    },
+  },
+  parameters: {
+    controls: {
+      exclude: [
+        'hoverTimeout',
+        'closeWatcher',
+        'popup',
+        'handleBlur',
+        'handleClick',
+        'handleFocus',
+        'handleDocumentKeyDown',
+        'handleMouseOver',
+        'handleMouseOut',
+        'hasTrigger',
+      ],
+    },
   },
 } satisfies Meta<TooltipProps>;
 
@@ -130,16 +164,19 @@ export const Main: Story = {
     inverted,
     trigger,
     placement,
+    size,
     disabled,
     distance,
     skidding,
-    ...rest
+    '--max-width': maxWidth,
+    '--show-delay': showDelay,
+    '--hide-delay': hideDelay,
   }: TooltipProps) => {
     return html`<mid-tooltip
       style="${styleMap({
-        '--max-width': rest['--max-width'],
-        '--show-delay': rest['--show-delay'],
-        '--hide-delay': rest['--hide-delay'],
+        '--max-width': maxWidth,
+        '--show-delay': showDelay,
+        '--hide-delay': hideDelay,
       })}"
       ?open=${open}
       ?hoist=${hoist}
@@ -147,6 +184,7 @@ export const Main: Story = {
       ?inverted=${inverted}
       trigger=${ifDefined(trigger)}
       placement=${ifDefined(placement)}
+      size=${ifDefined(size)}
       content=${ifDefined(content ? undefined : contentString)}
       distance=${ifDefined(distance)}
       skidding=${ifDefined(skidding)}

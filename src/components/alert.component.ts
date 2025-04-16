@@ -11,7 +11,7 @@ import {
 } from '../utilities/animation-registry';
 import { waitForEvent } from '../internal/event';
 import { animateTo, stopAnimations } from '../internal/animate';
-import { MidIconName } from '../types/icon-name';
+import { type MidIconName } from '../types/icon-name';
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -33,7 +33,7 @@ const styles = [
       font-size: var(--fds-alert-icon-size);
     }
 
-    .close-button {
+    /* .close-button {
       font-size: 24px;
       display: inline-flex;
       align-self: center;
@@ -42,7 +42,7 @@ const styles = [
       margin-top: -10px;
       margin-bottom: -10px;
       color: var(--fds-alert-icon-color);
-    }
+    } */
 
     .close-button:hover {
       background-color: color-mix(
@@ -335,6 +335,9 @@ export class MinidAlert extends styled(LitElement, styles) {
     const warning = this.severity === 'warning';
     const info = this.severity === 'info';
     const success = this.severity === 'success';
+    const sm = this.size === 'sm';
+    const md = this.size === 'md';
+    const lg = this.size === 'lg';
     const iconName: MidIconName =
       (danger && 'xmark-octagon-fill') ||
       (warning && 'exclamationmark-triangle-fill') ||
@@ -350,38 +353,42 @@ export class MinidAlert extends styled(LitElement, styles) {
       <div
         part="base"
         class="${classMap({
-          'fds-alert': true,
-          'fds-alert--sm': this.size === 'sm',
-          'fds-alert--md': this.size === 'md',
-          'fds-alert--lg': this.size === 'lg',
-          'fds-alert--warning': warning,
-          'fds-alert--success': success,
-          'fds-alert--info': info,
-          'fds-alert--danger': danger,
-          'fds-alert--elevated': this.elevated,
-        })}"
+          'text-body-sm': sm,
+          'text-body-md': md,
+          'text-body-lg': lg,
+          'bg-danger-surface-tinted': danger,
+          'bg-info-surface-tinted': info,
+          'bg-success-surface-tinted': success,
+          'bg-warning-surface-tinted': warning,
+          'border-danger': danger,
+          'border-info': info,
+          'border-success': success,
+          'border-warning': warning,
+          'text-danger': danger,
+          'text-info': info,
+          'text-success': success,
+          'text-warning': warning,
+          'shadow-md': this.elevated,
+        })} grid grid-cols-[auto_1fr_auto] gap-2 rounded border p-6"
         @mouseenter=${this.pauseAutoHide}
         @mouseleave=${this.resumeAutoHide}
       >
         <mid-icon
-          class="fds-alert__icon"
+          class="${classMap({
+            'text-info-subtle': info,
+            'text-danger-subtle': danger,
+            'text-success-subtle': success,
+            'text-warning-subtle': warning,
+          })} size-7"
           name="${iconName}"
           library="system"
           alt=${ifDefined(this.iconlabel)}
         ></mid-icon>
-        <div
-          aria-live="polite"
-          class=${classMap({
-            'fds-paragraph': true,
-            'fds-paragraph--sm': this.size === 'sm',
-            'fds-paragraph--md': this.size === 'md',
-            'fds-paragraph--lg': this.size === 'lg',
-          })}
-        >
+        <div aria-live="polite">
           <slot>
             ${!this.notificationContent?.title
               ? nothing
-              : html`<h2 class="fds-heading fds-heading--xs">
+              : html`<h2 class="text-heading-xs">
                   ${this.notificationContent?.title}
                 </h2>`}
             ${this.notificationContent?.message}
@@ -394,8 +401,20 @@ export class MinidAlert extends styled(LitElement, styles) {
         </div>
         ${this.closable
           ? html`
-              <button class="close-button" @click="${this.hide}">
-                <mid-icon name="xmark"> </mid-icon>
+              <button
+                class="${classMap({
+                  'text-info-subtle': info,
+                  'text-danger-subtle': danger,
+                  'text-success-subtle': success,
+                  'text-warning-subtle': warning,
+                  'hover:bg-danger-surface-hover': danger,
+                  'hover:bg-info-surface-hover': info,
+                  'hover:bg-success-surface-hover': success,
+                  'hover:bg-warning-surface-hover': warning,
+                })} -my-4 flex self-center rounded p-4"
+                @click="${this.hide}"
+              >
+                <mid-icon class="size-6" name="xmark"> </mid-icon>
               </button>
             `
           : nothing}

@@ -46,15 +46,14 @@ export class MinidHeading extends styled(LitElement) {
                 : literal`h6`;
 
     return html`<${tag} class="${classMap({
-      'fds-heading': true,
-      'fds-heading--spacing': this.spacing,
-      'fds-heading--2xs': this.size === '2xs',
-      'fds-heading--xs': this.size === 'xs',
-      'fds-heading--sm': this.size === 'sm',
-      'fds-heading--md': this.size === 'md',
-      'fds-heading--lg': this.size === 'lg',
-      'fds-heading--xl': this.size === 'xl',
-      'fds-heading--2xl': this.size === '2xl',
-    })}" ><slot></slot></${tag}>`;
+      'mb-2': this.spacing,
+      'text-heading-2xs': this.size === '2xs',
+      'text-heading-xs': this.size === 'xs',
+      'text-heading-sm': this.size === 'sm',
+      'text-heading-md': this.size === 'md',
+      'text-heading-lg': this.size === 'lg',
+      'text-heading-xl': this.size === 'xl',
+      'text-heading-2xl': this.size === '2xl',
+    })}"><slot></slot></${tag}>`;
   }
 }

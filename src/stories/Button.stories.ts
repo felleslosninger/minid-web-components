@@ -10,7 +10,6 @@ type ButtonProps = {
   type?: MinidButton['type'];
   label: string;
   href?: string;
-  fullwidth?: boolean;
   disabled?: boolean;
   iconstyled?: boolean;
   loading?: boolean;
@@ -61,23 +60,23 @@ export const Main: Story = {
     type,
     href,
     disabled,
-    fullwidth,
     iconstyled,
     loading,
     loadingtext,
   }: ButtonProps) => {
-    return html`<mid-button
-      @click=${onclick}
-      type="${ifDefined(type)}"
-      size=${ifDefined(size)}
-      variant=${ifDefined(variant)}
-      href=${ifDefined(href)}
-      loadingtext=${ifDefined(loadingtext)}
-      ?fullwidth=${fullwidth}
-      ?disabled=${disabled}
-      ?iconstyled=${iconstyled}
-      ?loading=${loading}
-      >${label}
-    </mid-button>`;
+    return html`
+      <mid-button
+        @click=${console.log}
+        type="${ifDefined(type)}"
+        size=${ifDefined(size)}
+        variant=${ifDefined(variant)}
+        href=${ifDefined(href)}
+        loadingtext=${ifDefined(loadingtext)}
+        ?disabled=${disabled}
+        ?iconstyled=${iconstyled}
+        ?loading=${loading}
+        >${label}
+      </mid-button>
+    `;
   },
 };

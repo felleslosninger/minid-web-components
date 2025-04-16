@@ -1,10 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html, Part } from 'lit';
 import '../components/button.component';
-import '../components/modal.component';
+import '../components/dialog.component';
 import '../components/paragraph.component';
 
-type ModalProps = {
+type DialogProps = {
   open: boolean;
   'mid-show': Event;
   'mid-hide': Event;
@@ -24,8 +24,8 @@ type ModalProps = {
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories
 const meta = {
-  title: 'Komponenter/Modal',
-  component: 'mid-modal',
+  title: 'Komponenter/Dialog',
+  component: 'mid-dialog',
   argTypes: {
     'mid-request-close': {
       control: { type: 'select' },
@@ -51,13 +51,13 @@ const meta = {
       control: false,
       table: { category: 'Methods' },
       type: 'function',
-      description: 'Shows the modal.',
+      description: 'Shows the dialog.',
     },
     hide: {
       control: false,
       table: { category: 'Methods' },
       type: 'function',
-      description: 'Hides the modal',
+      description: 'Hides the dialog',
     },
   },
   parameters: {
@@ -65,10 +65,10 @@ const meta = {
       exclude: ['dialog', 'panel', 'handleDialogCancel'],
     },
   },
-} satisfies Meta<ModalProps>;
+} satisfies Meta<DialogProps>;
 
 export default meta;
-type Story = StoryObj<ModalProps>;
+type Story = StoryObj<DialogProps>;
 
 // More on writing stories with args: https://storybook.js.org/docs/writing-stories/args
 
@@ -80,19 +80,19 @@ export const Main: Story = {
     heading,
     'mid-request-close': requestClose,
     '--': defaultSlot,
-  }: ModalProps) => {
+  }: DialogProps) => {
     return html`
-      <mid-button class="modal-button">Modal</mid-button>
-      <mid-modal
+      <mid-button class="dialog-button">Dialog</mid-button>
+      <mid-dialog
         ?open=${open}
-        class="modal"
-        @mid-request-close=${(event) =>
+        class="dialog"
+        @mid-request-close=${(event: Event) =>
           requestClose === 'preventDefault' && event.preventDefault()}
       >
-        <span slot="heading"> ${heading ?? 'Bekreft handling'} </span>
-        <mid-paragraph
+        <h2 class="mb-2" slot="heading">${heading ?? 'Bekreft handling'}</h2>
+        <mid-paragraph spacing
           >${defaultSlot ??
-          'Er du sikker på at du vil utføre denne handlingen? Det er ikke sikkert at handlingen kan reverseres.'}
+          'Er du sikker på at du vil utføre handling? Denne handlingen kan ikke reverseres. '}
         </mid-paragraph>
         ${footerSlot
           ? html`<div slot="footer">${footerSlot}</div>`
@@ -107,16 +107,16 @@ export const Main: Story = {
                 </mid-button>
               </div>
             `}
-      </mid-modal>
+      </mid-dialog>
       <script>
-        var modalButton = document.querySelector('.modal-button');
+        var dialogButton = document.querySelector('.dialog-button');
         var cancelButton = document.querySelector('.cancel-button');
         var confirmButton = document.querySelector('.confirm-button');
-        var modal = document.querySelector('.modal');
+        var dialog = document.querySelector('.dialog');
 
-        modalButton.addEventListener('click', () => modal.show());
-        cancelButton.addEventListener('click', () => modal.hide());
-        confirmButton.addEventListener('click', () => modal.hide());
+        dialogButton.addEventListener('click', () => dialog.show());
+        cancelButton.addEventListener('click', () => dialog.hide());
+        confirmButton.addEventListener('click', () => dialog.hide());
       </script>
     `;
   },

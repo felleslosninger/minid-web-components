@@ -8,7 +8,7 @@ import '../components/search.component';
 import '../components/icon/icon.component';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { CountryCode, getCountries } from 'libphonenumber-js';
-import { countryLabelsNO } from '../utilities/countries';
+import countryLabelsNO from '../utilities/country-labels-no';
 
 type PhoneInputProps = {
   'mid-country-click': Event;
@@ -22,7 +22,7 @@ type PhoneInputProps = {
   hidelabel?: boolean;
   labelPart: Part;
   base: Part;
-  'form-control': Part;
+  field: Part;
   'country-button': Part;
   input: Part;
 };
@@ -44,7 +44,7 @@ const meta: Meta = {
       table: { category: 'css shadow parts' },
     },
     base: { control: false },
-    'form-control': { control: false },
+    field: { control: false },
     'country-button': { control: false },
     input: { control: false },
     label: {
@@ -70,11 +70,11 @@ export const Main: Story = {
     country: 'NO',
     label: 'Telefonnummer',
   },
-  decorators: [(story) => html`<div class="mb-64">${story()}</div> `],
+  decorators: [(story) => html`<div class="mb-74 w-84">${story()}</div> `],
   render: ({ value, country, label, hidelabel }: PhoneInputProps) => html`
     <script>
       // A list of countries (localized to Norwegian) is provided to help creating the menu items in the dropdown
-      // import { countryLabelsNO } from '@felleslosninger/minid-elements';
+      // import countryLabelsNO  from '@felleslosninger/minid-elements/country-labels-no';
     </script>
     <mid-combobox>
       <mid-phone-input

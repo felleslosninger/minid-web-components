@@ -34,12 +34,11 @@ export class MinidParagraph extends styled(LitElement) {
   override render() {
     return html`<p
       class="${classMap({
-        'fds-paragraph': true,
-        'fds-paragraph--spacing': this.spacing,
-        'fds-paragraph--xs': this.size === 'xs',
-        'fds-paragraph--sm': this.size === 'sm',
-        'fds-paragraph--md': this.size === 'md',
-        'fds-paragraph--lg': this.size === 'lg',
+        'mb-2': this.spacing,
+        'text-body-xs': this.size === 'xs',
+        'text-body-sm': this.size === 'sm',
+        'text-body-md': this.size === 'md',
+        'text-body-lg': this.size === 'lg',
       })}"
     >
       <slot></slot>

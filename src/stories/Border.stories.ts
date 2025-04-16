@@ -19,7 +19,7 @@ export const BorderWidth: Story = {
   ],
   render: () => html`
     <div class="border">border</div>
-    <div class="border-highlight">border-highlight</div>
+    <div class="border-focus">border-focus</div>
   `,
 };
 
@@ -31,15 +31,15 @@ export const BorderColor: Story = {
       </div> `,
   ],
   render: () => html`
-    <div class="border-highlight border-neutral">border-neutral</div>
-    <div class="border-highlight border-accent">border-accent</div>
-    <div class="border-highlight border-brand1">border-brand1</div>
-    <div class="border-highlight border-brand2">border-brand2</div>
-    <div class="border-highlight border-brand3">border-brand3</div>
-    <div class="border-highlight border-info">border-info</div>
-    <div class="border-highlight border-danger">border-danger</div>
-    <div class="border-highlight border-success">border-success</div>
-    <div class="border-highlight border-warning">border-warning</div>
+    <div class="border-focus border-neutral">border-neutral</div>
+    <div class="border-focus border-accent">border-accent</div>
+    <div class="border-focus border-brand1">border-brand1</div>
+    <div class="border-focus border-brand2">border-brand2</div>
+    <div class="border-focus border-brand3">border-brand3</div>
+    <div class="border-focus border-info">border-info</div>
+    <div class="border-focus border-danger">border-danger</div>
+    <div class="border-focus border-success">border-success</div>
+    <div class="border-focus border-warning">border-warning</div>
   `,
 };
 export const BorderColorSubtle: Story = {
@@ -50,31 +50,15 @@ export const BorderColorSubtle: Story = {
       </div> `,
   ],
   render: () => html`
-    <div class="border-highlight border-neutral-subtle">
-      border-neutral-subtle
-    </div>
-    <div class="border-highlight border-accent-subtle">
-      border-accent-subtle
-    </div>
-    <div class="border-highlight border-brand1-subtle">
-      border-brand1-subtle
-    </div>
-    <div class="border-highlight border-brand2-subtle">
-      border-brand2-subtle
-    </div>
-    <div class="border-highlight border-brand3-subtle">
-      border-brand3-subtle
-    </div>
-    <div class="border-highlight border-info-subtle">border-info-subtle</div>
-    <div class="border-highlight border-danger-subtle">
-      border-danger-subtle
-    </div>
-    <div class="border-highlight border-success-subtle">
-      border-success-subtle
-    </div>
-    <div class="border-highlight border-warning-subtle">
-      border-warning-subtle
-    </div>
+    <div class="border-focus border-neutral-subtle">border-neutral-subtle</div>
+    <div class="border-focus border-accent-subtle">border-accent-subtle</div>
+    <div class="border-focus border-brand1-subtle">border-brand1-subtle</div>
+    <div class="border-focus border-brand2-subtle">border-brand2-subtle</div>
+    <div class="border-focus border-brand3-subtle">border-brand3-subtle</div>
+    <div class="border-focus border-info-subtle">border-info-subtle</div>
+    <div class="border-focus border-danger-subtle">border-danger-subtle</div>
+    <div class="border-focus border-success-subtle">border-success-subtle</div>
+    <div class="border-focus border-warning-subtle">border-warning-subtle</div>
   `,
 };
 
