@@ -57,6 +57,7 @@ const generateEntries = () => {
 // eslint-disable-next-line no-empty-pattern
 export default defineConfig(({}) => {
   return {
+    publicDir: 'src/assets',
     build: {
       minify: false,
       cssCodeSplit: true,

@@ -1,6 +1,5 @@
 import { css, html, LitElement, nothing } from 'lit';
 import { customElement, property, query, state } from 'lit/decorators.js';
-import { classMap } from 'lit/directives/class-map.js';
 import { styled } from '../mixins/tailwind.mixin.ts';
 import { MinidMenuItem } from './menu-item.component';
 import { scrollIntoView } from '../internal/scroll';
@@ -99,7 +98,7 @@ export class MinidMenu extends styled(LitElement, styles) {
     );
   }
 
-  handleFilterItems() {
+  private handleFilterItems() {
     this.filter((item) =>
       item.innerText
         .toLowerCase()
@@ -111,7 +110,7 @@ export class MinidMenu extends styled(LitElement, styles) {
     this.setCurrentItem(items[0]);
   }
 
-  #scrollOptionIntoView(item: MinidMenuItem): void {
+  private scrollOptionIntoView(item: MinidMenuItem): void {
     scrollIntoView(item, this.itemList, 'vertical', 'auto');
   }
 
@@ -154,7 +153,7 @@ export class MinidMenu extends styled(LitElement, styles) {
         }
 
         this.setCurrentItem(items[index]);
-        this.#scrollOptionIntoView(items[index]);
+        this.scrollOptionIntoView(items[index]);
 
         if (!this.searchable) {
           items[index].focus();
@@ -261,20 +260,9 @@ export class MinidMenu extends styled(LitElement, styles) {
   }
 
   override render() {
-    const combobox = this.variant === 'combobox';
-    const dropdown = this.variant === 'dropdown';
     return html`
       <div
-        class="${classMap({
-          'fds-dropdownmenu': dropdown,
-          'fds-dropdownmenu--md': dropdown,
-          'fds-box--md-shadow': combobox,
-          'fds-box--default-border-color': combobox,
-          'fds-box--md-border-radius': combobox,
-          'fds-box--default-background': combobox,
-          'fds-combobox__options-wrapper': combobox,
-          'fds-combobox--md': combobox,
-        })} border-neutral-subtle rounded-md border shadow-md"
+        class="text-body-md text-neutral border-neutral-subtle rounded-md border shadow-md"
       >
         ${!this.searchable
           ? nothing
@@ -282,8 +270,8 @@ export class MinidMenu extends styled(LitElement, styles) {
               class="border-neutral-subtle flex items-center gap-2 border-b p-2"
             >
               <mid-icon
+                class="text-6"
                 slot="prefix"
-                class="text-2xl"
                 library="system"
                 name="magnifying-glass"
               >
@@ -291,7 +279,7 @@ export class MinidMenu extends styled(LitElement, styles) {
               <input
                 @input=${this.handleFilterItems}
                 @keydown=${this.handleKeyDown}
-                class="filter-input focus-visible:outline-focus-outer h-8 w-full rounded px-2"
+                class="filter-input border-neutral-subtle focus-visible:outline-focus-outer h-8 w-full rounded border px-2"
                 type="search"
               />
             </div>`}

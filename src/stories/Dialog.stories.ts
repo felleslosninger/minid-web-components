@@ -92,7 +92,7 @@ export const Main: Story = {
         <h2 class="mb-2" slot="heading">${heading ?? 'Bekreft handling'}</h2>
         <mid-paragraph spacing
           >${defaultSlot ??
-          'Er du sikker på at du vil utføre handling? Denne handlingen kan ikke reverseres. Er du sikker på at du vil utføre handling? Denne handlingen kan ikke reverseres. Er du sikker på at du vil utføre handling? Denne handlingen kan ikke reverseres. Er du sikker på at du vil utføre handling? Denne handlingen kan ikke reverseres. Er du sikker på at du vil utføre handling? Denne handlingen kan ikke reverseres.Er du sikker på at du vil utføre handling? Denne handlingen kan ikke reverseres. Er du sikker på at du vil utføre handling? Denne handlingen kan ikke reverseres. Er du sikker på at du vil utføre handling? Denne handlingen kan ikke reverseres. Er du sikker på at du vil utføre handling? Denne handlingen kan ikke reverseres. Er du sikker på at du vil utføre handling? Denne handlingen kan ikke reverseres. Er du sikker på at du vil utføre handling? Denne handlingen kan ikke reverseres.Er du sikker på at du vil utføre handling? Denne handlingen kan ikke reverseres. Er du sikker på at du vil utføre handling? Denne handlingen kan ikke reverseres. Er du sikker på at du vil utføre handling? Denne handlingen kan ikke reverseres. Er du sikker på at du vil utføre handling? Denne handlingen kan ikke reverseres. Er du sikker på at du vil utføre handling? Denne handlingen kan ikke reverseres. Er du sikker på at du vil utføre handling? Denne handlingen kan ikke reverseres.Er du sikker på at du vil utføre handling? Denne handlingen kan ikke reverseres. Er du sikker på at du vil utføre handling? Denne handlingen kan ikke reverseres. Er du sikker på at du vil utføre handling? Denne handlingen kan ikke reverseres. Er du sikker på at du vil utføre handling? Denne handlingen kan ikke reverseres. Er du sikker på at du vil utføre handling? Denne handlingen kan ikke reverseres. Er du sikker på at du vil utføre handling? Denne handlingen kan ikke reverseres.Er du sikker på at du vil utføre handling? Denne handlingen kan ikke reverseres.'}
+          'Er du sikker på at du vil utføre handling? Denne handlingen kan ikke reverseres. '}
         </mid-paragraph>
         ${footerSlot
           ? html`<div slot="footer">${footerSlot}</div>`
@@ -117,9 +117,6 @@ export const Main: Story = {
         dialogButton.addEventListener('click', () => dialog.show());
         cancelButton.addEventListener('click', () => dialog.hide());
         confirmButton.addEventListener('click', () => dialog.hide());
-        // setTimeout(() => {
-        //   dialog.show();
-        // }, 100);
       </script>
     `;
   },

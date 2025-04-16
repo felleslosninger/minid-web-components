@@ -42,6 +42,10 @@
       "import": "./dist/components/code-input.js",
       "types": "./dist/components/code-input.component.d.ts"
     },
+    "./country-labels-no": {
+      "import": "./dist/utilities/country-labels-no.js",
+      "types": "./dist/components/country-labels-no.d.ts"
+    },
     "./combobox": {
       "import": "./dist/components/combobox.js",
       "types": "./dist/components/combobox.component.d.ts"
