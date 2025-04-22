@@ -4,6 +4,7 @@ import customElements from '../custom-elements.json';
 import '../src/styles/tailwind.css'; // replace with the name of your tailwind css file
 import '../src/styles/global.css';
 import '../src/styles/vendor.css';
+import '../src/styles/component-tailwind.css';
 
 setCustomElementsManifest(customElements);
 

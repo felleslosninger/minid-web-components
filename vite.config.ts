@@ -70,8 +70,7 @@ export default defineConfig(({}) => {
       },
     },
     rollupOptions: {
-      external: ['^lit$', 'icons'],
-
+      external: ['^lit$'],
       output: {
         preserveModules: true,
         globals: {
