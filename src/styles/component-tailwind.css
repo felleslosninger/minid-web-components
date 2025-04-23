@@ -4,7 +4,7 @@
 @custom-variant slotted (& ::slotted(*));
 
 @theme {
-  --animate-dash: dash 1.4s cubic-bezier(0.2, -0.01, 0.51, 0.96) infinite;
+  --animate-dash: dash 1.9s cubic-bezier(0.2, -0.01, 0.51, 0.96) infinite;
   --animate-spin-slow: spin 2.2s linear infinite;
   --animate-fade-out: fade-out 200ms ease-in forwards;
 

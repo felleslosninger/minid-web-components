@@ -68,14 +68,11 @@ export default defineConfig(({}) => {
         formats: ['es'],
         fileName: (_format, entryName) => `${entryName}.js`,
       },
-    },
-    rollupOptions: {
-      external: ['^lit$', 'icons'],
-
-      output: {
-        preserveModules: true,
-        globals: {
-          lit: 'Lit',
+      rollupOptions: {
+        output: {
+          globals: {
+            lit: 'Lit',
+          },
         },
       },
     },

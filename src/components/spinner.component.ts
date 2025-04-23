@@ -30,6 +30,15 @@ export class MinidSpinner extends styled(LitElement, styles) {
         viewBox="0 0 50 50"
       >
         <circle
+          opacity="0.2"
+          stroke="currentColor"
+          cx="25"
+          cy="25"
+          r="20"
+          fill="none"
+          stroke-width="5"
+        ></circle>
+        <circle
           class="animate-dash"
           cx="25"
           cy="25"
@@ -37,7 +46,6 @@ export class MinidSpinner extends styled(LitElement, styles) {
           fill="none"
           stroke-width="5"
           stroke="currentColor"
-          stroke-linecap="round"
         ></circle>
       </svg>
     `;
