@@ -70,7 +70,7 @@ export const Main: Story = {
     country: 'NO',
     label: 'Telefonnummer',
   },
-  decorators: [(story) => html`<div class="mb-74 w-84">${story()}</div> `],
+  decorators: [(story) => html`<div class="mb-74 w-100">${story()}</div> `],
   render: ({ value, country, label, hidelabel }: PhoneInputProps) => html`
     <script>
       // A list of countries (localized to Norwegian) is provided to help creating the menu items in the dropdown

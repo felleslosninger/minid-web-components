@@ -58,6 +58,7 @@ export class MinidTextfield extends FormControlMixin(
 ) {
   private readonly inputId!: string;
   private readonly descriptionId!: string;
+  private readonly validationId!: string;
   private readonly hasSlotControler = new HasSlotController(this, 'label');
   private initialValue = '';
 
@@ -202,6 +203,7 @@ export class MinidTextfield extends FormControlMixin(
     nextUniqueId++;
     this.inputId = `mid-textfield-input-${nextUniqueId}`;
     this.descriptionId = `mid-textfield-description-${nextUniqueId}`;
+    this.validationId = `mid-textfield-validation-${nextUniqueId}`;
   }
 
   override connectedCallback(): void {
@@ -378,7 +380,7 @@ export class MinidTextfield extends FormControlMixin(
               ? 'text'
               : this.type}
             aria-describedby="${this.descriptionId}"
-            aria-errormessage="error-message"
+            aria-errormessage="${this.validationId}"
             placeholder=${ifDefined(this.placeholder)}
             minlength=${ifDefined(this.minlength)}
             maxlength=${ifDefined(this.maxlength)}
@@ -441,11 +443,10 @@ export class MinidTextfield extends FormControlMixin(
           </span>
         </div>
         <div
-          class="${classMap({
-            hidden: !this.invalidmessage,
-          })} text-danger-subtle mt-2 flex gap-1"
-          id="error-message"
+          class="text-danger-subtle mt-2 flex gap-1"
+          id="${this.validationId}"
           aria-live="polite"
+          ?hidden=${!this.invalidmessage}
         >
           <mid-icon
             name="xmark-octagon-fill"

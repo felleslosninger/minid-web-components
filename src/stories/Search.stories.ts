@@ -35,7 +35,7 @@ export const Main: Story = {
   args: {
     placeholder: 'Søk',
   },
-  decorators: [(story) => html` <div class="w-80">${story()}</div>`],
+  decorators: [(story) => html` <div class="w-100">${story()}</div>`],
   render: ({ label, value, placeholder, size, debounce }: SearchProps) =>
     html`<mid-search
       label=${ifDefined(label)}

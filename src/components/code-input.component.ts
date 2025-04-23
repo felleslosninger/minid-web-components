@@ -16,9 +16,9 @@ declare global {
 const styles = [
   css`
     :host {
+      display: block;
       container: otc / inline-size;
       text-align: left;
-      width: 30rem;
       --otc-background: white;
       --otc-error-background: white;
       --otc-length: 5;
@@ -71,9 +71,9 @@ let nextUniqueId = 0;
 export class MinidCodeInput extends ConstraintsValidationMixin(
   styled(LitElement, styles)
 ) {
-  caretColor = 'var(--color-neutral-surface-tinted)';
-  caretHighlightColor = 'var(--color-accent-surface-active)';
-  inputId = `mid-code-input-${nextUniqueId++}`;
+  private readonly caretColor = 'var(--color-neutral-surface-tinted)';
+  private readonly caretHighlightColor = 'var(--color-accent-surface-active)';
+  private readonly inputId = `mid-code-input-${nextUniqueId++}`;
 
   public inputRef: Ref<HTMLInputElement> = createRef();
 
@@ -111,7 +111,7 @@ export class MinidCodeInput extends ConstraintsValidationMixin(
   length = 5;
 
   @property({ type: String, attribute: 'font-size' })
-  fontSize = '3cqw';
+  fontSize = '11.45cqw';
 
   @state()
   renderError = false;

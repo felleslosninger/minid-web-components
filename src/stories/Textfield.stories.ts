@@ -89,6 +89,7 @@ const meta = {
         'week',
       ],
     },
+    pattern: { type: 'string' },
     'mid-change': { control: { disable: true } },
     'mid-input': { control: { disable: true } },
     'mid-clear': { control: { disable: true } },
@@ -106,7 +107,16 @@ const meta = {
   },
   parameters: {
     controls: {
-      exclude: ['hasFocus', 'internals'],
+      exclude: [
+        'hasFocus',
+        'internals',
+        'validationId',
+        'hasSlotControler',
+        'initialValue',
+        'validationTarget',
+        'formControlValidators',
+        'event',
+      ],
     },
   },
 } satisfies Meta<TextfieldProps>;
@@ -118,58 +128,8 @@ type Story = StoryObj<TextfieldProps>;
 export const Main: Story = {
   args: {
     labelAttr: 'Tekst input',
-    // required: true,
-    // pattern: '^[a-zA-Z0-9]{5,30}$',
-    name: 'textfield-data',
-    // value: 'initialValue',
   },
-  decorators: [
-    (story) =>
-      html`<form
-          class="flex w-80 flex-col gap-4"
-          @reset=${() => {
-            document.querySelector('.output')!.textContent = '';
-          }}
-          @submit=${(event: SubmitEvent) => {
-            event.preventDefault();
-
-            const target = event.target as HTMLFormElement;
-            const valid = target.reportValidity();
-            const formData = new FormData(target);
-            const data = Object.fromEntries(formData);
-
-            console.log(valid, data);
-            document.querySelector('.output')!.textContent = JSON.stringify({
-              ...data,
-            });
-          }}
-        >
-          ${story()}
-          <div class="flex flex-row-reverse items-end justify-end gap-4">
-            <pre class="output"></pre>
-            <mid-button type="submit"> Submit </mid-button>
-            <mid-button variant="secondary" type="reset"> Reset </mid-button>
-          </div>
-        </form>
-        <script lang="ts">
-          var textfield = document.querySelector('mid-textfield');
-
-          textfield.addEventListener('mid-invalid-show', (event) => {
-            console.log(event);
-            if (event.detail.validity.patternMismatch) {
-              textfield.invalidmessage = 'Invalid pattern';
-            } else if (event.detail.validity.valueMissing) {
-              textfield.invalidmessage = 'Value is required';
-            } else {
-              textfield.invalidmessage = 'Invalid input';
-            }
-          });
-          textfield.addEventListener('mid-invalid-hide', (event) => {
-            console.log(event);
-            textfield.invalidmessage = '';
-          });
-        </script> `,
-  ],
+  decorators: [(story) => html`<div class="w-100">${story()}</div>`],
   render: ({
     labelAttr,
     label,

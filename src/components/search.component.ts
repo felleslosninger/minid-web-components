@@ -70,7 +70,7 @@ export class MinidSearch extends styled(LitElement) {
       >
         <mid-icon
           slot="prefix"
-          class="text-2xl"
+          class="size-6"
           library="system"
           name="magnifying-glass"
         >

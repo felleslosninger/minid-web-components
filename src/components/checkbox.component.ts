@@ -35,7 +35,7 @@ export class MinidCheckbox extends FormControllerMixin(styled(LitElement)) {
   @queryAssignedNodes({ slot: 'description', flatten: true })
   descriptionNodes?: NodeListOf<HTMLElement>;
 
-  #handleChange(event: Event) {
+  private handleChange(event: Event) {
     this.checked = (event.target as HTMLInputElement).checked;
     if (this.checked) {
       this.setFormValue('on', 'checked');
@@ -45,13 +45,13 @@ export class MinidCheckbox extends FormControllerMixin(styled(LitElement)) {
     this.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
   }
 
-  #handleClick(event: Event) {
+  private handleClick(event: Event) {
     if (this.readonly) {
       event.preventDefault();
     }
   }
 
-  #updateDescriptionHidden() {
+  private updateDescriptionHidden() {
     this.checkboxDescriptionElement.style.display = !this.descriptionNodes
       ?.length
       ? 'none'
@@ -59,7 +59,7 @@ export class MinidCheckbox extends FormControllerMixin(styled(LitElement)) {
   }
 
   protected firstUpdated() {
-    this.#updateDescriptionHidden();
+    this.updateDescriptionHidden();
   }
 
   override render() {
@@ -85,8 +85,8 @@ export class MinidCheckbox extends FormControllerMixin(styled(LitElement)) {
           id="checkbox"
           class="fds-checkbox__input"
           type="checkbox"
-          @change=${this.#handleChange}
-          @click=${this.#handleClick}
+          @change=${this.handleChange}
+          @click=${this.handleClick}
           ?disabled=${this.disabled}
           ?checked=${this.checked}
           ?readonly=${this.readonly}
@@ -115,7 +115,7 @@ export class MinidCheckbox extends FormControllerMixin(styled(LitElement)) {
         >
           <slot
             name="description"
-            @slotchange=${this.#updateDescriptionHidden}
+            @slotchange=${this.updateDescriptionHidden}
           ></slot>
         </div>
       </div>
