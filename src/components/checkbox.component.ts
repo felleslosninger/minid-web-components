@@ -1,13 +1,9 @@
 import { html, LitElement } from 'lit';
-import {
-  customElement,
-  property,
-  query,
-  queryAssignedNodes,
-} from 'lit/decorators.js';
+import { customElement, property, query } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { styled } from '../mixins/tailwind.mixin';
 import { FormControllerMixin } from '../mixins/form-controller.mixin.ts';
+import './icon/icon.component.ts';
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -15,8 +11,27 @@ declare global {
   }
 }
 
+/**
+ *
+ */
+
 @customElement('mid-checkbox')
 export class MinidCheckbox extends FormControllerMixin(styled(LitElement)) {
+  @query('input[type="checkbox"]')
+  input!: HTMLInputElement;
+
+  /**
+   * The name of the checkbox, submitted as a name/value pair with form data.
+   */
+  @property()
+  name = '';
+
+  /**
+   * The current value of the checkbox, submitted as a name/value pair with form data.
+   */
+  @property()
+  value?: string;
+
   @property({ type: Boolean })
   checked = false;
 
@@ -26,14 +41,11 @@ export class MinidCheckbox extends FormControllerMixin(styled(LitElement)) {
   @property({ type: Boolean })
   readonly = false;
 
-  @property({ type: String })
-  size: 'sm' | 'md' | 'lg' = 'md';
+  @property({ type: Boolean })
+  invalid = false;
 
-  @query('.fds-checkbox__description')
-  checkboxDescriptionElement!: HTMLDivElement;
-
-  @queryAssignedNodes({ slot: 'description', flatten: true })
-  descriptionNodes?: NodeListOf<HTMLElement>;
+  @property({ type: Boolean })
+  required = false;
 
   private handleChange(event: Event) {
     this.checked = (event.target as HTMLInputElement).checked;
@@ -51,74 +63,92 @@ export class MinidCheckbox extends FormControllerMixin(styled(LitElement)) {
     }
   }
 
-  private updateDescriptionHidden() {
-    this.checkboxDescriptionElement.style.display = !this.descriptionNodes
-      ?.length
-      ? 'none'
-      : 'block';
+  /**
+   * Simulates a click on the checkbox.
+   */
+  click() {
+    this.input.click();
   }
 
-  protected firstUpdated() {
-    this.updateDescriptionHidden();
+  /**
+   * Sets focus on the checkbox.
+   */
+  focus(options?: FocusOptions) {
+    this.input.focus(options);
+  }
+
+  /**
+   * Removes focus from the checkbox.
+   */
+  blur() {
+    this.input.blur();
+  }
+
+  /**
+   *  Checks for validity but does not show a validation message. Returns `true` when valid and `false` when invalid.
+   */
+  checkValidity() {
+    return this.input.checkValidity();
+  }
+
+  /**
+   *  Checks for validity and shows the browser's validation message if the control is invalid.
+   */
+  reportValidity() {
+    return this.input.reportValidity();
+  }
+
+  /**
+   * Sets a custom validation message. The value provided will be shown to the user when the form is submitted. To clear
+   * the custom validation message, call this method with an empty string.
+   */
+  setCustomValidity(message: string) {
+    this.input.setCustomValidity(message);
   }
 
   override render() {
-    const sm = this.size === 'sm';
-    const md = this.size === 'md';
-    const lg = this.size === 'lg';
-
     return html`
-      <div
+      <label
         class="${classMap({
-          'fds-checkbox': true,
-          'fds-paragraph': true,
-          'fds-checkbox--readonly': this.readonly,
-          'fds-paragraph--sm': sm,
-          'fds-checkbox--sm': sm,
-          'fds-paragraph--md': md,
-          'fds-checkbox--md': md,
-          'fds-paragraph--lg': lg,
-          'fds-checkbox--lg': lg,
-        })}"
+          'opacity-disabled': this.disabled,
+          'cursor-not-allowed': this.disabled,
+        })} grid grid-cols-[auto_1fr] gap-2"
       >
-        <input
-          id="checkbox"
-          class="fds-checkbox__input"
-          type="checkbox"
-          @change=${this.handleChange}
-          @click=${this.handleClick}
-          ?disabled=${this.disabled}
-          ?checked=${this.checked}
-          ?readonly=${this.readonly}
-        />
-        <label
-          for="checkbox"
-          class=${classMap({
-            'fds-label': true,
-            'fds-checkbox__label': true,
-            'fds-label--regular-weight': true,
-            'fds-label--sm': sm,
-            'fds-label--md': md,
-            'fds-label--lg': lg,
-          })}
-        >
-          <slot></slot>
-        </label>
-        <div
+        <span
           class="${classMap({
-            'fds-paragraph': true,
-            'fds-checkbox__description': true,
-            'fds-paragraph--sm': sm,
-            'fds-paragraph--md': md,
-            'fds-paragraph--lg': lg,
-          })}"
+            'bg-accent-base': !this.readonly && this.checked && !this.invalid,
+            'bg-danger-base': !this.readonly && this.checked && this.invalid,
+            'border-accent-base':
+              !this.readonly && this.checked && !this.invalid,
+            'border-neutral': !this.readonly && !this.checked && !this.invalid,
+            'border-danger-base': !this.readonly && this.invalid,
+            'border-neutral-subtle': this.readonly,
+            'bg-neutral-surface-tinted': this.readonly,
+          })} inline-flex size-6 shrink-0 items-center justify-center rounded-sm border"
         >
-          <slot
-            name="description"
-            @slotchange=${this.updateDescriptionHidden}
-          ></slot>
+          <input
+            class="pointer-events-none appearance-none"
+            type="checkbox"
+            @change=${this.handleChange}
+            @click=${this.handleClick}
+            ?disabled=${this.disabled}
+            ?checked=${this.checked}
+            ?readonly=${this.readonly}
+            ?required=${this.required}
+          />
+          ${this.checked
+            ? html`<mid-icon
+                class="${classMap({
+                  'text-accent-base-contrast': this.checked && !this.readonly,
+                })} size-6 shrink-0 scale-125"
+                name="checkmark"
+              ></mid-icon>`
+            : ''}
+        </span>
+        <div part="label">
+          <slot></slot>
         </div>
-      </div>
+      </label>
     `;
   }
 }

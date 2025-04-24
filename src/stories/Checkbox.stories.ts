@@ -1,16 +1,17 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html, nothing } from 'lit';
-import '../components/checkbox.component';
-import type { MinidCheckbox } from '../components/checkbox.component';
 import { ifDefined } from 'lit/directives/if-defined.js';
+import '../components/checkbox.component';
+import { classMap } from 'lit/directives/class-map.js';
 
 type CheckboxProps = Partial<{
   checked: boolean;
   disabled: boolean;
   readonly: boolean;
-  size: MinidCheckbox['size'];
+  size: 'sm' | 'md' | 'lg';
   label: string;
   description: string;
+  invalid: boolean;
 }>;
 
 const meta = {
@@ -39,12 +40,18 @@ export const Main: Story = {
     label,
     readonly,
     size,
+    invalid,
   }: CheckboxProps) => html`
     <mid-checkbox
+      class="${classMap({
+        'text-body-sm': size === 'sm',
+        'text-body-md': size === 'md',
+        'text-body-lg': size === 'lg',
+      })}"
       ?checked=${checked}
       ?readonly=${readonly}
       ?disabled=${disabled}
-      size=${ifDefined(size)}
+      ?invalid=${invalid}
     >
       ${label}
       ${!description

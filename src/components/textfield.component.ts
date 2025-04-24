@@ -319,7 +319,7 @@ export class MinidTextfield extends FormControlMixin(
           'text-body-sm': sm,
           'text-body-md': md,
           'text-body-lg': lg,
-        })}"
+        })} max-w-full"
       >
         <label
           for="${this.inputId}"
@@ -367,9 +367,11 @@ export class MinidTextfield extends FormControlMixin(
           <input
             id="${this.inputId}"
             class="${classMap({
+              'w-full': !isClearIconVisible,
+              'w-[calc(100%-var(--spacing)*7)]': isClearIconVisible,
               '[&::-webkit-search-cancel-button]:appearance-none':
                 this.type === 'search',
-            })} input grow focus-visible:outline-0"
+            })} input grow overflow-clip focus-visible:outline-0"
             part="input"
             .value=${live(this.value)}
             ?disabled=${this.disabled}
