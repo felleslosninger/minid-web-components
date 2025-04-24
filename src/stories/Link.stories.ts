@@ -4,11 +4,11 @@ import '../components/link.component';
 import '../components/icon/icon.component';
 import { ifDefined } from 'lit/directives/if-defined.js';
 
-type LinkProps = {
-  label?: string;
-  href?: string;
-  target?: string;
-};
+type LinkProps = Partial<{
+  label: string;
+  href: string;
+  target: string;
+}>;
 
 const meta: Meta = {
   title: 'Typografi/Link',

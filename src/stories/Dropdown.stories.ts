@@ -7,19 +7,19 @@ import '../components/menu-item.component';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { MinidDropdown } from '../components/dropdown.component';
 
-export interface DropdownProps {
-  open?: boolean;
-  size?: MinidDropdown['size'];
-  placement?: MinidDropdown['placement'];
-  sync?: MinidDropdown['sync'];
-  distance?: number;
-  skidding?: number;
-  hoist?: boolean;
-  arrow?: boolean;
-  trigger?: unknown;
-  panel?: unknown;
-  '--'?: unknown;
-}
+type DropdownProps = Partial<{
+  open: boolean;
+  size: MinidDropdown['size'];
+  placement: MinidDropdown['placement'];
+  sync: MinidDropdown['sync'];
+  distance: number;
+  skidding: number;
+  hoist: boolean;
+  arrow: boolean;
+  trigger: unknown;
+  panel: unknown;
+  '--': unknown;
+}>;
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories
 const meta = {

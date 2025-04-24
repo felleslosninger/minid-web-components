@@ -7,16 +7,16 @@ import '../components/button.component';
 import { MinidAlert } from '../components/alert.component';
 import { ifDefined } from 'lit/directives/if-defined.js';
 
-type AlertProps = {
+type AlertProps = Partial<{
   title: string;
   content: string;
   elevated: boolean;
-  closable?: boolean;
-  open?: boolean;
-  severity?: MinidAlert['severity'];
-  iconlabel?: string;
-  duration?: number;
-  size?: MinidAlert['size'];
+  closable: boolean;
+  open: boolean;
+  severity: MinidAlert['severity'];
+  iconlabel: string;
+  duration: number;
+  size: MinidAlert['size'];
   base: Part;
   '--': string;
   'mid-show': Event;
@@ -26,7 +26,7 @@ type AlertProps = {
   show: Function;
   hide: Function;
   toast: Function;
-};
+}>;
 
 const meta = {
   title: 'Komponenter/Alert',

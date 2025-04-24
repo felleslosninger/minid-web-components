@@ -4,11 +4,11 @@ import '../components/heading.component';
 import { MinidHeading } from '../components/heading.component';
 import { ifDefined } from 'lit/directives/if-defined.js';
 
-type HeadingProps = {
-  size?: MinidHeading['size'];
-  spacing?: boolean;
-  level?: MinidHeading['level'];
-};
+type HeadingProps = Partial<{
+  size: MinidHeading['size'];
+  spacing: boolean;
+  level: MinidHeading['level'];
+}>;
 
 const meta: Meta = {
   title: 'Typografi/Heading',

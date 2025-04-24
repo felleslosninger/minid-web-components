@@ -4,14 +4,14 @@ import '../components/checkbox.component';
 import type { MinidCheckbox } from '../components/checkbox.component';
 import { ifDefined } from 'lit/directives/if-defined.js';
 
-type CheckboxProps = {
-  checked?: boolean;
-  disabled?: boolean;
-  readonly?: boolean;
-  size?: MinidCheckbox['size'];
-  label?: string;
-  description?: string;
-};
+type CheckboxProps = Partial<{
+  checked: boolean;
+  disabled: boolean;
+  readonly: boolean;
+  size: MinidCheckbox['size'];
+  label: string;
+  description: string;
+}>;
 
 const meta = {
   title: 'Komponenter/Checkbox',

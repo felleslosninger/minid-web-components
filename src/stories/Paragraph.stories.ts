@@ -5,10 +5,10 @@ import '../components/paragraph.component';
 import { MinidParagraph } from '../components/paragraph.component';
 import { ifDefined } from 'lit/directives/if-defined.js';
 
-type ParagraphProps = {
-  size?: MinidParagraph['size'];
-  spacing?: boolean;
-};
+type ParagraphProps = Partial<{
+  size: MinidParagraph['size'];
+  spacing: boolean;
+}>;
 
 const meta: Meta = {
   title: 'Typografi/Paragraph',

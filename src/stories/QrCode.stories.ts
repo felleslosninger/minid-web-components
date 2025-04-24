@@ -3,15 +3,15 @@ import '../components/qr-code.component';
 import { html } from 'lit';
 import { ifDefined } from 'lit/directives/if-defined.js';
 
-type QrCodeProps = {
-  content?: string;
-  scale?: number;
-  fill?: string;
-  background?: string;
-  margin?: number;
-  label?: string;
-  width?: number;
-};
+type QrCodeProps = Partial<{
+  content: string;
+  scale: number;
+  fill: string;
+  background: string;
+  margin: number;
+  label: string;
+  width: number;
+}>;
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories
 const meta = {

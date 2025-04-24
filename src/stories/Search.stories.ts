@@ -4,13 +4,13 @@ import { html } from 'lit';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { MinidSearch } from '../components/search.component';
 
-type SearchProps = {
-  label?: string;
-  placeholder?: string;
-  size?: MinidSearch['size'];
-  value?: string;
-  debounce?: number;
-};
+type SearchProps = Partial<{
+  label: string;
+  placeholder: string;
+  size: MinidSearch['size'];
+  value: string;
+  debounce: number;
+}>;
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories
 const meta = {

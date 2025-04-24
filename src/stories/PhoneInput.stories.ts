@@ -10,22 +10,22 @@ import { ifDefined } from 'lit/directives/if-defined.js';
 import { CountryCode, getCountries } from 'libphonenumber-js';
 import countryLabelsNO from '../utilities/country-labels-no';
 
-type PhoneInputProps = {
+type PhoneInputProps = Partial<{
   'mid-country-click': Event;
   'mid-change': Event;
   'mid-input': Event;
   'mid-focus': Event;
   'mid-blur': Event;
-  value?: string;
-  country?: CountryCode;
-  label?: string;
-  hidelabel?: boolean;
+  value: string;
+  country: CountryCode;
+  label: string;
+  hidelabel: boolean;
   labelPart: Part;
   base: Part;
   field: Part;
   'country-button': Part;
   input: Part;
-};
+}>;
 
 const meta: Meta = {
   title: 'Komponenter/Phone Input',

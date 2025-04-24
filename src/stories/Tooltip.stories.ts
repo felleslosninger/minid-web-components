@@ -7,19 +7,19 @@ import { ifDefined } from 'lit/directives/if-defined.js';
 import { MinidTooltip } from '../components/tooltip.component';
 import { styleMap } from 'lit/directives/style-map.js';
 
-type TooltipProps = {
-  trigger?: MinidTooltip['trigger'];
+type TooltipProps = Partial<{
+  trigger: MinidTooltip['trigger'];
   contentString: string;
   open: boolean;
   hoist: boolean;
-  disabled?: boolean;
+  disabled: boolean;
   inverted: boolean;
-  placement?: MinidTooltip['placement'];
-  size?: MinidTooltip['size'];
-  distance?: number;
-  skidding?: number;
-  show?: Function;
-  hide?: Function;
+  placement: MinidTooltip['placement'];
+  size: MinidTooltip['size'];
+  distance: number;
+  skidding: number;
+  show: Function;
+  hide: Function;
   '--': Slottable;
   content: Slottable;
   base: Part;
@@ -31,7 +31,7 @@ type TooltipProps = {
   '--max-width': string;
   '--hide-delay': string;
   '--show-delay': string;
-};
+}>;
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories
 const meta = {

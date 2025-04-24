@@ -6,16 +6,16 @@ import { styleMap } from 'lit/directives/style-map.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { MinidIcon } from '../components/icon/icon.component';
 
-export interface IconProps {
+type IconProps = Partial<{
   name: MidIconName;
-  size?: string;
-  color?: string;
-  alt?: string;
-  src?: string;
-  library?: MinidIcon['library'];
-  'mid-error'?: unknown;
-  'mid-load'?: unknown;
-}
+  size: string;
+  color: string;
+  alt: string;
+  src: string;
+  library: MinidIcon['library'];
+  'mid-error': unknown;
+  'mid-load': unknown;
+}>;
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories
 const meta = {
@@ -65,7 +65,7 @@ export const Main: Story = {
         color: color,
         'font-size': size,
       })}"
-      name=${name}
+      name=${ifDefined(name)}
       alt=${ifDefined(alt)}
       library=${ifDefined(library)}
     ></mid-icon>`,

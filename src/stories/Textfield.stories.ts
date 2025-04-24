@@ -4,39 +4,39 @@ import '../components/button.component';
 import { html, nothing, Part } from 'lit';
 import { ifDefined } from 'lit/directives/if-defined.js';
 
-type TextfieldProps = {
-  label?: string;
-  labelAttr?: string;
-  name?: string;
-  value?: string;
-  placeholder?: string;
-  type?: 'text';
-  size?: 'sm' | 'md' | 'lg';
-  prefix?: string;
-  suffix?: string;
-  disabled?: boolean;
-  readonly?: boolean;
-  required?: boolean;
-  description?: string;
-  clearable?: boolean;
-  hidelabel?: boolean;
-  passwordtoggle?: boolean;
-  passwordvisible?: boolean;
-  pattern?: string;
-  autocomplete?: string;
-  autofocus?: boolean;
-  minlength?: number;
-  maxlength?: number;
-  min?: number;
-  max?: number;
-  invalidmessage?: string;
+type TextfieldProps = Partial<{
+  label: string;
+  labelAttr: string;
+  name: string;
+  value: string;
+  placeholder: string;
+  type: 'text';
+  size: 'sm' | 'md' | 'lg';
+  prefix: string;
+  suffix: string;
+  disabled: boolean;
+  readonly: boolean;
+  required: boolean;
+  description: string;
+  clearable: boolean;
+  hidelabel: boolean;
+  passwordtoggle: boolean;
+  passwordvisible: boolean;
+  pattern: string;
+  autocomplete: string;
+  autofocus: boolean;
+  minlength: number;
+  maxlength: number;
+  min: number;
+  max: number;
+  invalidmessage: string;
   input: Part;
   base: Part;
   field: Part;
   'clear-button': Part;
   'password-toggle-button': Part;
-  'mid-change'?: Event;
-  'mid-input'?: Event;
+  'mid-change': Event;
+  'mid-input': Event;
   'mid-clear': Event;
   'mid-focus': Event;
   'mid-blur': Event;
@@ -44,7 +44,7 @@ type TextfieldProps = {
   'mid-invalid-hide': Event;
   inputId: never;
   descriptionId: never;
-};
+}>;
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories
 const meta = {
