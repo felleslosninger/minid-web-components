@@ -182,7 +182,7 @@ export class MinidDialog extends styled(LitElement, styles) {
       <dialog
         part="base"
         id="dialog"
-        class="text-body-md text-neutral m-auto max-h-[calc(100%---spacing(8))] w-(--width) max-w-[calc(100%---spacing(8))] flex-col rounded-lg p-6 shadow-xl backdrop:bg-black/50 open:flex open:animate-none"
+        class="text-neutral m-auto max-h-[calc(100%---spacing(8))] w-(--width) max-w-[calc(100%---spacing(8))] flex-col rounded-lg p-6 shadow-xl backdrop:bg-black/50 open:flex open:animate-none"
         @cancel=${this.handleDialogCancel}
         @click=${this.handleBackdropClick}
       >
@@ -192,7 +192,7 @@ export class MinidDialog extends styled(LitElement, styles) {
             <button
               autofocus
               @click="${() => this.requestClose('close-button')}"
-              class="text-body-md focus-visible:focus-ring text-neutral hover:bg-neutral-surface-hover float-right flex size-12 -translate-y-3 translate-x-3 items-center justify-center rounded"
+              class="text-body-md focus-visible:focus-ring text-neutral hover:bg-neutral-surface-hover float-right flex size-12 translate-x-3 -translate-y-3 items-center justify-center rounded"
             >
               <mid-icon class="size-6" name="xmark"></mid-icon>
             </button>

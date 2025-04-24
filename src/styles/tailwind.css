@@ -1,2 +1,6 @@
 @import 'tailwindcss';
 @import '../public/designsystemet-tailwind.css';
+
+body {
+  @apply text-body-md text-neutral;
+}

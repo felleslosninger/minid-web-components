@@ -10,9 +10,9 @@ type CodeInputProps = Partial<{
   hidelabel: boolean;
   disabled: boolean;
   inputmode: string;
-  'error-message': string;
+  invalidmessage: string;
   length: number;
-  'font-size': string;
+  fontsize: string;
 }>;
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories
@@ -33,8 +33,8 @@ export const Main: Story = {
   },
   decorators: [(story) => html`<div class="w-100">${story()}</div>`],
   render: ({
-    'error-message': errorMessage,
-    'font-size': fontSize,
+    invalidmessage,
+    fontsize,
     disabled,
     hidelabel,
     inputmode,
@@ -48,8 +48,8 @@ export const Main: Story = {
         value=${ifDefined(value)}
         inputmode=${ifDefined(inputmode)}
         length=${ifDefined(length)}
-        font-size=${ifDefined(fontSize)}
-        error-message=${ifDefined(errorMessage)}
+        fontsize=${ifDefined(fontsize)}
+        invalidmessage=${ifDefined(invalidmessage)}
         ?disabled=${disabled}
         ?hidelabel=${hidelabel}
       >

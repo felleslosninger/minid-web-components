@@ -6,6 +6,7 @@ import { live } from 'lit/directives/live.js';
 import { webOtpApiClose, webOtpApiInit } from '../utilities/web-otp-api';
 import { styled } from '../mixins/tailwind.mixin';
 import { ConstraintsValidationMixin } from '../mixins/form-controller.mixin';
+import './icon/icon.component';
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -16,7 +17,8 @@ declare global {
 const styles = [
   css`
     :host {
-      display: block;
+      display: flex;
+      flex-direction: column;
       container: otc / inline-size;
       text-align: left;
       --otc-background: white;
@@ -36,6 +38,7 @@ const styles = [
       letter-spacing: 2ch;
       padding-block: 0.25ch;
       padding-inline-start: calc(0.5ch * 1.5);
+      flex-grow: 1;
 
       &:focus-visible:focus {
         outline-style: none;
@@ -55,12 +58,6 @@ const styles = [
 
     input.error {
       background: var(--otc-error-background);
-    }
-
-    #error-box {
-      color: rgb(179, 38, 30);
-      font-size: 18px;
-      font-weight: 400;
     }
   `,
 ];
@@ -101,8 +98,8 @@ export class MinidCodeInput extends ConstraintsValidationMixin(
   /**
    * Display custom error message, and force invalid state
    */
-  @property({ type: String, attribute: 'error-message' })
-  _forcedErrorMessage = '';
+  @property()
+  invalidmessage = '';
 
   /**
    * The length of the code input
@@ -110,22 +107,22 @@ export class MinidCodeInput extends ConstraintsValidationMixin(
   @property({ type: Number })
   length = 5;
 
-  @property({ type: String, attribute: 'font-size' })
-  fontSize = '11.45cqw';
+  @property()
+  fontsize = '11.45cqw';
 
   @state()
   renderError = false;
 
   @state()
-  _localErrorNode: Node | null = null;
+  localErrorNode: Node | null = null;
 
   constructor() {
     super();
     this.addEventListener('invalid', (e) => {
       this.renderError = true;
-      if (this._localErrorNode) {
+      if (this.localErrorNode) {
         e.preventDefault();
-        this._localErrorNode.textContent = this.validationMessage || 'Error';
+        this.localErrorNode.textContent = this.validationMessage || 'Error';
       }
     });
   }
@@ -152,7 +149,7 @@ export class MinidCodeInput extends ConstraintsValidationMixin(
     );
   }
 
-  calcInputStyle() {
+  private calcInputStyle() {
     const inputStyle = this.inputRef.value?.style;
 
     inputStyle?.setProperty('--otc-length', this.length.toString());
@@ -167,10 +164,10 @@ export class MinidCodeInput extends ConstraintsValidationMixin(
     const gradientErrorStyle = `linear-gradient(90deg, var(--color-danger-surface-active) calc(${this.length}ch / 2), transparent 0) 0 0 / 3ch 100%`;
     inputStyle?.setProperty('--otc-error-background', gradientErrorStyle);
 
-    inputStyle?.setProperty('--otc-width', this.fontSize);
+    inputStyle?.setProperty('--otc-width', this.fontsize);
   }
 
-  autoFillEventHandler(e: AnimationEvent) {
+  private autoFillEventHandler(e: AnimationEvent) {
     e.animationName === 'onAutoFillStart' &&
       (this.value = (this.inputRef.value as HTMLInputElement).value);
   }
@@ -179,18 +176,7 @@ export class MinidCodeInput extends ConstraintsValidationMixin(
     return this.inputRef.value?.selectionEnd;
   }
 
-  firstUpdated(_changedProperties: PropertyValues) {
-    this.focus();
-    webOtpApiInit(this.renderRoot);
-  }
-
-  focus(options?: FocusOptions) {
-    const notMobile = !window.matchMedia('only screen and (max-width: 768px)')
-      .matches;
-    notMobile && this.inputRef.value?.focus(options);
-  }
-
-  onFocusOut() {
+  private handleFocusOut() {
     for (let i = 0; i < this.length; i++) {
       this.inputRef.value?.style.setProperty(
         `--char-${i + 1}-color`,
@@ -199,44 +185,21 @@ export class MinidCodeInput extends ConstraintsValidationMixin(
     }
   }
 
-  onFocusIn() {
+  private handleFocusIn = () => {
     const currentChar = this.value.length + 1;
     this.inputRef.value?.style.setProperty(
       `--char-${currentChar}-color`,
       this.caretHighlightColor
     );
-  }
+  };
 
-  updated(_changedProperties: PropertyValues): void {
-    for (let i = 0; i < this.length; i++) {
-      const color =
-        i === this.value.length ? this.caretHighlightColor : this.caretColor;
-      this.inputRef.value?.style.setProperty(`--char-${i + 1}-color`, color);
-    }
-
-    if (_changedProperties.has('_forcedErrorMessage')) {
-      this.setCustomValidity(this._forcedErrorMessage);
-    }
-
-    this.setFormValue(this.value);
-    this.setValidity(
-      this.inputRef.value!.validity,
-      this.inputRef.value!.validationMessage,
-      this.inputRef!.value
-    );
-  }
-
-  setCustomValidity(error: string) {
-    this.inputRef!.value?.setCustomValidity(error);
-  }
-
-  onClick() {
+  private handleClick() {
     this.value = this.value.substring(0, this.selectionEnd || 0);
 
     this.renderError = false;
     this.setCustomValidity('');
-    if (this._localErrorNode) {
-      this._localErrorNode.textContent = '';
+    if (this.localErrorNode) {
+      this.localErrorNode.textContent = '';
     }
 
     this.setFormValue(this.value);
@@ -261,26 +224,37 @@ export class MinidCodeInput extends ConstraintsValidationMixin(
     }
   }
 
-  handleSlotchange(e: Event) {
+  private handleChange = (e: Event) => {
+    this.value = (e.target as HTMLInputElement).value;
+    this.dispatchEvent(
+      new Event('input', {
+        bubbles: true,
+        cancelable: true,
+        composed: true,
+      })
+    );
+  };
+
+  private handleSlotchange(e: Event) {
     const slot = e.target as HTMLSlotElement;
     const childNodes = slot.assignedNodes({ flatten: true });
 
-    this._localErrorNode = this._findErrorMessageNode(childNodes);
-    if (this._localErrorNode && this._forcedErrorMessage) {
+    this.localErrorNode = this.findErrorMessageNode(childNodes);
+    if (this.localErrorNode && this.invalidmessage) {
       // display if slot set, and error override in effect
       this.renderError = true;
-      this._localErrorNode.textContent = this._forcedErrorMessage;
+      this.localErrorNode.textContent = this.invalidmessage;
       this.setValidity({} as ValidityState); // cancel built-in visual feedback
     }
   }
 
-  _findErrorMessageNode(nodes: Node[]): Node | null {
+  private findErrorMessageNode(nodes: Node[]): Node | null {
     for (const node of nodes) {
       if (node instanceof Element && node.classList.contains('error-message')) {
         return node;
       }
       const childNodesArray = Array.from(node.childNodes);
-      const foundNode = this._findErrorMessageNode(childNodesArray);
+      const foundNode = this.findErrorMessageNode(childNodesArray);
       if (foundNode) {
         return foundNode;
       }
@@ -288,56 +262,83 @@ export class MinidCodeInput extends ConstraintsValidationMixin(
     return null;
   }
 
+  firstUpdated(_changedProperties: PropertyValues) {
+    this.focus();
+    webOtpApiInit(this.renderRoot);
+  }
+
+  updated(_changedProperties: PropertyValues): void {
+    for (let i = 0; i < this.length; i++) {
+      const color =
+        i === this.value.length ? this.caretHighlightColor : this.caretColor;
+      this.inputRef.value?.style.setProperty(`--char-${i + 1}-color`, color);
+    }
+
+    if (_changedProperties.has('_forcedErrorMessage')) {
+      this.setCustomValidity(this.invalidmessage);
+    }
+
+    this.setFormValue(this.value);
+    this.setValidity(
+      this.inputRef.value!.validity,
+      this.inputRef.value!.validationMessage,
+      this.inputRef!.value
+    );
+  }
+
+  focus(options?: FocusOptions) {
+    const notMobile = !window.matchMedia('only screen and (max-width: 768px)')
+      .matches;
+    notMobile && this.inputRef.value?.focus(options);
+  }
+
+  setCustomValidity(error: string) {
+    this.inputRef!.value?.setCustomValidity(error);
+  }
+
   override render() {
     return html`
-      <div class="flex flex-col">
-        <label
-          class="${classMap({
-            'sr-only': this.hidelabel,
-            'font-medium': true,
-            'mb-2': !!this.label,
-          })}"
-          for="${this.inputId}"
-          >${this.label}
-        </label>
-        <input
-          ${ref(this.inputRef)}
-          id=${this.inputId}
-          class="${classMap({
-            'w-full': true,
-            error: this._forcedErrorMessage,
-          })}"
-          .value=${live(this.value)}
-          autocomplete="${'one-time-code' as any}"
-          inputmode=${this.inputmode}
-          @input="${(e: InputEvent) => {
-            this.value = (e.target as HTMLInputElement).value;
-          }}"
-          @change="${(e: Event) => {
-            this.value = (e.target as HTMLInputElement).value;
-            this.dispatchEvent(
-              new Event('input', {
-                bubbles: true,
-                cancelable: true,
-                composed: true,
-              })
-            );
-          }}"
-          @focusout="${() => {
-            this.onFocusOut();
-          }}"
-          @focusin="${() => {
-            this.onFocusIn();
-          }}"
-          @keydown="${this.handleKeydown}"
-          @click="${this.onClick}"
-          ?disabled="${this.disabled}"
-          ?required="${this.required}"
-          minlength=${this.length}
-          maxlength="${this.length}"
-        />
-        <slot name="error-message" @slotchange=${this.handleSlotchange}></slot>
-      </div>
+      <label
+        class="${classMap({
+          'sr-only': this.hidelabel,
+          'mb-2': !!this.label,
+        })} font-medium"
+        for="${this.inputId}"
+        >${this.label}
+      </label>
+      <input
+        ${ref(this.inputRef)}
+        id=${this.inputId}
+        .value="${live(this.value)}"
+        class="${classMap({
+          error: this.invalidmessage,
+        })}"
+        autocomplete="${'one-time-code' as any}"
+        inputmode="${this.inputmode}"
+        @input="${this.handleChange}"
+        @change="${this.handleChange}"
+        @focusout="${this.handleFocusOut}"
+        @focusin="${this.handleFocusIn}"
+        @keydown="${this.handleKeydown}"
+        @click="${this.handleClick}"
+        minlength="${this.length}"
+        maxlength="${this.length}"
+        ?disabled="${this.disabled}"
+        ?required="${this.required}"
+      />
+      <slot name="error-message" @slotchange=${this.handleSlotchange}>
+        <div
+          class="text-danger-subtle mt-2 flex gap-1"
+          aria-live="polite"
+          ?hidden=${!this.invalidmessage}
+        >
+          <mid-icon
+            name="xmark-octagon-fill"
+            class="mt-1 min-h-5 min-w-5"
+          ></mid-icon>
+          ${this.invalidmessage}
+        </div>
+      </slot>
     `;
   }
 }

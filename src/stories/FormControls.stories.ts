@@ -75,12 +75,7 @@ export const Code: Story = {
   args: {},
   render: () =>
     html`<form id="form-2" class="flex w-100 flex-col gap-4">
-        <mid-code-input label="Tekst input" name="demo-data" required hidelabel>
-          <div
-            id="validation-message"
-            class="text-danger-subtle pt-2"
-            slot="error-message"
-          ></div>
+        <mid-code-input label="Tekst input" name="otc" required hidelabel>
         </mid-code-input>
         <div class="flex flex-row-reverse items-end justify-end gap-4">
           <pre id="output-2"></pre>
@@ -92,7 +87,6 @@ export const Code: Story = {
         var codeInput = document.querySelector('mid-code-input');
         var form2 = document.getElementById('form-2');
         var output2 = document.getElementById('output-2');
-        var errorElement = document.getElementById('validation-message');
 
         form2.addEventListener('submit', (event) => {
           event.preventDefault();
@@ -104,7 +98,7 @@ export const Code: Story = {
         });
 
         codeInput.addEventListener('input', (event) => {
-          codeInput._forcedErrorMessage = '';
+          codeInput.invalidmessage = '';
           errorElement.textContent = '';
         });
 
@@ -112,12 +106,10 @@ export const Code: Story = {
           event.preventDefault();
           const { validity } = event.target;
           if (validity.valueMissing) {
-            codeInput._forcedErrorMessage = 'Feltet må fylles ut';
-            errorElement.textContent = 'Feltet må fylles ut';
+            codeInput.invalidmessage = 'Feltet må fylles ut';
           }
           if (validity.tooShort) {
-            codeInput._forcedErrorMessage = 'Litt kort bare';
-            errorElement.textContent = 'Litt kort bare';
+            codeInput.invalidmessage = 'Litt kort bare';
           }
         });
       </script> `,

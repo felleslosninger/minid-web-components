@@ -30,7 +30,7 @@ export const Main: Story = {
   },
   decorators: [(story) => html`<div class="grid gap-4">${story()}</div> `],
   render: ({ href, label, target }: LinkProps) => html`
-    <mid-paragraph class="text-body-md">
+    <mid-paragraph>
       Her brukes litt styles og sånn rett fra
       <mid-link href=${ifDefined(href)} target=${ifDefined(target)}>
         Designsystemet
