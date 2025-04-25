@@ -16,6 +16,7 @@ const run = () => {
       return;
     }
 
+    // Extract CSS values
     const sizeBase = /--ds-size-base: (.+);/g.exec(data)[1];
     const sizeStep = /--ds-size-step: (.+);/g.exec(data)[1];
     const radiusBase = /--ds-border-radius-base: (.+);/g.exec(data)[1];
@@ -25,7 +26,7 @@ const run = () => {
     const borderWidth = /--ds-border-width-default: (.+);/g.exec(data)[1];
     const borderWidthFocus = /--ds-border-width-focus: (.+);/g.exec(data)[1];
 
-    const shadowRegex = /--([\w-]*shadow[\w-]*): (.+);/g;
+    // Grab the colors inside the light mode section
     const colorsRegex =
       /@layer ds\.theme\.color-scheme\.light [\s\S]*? color-scheme: light;/g;
     const colors = colorsRegex
@@ -33,9 +34,12 @@ const run = () => {
       .replaceAll('ds-', '')
       .replaceAll('-default', '');
 
-    // Extract CSS variables and their values
+    // Grab only the primary typography styles
     const typographyRegex = /data-typography="primary"[\s\S]*?}/g;
     const typography = typographyRegex.exec(data)[0].replaceAll('ds', '');
+
+    // Extract CSS variables and their values
+    const shadowRegex = /--([\w-]*shadow[\w-]*): (.+);/g;
     const fontSizeRegex = /--([\w-]*(?:font-size|body|heading)[\w-]*): (.+);/g;
     const fontPropertiesRegex =
       /--([\w-]*(?:-font-weight-|-letter-spacing-|-line-height-)[\w-]*): (.+);/g;
@@ -54,6 +58,7 @@ const run = () => {
 
     let match;
 
+    // Loop through all the regex matches and make objects for all the variables
     while ((match = shadowRegex.exec(data)) !== null) {
       shadows[match[1].replace('ds-', '')] = match[2].trim();
     }
