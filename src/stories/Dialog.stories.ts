@@ -60,11 +60,6 @@ const meta = {
       description: 'Hides the dialog',
     },
   },
-  parameters: {
-    controls: {
-      exclude: ['dialog', 'panel', 'handleDialogCancel'],
-    },
-  },
 } satisfies Meta<DialogProps>;
 
 export default meta;

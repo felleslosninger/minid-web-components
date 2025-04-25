@@ -43,11 +43,6 @@ const meta = {
     'mid-error': { control: { disable: true } },
     'mid-load': { control: { disable: true } },
   },
-  parameters: {
-    controls: {
-      exclude: ['svg'],
-    },
-  },
 } satisfies Meta<IconProps>;
 
 export default meta;

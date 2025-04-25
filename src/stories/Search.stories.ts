@@ -20,11 +20,6 @@ const meta = {
   argTypes: {
     size: { control: { type: 'radio' }, options: ['sm', 'md', 'lg'] },
   },
-  parameters: {
-    controls: {
-      exclude: ['textField', 'handleInput'],
-    },
-  },
 } satisfies Meta<SearchProps>;
 
 export default meta;

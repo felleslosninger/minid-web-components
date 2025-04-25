@@ -71,21 +71,6 @@ const meta = {
       control: { disable: true },
     },
   },
-  parameters: {
-    controls: {
-      exclude: [
-        'body',
-        'popup',
-        'filledIcon',
-        'handleBlur',
-        'handleClick',
-        'handleFocus',
-        'handleDocumentKeyDown',
-        'handleMouseOver',
-        'handleMouseOut',
-      ],
-    },
-  },
 } satisfies Meta<HelptextProps>;
 
 export default meta;

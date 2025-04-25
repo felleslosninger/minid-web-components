@@ -3,6 +3,7 @@ import { html } from 'lit';
 import '../components/textfield.component.js';
 import '../components/button.component.js';
 import '../components/code-input.component.js';
+import '../components/checkbox.component.js';
 
 export interface FormControlProps {}
 
@@ -71,11 +72,17 @@ export const Main: Story = {
       </script> `,
 };
 
-export const Code: Story = {
+export const CodeInput: Story = {
   args: {},
   render: () =>
     html`<form id="form-2" class="flex w-100 flex-col gap-4">
-        <mid-code-input label="Tekst input" name="otc" required hidelabel>
+        <mid-code-input
+          id="code-input-1"
+          label="Tekst input"
+          name="otc"
+          required
+          hidelabel
+        >
         </mid-code-input>
         <div class="flex flex-row-reverse items-end justify-end gap-4">
           <pre id="output-2"></pre>
@@ -84,7 +91,7 @@ export const Code: Story = {
       </form>
 
       <script>
-        var codeInput = document.querySelector('mid-code-input');
+        var codeInput = document.getElementById('code-input-1');
         var form2 = document.getElementById('form-2');
         var output2 = document.getElementById('output-2');
 
@@ -99,7 +106,6 @@ export const Code: Story = {
 
         codeInput.addEventListener('input', (event) => {
           codeInput.invalidmessage = '';
-          errorElement.textContent = '';
         });
 
         codeInput.addEventListener('invalid', (event) => {
@@ -110,6 +116,47 @@ export const Code: Story = {
           }
           if (validity.tooShort) {
             codeInput.invalidmessage = 'Litt kort bare';
+          }
+        });
+      </script> `,
+};
+
+export const CheckboxInput: Story = {
+  args: {},
+  render: () =>
+    html`<form id="form-3" class="flex w-100 flex-col gap-4">
+        <mid-checkbox id="checkbox-1" required name="agree" value="yees">
+          Godkjenn vilkår for å fortsette
+        </mid-checkbox>
+        <div class="flex flex-row-reverse items-end justify-end gap-4">
+          <pre id="output-3"></pre>
+          <mid-button type="submit"> Submit </mid-button>
+        </div>
+      </form>
+
+      <script>
+        var checkbox1 = document.getElementById('checkbox-1');
+        var form3 = document.getElementById('form-3');
+        var output3 = document.getElementById('output-3');
+
+        form3.addEventListener('submit', (event) => {
+          event.preventDefault();
+          const formData = new FormData(form3);
+          const data = Object.fromEntries(formData);
+          output3.textContent = JSON.stringify({
+            ...data,
+          });
+        });
+
+        checkbox1.addEventListener('input', (event) => {
+          checkbox1.invalid = false;
+        });
+
+        checkbox1.addEventListener('mid-invalid-show', (event) => {
+          const { validity } = event.target;
+
+          if (validity.valueMissing) {
+            checkbox1.invalid = true;
           }
         });
       </script> `,

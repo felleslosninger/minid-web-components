@@ -105,20 +105,6 @@ const meta = {
     descriptionId: { table: { disable: true } },
     inputId: { table: { disable: true } },
   },
-  parameters: {
-    controls: {
-      exclude: [
-        'hasFocus',
-        'internals',
-        'validationId',
-        'hasSlotControler',
-        'initialValue',
-        'validationTarget',
-        'formControlValidators',
-        'event',
-      ],
-    },
-  },
 } satisfies Meta<TextfieldProps>;
 
 export default meta;

@@ -78,11 +78,11 @@ const meta = {
   parameters: {
     controls: {
       exclude: [
-        'autoHideTimeout',
-        'remainingTimeInterval',
-        'countdownElement',
-        'remainingTime',
-        'notificationContent',
+        // 'autoHideTimeout',
+        // 'remainingTimeInterval',
+        // 'countdownElement',
+        // 'remainingTime',
+        // 'notificationContent',
       ],
     },
   },

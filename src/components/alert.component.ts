@@ -23,59 +23,7 @@ const toastStack = Object.assign(document.createElement('div'), {
   className: 'mid-toast-stack',
 });
 
-const styles = [
-  css`
-    [hidden] {
-      display: none !important;
-    }
-
-    .fds-alert__icon {
-      font-size: var(--fds-alert-icon-size);
-    }
-
-    /* .close-button {
-      font-size: 24px;
-      display: inline-flex;
-      align-self: center;
-      padding: 10px;
-      border-radius: 4px;
-      margin-top: -10px;
-      margin-bottom: -10px;
-      color: var(--fds-alert-icon-color);
-    } */
-
-    .close-button:hover {
-      background-color: color-mix(
-        in srgb,
-        var(--fds-alert-icon-color) 20%,
-        var(--fds-alert-background)
-      );
-    }
-
-    .message-details {
-      margin-top: 0.5rem;
-      font-size: 0.875rem;
-      line-height: 1.25rem;
-      padding: 0.75rem;
-      background-color: color-mix(
-        in srgb,
-        var(--fds-alert-icon-color) 20%,
-        var(--fds-alert-background)
-      );
-      border-left: solid 4px
-        color-mix(
-          in srgb,
-          var(--fds-alert-border-color),
-          var(--fds-alert-background)
-        );
-    }
-
-    .message-details pre {
-      white-space: pre-wrap;
-      word-break: break-all;
-    }
-  `,
-];
+const styles = [css``];
 
 /**
  * Alerts need to have the `open` attribute to be displayed
@@ -97,7 +45,7 @@ export class MinidAlert extends styled(LitElement, styles) {
   private remainingTimeInterval?: number;
 
   @query('[part~="base"]')
-  base!: HTMLElement;
+  private base!: HTMLElement;
 
   /**
    * Indicates whether or not the alert is open. You can toggle this attribute to show and hide the alert, or you can
@@ -149,7 +97,7 @@ export class MinidAlert extends styled(LitElement, styles) {
   private remainingTime = this.duration;
 
   @state()
-  notificationContent?: {
+  private notificationContent?: {
     title?: string;
     message: string;
     details?: string;
@@ -394,8 +342,21 @@ export class MinidAlert extends styled(LitElement, styles) {
             ${this.notificationContent?.message}
             ${!this.notificationContent?.details
               ? nothing
-              : html`<div class="message-details">
-                  <pre>${this.notificationContent?.details}</pre>
+              : html`<div
+                  class="${classMap({
+                    'border-danger': danger,
+                    'border-info': info,
+                    'border-success': success,
+                    'border-warning': warning,
+                    'bg-danger-surface-hover': danger,
+                    'bg-info-surface-hover': info,
+                    'bg-success-surface-hover': success,
+                    'bg-warning-surface-hover': warning,
+                  })} text-body-sm mt-0.5 border-l-4 p-3"
+                >
+                  <pre class="break-all whitespace-pre-wrap">
+${this.notificationContent?.details}</pre
+                  >
                 </div>`}
           </slot>
         </div>

@@ -12,6 +12,7 @@ type CheckboxProps = Partial<{
   label: string;
   description: string;
   invalid: boolean;
+  value: string;
 }>;
 
 const meta = {
@@ -22,6 +23,7 @@ const meta = {
       control: { type: 'radio' },
       options: ['sm', 'md', 'lg'],
     },
+    value: { type: 'string' },
   },
 } satisfies Meta<CheckboxProps>;
 
@@ -30,7 +32,7 @@ type Story = StoryObj<CheckboxProps>;
 
 export const Main: Story = {
   args: {
-    label: 'Godkjenn deling av dine personlige bankdata?',
+    label: 'Godkjenn deling av dine personlige data',
     description: 'Obs! Obs! Dette kan ikke reverseres',
   },
   render: ({

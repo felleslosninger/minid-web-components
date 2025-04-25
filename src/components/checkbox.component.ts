@@ -1,9 +1,13 @@
 import { html, LitElement } from 'lit';
 import { customElement, property, query } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
+import { live } from 'lit/directives/live.js';
 import { styled } from '../mixins/tailwind.mixin';
-import { FormControllerMixin } from '../mixins/form-controller.mixin.ts';
 import './icon/icon.component.ts';
+import { ifDefined } from 'lit/directives/if-defined.js';
+import { FormControlMixin } from '../mixins/form-control.mixin.ts';
+import { watch } from '../internal/watch.ts';
+import { requiredValidator } from 'src/mixins/validators.ts';
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -16,9 +20,9 @@ declare global {
  */
 
 @customElement('mid-checkbox')
-export class MinidCheckbox extends FormControllerMixin(styled(LitElement)) {
+export class MinidCheckbox extends FormControlMixin(styled(LitElement)) {
   @query('input[type="checkbox"]')
-  input!: HTMLInputElement;
+  private input!: HTMLInputElement;
 
   /**
    * The name of the checkbox, submitted as a name/value pair with form data.
@@ -30,7 +34,7 @@ export class MinidCheckbox extends FormControllerMixin(styled(LitElement)) {
    * The current value of the checkbox, submitted as a name/value pair with form data.
    */
   @property()
-  value?: string;
+  value = 'on';
 
   @property({ type: Boolean })
   checked = false;
@@ -44,23 +48,25 @@ export class MinidCheckbox extends FormControllerMixin(styled(LitElement)) {
   @property({ type: Boolean })
   invalid = false;
 
-  @property({ type: Boolean })
+  @property({ type: Boolean, reflect: true })
   required = false;
 
-  private handleChange(event: Event) {
-    this.checked = (event.target as HTMLInputElement).checked;
-    if (this.checked) {
-      this.setFormValue('on', 'checked');
-    } else {
-      this.setFormValue(null);
-    }
-    this.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
+  static get formControlValidators() {
+    return [requiredValidator];
   }
 
-  private handleClick(event: Event) {
-    if (this.readonly) {
-      event.preventDefault();
-    }
+  shouldFormValueUpdate(): boolean {
+    return this.checked;
+  }
+
+  get validationTarget() {
+    return this.input;
+  }
+
+  private handleClick() {
+    this.checked = !this.checked;
+    // this.indeterminate = false;
+    this.dispatchEvent(new Event('mid-change'));
   }
 
   /**
@@ -84,6 +90,8 @@ export class MinidCheckbox extends FormControllerMixin(styled(LitElement)) {
     this.input.blur();
   }
 
+  /** Gets the validity state object */
+
   /**
    *  Checks for validity but does not show a validation message. Returns `true` when valid and `false` when invalid.
    */
@@ -106,13 +114,22 @@ export class MinidCheckbox extends FormControllerMixin(styled(LitElement)) {
     this.input.setCustomValidity(message);
   }
 
+  @watch(['checked', 'value'])
+  handleStateChange() {
+    // this.input.indeterminate = this.indeterminate; // force a sync update
+    this.setValue(this.value);
+  }
+
   override render() {
+    console.log('invalid: ', this.invalid);
+
     return html`
       <label
         class="${classMap({
           'opacity-disabled': this.disabled,
           'cursor-not-allowed': this.disabled,
         })} grid grid-cols-[auto_1fr] gap-2"
+        tabindex="1"
       >
         <span
           class="${classMap({
@@ -124,17 +141,18 @@ export class MinidCheckbox extends FormControllerMixin(styled(LitElement)) {
             'border-danger-base': !this.readonly && this.invalid,
             'border-neutral-subtle': this.readonly,
             'bg-neutral-surface-tinted': this.readonly,
-          })} inline-flex size-6 shrink-0 items-center justify-center rounded-sm border"
+          })} inline-flex size-6 shrink-0 items-center justify-center rounded-sm border-2"
         >
           <input
             class="pointer-events-none appearance-none"
             type="checkbox"
-            @change=${this.handleChange}
-            @click=${this.handleClick}
+            value=${ifDefined(this.value)}
+            .checked=${live(this.checked)}
             ?disabled=${this.disabled}
             ?checked=${this.checked}
             ?readonly=${this.readonly}
-            ?required=${this.required}
+            .required=${this.required}
+            @click=${this.handleClick}
           />
           ${this.checked
             ? html`<mid-icon

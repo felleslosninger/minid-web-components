@@ -20,26 +20,6 @@ const meta: Meta = {
       options: ['xs', 'sm', 'md', 'lg'],
     },
   },
-  parameters: {
-    controls: {
-      exclude: [
-        'popup',
-        'closeWatcher',
-        'popup',
-        'trigger',
-        'panel',
-        'triggerElements',
-        'triggerElement',
-        'containingElement',
-        'handleCountryClick',
-        'handleKeyDown',
-        'handleDocumentKeyDown',
-        'handleDocumentMouseDown',
-        'handleTriggerKeyDown',
-        'handlePanelSelect',
-      ],
-    },
-  },
 };
 
 export default meta;

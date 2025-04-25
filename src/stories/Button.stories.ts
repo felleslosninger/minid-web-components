@@ -37,11 +37,6 @@ const meta = {
       control: { type: 'text' },
     },
   },
-  parameters: {
-    controls: {
-      exclude: ['button', 'internals'],
-    },
-  },
 } satisfies Meta<ButtonProps>;
 
 export default meta;

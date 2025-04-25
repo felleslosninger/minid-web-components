@@ -23,11 +23,6 @@ const meta = {
     background: { control: { type: 'color' } },
     width: { type: 'number' },
   },
-  parameters: {
-    controls: {
-      exclude: ['canvas'],
-    },
-  },
 } satisfies Meta<QrCodeProps>;
 
 export default meta;

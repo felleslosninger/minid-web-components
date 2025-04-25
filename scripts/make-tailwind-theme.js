@@ -117,7 +117,7 @@ const run = () => {
     themeContent += '  --font-*: initial;\n';
     themeContent += `  --font-sans: 'Inter', 'Arial', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';\n`;
     themeContent += `  --font-sans--font-feature-settings: 'cv05' 1;\n`;
-    themeContent += `  --font-mono: IBM Plex Mono;\n`;
+    themeContent += `  --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;\n`;
 
     Object.entries(fontSizes).forEach(([key, value]) => {
       themeContent += `  --text${key}: ${value};\n`;

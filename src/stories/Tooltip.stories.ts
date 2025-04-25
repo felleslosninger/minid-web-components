@@ -124,22 +124,6 @@ const meta = {
       description: 'Hides the tooltip',
     },
   },
-  parameters: {
-    controls: {
-      exclude: [
-        'hoverTimeout',
-        'closeWatcher',
-        'popup',
-        'handleBlur',
-        'handleClick',
-        'handleFocus',
-        'handleDocumentKeyDown',
-        'handleMouseOver',
-        'handleMouseOut',
-        'hasTrigger',
-      ],
-    },
-  },
 } satisfies Meta<TooltipProps>;
 
 export default meta;
