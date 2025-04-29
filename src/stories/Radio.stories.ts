@@ -6,21 +6,21 @@ import '../components/button.component';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { MinidRadioGroup } from '../components/radio-group.component';
 
-export type RadioProps = {
-  label?: string;
-  name?: string;
-  value?: string;
-  checked?: boolean;
-  disabled?: boolean;
-  labelhidden?: boolean;
-  size?: MinidRadioGroup['size'];
+export type RadioProps = Partial<{
+  label: string;
+  name: string;
+  value: string;
+  checked: boolean;
+  disabled: boolean;
+  labelhidden: boolean;
+  size: MinidRadioGroup['size'];
   '--': string;
   'mid-change': Event;
   'mid-input': Event;
   base: Part;
   'form-control': Part;
   'form-control-label': Part;
-};
+}>;
 
 const meta: Meta<RadioProps> = {
   title: 'Komponenter/Under arbeid/Radio',

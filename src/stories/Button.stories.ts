@@ -4,17 +4,17 @@ import { ifDefined } from 'lit/directives/if-defined.js';
 import '../components/button.component';
 import { MinidButton } from '../components/button.component';
 
-type ButtonProps = {
-  variant?: MinidButton['variant'];
-  size?: MinidButton['size'];
-  type?: MinidButton['type'];
+type ButtonProps = Partial<{
+  variant: MinidButton['variant'];
+  size: MinidButton['size'];
+  type: MinidButton['type'];
   label: string;
-  href?: string;
-  disabled?: boolean;
-  iconstyled?: boolean;
-  loading?: boolean;
-  loadingtext?: string;
-};
+  href: string;
+  disabled: boolean;
+  iconstyled: boolean;
+  loading: boolean;
+  loadingtext: string;
+}>;
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories
 const meta = {
@@ -35,11 +35,6 @@ const meta = {
     },
     href: {
       control: { type: 'text' },
-    },
-  },
-  parameters: {
-    controls: {
-      exclude: ['button', 'internals'],
     },
   },
 } satisfies Meta<ButtonProps>;

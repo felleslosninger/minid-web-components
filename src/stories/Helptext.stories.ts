@@ -5,21 +5,21 @@ import { MinidHelptext } from '../components/helptext.component';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { styleMap } from 'lit/directives/style-map.js';
 
-type HelptextProps = {
-  open?: boolean;
-  content?: string;
-  placement?: MinidHelptext['placement'];
-  hoist?: boolean;
-  size?: MinidHelptext['size'];
-  skidding?: number;
-  distance?: number;
+type HelptextProps = Partial<{
+  open: boolean;
+  content: string;
+  placement: MinidHelptext['placement'];
+  hoist: boolean;
+  size: MinidHelptext['size'];
+  skidding: number;
+  distance: number;
   'mid-show': unknown;
   'mid-hide': unknown;
   'mid-after-show': unknown;
   'mid-after-hide': unknown;
   '--': Slottable;
   '--max-width': string;
-};
+}>;
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories
 const meta = {
@@ -69,21 +69,6 @@ const meta = {
     '--': {
       name: '-',
       control: { disable: true },
-    },
-  },
-  parameters: {
-    controls: {
-      exclude: [
-        'body',
-        'popup',
-        'filledIcon',
-        'handleBlur',
-        'handleClick',
-        'handleFocus',
-        'handleDocumentKeyDown',
-        'handleMouseOver',
-        'handleMouseOut',
-      ],
     },
   },
 } satisfies Meta<HelptextProps>;

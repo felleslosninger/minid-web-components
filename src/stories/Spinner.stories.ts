@@ -3,10 +3,10 @@ import '../components/spinner.component';
 import { html } from 'lit';
 import { styleMap } from 'lit/directives/style-map.js';
 
-type SpinnerProps = {
-  size?: string;
-  color?: string;
-};
+type SpinnerProps = Partial<{
+  size: string;
+  color: string;
+}>;
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories
 const meta = {

@@ -51,11 +51,11 @@ const styles = [
 export class MinidPhoneInput extends FormControllerMixin(
   styled(LitElement, styles)
 ) {
-  #formatter = new AsYouType();
-  #skipCountryUpdate = false; // avoids unwanted update loop
-  #currentEvent = new Event(''); // the event to be emitted after value is set
-  #currentTemplate = '';
-  hasSlotControler = new HasSlotController(this, 'label');
+  private formatter = new AsYouType();
+  private skipCountryUpdate = false; // avoids unwanted update loop
+  private currentEvent = new Event(''); // the event to be emitted after value is set
+  private currentTemplate = '';
+  private hasSlotControler = new HasSlotController(this, 'label');
 
   @query('#input')
   input!: HTMLInputElement;
@@ -118,8 +118,8 @@ export class MinidPhoneInput extends FormControllerMixin(
   connectedCallback(): void {
     super.connectedCallback();
 
-    this.#formatter.input(this.value);
-    this.country = this.#formatter.getCountry() ?? this.country;
+    this.formatter.input(this.value);
+    this.country = this.formatter.getCountry() ?? this.country;
     this.countrycode = this.country
       ? `+${getCountryCallingCode(this.country)}`
       : '+';
@@ -134,11 +134,11 @@ export class MinidPhoneInput extends FormControllerMixin(
   }
 
   get parseTemplate() {
-    return templateParser(this.#currentTemplate, parsePhoneNumberCharacter);
+    return templateParser(this.currentTemplate, parsePhoneNumberCharacter);
   }
 
   get formatTemplate() {
-    return templateFormatter(this.#currentTemplate);
+    return templateFormatter(this.currentTemplate);
   }
 
   private handleBlur() {
@@ -150,7 +150,7 @@ export class MinidPhoneInput extends FormControllerMixin(
 
   private handleChange(event: Event) {
     // Event is dispatched after value is set
-    this.#currentEvent = new Event('mid-change', {
+    this.currentEvent = new Event('mid-change', {
       bubbles: true,
       composed: true,
     });
@@ -175,7 +175,7 @@ export class MinidPhoneInput extends FormControllerMixin(
 
   private handleInput(event: InputEvent) {
     // Event is dispatched after value is set
-    this.#currentEvent = new Event('mid-input', {
+    this.currentEvent = new Event('mid-input', {
       composed: true,
       bubbles: true,
     });
@@ -183,13 +183,13 @@ export class MinidPhoneInput extends FormControllerMixin(
   }
 
   private setValue(event: Event) {
-    this.#formatter.reset();
+    this.formatter.reset();
 
     if (!this.input.value.startsWith('+')) {
       this.input.value = `+${this.input.value}`;
     }
-    this.#formatter.input(this.input.value);
-    this.#currentTemplate = this.#formatter.getTemplate();
+    this.formatter.input(this.input.value);
+    this.currentTemplate = this.formatter.getTemplate();
 
     onChange(
       event,
@@ -204,19 +204,19 @@ export class MinidPhoneInput extends FormControllerMixin(
     const country =
       value.length < 2
         ? undefined
-        : (this.#formatter.getCountry() ?? this.country);
+        : (this.formatter.getCountry() ?? this.country);
 
     if (country !== this.country) {
       this.country = country;
       this.countrycode = this.country
         ? `+${getCountryCallingCode(this.country)}`
         : '+';
-      this.#skipCountryUpdate = true;
+      this.skipCountryUpdate = true;
     }
 
     this.value = value;
     this.nationalnumber = this.removePhonePrefix(value);
-    this.dispatchEvent(this.#currentEvent);
+    this.dispatchEvent(this.currentEvent);
     this.setFormValue(this.value);
   };
 
@@ -249,12 +249,12 @@ export class MinidPhoneInput extends FormControllerMixin(
 
   @watch('country', { waitUntilFirstUpdate: true })
   handleCountryChange() {
-    if (this.#skipCountryUpdate) {
-      this.#skipCountryUpdate = false;
+    if (this.skipCountryUpdate) {
+      this.skipCountryUpdate = false;
       return;
     }
 
-    this.#formatter = new AsYouType(this.country);
+    this.formatter = new AsYouType(this.country);
     this.nationalnumber = this.removePhonePrefix(this.input.value);
 
     this.countrycode = this.country
@@ -317,7 +317,7 @@ export class MinidPhoneInput extends FormControllerMixin(
 
           <input
             id="input"
-            class="border-neutral p focus-visible:focus-ring grow rounded-r border px-3"
+            class="border-neutral focus-visible:focus-ring grow rounded-r border px-3"
             part="phone-number"
             type="tel"
             autocomplete="tel"

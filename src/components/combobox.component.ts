@@ -46,16 +46,20 @@ export class MinidCombobox extends styled(LitElement, styles) {
   private closeWatcher?: CloseWatcher;
 
   @query('#combobox')
-  popup!: MinidPopup;
+  private popup!: MinidPopup;
 
   @query('.combobox__trigger')
-  trigger!: HTMLSlotElement;
+  private trigger!: HTMLSlotElement;
 
   @query('.combobox__panel')
-  panel!: HTMLSlotElement;
+  private panel!: HTMLSlotElement;
 
   @queryAssignedElements({ slot: 'trigger' })
-  triggerElements!: (MinidTextfield | MinidPhoneInput | HTMLInputElement)[];
+  private triggerElements!: (
+    | MinidTextfield
+    | MinidPhoneInput
+    | HTMLInputElement
+  )[];
 
   /**
    * By default, the combobox is closed when an item is selected. This attribute will keep it open instead. Useful for
@@ -96,7 +100,7 @@ export class MinidCombobox extends styled(LitElement, styles) {
   disabled = false;
 
   @state()
-  triggerElement: 'mid-textfield' | 'mid-phone-input' = 'mid-textfield';
+  private triggerElement: 'mid-textfield' | 'mid-phone-input' = 'mid-textfield';
 
   /**
    * The combobox will close when the user interacts outside of this element (e.g. clicking). Useful for composing other
@@ -113,7 +117,7 @@ export class MinidCombobox extends styled(LitElement, styles) {
     }
   }
 
-  protected firstUpdated(_changedProperties: PropertyValues): void {
+  firstUpdated(_changedProperties: PropertyValues): void {
     const input = this.triggerElements[0];
     if (input.tagName.toLowerCase() === 'mid-phone-input') {
       this.triggerElement = 'mid-phone-input';

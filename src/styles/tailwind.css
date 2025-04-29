@@ -1,8 +1,6 @@
 @import 'tailwindcss';
 @import '../public/designsystemet-tailwind.css';
 
-@custom-variant dark (&:is(.dark *));
-
-@theme inline {
-  --shadow-danger: inset 0 0 0 1px var(--fds-semantic-border-danger-default);
+body {
+  @apply text-body-md text-neutral;
 }

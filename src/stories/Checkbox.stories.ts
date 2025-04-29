@@ -1,17 +1,19 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html, nothing } from 'lit';
-import '../components/checkbox.component';
-import type { MinidCheckbox } from '../components/checkbox.component';
 import { ifDefined } from 'lit/directives/if-defined.js';
+import '../components/checkbox.component';
+import { classMap } from 'lit/directives/class-map.js';
 
-type CheckboxProps = {
-  checked?: boolean;
-  disabled?: boolean;
-  readonly?: boolean;
-  size?: MinidCheckbox['size'];
-  label?: string;
-  description?: string;
-};
+type CheckboxProps = Partial<{
+  checked: boolean;
+  disabled: boolean;
+  readonly: boolean;
+  size: 'sm' | 'md' | 'lg';
+  label: string;
+  description: string;
+  invalid: boolean;
+  value: string;
+}>;
 
 const meta = {
   title: 'Komponenter/Checkbox',
@@ -21,6 +23,7 @@ const meta = {
       control: { type: 'radio' },
       options: ['sm', 'md', 'lg'],
     },
+    value: { type: 'string' },
   },
 } satisfies Meta<CheckboxProps>;
 
@@ -29,7 +32,7 @@ type Story = StoryObj<CheckboxProps>;
 
 export const Main: Story = {
   args: {
-    label: 'Godkjenn deling av dine personlige bankdata?',
+    label: 'Godkjenn deling av dine personlige data',
     description: 'Obs! Obs! Dette kan ikke reverseres',
   },
   render: ({
@@ -39,12 +42,18 @@ export const Main: Story = {
     label,
     readonly,
     size,
+    invalid,
   }: CheckboxProps) => html`
     <mid-checkbox
+      class="${classMap({
+        'text-body-sm': size === 'sm',
+        'text-body-md': size === 'md',
+        'text-body-lg': size === 'lg',
+      })}"
       ?checked=${checked}
       ?readonly=${readonly}
       ?disabled=${disabled}
-      size=${ifDefined(size)}
+      ?invalid=${invalid}
     >
       ${label}
       ${!description

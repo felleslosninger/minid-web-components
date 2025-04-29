@@ -767,7 +767,7 @@ export class MinidPopup extends styled(LitElement, styles) {
     }
   };
 
-  #handleAnchorClick() {
+  private handleAnchorClick() {
     // to make sure clicking another element's anchor closes current element's dropdown menu
     this.dispatchEvent(
       new CustomEvent('mid-anchor-click', {
@@ -783,7 +783,7 @@ export class MinidPopup extends styled(LitElement, styles) {
       <slot
         name="anchor"
         @slotchange=${this.handleAnchorChange}
-        @click=${this.#handleAnchorClick}
+        @click=${this.handleAnchorClick}
       ></slot>
 
       <span

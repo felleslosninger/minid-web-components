@@ -14,14 +14,8 @@ export const FormControllerMixin = <TBase extends Constructor<LitElement>>(
   Base: TBase
 ): TBase & Constructor<FormAssociatedMixinInterface> => {
   class FormAssociated extends Base implements FormAssociatedMixinInterface {
-    /**
-     * @ignore
-     */
     static formAssociated = true;
 
-    /**
-     * @ignore
-     */
     internals: ElementInternals;
 
     constructor(...args: any[]) {
@@ -37,9 +31,6 @@ export const FormControllerMixin = <TBase extends Constructor<LitElement>>(
       this.internals.setFormValue(value, state);
     }
 
-    /**
-     * @ignore
-     */
     get shadowRoot() {
       return this.internals.shadowRoot;
     }

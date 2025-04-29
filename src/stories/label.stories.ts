@@ -5,11 +5,11 @@ import '../components/label.component';
 import type { MinidLabel } from '../components/label.component';
 import { ifDefined } from 'lit/directives/if-defined.js';
 
-type labelProps = {
-  size?: MinidLabel['size'];
-  weight?: MinidLabel['weight'];
-  spacing?: boolean;
-};
+type labelProps = Partial<{
+  size: MinidLabel['size'];
+  weight: MinidLabel['weight'];
+  spacing: boolean;
+}>;
 
 const meta: Meta = {
   title: 'Typografi/Label',

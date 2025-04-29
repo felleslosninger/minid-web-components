@@ -4,7 +4,7 @@ import '../components/button.component';
 import '../components/dialog.component';
 import '../components/paragraph.component';
 
-type DialogProps = {
+type DialogProps = Partial<{
   open: boolean;
   'mid-show': Event;
   'mid-hide': Event;
@@ -17,10 +17,10 @@ type DialogProps = {
   body: Part;
   show: Function;
   hide: Function;
-  footerSlot?: string;
-  heading?: string;
-  '--'?: string;
-};
+  footerSlot: string;
+  heading: string;
+  '--': string;
+}>;
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories
 const meta = {
@@ -58,11 +58,6 @@ const meta = {
       table: { category: 'Methods' },
       type: 'function',
       description: 'Hides the dialog',
-    },
-  },
-  parameters: {
-    controls: {
-      exclude: ['dialog', 'panel', 'handleDialogCancel'],
     },
   },
 } satisfies Meta<DialogProps>;

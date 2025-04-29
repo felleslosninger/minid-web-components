@@ -3,9 +3,9 @@ import { html } from 'lit';
 import '../components/code-input-2.component';
 import { ifDefined } from 'lit/directives/if-defined.js';
 
-type CodeInputProps = {
-  length?: number;
-};
+type CodeInputProps = Partial<{
+  length: number;
+}>;
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories
 const meta = {
