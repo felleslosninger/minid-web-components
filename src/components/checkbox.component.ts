@@ -129,7 +129,6 @@ export class MinidCheckbox extends FormControlMixin(styled(LitElement)) {
           'opacity-disabled': this.disabled,
           'cursor-not-allowed': this.disabled,
         })} grid grid-cols-[auto_1fr] gap-2"
-        tabindex="1"
       >
         <span
           class="${classMap({
@@ -141,7 +140,7 @@ export class MinidCheckbox extends FormControlMixin(styled(LitElement)) {
             'border-danger-base': !this.readonly && this.invalid,
             'border-neutral-subtle': this.readonly,
             'bg-neutral-surface-tinted': this.readonly,
-          })} inline-flex size-6 shrink-0 items-center justify-center rounded-sm border-2"
+          })} focus-within:focus-ring inline-flex size-6 shrink-0 items-center justify-center rounded-sm border-2"
         >
           <input
             class="pointer-events-none appearance-none"
