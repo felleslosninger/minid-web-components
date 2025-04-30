@@ -20,7 +20,7 @@ export class MinidLink extends styled(LitElement) {
   override render() {
     return html`
       <a
-        class="text-accent-subtle visited:text-link-visited focus-visible:bg-focus-outer inline-flex items-center gap-2 underline decoration-[.0625rem] underline-offset-[.27em] outline-0 focus-visible:text-white"
+        class="text-accent-subtle visited:text-link-visited focus-visible:bg-focus-outer hover:text-accent inline-flex items-center gap-2 underline decoration-[.0625rem] underline-offset-[.27em] outline-0 hover:decoration-[.125rem] focus-visible:text-white"
         href=${ifDefined(this.href)}
         target=${ifDefined(this.target)}
       >
