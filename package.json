@@ -114,6 +114,10 @@
       "import": "./dist/components/spinner.js",
       "types": "./dist/components/spinner.component.d.ts"
     },
+    "./step-indicator": {
+      "import": "./dist/components/step-indicator.js",
+      "types": "./dist/components/step-indicator.component.d.ts"
+    },
     "./textfield": {
       "import": "./dist/components/textfield.js",
       "types": "./dist/components/textfield.component.d.ts"

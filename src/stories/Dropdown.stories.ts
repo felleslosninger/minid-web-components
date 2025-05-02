@@ -108,7 +108,7 @@ export const Main: Story = {
         <mid-menu-item @click=${click1}> Interessante ting </mid-menu-item>
         <mid-menu-item @click=${click2}> Logg ut </mid-menu-item>
       </mid-menu>
-    </mid-dropdown>`,
+    </mid-dropdown> `,
 };
 
 const click1 = () => {

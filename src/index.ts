@@ -20,5 +20,6 @@ export { MinidPopup } from './components/popup.component.ts';
 export { MinidQrCode } from './components/qr-code.component.ts';
 export { MinidSearch } from './components/search.component.ts';
 export { MinidSpinner } from './components/spinner.component.ts';
+export { MinidStepIndicator } from './components/step-indicator.component.ts';
 export { MinidTextfield } from './components/textfield.component.ts';
 export { MinidTooltip } from './components/tooltip.component.ts';

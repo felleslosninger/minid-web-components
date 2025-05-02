@@ -141,6 +141,7 @@ export class MinidDropdown extends styled(LitElement, styles) {
       >
         <slot slot="anchor" name="trigger"> </slot>
         <div
+          class="bg-accent min-w-68"
           aria-hidden=${this.open ? 'false' : 'true'}
           aria-labelledby="${this.popupId}"
         >
