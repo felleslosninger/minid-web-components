@@ -1,4 +1,4 @@
-import { css, html, LitElement, nothing } from 'lit';
+import { html, LitElement, nothing } from 'lit';
 import { customElement, property, query, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { styled } from '../mixins/tailwind.mixin.ts';
@@ -23,8 +23,6 @@ const toastStack = Object.assign(document.createElement('div'), {
   className: 'mid-toast-stack',
 });
 
-const styles = [css``];
-
 /**
  * Alerts need to have the `open` attribute to be displayed
  * @csspart base - Select the base of the alert
@@ -40,7 +38,7 @@ const styles = [css``];
  * @animation alert.hide - The animation to use when hiding the alert.
  */
 @customElement('mid-alert')
-export class MinidAlert extends styled(LitElement, styles) {
+export class MinidAlert extends styled(LitElement) {
   private autoHideTimeout?: number;
   private remainingTimeInterval?: number;
 
@@ -372,7 +370,7 @@ ${this.notificationContent?.details}</pre
                   'hover:bg-info-surface-hover': info,
                   'hover:bg-success-surface-hover': success,
                   'hover:bg-warning-surface-hover': warning,
-                })} -my-4 flex self-center rounded p-4"
+                })} -my-4 -mr-4 flex self-center rounded p-4"
                 @click="${this.hide}"
               >
                 <mid-icon class="size-6" name="xmark"> </mid-icon>
