@@ -91,24 +91,27 @@ export const Main: Story = {
     sync,
   }: DropdownProps) =>
     html`<mid-dropdown
-      ?open=${open}
-      ?hoist=${hoist}
-      ?arrow=${arrow}
-      distance=${ifDefined(distance)}
-      placement=${ifDefined(placement)}
-      size=${ifDefined(size)}
-      skidding=${ifDefined(skidding)}
-      sync=${ifDefined(sync)}
-    >
-      <mid-button slot="trigger"> Nedtrekk </mid-button>
-      <mid-menu>
-        <mid-menu-item href="https://www.google.com">
-          google.com
-        </mid-menu-item>
-        <mid-menu-item @click=${click1}> Interessante ting </mid-menu-item>
-        <mid-menu-item @click=${click2}> Logg ut </mid-menu-item>
-      </mid-menu>
-    </mid-dropdown> `,
+        ?open=${open}
+        ?hoist=${hoist}
+        ?arrow=${arrow}
+        distance=${ifDefined(distance)}
+        placement=${ifDefined(placement)}
+        size=${ifDefined(size)}
+        skidding=${ifDefined(skidding)}
+        sync=${ifDefined(sync)}
+      >
+        <mid-button slot="trigger"> Nedtrekk </mid-button>
+        <mid-menu>
+          <mid-menu-item href="https://www.google.com">
+            google.com
+          </mid-menu-item>
+          <mid-menu-item @click=${click1}> Interessante ting </mid-menu-item>
+          <mid-menu-item @click=${click2}> Logg ut </mid-menu-item>
+        </mid-menu>
+      </mid-dropdown>
+      <script>
+        var dropdown = document.querySelector('mid-dropdown');
+      </script> `,
 };
 
 const click1 = () => {

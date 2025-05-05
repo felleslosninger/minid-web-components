@@ -61,7 +61,7 @@ export class MinidMenuItem extends styled(LitElement) {
           'border-transparent': !this.active,
           'bg-accent-tinted': this.active,
           'border-accent-base': this.active,
-        })} block w-full rounded border-l-[5px] px-3 py-2 font-medium"
+        })} button block w-full rounded border-l-[5px] px-3 py-2 font-medium"
         href=${ifDefined(this.href)}
       >
         <div class="flex items-center gap-2">
@@ -72,7 +72,7 @@ export class MinidMenuItem extends styled(LitElement) {
 
     return html`
       <mid-button
-        class="flex w-full [&::part(base)]:justify-start"
+        class="button flex w-full [&::part(base)]:justify-start"
         variant="tertiary"
         href=${ifDefined(this.href)}
       >

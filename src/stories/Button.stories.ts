@@ -14,6 +14,7 @@ type ButtonProps = Partial<{
   iconstyled: boolean;
   loading: boolean;
   loadingtext: string;
+  button: HTMLElement;
 }>;
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories
@@ -36,6 +37,7 @@ const meta = {
     href: {
       control: { type: 'text' },
     },
+    button: { control: { disable: true } },
   },
 } satisfies Meta<ButtonProps>;
 

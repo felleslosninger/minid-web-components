@@ -23,3 +23,5 @@ export { MinidSpinner } from './components/spinner.component.ts';
 export { MinidStepIndicator } from './components/step-indicator.component.ts';
 export { MinidTextfield } from './components/textfield.component.ts';
 export { MinidTooltip } from './components/tooltip.component.ts';
+
+export * from './events/events.ts';

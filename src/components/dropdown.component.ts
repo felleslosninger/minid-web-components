@@ -1,9 +1,21 @@
 import { css, html, LitElement } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { customElement, property, query } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
+import { classMap } from 'lit/directives/class-map.js';
 import { styled } from '../mixins/tailwind.mixin.ts';
 import './popup.component';
-import { classMap } from 'lit/directives/class-map.js';
+import {
+  getAnimation,
+  setDefaultAnimation,
+} from '../utilities/animation-registry.ts';
+import { waitForEvent } from '../internal/event.ts';
+import { MinidPopup } from './popup.component';
+import { watch } from '../internal/watch.ts';
+import { animateTo, stopAnimations } from '../internal/animate.ts';
+import { getTabbableBoundary } from '../internal/tabbable.ts';
+import { MinidButton } from '../components/button.component.ts';
+import { MidSelectEvent } from '../events/mid-select.ts';
+import { MinidMenu } from 'src/components/menu.component.ts';
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -29,9 +41,29 @@ const styles = [
 @customElement('mid-dropdown')
 export class MinidDropdown extends styled(LitElement, styles) {
   private readonly popupId = `mid-dropdown-${nextUniqueId++}`;
+  private closeWatcher?: CloseWatcher | null;
+
+  @query('.popup')
+  popup!: MinidPopup;
+
+  @query('.trigger')
+  trigger!: HTMLSlotElement;
+
+  @query('.panel')
+  panel!: HTMLSlotElement;
 
   @property({ type: Boolean, reflect: true })
   open = false;
+
+  @property({ type: Boolean, reflect: true })
+  disabled = false;
+
+  /**
+   * By default, the dropdown is closed when an item is selected. This attribute will keep it open instead. Useful for
+   * dropdowns that allow for multiple interactions.
+   */
+  @property({ type: Boolean, reflect: true })
+  stayopenonselect = false;
 
   @property()
   size: 'sm' | 'md' | 'lg' = 'md';
@@ -79,43 +111,349 @@ export class MinidDropdown extends styled(LitElement, styles) {
   @property({ type: Boolean })
   hoist = false;
 
-  private handleClickOutside = (event: Event) => {
-    if (!event.composedPath().includes(this)) {
-      this.toggleDropdownOpen(event, false);
-    }
-  };
+  /**
+   * The dropdown will close when the user interacts outside of this element (e.g. clicking). Useful for composing other
+   * components that use a dropdown internally.
+   */
+  @property({ attribute: false })
+  containingElement?: HTMLElement;
 
-  private toggleDropdownOpen(event: Event, open?: boolean) {
-    event.stopPropagation();
+  connectedCallback() {
+    super.connectedCallback();
 
-    if (open !== undefined) {
-      this.open = open;
-    } else {
-      this.open = !this.open;
-    }
-
-    if (this.open) {
-      addEventListener('click', this.handleClickOutside);
-      addEventListener(
-        'mid-anchor-click',
-        this.handleAnchorClick as EventListener
-      );
-    } else {
-      this.blur();
-      removeEventListener(
-        'mid-anchor-click',
-        this.handleAnchorClick as EventListener
-      );
-      removeEventListener('click', this.handleClickOutside);
+    if (!this.containingElement) {
+      this.containingElement = this;
     }
   }
 
-  private handleAnchorClick = (event: CustomEvent<{ id: string }>) => {
-    // to make sure clicking another element's anchor closes current element's dropdown menu
-    if (event.detail.id !== this.popupId) {
-      this.toggleDropdownOpen(event, false);
+  firstUpdated() {
+    this.panel.hidden = !this.open;
+
+    // If the dropdown is visible on init, update its position
+    if (this.open) {
+      this.addOpenListeners();
+      this.popup.active = true;
+    }
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    this.removeOpenListeners();
+    this.hide();
+  }
+
+  focusOnTrigger() {
+    const trigger = this.trigger.assignedElements({ flatten: true })[0] as
+      | HTMLElement
+      | undefined;
+    if (typeof trigger?.focus === 'function') {
+      trigger.focus();
+    }
+  }
+
+  getMenu() {
+    return this.panel
+      .assignedElements({ flatten: true })
+      .find((el) => el.tagName.toLowerCase() === 'mid-menu') as
+      | MinidMenu
+      | undefined;
+  }
+
+  private handleKeyDown = (event: KeyboardEvent) => {
+    // Close when escape is pressed inside an open dropdown. We need to listen on the panel itself and stop propagation
+    // in case any ancestors are also listening for this key.
+    if (this.open && event.key === 'Escape') {
+      event.stopPropagation();
+      this.hide();
+      this.focusOnTrigger();
     }
   };
+
+  private handleDocumentKeyDown = (event: KeyboardEvent) => {
+    // Close when escape or tab is pressed
+    if (event.key === 'Escape' && this.open && !this.closeWatcher) {
+      event.stopPropagation();
+      this.focusOnTrigger();
+      this.hide();
+      return;
+    }
+
+    // Handle tabbing
+    if (event.key === 'Tab') {
+      // Tabbing within an open menu should close the dropdown and refocus the trigger
+      if (
+        this.open &&
+        document.activeElement?.tagName.toLowerCase() === 'mid-menu-item'
+      ) {
+        event.preventDefault();
+        this.hide();
+        this.focusOnTrigger();
+        return;
+      }
+
+      // Tabbing outside of the containing element closes the panel
+      //
+      // If the dropdown is used within a shadow DOM, we need to obtain the activeElement within that shadowRoot,
+      // otherwise `document.activeElement` will only return the name of the parent shadow DOM element.
+      setTimeout(() => {
+        const activeElement =
+          this.containingElement?.getRootNode() instanceof ShadowRoot
+            ? document.activeElement?.shadowRoot?.activeElement
+            : document.activeElement;
+
+        if (
+          !this.containingElement ||
+          activeElement?.closest(
+            this.containingElement.tagName.toLowerCase()
+          ) !== this.containingElement
+        ) {
+          this.hide();
+        }
+      });
+    }
+  };
+
+  private handleDocumentMouseDown = (event: MouseEvent) => {
+    // Close when clicking outside of the containing element
+    const path = event.composedPath();
+    if (this.containingElement && !path.includes(this.containingElement)) {
+      this.hide();
+    }
+  };
+
+  private handlePanelSelect = (event: MidSelectEvent) => {
+    const target = event.target as HTMLElement;
+
+    // Hide the dropdown when a menu item is selected
+    if (!this.stayopenonselect && target.tagName.toLowerCase() === 'mid-menu') {
+      this.hide();
+      this.focusOnTrigger();
+    }
+  };
+
+  // private handleClickOutside = (event: Event) => {
+  //   if (!event.composedPath().includes(this)) {
+  //     this.toggleDropdownOpen(event, false);
+  //   }
+  // };
+
+  // private toggleDropdownOpen(event: Event, open?: boolean) {
+  //   event.stopPropagation();
+
+  //   if (open !== undefined) {
+  //     this.open = open;
+  //   } else {
+  //     this.open = !this.open;
+  //   }
+
+  //   if (this.open) {
+  //     addEventListener('click', this.handleClickOutside);
+  //     addEventListener(
+  //       'mid-anchor-click',
+  //       this.handleAnchorClick as EventListener
+  //     );
+  //   } else {
+  //     this.blur();
+  //     removeEventListener(
+  //       'mid-anchor-click',
+  //       this.handleAnchorClick as EventListener
+  //     );
+  //     removeEventListener('click', this.handleClickOutside);
+  //   }
+  // }
+
+  // private handleAnchorClick = (event: CustomEvent<{ id: string }>) => {
+  //   // to make sure clicking another element's anchor closes current element's dropdown menu
+  //   if (event.detail.id !== this.popupId) {
+  //     this.toggleDropdownOpen(event, false);
+  //   }
+  // };
+
+  handleTriggerClick() {
+    if (this.open) {
+      this.hide();
+    } else {
+      this.show();
+      this.focusOnTrigger();
+    }
+  }
+
+  async handleTriggerKeyDown(event: KeyboardEvent) {
+    // When spacebar/enter is pressed, show the panel but don't focus on the menu. This let's the user press the same
+    // key again to hide the menu in case they don't want to make a selection.
+    if ([' ', 'Enter'].includes(event.key)) {
+      event.preventDefault();
+      this.handleTriggerClick();
+      return;
+    }
+
+    const menu = this.getMenu();
+
+    if (menu) {
+      const menuItems = menu.getAllSelectableItems();
+      const firstMenuItem = menuItems[0];
+      const lastMenuItem = menuItems[menuItems.length - 1];
+
+      // When up/down is pressed, we make the assumption that the user is familiar with the menu and plans to make a
+      // selection. Rather than toggle the panel, we focus on the menu (if one exists) and activate the first item for
+      // faster navigation.
+      if (['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) {
+        event.preventDefault();
+
+        // Show the menu if it's not already open
+        if (!this.open) {
+          this.show();
+
+          // Wait for the dropdown to open before focusing, but not the animation
+          await this.updateComplete;
+        }
+
+        if (menuItems.length > 0) {
+          // Focus on the first/last menu item after showing
+          this.updateComplete.then(() => {
+            if (event.key === 'ArrowDown' || event.key === 'Home') {
+              menu.setCurrentItem(firstMenuItem);
+              firstMenuItem.focus();
+            }
+
+            if (event.key === 'ArrowUp' || event.key === 'End') {
+              menu.setCurrentItem(lastMenuItem);
+              lastMenuItem.focus();
+            }
+          });
+        }
+      }
+    }
+  }
+
+  handleTriggerKeyUp(event: KeyboardEvent) {
+    // Prevent space from triggering a click event in Firefox
+    if (event.key === ' ') {
+      event.preventDefault();
+    }
+  }
+
+  handleTriggerSlotChange() {
+    this.updateAccessibleTrigger();
+  }
+
+  updateAccessibleTrigger() {
+    const assignedElements = this.trigger.assignedElements({
+      flatten: true,
+    }) as HTMLElement[];
+    const accessibleTrigger = assignedElements.find(
+      (el) => getTabbableBoundary(el).start
+    );
+    let target: HTMLElement;
+    if (accessibleTrigger) {
+      if (accessibleTrigger.tagName.toLowerCase() === 'mid-button') {
+        target = (accessibleTrigger as MinidButton).button;
+      } else {
+        target = accessibleTrigger;
+      }
+
+      target.setAttribute('aria-haspopup', 'true');
+      target.setAttribute('aria-expanded', this.open ? 'true' : 'false');
+    }
+  }
+
+  /**
+   * Shows the dropdown panel.
+   */
+  async show() {
+    if (this.open) {
+      return undefined;
+    }
+
+    this.open = true;
+    return waitForEvent(this, 'mid-after-show');
+  }
+
+  /**
+   * Hides the dropdown panel
+   */
+  async hide() {
+    if (!this.open) {
+      return undefined;
+    }
+
+    this.open = false;
+    return waitForEvent(this, 'mid-after-hide');
+  }
+
+  /**
+   * Instructs the dropdown menu to reposition. Useful when the position or size of the trigger changes when the menu
+   * is activated.
+   */
+  reposition() {
+    this.popup.reposition();
+  }
+
+  addOpenListeners() {
+    this.panel.addEventListener('mid-select', this.handlePanelSelect);
+    if ('CloseWatcher' in window) {
+      this.closeWatcher?.destroy();
+      this.closeWatcher = new CloseWatcher();
+      this.closeWatcher.onclose = () => {
+        this.hide();
+        this.focusOnTrigger();
+      };
+    } else {
+      this.panel.addEventListener('keydown', this.handleKeyDown);
+    }
+    document.addEventListener('keydown', this.handleDocumentKeyDown);
+    document.addEventListener('mousedown', this.handleDocumentMouseDown);
+  }
+
+  removeOpenListeners() {
+    if (this.panel) {
+      this.panel.removeEventListener('mid-select', this.handlePanelSelect);
+      this.panel.removeEventListener('keydown', this.handleKeyDown);
+    }
+    document.removeEventListener('keydown', this.handleDocumentKeyDown);
+    document.removeEventListener('mousedown', this.handleDocumentMouseDown);
+    this.closeWatcher?.destroy();
+  }
+
+  @watch('open', { waitUntilFirstUpdate: true })
+  async handleOpenChange() {
+    if (this.disabled) {
+      this.open = false;
+      return;
+    }
+
+    console.log('open 📖', this.open);
+
+    this.updateAccessibleTrigger();
+
+    if (this.open) {
+      // Show
+      this.dispatchEvent(new Event('mid-show'));
+      this.addOpenListeners();
+      console.log('mid show');
+
+      await stopAnimations(this);
+      this.panel.hidden = false;
+      this.popup.active = true;
+      const { keyframes, options } = getAnimation(this, 'dropdown.show');
+      await animateTo(this.popup.popup, keyframes, options);
+
+      this.dispatchEvent(new Event('mid-after-show'));
+    } else {
+      // Hide
+      this.dispatchEvent(new Event('mid-hide'));
+      this.removeOpenListeners();
+      console.log('mid hide');
+
+      await stopAnimations(this);
+      const { keyframes, options } = getAnimation(this, 'dropdown.hide');
+      await animateTo(this.popup.popup, keyframes, options);
+      this.panel.hidden = true;
+      this.popup.active = false;
+
+      this.dispatchEvent(new Event('mid-after-hide'));
+    }
+  }
 
   override render() {
     return html`
@@ -125,7 +463,7 @@ export class MinidDropdown extends styled(LitElement, styles) {
           'text-body-sm': this.size === 'sm',
           'text-body-md': this.size === 'md',
           'text-body-lg': this.size === 'lg',
-        })} [--arrow-border-color:var(--border-color-neutral-subtle)] [--arrow-size:8px]"
+        })} popup [--arrow-border-color:var(--border-color-neutral-subtle)] [--arrow-size:8px]"
         distance=${this.distance}
         placement="${this.placement}"
         skidding=${this.skidding}
@@ -137,17 +475,41 @@ export class MinidDropdown extends styled(LitElement, styles) {
         sync=${ifDefined(this.sync)}
         ?active=${this.open}
         ?arrow=${this.arrow}
-        @click=${this.toggleDropdownOpen}
       >
-        <slot slot="anchor" name="trigger"> </slot>
+        <slot
+          slot="anchor"
+          name="trigger"
+          class="trigger"
+          @click=${this.handleTriggerClick}
+          @keydown=${this.handleTriggerKeyDown}
+          @keyup=${this.handleTriggerKeyUp}
+          @slotchange=${this.handleTriggerSlotChange}
+        >
+        </slot>
         <div
           class="bg-accent min-w-68"
           aria-hidden=${this.open ? 'false' : 'true'}
           aria-labelledby="${this.popupId}"
         >
-          <slot part="panel"></slot>
+          <slot part="panel" class="panel"></slot>
         </div>
       </mid-popup>
     `;
   }
 }
+
+setDefaultAnimation('dropdown.show', {
+  keyframes: [
+    { opacity: 0, scale: 0.9 },
+    { opacity: 1, scale: 1 },
+  ],
+  options: { duration: 600, easing: 'ease' },
+});
+
+setDefaultAnimation('dropdown.hide', {
+  keyframes: [
+    { opacity: 1, scale: 1 },
+    { opacity: 0, scale: 0.9 },
+  ],
+  options: { duration: 600, easing: 'ease' },
+});
