@@ -171,7 +171,6 @@ export class MinidDropdown extends styled(LitElement, styles) {
   };
 
   private handleDocumentKeyDown = (event: KeyboardEvent) => {
-    console.log('Document key down:', event.key);
     // Close when escape or tab is pressed
     if (event.key === 'Escape' && this.open && !this.closeWatcher) {
       event.stopPropagation();
@@ -203,7 +202,6 @@ export class MinidDropdown extends styled(LitElement, styles) {
             ? document.activeElement?.shadowRoot?.activeElement
             : document.activeElement;
 
-        console.log('Active element after tab:', activeElement);
         if (
           !this.containingElement ||
           activeElement?.closest(
@@ -221,11 +219,7 @@ export class MinidDropdown extends styled(LitElement, styles) {
   private handleDocumentMouseDown = (event: MouseEvent) => {
     // Close when clicking outside of the containing element
     const path = event.composedPath();
-    if (this.containingElement)
-      console.log(
-        'Document mouse down. Path includes dropdown:',
-        path.includes(this.containingElement)
-      );
+
     if (this.containingElement && !path.includes(this.containingElement)) {
       this.hide();
     }
@@ -242,7 +236,6 @@ export class MinidDropdown extends styled(LitElement, styles) {
   };
 
   handleTriggerClick() {
-    console.log('Trigger clicked. Current open state:', this.open);
     if (this.open) {
       this.hide();
     } else {
@@ -390,7 +383,6 @@ export class MinidDropdown extends styled(LitElement, styles) {
 
   @watch('open', { waitUntilFirstUpdate: true })
   async handleOpenChange() {
-    console.log('Open state changed:', this.open);
     if (this.disabled) {
       this.open = false;
       return;
@@ -400,7 +392,6 @@ export class MinidDropdown extends styled(LitElement, styles) {
 
     if (this.open) {
       // Show
-      console.log('Opening dropdown...');
       this.dispatchEvent(new Event('mid-show'));
       this.addOpenListeners();
 
@@ -411,10 +402,8 @@ export class MinidDropdown extends styled(LitElement, styles) {
       await animateTo(this.popup.popup, keyframes, options);
 
       this.dispatchEvent(new Event('mid-after-show'));
-      console.log('Dropdown opened.');
     } else {
       // Hide
-      console.log('Closing dropdown...');
       this.dispatchEvent(new Event('mid-hide'));
       this.removeOpenListeners();
 
@@ -425,7 +414,6 @@ export class MinidDropdown extends styled(LitElement, styles) {
       this.popup.active = false;
 
       this.dispatchEvent(new Event('mid-after-hide'));
-      console.log('Dropdown closed.');
     }
   }
 
