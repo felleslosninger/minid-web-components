@@ -1,4 +1,4 @@
-import type { MinidMenuItem } from 'src/components/menu-item.component';
+import type { MinidMenuItem } from '../components/menu-item.component';
 
 export type MidSelectEvent = CustomEvent<{ item: MinidMenuItem }>;
 

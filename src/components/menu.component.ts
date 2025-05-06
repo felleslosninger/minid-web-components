@@ -46,7 +46,7 @@ export class MinidMenu extends styled(LitElement, styles) {
   variant: 'combobox' | 'dropdown' = 'dropdown';
 
   @state()
-  emptyItemList = false;
+  isEmptyItemList = false;
 
   protected firstUpdated(): void {
     this.getAllItems().forEach((item) => {
@@ -106,7 +106,7 @@ export class MinidMenu extends styled(LitElement, styles) {
     );
 
     const items = this.getAllSelectableItems();
-    this.emptyItemList = items.length === 0;
+    this.isEmptyItemList = items.length === 0;
     this.setCurrentItem(items[0]);
   }
 
@@ -292,7 +292,7 @@ export class MinidMenu extends styled(LitElement, styles) {
             @keydown=${this.handleKeyDown}
             @mousedown=${this.handleMouseDown}
           ></slot>
-          ${this.emptyItemList
+          ${this.isEmptyItemList
             ? html`<div class="p-2">Fant ingen treff</div>`
             : nothing}
         </ul>

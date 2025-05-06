@@ -15,7 +15,8 @@ import { animateTo, stopAnimations } from '../internal/animate.ts';
 import { getTabbableBoundary } from '../internal/tabbable.ts';
 import { MinidButton } from '../components/button.component.ts';
 import { MidSelectEvent } from '../events/mid-select.ts';
-import { MinidMenu } from 'src/components/menu.component.ts';
+import { MinidMenu } from '../components/menu.component.ts';
+import { MinidMenuItem } from 'src/components/menu-item.component.ts';
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -170,6 +171,7 @@ export class MinidDropdown extends styled(LitElement, styles) {
   };
 
   private handleDocumentKeyDown = (event: KeyboardEvent) => {
+    console.log('Document key down:', event.key);
     // Close when escape or tab is pressed
     if (event.key === 'Escape' && this.open && !this.closeWatcher) {
       event.stopPropagation();
@@ -201,6 +203,7 @@ export class MinidDropdown extends styled(LitElement, styles) {
             ? document.activeElement?.shadowRoot?.activeElement
             : document.activeElement;
 
+        console.log('Active element after tab:', activeElement);
         if (
           !this.containingElement ||
           activeElement?.closest(
@@ -208,6 +211,8 @@ export class MinidDropdown extends styled(LitElement, styles) {
           ) !== this.containingElement
         ) {
           this.hide();
+        } else if (activeElement.tagName.toLowerCase() === 'mid-menu-item') {
+          (activeElement as MinidMenuItem).focus();
         }
       });
     }
@@ -216,6 +221,11 @@ export class MinidDropdown extends styled(LitElement, styles) {
   private handleDocumentMouseDown = (event: MouseEvent) => {
     // Close when clicking outside of the containing element
     const path = event.composedPath();
+    if (this.containingElement)
+      console.log(
+        'Document mouse down. Path includes dropdown:',
+        path.includes(this.containingElement)
+      );
     if (this.containingElement && !path.includes(this.containingElement)) {
       this.hide();
     }
@@ -231,45 +241,8 @@ export class MinidDropdown extends styled(LitElement, styles) {
     }
   };
 
-  // private handleClickOutside = (event: Event) => {
-  //   if (!event.composedPath().includes(this)) {
-  //     this.toggleDropdownOpen(event, false);
-  //   }
-  // };
-
-  // private toggleDropdownOpen(event: Event, open?: boolean) {
-  //   event.stopPropagation();
-
-  //   if (open !== undefined) {
-  //     this.open = open;
-  //   } else {
-  //     this.open = !this.open;
-  //   }
-
-  //   if (this.open) {
-  //     addEventListener('click', this.handleClickOutside);
-  //     addEventListener(
-  //       'mid-anchor-click',
-  //       this.handleAnchorClick as EventListener
-  //     );
-  //   } else {
-  //     this.blur();
-  //     removeEventListener(
-  //       'mid-anchor-click',
-  //       this.handleAnchorClick as EventListener
-  //     );
-  //     removeEventListener('click', this.handleClickOutside);
-  //   }
-  // }
-
-  // private handleAnchorClick = (event: CustomEvent<{ id: string }>) => {
-  //   // to make sure clicking another element's anchor closes current element's dropdown menu
-  //   if (event.detail.id !== this.popupId) {
-  //     this.toggleDropdownOpen(event, false);
-  //   }
-  // };
-
   handleTriggerClick() {
+    console.log('Trigger clicked. Current open state:', this.open);
     if (this.open) {
       this.hide();
     } else {
@@ -417,20 +390,19 @@ export class MinidDropdown extends styled(LitElement, styles) {
 
   @watch('open', { waitUntilFirstUpdate: true })
   async handleOpenChange() {
+    console.log('Open state changed:', this.open);
     if (this.disabled) {
       this.open = false;
       return;
     }
 
-    console.log('open 📖', this.open);
-
     this.updateAccessibleTrigger();
 
     if (this.open) {
       // Show
+      console.log('Opening dropdown...');
       this.dispatchEvent(new Event('mid-show'));
       this.addOpenListeners();
-      console.log('mid show');
 
       await stopAnimations(this);
       this.panel.hidden = false;
@@ -439,11 +411,12 @@ export class MinidDropdown extends styled(LitElement, styles) {
       await animateTo(this.popup.popup, keyframes, options);
 
       this.dispatchEvent(new Event('mid-after-show'));
+      console.log('Dropdown opened.');
     } else {
       // Hide
+      console.log('Closing dropdown...');
       this.dispatchEvent(new Event('mid-hide'));
       this.removeOpenListeners();
-      console.log('mid hide');
 
       await stopAnimations(this);
       const { keyframes, options } = getAnimation(this, 'dropdown.hide');
@@ -452,6 +425,7 @@ export class MinidDropdown extends styled(LitElement, styles) {
       this.popup.active = false;
 
       this.dispatchEvent(new Event('mid-after-hide'));
+      console.log('Dropdown closed.');
     }
   }
 
@@ -473,7 +447,6 @@ export class MinidDropdown extends styled(LitElement, styles) {
         auto-size="vertical"
         auto-size-padding="10"
         sync=${ifDefined(this.sync)}
-        ?active=${this.open}
         ?arrow=${this.arrow}
       >
         <slot
@@ -503,7 +476,7 @@ setDefaultAnimation('dropdown.show', {
     { opacity: 0, scale: 0.9 },
     { opacity: 1, scale: 1 },
   ],
-  options: { duration: 600, easing: 'ease' },
+  options: { duration: 100, easing: 'ease' },
 });
 
 setDefaultAnimation('dropdown.hide', {
@@ -511,5 +484,5 @@ setDefaultAnimation('dropdown.hide', {
     { opacity: 1, scale: 1 },
     { opacity: 0, scale: 0.9 },
   ],
-  options: { duration: 600, easing: 'ease' },
+  options: { duration: 100, easing: 'ease' },
 });
