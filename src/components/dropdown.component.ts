@@ -16,7 +16,6 @@ import { getTabbableBoundary } from '../internal/tabbable.ts';
 import { MinidButton } from '../components/button.component.ts';
 import { MidSelectEvent } from '../events/mid-select.ts';
 import { MinidMenu } from '../components/menu.component.ts';
-import { MinidMenuItem } from 'src/components/menu-item.component.ts';
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -181,6 +180,18 @@ export class MinidDropdown extends styled(LitElement, styles) {
 
     // Handle tabbing
     if (event.key === 'Tab') {
+      console.log('tabbed!', document.activeElement?.tagName.toLowerCase());
+
+      console.log(
+        'another active element',
+        event
+          .composedPath()
+          .some(
+            (target) =>
+              (target as HTMLElement).tagName.toLowerCase() === 'mid-menu-item'
+          )
+      );
+
       // Tabbing within an open menu should close the dropdown and refocus the trigger
       if (
         this.open &&
@@ -208,9 +219,9 @@ export class MinidDropdown extends styled(LitElement, styles) {
             this.containingElement.tagName.toLowerCase()
           ) !== this.containingElement
         ) {
+          console.log(activeElement);
+
           this.hide();
-        } else if (activeElement.tagName.toLowerCase() === 'mid-menu-item') {
-          (activeElement as MinidMenuItem).focus();
         }
       });
     }
