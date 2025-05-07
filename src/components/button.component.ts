@@ -82,11 +82,6 @@ export class MinidButton extends FormControllerMixin(
   @property({ type: Boolean })
   iconstyled = false;
 
-  constructor() {
-    super();
-    this.addEventListener('click', this.handleClick);
-  }
-
   handleClick() {
     if (this.type === 'submit') {
       this.value && this.setFormValue(this.value);
@@ -120,6 +115,7 @@ export class MinidButton extends FormControllerMixin(
     return html`<${tag}
       part="base"
       class="${classMap({
+        button: true,
         'w-12': this.iconstyled,
         'h-12': this.iconstyled,
         'py-2': !this.iconstyled,
@@ -144,11 +140,12 @@ export class MinidButton extends FormControllerMixin(
         relative: spinnerOnly,
         'gap-0': spinnerOnly,
         'opacity-disabled': this.disabled && !this.loading,
-      })} grow focus-visible:focus-ring leading-sm flex h-fit min-h-12 min-w-12 items-center justify-center gap-2 rounded border font-medium"
+      })}  grow focus-visible:focus-ring leading-sm flex h-fit min-h-12 min-w-12 items-center justify-center gap-2 rounded border font-medium"
       type=${this.type}
       aria-busy=${this.loading}
       ?disabled=${this.disabled}
       href="${ifDefined(this.href)}"
+      @click="${this.handleClick}"
     >
       <slot
         class="${classMap({

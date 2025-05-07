@@ -15,8 +15,7 @@ const preview: Preview = {
       },
     },
     controls: {
-      exclude:
-        /(_.*|#.*|internals|validationMessage|validity|formAssociated|[a-z][A-Z]+)/, // exclude private props
+      exclude: /(_.*|#.*|internals|validationMessage|validity|[a-z][A-Z]+)/, // exclude private props
       matchers: {
         color: /(background|color)$/i,
         date: /Date$/i,

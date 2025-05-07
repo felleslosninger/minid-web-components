@@ -282,7 +282,7 @@ export class MinidPhoneInput extends FormControllerMixin(
           'text-body-sm': sm,
           'text-body-md': md,
           'text-body-lg': lg,
-        })} grow"
+        })}"
       >
         <label
           for="input"

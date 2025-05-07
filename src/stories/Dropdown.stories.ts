@@ -89,8 +89,8 @@ export const Main: Story = {
     skidding,
     arrow,
     sync,
-  }: DropdownProps) =>
-    html`<mid-dropdown
+  }: DropdownProps) => html`
+    <mid-dropdown
       ?open=${open}
       ?hoist=${hoist}
       ?arrow=${arrow}
@@ -108,7 +108,12 @@ export const Main: Story = {
         <mid-menu-item @click=${click1}> Interessante ting </mid-menu-item>
         <mid-menu-item @click=${click2}> Logg ut </mid-menu-item>
       </mid-menu>
-    </mid-dropdown>`,
+    </mid-dropdown>
+
+    <script>
+      var dropdown = document.querySelector('mid-dropdown');
+    </script>
+  `,
 };
 
 const click1 = () => {

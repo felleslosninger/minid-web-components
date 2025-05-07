@@ -1,4 +1,4 @@
-import { css, html, LitElement, PropertyValues } from 'lit';
+import { css, html, LitElement } from 'lit';
 import {
   customElement,
   property,
@@ -117,7 +117,7 @@ export class MinidCombobox extends styled(LitElement, styles) {
     }
   }
 
-  firstUpdated(_changedProperties: PropertyValues): void {
+  firstUpdated(): void {
     const input = this.triggerElements[0];
     if (input.tagName.toLowerCase() === 'mid-phone-input') {
       this.triggerElement = 'mid-phone-input';

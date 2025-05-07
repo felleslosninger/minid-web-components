@@ -44,6 +44,28 @@ export class MinidMenuItem extends styled(LitElement) {
   connectedCallback(): void {
     super.connectedCallback();
     this.setAttribute('role', 'menuitem');
+    this.addEventListener('focus', this.handleHostFocus);
+    this.addEventListener('keydown', this.handleKeyDown);
+  }
+
+  disconnectedCallback(): void {
+    super.disconnectedCallback();
+    this.removeEventListener('focus', this.handleHostFocus);
+    this.removeEventListener('keydown', this.handleKeyDown);
+  }
+
+  handleKeyDown(event: KeyboardEvent) {
+    if (this.href && event.key === 'Enter') {
+      window.location.href = this.href;
+    }
+  }
+
+  handleHostFocus() {
+    if (this.shadowRoot?.activeElement === this.button) {
+      return;
+    }
+
+    this.focus();
   }
 
   focus(): void {
@@ -61,7 +83,7 @@ export class MinidMenuItem extends styled(LitElement) {
           'border-transparent': !this.active,
           'bg-accent-tinted': this.active,
           'border-accent-base': this.active,
-        })} block w-full rounded border-l-[5px] px-3 py-2 font-medium"
+        })} button block w-full rounded border-l-[5px] px-3 py-2 font-medium"
         href=${ifDefined(this.href)}
       >
         <div class="flex items-center gap-2">
@@ -72,7 +94,7 @@ export class MinidMenuItem extends styled(LitElement) {
 
     return html`
       <mid-button
-        class="flex w-full [&::part(base)]:justify-start"
+        class="button flex w-full [&::part(base)]:justify-start"
         variant="tertiary"
         href=${ifDefined(this.href)}
       >

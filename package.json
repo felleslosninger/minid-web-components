@@ -54,6 +54,10 @@
       "import": "./dist/components/countdown.js",
       "types": "./dist/components/countdown.component.d.ts"
     },
+    "./dialog": {
+      "import": "./dist/components/dialog.js",
+      "types": "./dist/components/dialog.component.d.ts"
+    },
     "./dropdown": {
       "import": "./dist/components/dropdown.js",
       "types": "./dist/components/dropdown.component.d.ts"
@@ -86,10 +90,6 @@
       "import": "./dist/components/menu-item.js",
       "types": "./dist/components/menu-item.component.d.ts"
     },
-    "./modal": {
-      "import": "./dist/components/modal.js",
-      "types": "./dist/components/modal.component.d.ts"
-    },
     "./paragraph": {
       "import": "./dist/components/paragraph.js",
       "types": "./dist/components/paragraph.component.d.ts"
@@ -113,6 +113,10 @@
     "./spinner": {
       "import": "./dist/components/spinner.js",
       "types": "./dist/components/spinner.component.d.ts"
+    },
+    "./step-indicator": {
+      "import": "./dist/components/step-indicator.js",
+      "types": "./dist/components/step-indicator.component.d.ts"
     },
     "./textfield": {
       "import": "./dist/components/textfield.js",
@@ -141,7 +145,6 @@
   "dependencies": {
     "@floating-ui/dom": "^1.6.10",
     "@floating-ui/utils": "^0.2.9",
-    "@u-elements/u-datalist": "^0.1.5",
     "composed-offset-position": "^0.0.6",
     "element-internals-polyfill": "^1.3.10",
     "input-format": "^0.3.11",
