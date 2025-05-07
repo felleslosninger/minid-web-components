@@ -16,6 +16,7 @@ import { getTabbableBoundary } from '../internal/tabbable.ts';
 import { MinidButton } from '../components/button.component.ts';
 import { MidSelectEvent } from '../events/mid-select.ts';
 import { MinidMenu } from '../components/menu.component.ts';
+import { MinidMenuItem } from 'src/components/menu-item.component.ts';
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -180,23 +181,14 @@ export class MinidDropdown extends styled(LitElement, styles) {
 
     // Handle tabbing
     if (event.key === 'Tab') {
-      console.log('tabbed!', document.activeElement?.tagName.toLowerCase());
-
-      console.log(
-        'another active element',
-        event
-          .composedPath()
-          .some(
-            (target) =>
-              (target as HTMLElement).tagName.toLowerCase() === 'mid-menu-item'
-          )
+      const composedPath = event.composedPath();
+      const tabbedIsMenuItem = composedPath.some(
+        (e): e is MinidMenuItem =>
+          (e as HTMLElement).tagName?.toLowerCase() === 'mid-menu-item'
       );
 
       // Tabbing within an open menu should close the dropdown and refocus the trigger
-      if (
-        this.open &&
-        document.activeElement?.tagName.toLowerCase() === 'mid-menu-item'
-      ) {
+      if (this.open && tabbedIsMenuItem) {
         event.preventDefault();
         this.hide();
         this.focusOnTrigger();
@@ -208,19 +200,7 @@ export class MinidDropdown extends styled(LitElement, styles) {
       // If the dropdown is used within a shadow DOM, we need to obtain the activeElement within that shadowRoot,
       // otherwise `document.activeElement` will only return the name of the parent shadow DOM element.
       setTimeout(() => {
-        const activeElement =
-          this.containingElement?.getRootNode() instanceof ShadowRoot
-            ? document.activeElement?.shadowRoot?.activeElement
-            : document.activeElement;
-
-        if (
-          !this.containingElement ||
-          activeElement?.closest(
-            this.containingElement.tagName.toLowerCase()
-          ) !== this.containingElement
-        ) {
-          console.log(activeElement);
-
+        if (composedPath.every((target) => target !== this.containingElement)) {
           this.hide();
         }
       });

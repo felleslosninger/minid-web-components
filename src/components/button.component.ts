@@ -82,11 +82,6 @@ export class MinidButton extends FormControllerMixin(
   @property({ type: Boolean })
   iconstyled = false;
 
-  constructor() {
-    super();
-    this.addEventListener('click', this.handleClick);
-  }
-
   handleClick() {
     if (this.type === 'submit') {
       this.value && this.setFormValue(this.value);
@@ -150,6 +145,7 @@ export class MinidButton extends FormControllerMixin(
       aria-busy=${this.loading}
       ?disabled=${this.disabled}
       href="${ifDefined(this.href)}"
+      @click="${this.handleClick}"
     >
       <slot
         class="${classMap({
