@@ -98,8 +98,16 @@ export class MinidButton extends FormControllerMixin(
     return !!this.href;
   }
 
-  focus() {
-    this.button.focus();
+  click() {
+    this.button.click();
+  }
+
+  blur() {
+    this.button.blur();
+  }
+
+  focus(options?: FocusOptions) {
+    this.button.focus(options);
   }
 
   override render() {
