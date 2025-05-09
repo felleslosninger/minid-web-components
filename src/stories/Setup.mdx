@@ -1,4 +1,4 @@
-import { Meta, Canvas, Title, Stories } from '@storybook/addon-docs';
+import { Meta, Canvas, Title, Stories, Source } from '@storybook/addon-docs';
 
 <Meta title="Styling/Setup" />
 
@@ -11,7 +11,9 @@ MinID elements provides a Tailwind theme based on [Designsystemet.](https://www.
 See the [Tailwind documentation](https://tailwindcss.com/docs/installation) for information
 on how to install Tailwind. We recommend PostCSS if you are using Custom Components/Lit Components.
 
-To use the Tailwind theme in your application, simply import the theme in your `tailwind.css` file
+To use the Tailwind theme in your application, simply import the theme in your `tailwind.css` file.
+
+You can have a look at the raw theme file [here](https://github.com/felleslosninger/minid-web-components/blob/main/src/styles/designsystemet-tailwind.css)
 
 ```css
 // tailwind.css
@@ -19,13 +21,41 @@ To use the Tailwind theme in your application, simply import the theme in your `
 @import '@felleslosninger/minid-elements/designsystemet-tailwind';
 ```
 
-You can have a look at the raw theme file [here](https://github.com/felleslosninger/minid-web-components/blob/main/src/styles/designsystemet-tailwind.css)
+The tailwind file should be included in the head with `id="tailwind-styles"`. This css sheet is inserted into the shadow dom of the custom comopnents.
+
+```html
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Tailwind styles for the component library -->
+    <link
+      id="tailwind-styles"
+      href="src/styles/tailwind.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <mid-button>Click me</mid-button>
+  </body>
+</html>
+```
+
+The consuming application should generate tailwind classes for minid-elements.
+
+```css
+// tailwind.css
+@import 'tailwindcss';
+@import '@felleslosninger/minid-elements/designsystemet-tailwind';
+@source "../../node_modules/@felleslosninger/minid-elements/dist";
+```
 
 MiniID elements also has some global CSS that should be imported.
 
 ```css
 // index.css
-@import '@digdir/designsystemet-theme';
 @import '@felleslosninger/minid-elements/styles';
 
 ```
