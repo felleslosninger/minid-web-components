@@ -118,6 +118,10 @@
       "import": "./dist/components/step-indicator.js",
       "types": "./dist/components/step-indicator.component.d.ts"
     },
+    "./tailwind-mixin": {
+      "import": "./dist/mixins/tailwind.mixin.js",
+      "types": "./dist/mixins/tailwind.mixin.d.ts"
+    },
     "./textfield": {
       "import": "./dist/components/textfield.js",
       "types": "./dist/components/textfield.component.d.ts"

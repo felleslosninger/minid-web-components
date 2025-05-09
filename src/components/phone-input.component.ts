@@ -6,7 +6,7 @@ import {
   AsYouType,
   formatIncompletePhoneNumber,
   getCountryCallingCode,
-  CountryCode,
+  type CountryCode,
   parsePhoneNumberCharacter,
 } from 'libphonenumber-js';
 import './icon/icon.component';
