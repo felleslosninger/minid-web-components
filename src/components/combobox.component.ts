@@ -499,6 +499,7 @@ export class MinidCombobox extends styled(LitElement, styles) {
           @mid-country-click=${this.handleCountryClick}
         ></slot>
         <div
+          class="bg-accent"
           aria-hidden=${this.open ? 'false' : 'true'}
           aria-labelledby="combobox"
         >
