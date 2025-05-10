@@ -4,7 +4,6 @@ import path from 'path';
 import dts from 'vite-plugin-dts';
 import { externalizeDeps } from 'vite-plugin-externalize-deps';
 import { glob } from 'glob';
-import postcssLit from 'rollup-plugin-postcss-lit';
 
 const generateEntries = () => {
   const entries = {};
@@ -83,7 +82,6 @@ export default defineConfig(({}) => {
         include: ['./src/**/*.ts'],
         presets: [presets.lit],
       }),
-      postcssLit(),
     ],
     resolve: {
       alias: {
