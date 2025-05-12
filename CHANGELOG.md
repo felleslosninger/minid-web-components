@@ -2,6 +2,10 @@
 
 A changelog for logging changes
 
+## 0.0.105
+
+- Fixed CDN build
+
 ## 0.0.104
 
 - Fixed styling in static storybook build

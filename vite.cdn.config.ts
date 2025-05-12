@@ -1,7 +1,6 @@
 import { defineConfig } from 'vite';
 import { resolve } from 'path';
 import { glob } from 'glob';
-import postcssLit from 'rollup-plugin-postcss-lit';
 //import * as path from 'node:path';
 
 // eslint-disable-next-line no-empty-pattern
@@ -35,7 +34,7 @@ export default defineConfig(({}) => {
       },
     },
 
-    plugins: [postcssLit()],
+    plugins: [],
 
     resolve: {
       alias: {
