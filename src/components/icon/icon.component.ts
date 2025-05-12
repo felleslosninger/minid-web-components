@@ -165,15 +165,11 @@ export class MinidIcon extends styled(LitElement, styles) {
         iconResolver = this.resolveIcon(this.src);
         iconCache.set(iconKey, iconResolver);
       } else if (this.library === 'nav-aksel') {
-        svgUrl = await import(`../../assets/icons/${this.name}.svg`).then(
-          (result) => result.default
-        );
+        svgUrl = `/icons/${this.name}.svg`;
         iconResolver = this.resolveIcon(svgUrl);
         iconCache.set(iconKey, iconResolver);
       } else if (this.library === 'country') {
-        svgUrl = await import(`../../assets/flags/${this.name}.svg?`).then(
-          (result) => result.default
-        );
+        svgUrl = `/flags/${this.name}.svg`;
         iconResolver = this.resolveIcon(svgUrl);
         iconCache.set(iconKey, iconResolver);
       } else if (this.library === 'system') {

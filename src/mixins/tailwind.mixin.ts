@@ -21,7 +21,6 @@ export const styled = <T extends Constructor<LitElement>>(
     connectedCallback(): void {
       super.connectedCallback();
 
-      console.log(tailwindSheet);
       if (tailwindSheet.cssRules.length) {
         return;
       }

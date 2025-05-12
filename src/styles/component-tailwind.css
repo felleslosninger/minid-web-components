@@ -1,5 +1,6 @@
-@import 'tailwindcss' source('../components');
-@import '../public/designsystemet-tailwind.css';
+@utility focus-ring {
+  @apply ring-focus-inner outline-focus-outer ring-[3px] outline-[3px] outline-offset-[3px];
+}
 
 @custom-variant slotted (& ::slotted(*));
 

@@ -8,6 +8,8 @@ const run = () => {
   const cssThemeFile =
     projectRoot + '/node_modules/@digdir/designsystemet-theme/brand/digdir.css';
   const destination = projectRoot + '/src/public/designsystemet-tailwind.css';
+  const extraTailwindPropsFile =
+    projectRoot + '/src/styles/component-tailwind.css';
 
   // Read the digdir.css file
   fs.readFile(cssThemeFile, 'utf-8', (err, data) => {
@@ -162,18 +164,21 @@ const run = () => {
 
     themeContent += '}\n';
 
-    themeContent += '\n@utility focus-ring {\n';
-    themeContent +=
-      '  @apply ring-focus-inner outline-focus-outer ring-[3px] outline-[3px] outline-offset-[3px];\n';
-    themeContent += '}\n';
-
-    // Write the generated theme to the destination file
-    fs.writeFile(destination, themeContent, 'utf-8', (writeErr) => {
-      if (writeErr) {
-        console.error('Error writing theme.css:', writeErr);
-      } else {
-        console.log('Tailwind theme generated successfully at:', destination);
+    fs.readFile(extraTailwindPropsFile, 'utf-8', (err, data) => {
+      if (err) {
+        console.error('Error reading extra tailwind props file:', err);
+        return;
       }
+      themeContent += data;
+
+      // Write the generated theme to the destination file
+      fs.writeFile(destination, themeContent, 'utf-8', (writeErr) => {
+        if (writeErr) {
+          console.error('Error writing theme.css:', writeErr);
+        } else {
+          console.log('Tailwind theme generated successfully at:', destination);
+        }
+      });
     });
   });
 };
