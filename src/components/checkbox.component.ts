@@ -121,8 +121,6 @@ export class MinidCheckbox extends FormControlMixin(styled(LitElement)) {
   }
 
   override render() {
-    console.log('invalid: ', this.invalid);
-
     return html`
       <label
         class="${classMap({
