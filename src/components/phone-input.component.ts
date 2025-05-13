@@ -17,8 +17,9 @@ import {
   templateParser,
 } from 'input-format';
 import { watch } from '../internal/watch';
-import { FormControllerMixin } from '../mixins/form-controller.mixin';
 import { HasSlotController } from '../internal/slot';
+import { FormControlMixin } from 'src/mixins/form-control.mixin';
+import { requiredValidator } from 'src/mixins/validators';
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -48,7 +49,7 @@ const styles = [
  * @part input - Select the phone number input
  */
 @customElement('mid-phone-input')
-export class MinidPhoneInput extends FormControllerMixin(
+export class MinidPhoneInput extends FormControlMixin(
   styled(LitElement, styles)
 ) {
   private formatter = new AsYouType();
@@ -98,8 +99,24 @@ export class MinidPhoneInput extends FormControllerMixin(
   @property({ reflect: true })
   country?: CountryCode;
 
+  /**
+   * Error message to display when the input is invalid, also activates invalid styling
+   */
+  @property()
+  invalidmessage = '';
+
+  /**
+   * Makes the input required
+   */
+  @property({ type: Boolean })
+  required = false;
+
   @state()
   hasFocus = false;
+
+  static get formControlValidators() {
+    return [requiredValidator];
+  }
 
   handleCountryClick() {
     this.dispatchEvent(
@@ -129,8 +146,8 @@ export class MinidPhoneInput extends FormControllerMixin(
     this.nationalnumber = this.removePhonePrefix(this.value);
 
     setTimeout(() => {
-      this.input.value = `${this.countrycode}${this.nationalnumber}`;
-    }, 0);
+      this.input.value = `${this.countrycode} ${this.nationalnumber}`;
+    });
   }
 
   get parseTemplate() {
@@ -155,12 +172,31 @@ export class MinidPhoneInput extends FormControllerMixin(
       composed: true,
     });
 
-    this.setValue(event);
+    this.handleNewValue(event);
   }
 
   private handleKeydown(event: KeyboardEvent) {
     if (event.key === 'Backspace' && this.input.selectionStart === 1) {
       event.preventDefault();
+      return;
+    }
+
+    const hasModifier =
+      event.metaKey || event.ctrlKey || event.shiftKey || event.altKey;
+
+    // Pressing enter when focused on an input should submit the form like a native input, but we wait a tick before
+    // submitting to allow users to cancel the keydown event if they need to
+    if (event.key === 'Enter' && !hasModifier) {
+      setTimeout(() => {
+        console.log(this.form);
+
+        //
+        // When using an Input Method Editor (IME), pressing enter will cause the form to submit unexpectedly. One way
+        // to check for this is to look at event.isComposing, which will be true when the IME is open.
+        if (!event.defaultPrevented && !event.isComposing) {
+          this.form.requestSubmit();
+        }
+      });
       return;
     }
 
@@ -179,10 +215,10 @@ export class MinidPhoneInput extends FormControllerMixin(
       composed: true,
       bubbles: true,
     });
-    this.setValue(event);
+    this.handleNewValue(event);
   }
 
-  private setValue(event: Event) {
+  private handleNewValue(event: Event) {
     this.formatter.reset();
 
     if (!this.input.value.startsWith('+')) {
@@ -217,7 +253,6 @@ export class MinidPhoneInput extends FormControllerMixin(
     this.value = value;
     this.nationalnumber = this.removePhonePrefix(value);
     this.dispatchEvent(this.currentEvent);
-    this.setFormValue(this.value);
   };
 
   private handleFocus() {
@@ -265,6 +300,12 @@ export class MinidPhoneInput extends FormControllerMixin(
     );
     this.input.dispatchEvent(new Event('input', { bubbles: true }));
     this.input.dispatchEvent(new Event('change', { bubbles: true }));
+  }
+
+  @watch('value')
+  handleValueChange() {
+    this.setValue(this.value.replaceAll(' ', ''));
+    console.log(this.value);
   }
 
   override render() {
@@ -328,6 +369,17 @@ export class MinidPhoneInput extends FormControllerMixin(
             @keydown=${this.handleKeydown}
             @change=${this.handleChange}
           />
+        </div>
+        <div
+          class="text-danger-subtle mt-2 flex gap-1"
+          aria-live="polite"
+          ?hidden=${!this.invalidmessage}
+        >
+          <mid-icon
+            name="xmark-octagon-fill"
+            class="mt-1 min-h-5 min-w-5"
+          ></mid-icon>
+          ${this.invalidmessage}
         </div>
       </div>
     `;

@@ -383,7 +383,9 @@ export class MinidDropdown extends styled(LitElement, styles) {
 
     if (this.open) {
       // Show
-      this.dispatchEvent(new Event('mid-show'));
+      this.dispatchEvent(
+        new Event('mid-show', { bubbles: true, composed: true })
+      );
       this.addOpenListeners();
 
       await stopAnimations(this);
@@ -392,10 +394,14 @@ export class MinidDropdown extends styled(LitElement, styles) {
       const { keyframes, options } = getAnimation(this, 'dropdown.show');
       await animateTo(this.popup.popup, keyframes, options);
 
-      this.dispatchEvent(new Event('mid-after-show'));
+      this.dispatchEvent(
+        new Event('mid-after-show', { bubbles: true, composed: true })
+      );
     } else {
       // Hide
-      this.dispatchEvent(new Event('mid-hide'));
+      this.dispatchEvent(
+        new Event('mid-hide', { bubbles: true, composed: true })
+      );
       this.removeOpenListeners();
 
       await stopAnimations(this);
@@ -404,7 +410,9 @@ export class MinidDropdown extends styled(LitElement, styles) {
       this.panel.hidden = true;
       this.popup.active = false;
 
-      this.dispatchEvent(new Event('mid-after-hide'));
+      this.dispatchEvent(
+        new Event('mid-after-hide', { bubbles: true, composed: true })
+      );
     }
   }
 
@@ -429,9 +437,9 @@ export class MinidDropdown extends styled(LitElement, styles) {
         ?arrow=${this.arrow}
       >
         <slot
+          class="trigger"
           slot="anchor"
           name="trigger"
-          class="trigger"
           @click=${this.handleTriggerClick}
           @keydown=${this.handleTriggerKeyDown}
           @keyup=${this.handleTriggerKeyUp}
