@@ -1,9 +1,9 @@
 import { customElement, property, state } from 'lit/decorators.js';
-import { css, HTMLTemplateResult, LitElement } from 'lit';
+import { css, type HTMLTemplateResult, LitElement } from 'lit';
 import { styled } from '../../mixins/tailwind.mixin';
 import { watch } from '../../internal/watch.ts';
 import { isTemplateResult } from 'lit/directive-helpers.js';
-import { MidIconName } from '../../types/icon-name';
+import type { MidIconName } from '../../types/icon-name';
 import { systemIcons } from './system.icon-library.ts';
 
 declare global {

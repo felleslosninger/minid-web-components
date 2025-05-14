@@ -24,7 +24,7 @@ import { MinidMenuItem } from '../components/menu-item.component.ts';
 
 declare global {
   interface HTMLElementTagNameMap {
-    'mid-combobox': MinidCombobox;
+    'mid-combobox-copy': MinidComboboxCopy;
   }
 }
 
@@ -41,8 +41,8 @@ const styles = [
  * @slot trigger - Used for the button element that will be used to open the dropdown menu
  * @part panel - Select the dropdown panel host element
  */
-@customElement('mid-combobox')
-export class MinidCombobox extends styled(LitElement, styles) {
+@customElement('mid-combobox-copy')
+export class MinidComboboxCopy extends styled(LitElement, styles) {
   private closeWatcher?: CloseWatcher;
   private triggerElement: 'mid-textfield' | 'mid-phone-input' = 'mid-textfield';
 

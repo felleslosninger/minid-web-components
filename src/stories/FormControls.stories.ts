@@ -244,7 +244,6 @@ export const PhoneInput: Story = {
             phoneInput1.invalid = true;
             invalidMessage1.textContent = 'Ugyldig verdi';
           }
-          phoneInput1.invalid = false;
           output1.textContent = '';
         });
 

@@ -14,7 +14,7 @@ import { watch } from '../internal/watch.ts';
 import { animateTo, stopAnimations } from '../internal/animate.ts';
 import { getTabbableBoundary } from '../internal/tabbable.ts';
 import { MinidButton } from '../components/button.component.ts';
-import { MidSelectEvent } from '../events/mid-select.ts';
+import type { MidSelectEvent } from '../events/mid-select.ts';
 import { MinidMenu } from '../components/menu.component.ts';
 import { MinidMenuItem } from 'src/components/menu-item.component.ts';
 

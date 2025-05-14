@@ -1,4 +1,4 @@
-import { CountryCode, getCountries } from 'libphonenumber-js';
+import { type CountryCode, getCountries } from 'libphonenumber-js';
 const labels: Record<CountryCode, string> = {
   AC: 'Ascension Island',
   AD: 'Andorra',
