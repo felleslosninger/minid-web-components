@@ -1,0 +1,36 @@
+@utility focus-ring {
+  @apply ring-focus-inner outline-focus-outer ring-[3px] outline-[3px] outline-offset-[3px];
+}
+
+@custom-variant slotted (& ::slotted(*));
+
+@theme {
+  --animate-dash: dash 1.9s cubic-bezier(0.2, -0.01, 0.51, 0.96) infinite;
+  --animate-spin-slow: spin 2.2s linear infinite;
+  --animate-fade-out: fade-out 200ms ease-in forwards;
+
+  @keyframes dash {
+    0% {
+      stroke-dasharray: 1, 150;
+      stroke-dashoffset: 0;
+    }
+    50% {
+      stroke-dasharray: 90, 150;
+      stroke-dashoffset: -35;
+    }
+    100% {
+      stroke-dasharray: 90, 150;
+      stroke-dashoffset: -124;
+    }
+  }
+
+  @keyframes fade-out {
+    from {
+      opacity: 1;
+    }
+
+    to {
+      opacity: 0;
+    }
+  }
+}

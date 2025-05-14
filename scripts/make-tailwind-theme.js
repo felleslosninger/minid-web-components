@@ -8,8 +8,8 @@ const run = () => {
   const cssThemeFile =
     projectRoot + '/node_modules/@digdir/designsystemet-theme/brand/digdir.css';
   const destination = projectRoot + '/src/public/designsystemet-tailwind.css';
-  const extraTailwindPropsFile =
-    projectRoot + '/src/styles/component-tailwind.css';
+  const extraTailwindConfigFile =
+    projectRoot + '/src/styles/extra-tailwind-config.css';
 
   // Read the digdir.css file
   fs.readFile(cssThemeFile, 'utf-8', (err, data) => {
@@ -164,9 +164,9 @@ const run = () => {
 
     themeContent += '}\n';
 
-    fs.readFile(extraTailwindPropsFile, 'utf-8', (err, data) => {
+    fs.readFile(extraTailwindConfigFile, 'utf-8', (err, data) => {
       if (err) {
-        console.error('Error reading extra tailwind props file:', err);
+        console.error('Error reading extra tailwind config file:', err);
         return;
       }
       themeContent += data;

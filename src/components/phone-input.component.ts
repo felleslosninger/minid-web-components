@@ -18,8 +18,8 @@ import {
 } from 'input-format';
 import { watch } from '../internal/watch';
 import { HasSlotController } from '../internal/slot';
-import { FormControlMixin } from 'src/mixins/form-control.mixin';
-import { requiredValidator } from 'src/mixins/validators';
+import { FormControlMixin } from '../mixins/form-control.mixin';
+import { requiredValidator } from '../mixins/validators';
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -100,10 +100,10 @@ export class MinidPhoneInput extends FormControlMixin(
   country?: CountryCode;
 
   /**
-   * Error message to display when the input is invalid, also activates invalid styling
+   * Activates invalid styling
    */
-  @property()
-  invalidmessage = '';
+  @property({ type: Boolean })
+  invalid = false;
 
   /**
    * Makes the input required
@@ -177,6 +177,7 @@ export class MinidPhoneInput extends FormControlMixin(
 
   private handleKeydown(event: KeyboardEvent) {
     if (event.key === 'Backspace' && this.input.selectionStart === 1) {
+      // don't remove '+' symbol which is the first character
       event.preventDefault();
       return;
     }
@@ -193,12 +194,16 @@ export class MinidPhoneInput extends FormControlMixin(
         //
         // When using an Input Method Editor (IME), pressing enter will cause the form to submit unexpectedly. One way
         // to check for this is to look at event.isComposing, which will be true when the IME is open.
+        console.log('default prevented', event.defaultPrevented, event);
+
         if (!event.defaultPrevented && !event.isComposing) {
           this.form.requestSubmit();
         }
       });
       return;
     }
+
+    console.log('event passed on');
 
     onKeyDown(
       event,
@@ -315,6 +320,7 @@ export class MinidPhoneInput extends FormControlMixin(
 
     const hasLabelSlot = this.hasSlotControler.test('label');
     const hasLabel = !!this.label || !!hasLabelSlot;
+    console.log(this.invalid);
 
     return html`
       <div
@@ -358,7 +364,12 @@ export class MinidPhoneInput extends FormControlMixin(
 
           <input
             id="input"
-            class="border-neutral focus-visible:focus-ring grow rounded-r border px-3"
+            class="${classMap({
+              'border-neutral': !this.invalid,
+              'border-danger': this.invalid,
+              'border-2': this.invalid,
+              border: !this.invalid,
+            })} focus-visible:focus-ring grow rounded-r px-3"
             part="phone-number"
             type="tel"
             autocomplete="tel"
@@ -369,17 +380,6 @@ export class MinidPhoneInput extends FormControlMixin(
             @keydown=${this.handleKeydown}
             @change=${this.handleChange}
           />
-        </div>
-        <div
-          class="text-danger-subtle mt-2 flex gap-1"
-          aria-live="polite"
-          ?hidden=${!this.invalidmessage}
-        >
-          <mid-icon
-            name="xmark-octagon-fill"
-            class="mt-1 min-h-5 min-w-5"
-          ></mid-icon>
-          ${this.invalidmessage}
         </div>
       </div>
     `;

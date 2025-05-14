@@ -143,7 +143,7 @@
     "build:cdn": "rimraf dist-cdn && tsc && vite build --config vite.cdn.config.js",
     "storybook": "storybook dev -p 6006",
     "storybook:dev": "concurrently --kill-others \"npm run analyze -- --watch\" \"npx @tailwindcss/cli -i ./src/styles/tailwind.css -o ./.storybook/public/tailwind.css --watch\" \"npm run storybook\"",
-    "storybook:build": "npm run build && rimraf storybook-static && npm run analyze && storybook build",
+    "storybook:build": "npm run build && rimraf storybook-static && npm run analyze && npx @tailwindcss/cli -i ./src/styles/tailwind.css -o ./.storybook/public/tailwind.css && storybook build",
     "analyze": "custom-elements-manifest analyze"
   },
   "dependencies": {
@@ -158,7 +158,6 @@
   },
   "devDependencies": {
     "@custom-elements-manifest/analyzer": "^0.10.3",
-    "@digdir/designsystemet-css": "^1.0.3",
     "@digdir/designsystemet-theme": "^1.0.3",
     "@floating-ui/dom": "^1.6.10",
     "@navikt/aksel-icons": "^7.1.2",
