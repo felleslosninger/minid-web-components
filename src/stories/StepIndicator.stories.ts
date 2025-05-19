@@ -26,7 +26,12 @@ export const Main: Story = {
   },
   render: ({ steps, current }: StepIndicatorProps) =>
     html`<mid-step-indicator
-      steps="${ifDefined(steps)}"
+      .steps="${[
+        'Aktiveringskode',
+        'Fødselsnummer',
+        'Kontaktinformasjon',
+        'Bekreftelse',
+      ]}"
       current="${ifDefined(current)}"
-    ></mid-step-indicator>`,
+    ></mid-step-indicator> `,
 };

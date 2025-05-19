@@ -1,6 +1,7 @@
 import { css, html, LitElement } from 'lit';
 import { styled } from '../mixins/tailwind.mixin';
 import { customElement, property } from 'lit/decorators.js';
+import './icon/icon.component';
 import { classMap } from 'lit/directives/class-map.js';
 
 declare global {
@@ -21,25 +22,40 @@ const styles = [
 @customElement('mid-step-indicator')
 export class MinidStepIndicator extends styled(LitElement, styles) {
   @property({ type: Number })
-  steps = 0;
-
-  @property({ type: Number })
   current = 0;
+
+  @property({ type: Array })
+  steps = Array<string>();
 
   override render() {
     return html`
-      <ul class="flex space-x-2">
-        ${Array.from({ length: this.steps }).map((_, index) => {
+      <ol class="text-body-sm flex text-center font-medium">
+        ${this.steps.map((text, index) => {
           const step = index + 1;
           return html`<li
             class="${classMap({
-              'bg-accent-surface-active': step < this.current,
-              'bg-accent-base': step === this.current,
-              'bg-accent': step > this.current,
-            })} border-accent rounded-full border p-1.5"
-          ></li>`;
+              'text-accent': step < this.current,
+              'text-accent-base': step === this.current,
+              'text-neutral-subtle': step > this.current,
+            })} flex items-center"
+          >
+            <span
+              class="${classMap({
+                'text-white': step === this.current,
+                'bg-accent-base': step === this.current,
+              })} me-2 flex size-8 shrink-0 items-center justify-center rounded-full border"
+              >${step}</span
+            >
+            ${text}
+            <mid-icon
+              class="${classMap({
+                hidden: step === this.steps.length,
+              })} mx-2 size-8"
+              name="chevron-right"
+            ></mid-icon>
+          </li> `;
         })}
-      </ul>
+      </ol>
     `;
   }
 }
