@@ -2,6 +2,10 @@
 
 A changelog for logging changes.
 
+## 0.0.107
+
+- Changed step indicator style
+
 ## 0.0.106
 
 - New validation message component
