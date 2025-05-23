@@ -28,15 +28,24 @@ export class MinidStepIndicator extends styled(LitElement, styles) {
 
   override render() {
     return html`
-      <ul class="flex space-x-2">
+      <ul class="flex gap-8">
         ${Array.from({ length: this.steps }).map((_, index) => {
           const step = index + 1;
+          const isActive = step === this.current;
+          const isCompleted = step < this.current;
+          const isUpcoming = step > this.current;
           return html`<li
             class="${classMap({
-              'bg-accent-surface-active': step < this.current,
-              'bg-accent-base': step === this.current,
-              'bg-accent': step > this.current,
-            })} border-accent rounded-full border p-1.5"
+              'after:bg-accent-base': isActive || isCompleted,
+              'border-accent-base': isActive || isCompleted,
+              'after:bg-neutral-surface-active': isUpcoming,
+              'border-neutral-surface-active': isUpcoming,
+              'bg-neutral-surface-active': isUpcoming,
+              'after:bg-transparent': step === 1,
+              'bg-neutral-surface': isCompleted,
+              'bg-accent-base': isActive,
+              'bg-accent': isUpcoming,
+            })} relative rounded-full border-4 p-1.5 after:absolute after:-left-1 after:block after:h-1 after:w-8 after:-translate-x-full after:-translate-y-1/2"
           ></li>`;
         })}
       </ul>

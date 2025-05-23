@@ -11,6 +11,7 @@
     --radius-xl: min(0.25rem * 3, 0.25rem * 7);
     --ease-in: cubic-bezier(0.4, 0, 1, 1);
     --ease-out: cubic-bezier(0, 0, 0.2, 1);
+    --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
     --default-transition-duration: 150ms;
     --default-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     --default-font-family: var(--font-sans);
@@ -740,15 +741,11 @@
   .gap-4 {
     gap: calc(var(--spacing) * 4);
   }
+  .gap-8 {
+    gap: calc(var(--spacing) * 8);
+  }
   .gap-x-4 {
     column-gap: calc(var(--spacing) * 4);
-  }
-  .space-x-2 {
-    :where(& > :not(:last-child)) {
-      --tw-space-x-reverse: 0;
-      margin-inline-start: calc(calc(var(--spacing) * 2) * var(--tw-space-x-reverse));
-      margin-inline-end: calc(calc(var(--spacing) * 2) * calc(1 - var(--tw-space-x-reverse)));
-    }
   }
   .self-center {
     align-self: center;
@@ -812,6 +809,10 @@
   .border-2 {
     border-style: var(--tw-border-style);
     border-width: 2px;
+  }
+  .border-4 {
+    border-style: var(--tw-border-style);
+    border-width: 4px;
   }
   .border-focus {
     border-style: var(--tw-border-style);
@@ -883,6 +884,9 @@
   }
   .border-neutral-subtle {
     border-color: var(--border-color-neutral-subtle);
+  }
+  .border-neutral-surface-active {
+    border-color: var(--color-neutral-surface-active);
   }
   .border-success {
     border-color: var(--border-color-success);
@@ -1564,6 +1568,68 @@
       }
     }
   }
+  .after\:absolute {
+    &::after {
+      content: var(--tw-content);
+      position: absolute;
+    }
+  }
+  .after\:-left-1 {
+    &::after {
+      content: var(--tw-content);
+      left: calc(var(--spacing) * -1);
+    }
+  }
+  .after\:block {
+    &::after {
+      content: var(--tw-content);
+      display: block;
+    }
+  }
+  .after\:h-1 {
+    &::after {
+      content: var(--tw-content);
+      height: calc(var(--spacing) * 1);
+    }
+  }
+  .after\:w-8 {
+    &::after {
+      content: var(--tw-content);
+      width: calc(var(--spacing) * 8);
+    }
+  }
+  .after\:-translate-x-full {
+    &::after {
+      content: var(--tw-content);
+      --tw-translate-x: -100%;
+      translate: var(--tw-translate-x) var(--tw-translate-y);
+    }
+  }
+  .after\:-translate-y-1\/2 {
+    &::after {
+      content: var(--tw-content);
+      --tw-translate-y: calc(calc(1/2 * 100%) * -1);
+      translate: var(--tw-translate-x) var(--tw-translate-y);
+    }
+  }
+  .after\:bg-accent-base {
+    &::after {
+      content: var(--tw-content);
+      background-color: var(--color-accent-base);
+    }
+  }
+  .after\:bg-neutral-surface-active {
+    &::after {
+      content: var(--tw-content);
+      background-color: var(--color-neutral-surface-active);
+    }
+  }
+  .after\:bg-transparent {
+    &::after {
+      content: var(--tw-content);
+      background-color: transparent;
+    }
+  }
   .visited\:text-link-visited {
     &:visited {
       color: var(--color-link-visited);
@@ -1778,11 +1844,6 @@ body {
   syntax: "*";
   inherits: false;
 }
-@property --tw-space-x-reverse {
-  syntax: "*";
-  inherits: false;
-  initial-value: 0;
-}
 @property --tw-border-style {
   syntax: "*";
   inherits: false;
@@ -1923,6 +1984,11 @@ body {
   syntax: "*";
   inherits: false;
 }
+@property --tw-content {
+  syntax: "*";
+  initial-value: "";
+  inherits: false;
+}
 @keyframes spin {
   to {
     transform: rotate(360deg);
@@ -1964,7 +2030,6 @@ body {
       --tw-rotate-z: initial;
       --tw-skew-x: initial;
       --tw-skew-y: initial;
-      --tw-space-x-reverse: 0;
       --tw-border-style: solid;
       --tw-leading: initial;
       --tw-font-weight: initial;
@@ -1997,6 +2062,7 @@ body {
       --tw-drop-shadow-alpha: 100%;
       --tw-drop-shadow-size: initial;
       --tw-ease: initial;
+      --tw-content: "";
     }
   }
 }
