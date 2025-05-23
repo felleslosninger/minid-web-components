@@ -62,7 +62,6 @@ export default defineConfig(({}) => {
       emptyOutDir: true,
       lib: {
         entry: generateEntries(),
-
         name: 'MinID-Elements',
         formats: ['es'],
         fileName: (_format, entryName) => `${entryName}.js`,

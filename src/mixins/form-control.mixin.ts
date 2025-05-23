@@ -1,9 +1,9 @@
 import { LitElement } from 'lit';
-import { IControlHost } from '../types/control-host';
-import { FormControlInterface } from '../types/form-control';
-import { FormValue } from '../types/form-value';
-import { Constructor } from '../types/mixin-constructor';
-import {
+import type { IControlHost } from '../types/control-host';
+import type { FormControlInterface } from '../types/form-control';
+import type { FormValue } from '../types/form-value';
+import type { Constructor } from '../types/mixin-constructor';
+import type {
   CustomValidityState,
   validationMessageCallback,
   Validator,

@@ -4,7 +4,6 @@ import '../components/combobox.component';
 import '../components/menu.component';
 import '../components/menu-item.component';
 import '../components/phone-input.component';
-import '../components/search.component';
 import '../components/icon/icon.component';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { CountryCode, getCountries } from 'libphonenumber-js';

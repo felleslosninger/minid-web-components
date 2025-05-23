@@ -4,7 +4,6 @@ import {
   property,
   query,
   queryAssignedElements,
-  state,
 } from 'lit/decorators.js';
 import './popup.component';
 import { styled } from '../mixins/tailwind.mixin.ts';
@@ -21,6 +20,7 @@ import { MinidButton } from './button.component';
 import { MinidMenu } from '../components/menu.component';
 import { MinidPhoneInput } from '../components/phone-input.component';
 import { MinidTextfield } from '../components/textfield.component';
+import { MinidMenuItem } from '../components/menu-item.component.ts';
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -44,6 +44,7 @@ const styles = [
 @customElement('mid-combobox')
 export class MinidCombobox extends styled(LitElement, styles) {
   private closeWatcher?: CloseWatcher;
+  private triggerElement: 'mid-textfield' | 'mid-phone-input' = 'mid-textfield';
 
   @query('#combobox')
   private popup!: MinidPopup;
@@ -99,9 +100,6 @@ export class MinidCombobox extends styled(LitElement, styles) {
   @property({ type: Boolean })
   disabled = false;
 
-  @state()
-  private triggerElement: 'mid-textfield' | 'mid-phone-input' = 'mid-textfield';
-
   /**
    * The combobox will close when the user interacts outside of this element (e.g. clicking). Useful for composing other
    * components that use a combobox internally.
@@ -117,7 +115,7 @@ export class MinidCombobox extends styled(LitElement, styles) {
     }
   }
 
-  firstUpdated(): void {
+  firstUpdated() {
     const input = this.triggerElements[0];
     if (input.tagName.toLowerCase() === 'mid-phone-input') {
       this.triggerElement = 'mid-phone-input';
@@ -183,7 +181,6 @@ export class MinidCombobox extends styled(LitElement, styles) {
       event.stopPropagation();
       this.hide();
       this.focusOnTrigger();
-      return;
     }
   };
 
@@ -198,12 +195,14 @@ export class MinidCombobox extends styled(LitElement, styles) {
 
     // Handle tabbing
     if (event.key === 'Tab') {
+      const composedPath = event.composedPath();
+      const tabbedIsMenuItem = composedPath.some(
+        (e): e is MinidMenuItem =>
+          (e as HTMLElement).tagName?.toLowerCase() === 'mid-menu-item'
+      );
+
       // Tabbing within an open menu should close the combobox and refocus the trigger
-      if (
-        this.open &&
-        (document.activeElement?.tagName.toLowerCase() === 'mid-menu-item' ||
-          document.activeElement?.tagName.toLowerCase() === 'mid-menu')
-      ) {
+      if (this.open && tabbedIsMenuItem) {
         event.preventDefault();
         this.hide();
         this.focusOnTrigger();
@@ -215,17 +214,7 @@ export class MinidCombobox extends styled(LitElement, styles) {
       // If the combobox is used within a shadow DOM, we need to obtain the activeElement within that shadowRoot,
       // otherwise `document.activeElement` will only return the name of the parent shadow DOM element.
       setTimeout(() => {
-        const activeElement =
-          this.containingElement?.getRootNode() instanceof ShadowRoot
-            ? document.activeElement?.shadowRoot?.activeElement
-            : document.activeElement;
-
-        if (
-          !this.containingElement ||
-          activeElement?.closest(
-            this.containingElement.tagName.toLowerCase()
-          ) !== this.containingElement
-        ) {
+        if (composedPath.every((target) => target !== this.containingElement)) {
           this.hide();
         }
       });
@@ -343,58 +332,6 @@ export class MinidCombobox extends styled(LitElement, styles) {
     this.updateAccessibleTrigger();
   }
 
-  /**
-   * Instructs the combobox menu to reposition. Useful when the position or size of the trigger changes when the menu
-   * is activated.
-   */
-  reposition() {
-    this.popup.reposition();
-  }
-
-  addOpenListeners() {
-    if ('CloseWatcher' in window) {
-      this.closeWatcher?.destroy();
-      this.closeWatcher = new CloseWatcher();
-      this.closeWatcher.onclose = () => {
-        this.hide();
-        this.focusOnTrigger();
-      };
-    }
-
-    document.addEventListener('keydown', this.handleDocumentKeyDown);
-    document.addEventListener('mousedown', this.handleDocumentMouseDown);
-  }
-
-  removeOpenListeners() {
-    document.removeEventListener('keydown', this.handleDocumentKeyDown);
-    document.removeEventListener('mousedown', this.handleDocumentMouseDown);
-    this.closeWatcher?.destroy();
-  }
-
-  /**
-   * Shows the combobox panel.
-   */
-  async show() {
-    if (this.open) {
-      return undefined;
-    }
-
-    this.open = true;
-    return waitForEvent(this, 'mid-after-show');
-  }
-
-  /**
-   * Hides the combobox panel
-   */
-  async hide() {
-    if (!this.open) {
-      return undefined;
-    }
-
-    this.open = false;
-    return waitForEvent(this, 'mid-after-hide');
-  }
-
   //
   // Slotted triggers can be arbitrary content, but we need to link them to the combobox panel with `aria-haspopup` and
   // `aria-expanded`. These must be applied to the "accessible trigger" (the tabbable portion of the trigger element
@@ -428,6 +365,58 @@ export class MinidCombobox extends styled(LitElement, styles) {
       target.setAttribute('aria-haspopup', 'true');
       target.setAttribute('aria-expanded', this.open ? 'true' : 'false');
     }
+  }
+
+  /**
+   * Shows the combobox panel.
+   */
+  async show() {
+    if (this.open) {
+      return undefined;
+    }
+
+    this.open = true;
+    return waitForEvent(this, 'mid-after-show');
+  }
+
+  /**
+   * Hides the combobox panel
+   */
+  async hide() {
+    if (!this.open) {
+      return undefined;
+    }
+
+    this.open = false;
+    return waitForEvent(this, 'mid-after-hide');
+  }
+
+  /**
+   * Instructs the combobox menu to reposition. Useful when the position or size of the trigger changes when the menu
+   * is activated.
+   */
+  reposition() {
+    this.popup.reposition();
+  }
+
+  addOpenListeners() {
+    if ('CloseWatcher' in window) {
+      this.closeWatcher?.destroy();
+      this.closeWatcher = new CloseWatcher();
+      this.closeWatcher.onclose = () => {
+        this.hide();
+        this.focusOnTrigger();
+      };
+    }
+
+    document.addEventListener('keydown', this.handleDocumentKeyDown);
+    document.addEventListener('mousedown', this.handleDocumentMouseDown);
+  }
+
+  removeOpenListeners() {
+    document.removeEventListener('keydown', this.handleDocumentKeyDown);
+    document.removeEventListener('mousedown', this.handleDocumentMouseDown);
+    this.closeWatcher?.destroy();
   }
 
   @watch('open', { waitUntilFirstUpdate: true })

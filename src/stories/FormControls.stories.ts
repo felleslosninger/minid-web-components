@@ -4,6 +4,13 @@ import '../components/textfield.component.js';
 import '../components/button.component.js';
 import '../components/code-input.component.js';
 import '../components/checkbox.component.js';
+import '../components/combobox.component';
+import '../components/menu.component';
+import '../components/menu-item.component';
+import '../components/phone-input.component';
+import '../components/icon/icon.component';
+import { CountryCode, getCountries } from 'libphonenumber-js';
+import countryLabelsNO from '../utilities/country-labels-no';
 
 export interface FormControlProps {}
 
@@ -158,6 +165,89 @@ export const CheckboxInput: Story = {
           if (validity.valueMissing) {
             checkbox1.invalid = true;
           }
+        });
+      </script> `,
+};
+
+export const PhoneInput: Story = {
+  args: {},
+  render: () =>
+    html`<form id="form-4" class="mb-74 flex w-100 flex-col">
+        <mid-combobox>
+          <mid-phone-input
+            id="phone-input-1"
+            name="phone"
+            slot="trigger"
+            class="phone-input w-full"
+            country="NO"
+            label="Telefonnummer"
+            required
+          >
+          </mid-phone-input>
+          <mid-menu searchable style="--max-height: 14rem">
+            ${getCountries()
+              .sort((a, b) =>
+                Array<CountryCode>('NO', 'PL', 'DK', 'SE', 'US', 'GB').includes(
+                  a
+                )
+                  ? -1
+                  : a.localeCompare(b)
+              )
+              .slice(0, 10)
+              .map((country) => {
+                return html`<mid-menu-item value=${country}>
+                  <mid-icon
+                    class="h-4 w-6 overflow-hidden rounded"
+                    library="country"
+                    name="${country}"
+                  ></mid-icon>
+                  <span class="truncate">${countryLabelsNO[country]}</span>
+                </mid-menu-item>`;
+              })}
+          </mid-menu>
+        </mid-combobox>
+        <div class="text-danger-subtle mt-2 flex gap-1" aria-live="polite">
+          <span id="invalid-message-1"></span>
+        </div>
+        <div class="mt-4 flex flex-row-reverse items-end justify-end gap-4">
+          <pre id="output-4"></pre>
+          <mid-button type="submit"> Submit </mid-button>
+        </div>
+      </form>
+
+      <script>
+        var phoneInput1 = document.getElementById('phone-input-1');
+        var form4 = document.getElementById('form-4');
+        var output4 = document.getElementById('output-4');
+        var invalidMessage1 = document.getElementById('invalid-message-1');
+
+        form4.addEventListener('submit', (event) => {
+          event.preventDefault();
+
+          const formData = new FormData(form4);
+          const data = Object.fromEntries(formData);
+          output4.textContent = JSON.stringify({
+            ...data,
+          });
+        });
+
+        phoneInput1.addEventListener('mid-invalid-show', (event) => {
+          if (event.detail.validity.patternMismatch) {
+            phoneInput1.invalid = true;
+            invalidMessage1.textContent = 'Verdien har ugyldig format';
+          } else if (event.detail.validity.valueMissing) {
+            phoneInput1.invalid = true;
+            invalidMessage1.textContent = 'Feltet må fylles ut';
+          } else {
+            phoneInput1.invalid = true;
+            invalidMessage1.textContent = 'Ugyldig verdi';
+          }
+          output1.textContent = '';
+        });
+
+        phoneInput1.addEventListener('mid-invalid-hide', (event) => {
+          phoneInput1.invalid = false;
+          invalidMessage1.textContent = '';
         });
       </script> `,
 };

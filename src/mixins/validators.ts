@@ -1,6 +1,6 @@
-import { FormControlInterface } from '../types/form-control';
-import { FormValue } from '../types/form-value';
-import { Validator } from '../types/validator.type';
+import type { FormControlInterface } from '../types/form-control';
+import type { FormValue } from '../types/form-value';
+import type { Validator } from '../types/validator.type';
 
 export const requiredValidator: Validator = {
   attribute: 'required',

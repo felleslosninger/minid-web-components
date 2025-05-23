@@ -17,8 +17,9 @@ import {
   templateParser,
 } from 'input-format';
 import { watch } from '../internal/watch';
-import { FormControllerMixin } from '../mixins/form-controller.mixin';
 import { HasSlotController } from '../internal/slot';
+import { FormControlMixin } from '../mixins/form-control.mixin';
+import { requiredValidator } from '../mixins/validators';
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -48,7 +49,7 @@ const styles = [
  * @part input - Select the phone number input
  */
 @customElement('mid-phone-input')
-export class MinidPhoneInput extends FormControllerMixin(
+export class MinidPhoneInput extends FormControlMixin(
   styled(LitElement, styles)
 ) {
   private formatter = new AsYouType();
@@ -98,8 +99,24 @@ export class MinidPhoneInput extends FormControllerMixin(
   @property({ reflect: true })
   country?: CountryCode;
 
+  /**
+   * Activates invalid styling
+   */
+  @property({ type: Boolean })
+  invalid = false;
+
+  /**
+   * Makes the input required
+   */
+  @property({ type: Boolean })
+  required = false;
+
   @state()
   hasFocus = false;
+
+  static get formControlValidators() {
+    return [requiredValidator];
+  }
 
   handleCountryClick() {
     this.dispatchEvent(
@@ -129,8 +146,8 @@ export class MinidPhoneInput extends FormControllerMixin(
     this.nationalnumber = this.removePhonePrefix(this.value);
 
     setTimeout(() => {
-      this.input.value = `${this.countrycode}${this.nationalnumber}`;
-    }, 0);
+      this.input.value = `${this.countrycode} ${this.nationalnumber}`;
+    });
   }
 
   get parseTemplate() {
@@ -155,12 +172,30 @@ export class MinidPhoneInput extends FormControllerMixin(
       composed: true,
     });
 
-    this.setValue(event);
+    this.handleNewValue(event);
   }
 
   private handleKeydown(event: KeyboardEvent) {
     if (event.key === 'Backspace' && this.input.selectionStart === 1) {
+      // don't remove '+' symbol which is the first character
       event.preventDefault();
+      return;
+    }
+
+    const hasModifier =
+      event.metaKey || event.ctrlKey || event.shiftKey || event.altKey;
+
+    // Pressing enter when focused on an input should submit the form like a native input, but we wait a tick before
+    // submitting to allow users to cancel the keydown event if they need to
+    if (event.key === 'Enter' && !hasModifier) {
+      setTimeout(() => {
+        //
+        // When using an Input Method Editor (IME), pressing enter will cause the form to submit unexpectedly. One way
+        // to check for this is to look at event.isComposing, which will be true when the IME is open.
+        if (!event.defaultPrevented && !event.isComposing) {
+          this.form.requestSubmit();
+        }
+      });
       return;
     }
 
@@ -179,10 +214,10 @@ export class MinidPhoneInput extends FormControllerMixin(
       composed: true,
       bubbles: true,
     });
-    this.setValue(event);
+    this.handleNewValue(event);
   }
 
-  private setValue(event: Event) {
+  private handleNewValue(event: Event) {
     this.formatter.reset();
 
     if (!this.input.value.startsWith('+')) {
@@ -217,7 +252,6 @@ export class MinidPhoneInput extends FormControllerMixin(
     this.value = value;
     this.nationalnumber = this.removePhonePrefix(value);
     this.dispatchEvent(this.currentEvent);
-    this.setFormValue(this.value);
   };
 
   private handleFocus() {
@@ -265,6 +299,11 @@ export class MinidPhoneInput extends FormControllerMixin(
     );
     this.input.dispatchEvent(new Event('input', { bubbles: true }));
     this.input.dispatchEvent(new Event('change', { bubbles: true }));
+  }
+
+  @watch('value')
+  handleValueChange() {
+    this.setValue(this.value.replaceAll(' ', ''));
   }
 
   override render() {
@@ -317,7 +356,12 @@ export class MinidPhoneInput extends FormControllerMixin(
 
           <input
             id="input"
-            class="border-neutral focus-visible:focus-ring grow rounded-r border px-3"
+            class="${classMap({
+              'border-neutral': !this.invalid,
+              'border-danger': this.invalid,
+              'border-2': this.invalid,
+              border: !this.invalid,
+            })} focus-visible:focus-ring grow rounded-r px-3"
             part="phone-number"
             type="tel"
             autocomplete="tel"

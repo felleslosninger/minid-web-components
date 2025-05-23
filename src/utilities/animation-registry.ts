@@ -1,4 +1,4 @@
-import { AnimationName } from '../types/animation-name';
+import type { AnimationName } from '../types/animation-name';
 
 export interface ElementAnimation {
   keyframes: Keyframe[];
