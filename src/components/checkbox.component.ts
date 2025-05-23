@@ -7,7 +7,7 @@ import './icon/icon.component.ts';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { FormControlMixin } from '../mixins/form-control.mixin.ts';
 import { watch } from '../internal/watch.ts';
-import { requiredValidator } from 'src/mixins/validators.ts';
+import { requiredValidator } from '../mixins/validators.ts';
 
 declare global {
   interface HTMLElementTagNameMap {

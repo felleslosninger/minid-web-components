@@ -189,21 +189,15 @@ export class MinidPhoneInput extends FormControlMixin(
     // submitting to allow users to cancel the keydown event if they need to
     if (event.key === 'Enter' && !hasModifier) {
       setTimeout(() => {
-        console.log(this.form);
-
         //
         // When using an Input Method Editor (IME), pressing enter will cause the form to submit unexpectedly. One way
         // to check for this is to look at event.isComposing, which will be true when the IME is open.
-        console.log('default prevented', event.defaultPrevented, event);
-
         if (!event.defaultPrevented && !event.isComposing) {
           this.form.requestSubmit();
         }
       });
       return;
     }
-
-    console.log('event passed on');
 
     onKeyDown(
       event,
@@ -310,7 +304,6 @@ export class MinidPhoneInput extends FormControlMixin(
   @watch('value')
   handleValueChange() {
     this.setValue(this.value.replaceAll(' ', ''));
-    console.log(this.value);
   }
 
   override render() {
@@ -320,7 +313,6 @@ export class MinidPhoneInput extends FormControlMixin(
 
     const hasLabelSlot = this.hasSlotControler.test('label');
     const hasLabel = !!this.label || !!hasLabelSlot;
-    console.log(this.invalid);
 
     return html`
       <div

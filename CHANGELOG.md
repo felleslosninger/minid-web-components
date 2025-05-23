@@ -5,6 +5,8 @@ A changelog for logging changes.
 ## 0.0.106
 
 - New validation message component
+- Added invalid styling for phone input
+- Fixed bugs in phone input
 
 ## 0.0.105
 

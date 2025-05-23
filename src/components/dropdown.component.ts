@@ -16,7 +16,7 @@ import { getTabbableBoundary } from '../internal/tabbable.ts';
 import { MinidButton } from '../components/button.component.ts';
 import type { MidSelectEvent } from '../events/mid-select.ts';
 import { MinidMenu } from '../components/menu.component.ts';
-import { MinidMenuItem } from 'src/components/menu-item.component.ts';
+import { MinidMenuItem } from '../components/menu-item.component.ts';
 
 declare global {
   interface HTMLElementTagNameMap {

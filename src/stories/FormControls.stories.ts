@@ -223,7 +223,6 @@ export const PhoneInput: Story = {
 
         form4.addEventListener('submit', (event) => {
           event.preventDefault();
-          console.log('submitted');
 
           const formData = new FormData(form4);
           const data = Object.fromEntries(formData);
@@ -233,7 +232,6 @@ export const PhoneInput: Story = {
         });
 
         phoneInput1.addEventListener('mid-invalid-show', (event) => {
-          console.log('mid-invalid', event.detail.validity);
           if (event.detail.validity.patternMismatch) {
             phoneInput1.invalid = true;
             invalidMessage1.textContent = 'Verdien har ugyldig format';

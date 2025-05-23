@@ -219,7 +219,6 @@ export class MinidTextfield extends FormControlMixin(
     // submitting to allow users to cancel the keydown event if they need to
     if (event.key === 'Enter' && !hasModifier) {
       setTimeout(() => {
-        console.log('default prevented', event.defaultPrevented, event);
         //
         // When using an Input Method Editor (IME), pressing enter will cause the form to submit unexpectedly. One way
         // to check for this is to look at event.isComposing, which will be true when the IME is open.
