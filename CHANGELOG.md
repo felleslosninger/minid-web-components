@@ -1,6 +1,10 @@
 # Changelog
 
-A changelog for logging changes
+A changelog for logging changes.
+
+## 0.0.106
+
+- New validation message component
 
 ## 0.0.105
 
@@ -13,7 +17,7 @@ A changelog for logging changes
   This command can be added to `package.json` for easy copying:
 
 ```bash
-    "copy-assets": "cp -aR node_modules/@felleslosninger/minid-elements/dist/icons/ ./public/icons && cp -aR node_modules/@felleslosninger/minid-elements/dist/flags/ ./public/flags"
+    cp -aR node_modules/@felleslosninger/minid-elements/dist/icons/ ./public/icons && cp -aR node_modules/@felleslosninger/minid-elements/dist/flags/ ./public/flags
 ```
 
 ## 0.0.103

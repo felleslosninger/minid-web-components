@@ -129,6 +129,10 @@
     "./tooltip": {
       "import": "./dist/components/tooltip.js",
       "types": "./dist/components/tooltip.component.d.ts"
+    },
+    "./validation-message": {
+      "import": "./dist/components/validation-message.js",
+      "types": "./dist/components/validation-message.component.d.ts"
     }
   },
   "repository": {
@@ -153,7 +157,7 @@
     "element-internals-polyfill": "^1.3.10",
     "input-format": "^0.3.11",
     "libphonenumber-js": "^1.11.15",
-    "lit": "^3.1.2",
+    "lit": "^3.3.0",
     "qrcode": "^1.5.4"
   },
   "devDependencies": {
