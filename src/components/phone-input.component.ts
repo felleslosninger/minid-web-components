@@ -1,4 +1,4 @@
-import { css, html, LitElement } from 'lit';
+import { css, html, LitElement, nothing } from 'lit';
 import { customElement, property, query, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { styled } from '../mixins/tailwind.mixin';
@@ -110,6 +110,12 @@ export class MinidPhoneInput extends FormControlMixin(
    */
   @property({ type: Boolean })
   required = false;
+
+  /**
+   * Makes the input read-only, meaning the user cannot change the value.
+   */
+  @property({ type: Boolean })
+  readonly = false;
 
   @state()
   hasFocus = false;
@@ -329,14 +335,27 @@ export class MinidPhoneInput extends FormControlMixin(
             'sr-only': this.hidelabel || !hasLabel,
           })} mb-2 inline-flex items-center gap-1 font-medium"
         >
+          ${this.readonly
+            ? html`<mid-icon
+                class="size-5"
+                library="system"
+                name="padlock-locked-fill"
+              ></mid-icon>`
+            : nothing}
           <slot name="label"> ${this.label} </slot>
         </label>
         <div part="base" class="flex h-12">
           <button
             part="country-button"
-            class="border-neutral focus-visible:focus-ring flex h-full items-center rounded-l border border-r-0 pl-3"
+            class="${classMap({
+              'border-neutral': !this.readonly,
+              'border-neutral-subtle': this.readonly,
+              'bg-neutral-surface-tinted': this.readonly,
+              'bg-neutral-surface': !this.readonly,
+            })} focus-visible:focus-ring flex h-full items-center rounded-l border border-r-0 pl-3"
             iconstyled
             variant="tertiary"
+            ?disabled=${this.readonly}
             @click=${this.handleCountryClick}
             @keydown=${this.handleCountryKeyDown}
           >
@@ -357,14 +376,18 @@ export class MinidPhoneInput extends FormControlMixin(
           <input
             id="input"
             class="${classMap({
-              'border-neutral': !this.invalid,
-              'border-danger': this.invalid,
+              'border-neutral': !this.invalid && !this.readonly,
+              'border-danger': this.invalid && !this.readonly,
+              'border-neutral-subtle': this.readonly,
+              'bg-neutral-surface-tinted': this.readonly,
+              'bg-neutral-surface': !this.readonly,
               'border-2': this.invalid,
               border: !this.invalid,
             })} focus-visible:focus-ring grow rounded-r px-3"
             part="phone-number"
             type="tel"
             autocomplete="tel"
+            ?readonly=${this.readonly}
             value=${this.value}
             @input=${this.handleInput}
             @focus=${this.handleFocus}

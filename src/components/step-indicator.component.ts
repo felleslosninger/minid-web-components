@@ -2,6 +2,7 @@ import { css, html, LitElement } from 'lit';
 import { styled } from '../mixins/tailwind.mixin';
 import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
+import { ifDefined } from 'lit/directives/if-defined.js';
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -28,13 +29,14 @@ export class MinidStepIndicator extends styled(LitElement, styles) {
 
   override render() {
     return html`
-      <ul class="flex gap-8">
+      <ol class="flex gap-8">
         ${Array.from({ length: this.steps }).map((_, index) => {
           const step = index + 1;
           const isActive = step === this.current;
           const isCompleted = step < this.current;
           const isUpcoming = step > this.current;
           return html`<li
+            aria-current="${ifDefined(isActive ? 'step' : undefined)}"
             class="${classMap({
               'after:bg-accent-base': isActive || isCompleted,
               'border-accent-base': isActive || isCompleted,
@@ -48,7 +50,7 @@ export class MinidStepIndicator extends styled(LitElement, styles) {
             })} relative rounded-full border-4 p-1.5 after:absolute after:-left-1 after:block after:h-1 after:w-8 after:-translate-x-full after:-translate-y-1/2"
           ></li>`;
         })}
-      </ul>
+      </ol>
     `;
   }
 }
