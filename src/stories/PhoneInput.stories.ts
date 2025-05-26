@@ -19,6 +19,7 @@ type PhoneInputProps = Partial<{
   country: CountryCode;
   label: string;
   hidelabel: boolean;
+  readonly: boolean;
   labelPart: Part;
   base: Part;
   field: Part;
@@ -70,7 +71,13 @@ export const Main: Story = {
     label: 'Telefonnummer',
   },
   decorators: [(story) => html`<div class="mb-74 w-100">${story()}</div> `],
-  render: ({ value, country, label, hidelabel }: PhoneInputProps) => html`
+  render: ({
+    value,
+    country,
+    label,
+    hidelabel,
+    readonly,
+  }: PhoneInputProps) => html`
     <script>
       // A list of countries (localized to Norwegian) is provided to help creating the menu items in the dropdown
       // import countryLabelsNO  from '@felleslosninger/minid-elements/country-labels-no';
@@ -83,6 +90,7 @@ export const Main: Story = {
         value=${ifDefined(value)}
         label=${ifDefined(label)}
         ?hidelabel=${hidelabel}
+        ?readonly=${readonly}
       >
       </mid-phone-input>
       <mid-menu searchable style="--max-height: 14rem">

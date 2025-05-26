@@ -2,6 +2,11 @@
 
 A changelog for logging changes.
 
+## 0.0.108
+
+- Step indicator improved a11y
+- Phone input can now be toggled readonly
+
 ## 0.0.107
 
 - Changed step indicator style
