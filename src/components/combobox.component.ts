@@ -5,22 +5,17 @@ import {
   query,
   queryAssignedElements,
 } from 'lit/decorators.js';
-import './popup.component';
+import './dropdown.component.ts';
 import { styled } from '../mixins/tailwind.mixin.ts';
-import { MinidPopup } from './popup.component';
 import { waitForEvent } from '../internal/event';
 import { watch } from '../internal/watch';
-import {
-  getAnimation,
-  setDefaultAnimation,
-} from '../utilities/animation-registry';
-import { animateTo, stopAnimations } from '../internal/animate';
 import { getTabbableBoundary } from '../internal/tabbable';
 import { MinidButton } from './button.component';
-import { MinidMenu } from '../components/menu.component';
-import { MinidPhoneInput } from '../components/phone-input.component';
-import { MinidTextfield } from '../components/textfield.component';
-import { MinidMenuItem } from '../components/menu-item.component.ts';
+import { MinidMenu } from './menu.component';
+import { MinidPhoneInput } from './phone-input.component';
+import { MinidTextfield } from './textfield.component';
+import { MinidMenuItem } from './menu-item.component.ts';
+import { MinidDropdown } from './dropdown.component.ts';
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -47,7 +42,7 @@ export class MinidCombobox extends styled(LitElement, styles) {
   private triggerElement: 'mid-textfield' | 'mid-phone-input' = 'mid-textfield';
 
   @query('#combobox')
-  private popup!: MinidPopup;
+  private popup!: MinidDropdown;
 
   @query('.combobox__trigger')
   private trigger!: HTMLSlotElement;
@@ -133,7 +128,7 @@ export class MinidCombobox extends styled(LitElement, styles) {
     // If the combobox panel is visible on init, update its position
     if (this.open) {
       this.addOpenListeners();
-      this.popup.active = true;
+      this.popup.open = true;
     }
   }
 
@@ -147,7 +142,6 @@ export class MinidCombobox extends styled(LitElement, styles) {
     const trigger = this.trigger.assignedElements({ flatten: true })[0] as
       | HTMLElement
       | undefined;
-
     if (typeof trigger?.focus === 'function') {
       trigger.focus();
     }
@@ -430,41 +424,23 @@ export class MinidCombobox extends styled(LitElement, styles) {
 
     if (this.open) {
       // Show
-      this.dispatchEvent(
-        new Event('mid-show', { bubbles: true, composed: true })
-      );
+
       this.addOpenListeners();
 
-      await stopAnimations(this);
       this.panel.hidden = false;
-      this.popup.active = true;
-      const { keyframes, options } = getAnimation(this, 'combobox.show');
-      await animateTo(this.popup.popup, keyframes, options);
-
-      this.dispatchEvent(
-        new Event('mid-after-show', { bubbles: true, composed: true })
-      );
+      this.popup.open = true;
     } else {
       // Hide
-      this.dispatchEvent(
-        new Event('mid-hide', { bubbles: true, composed: true })
-      );
-      this.removeOpenListeners();
-      await stopAnimations(this);
-      const { keyframes, options } = getAnimation(this, 'combobox.hide');
-      await animateTo(this.popup.popup, keyframes, options);
-      this.panel.hidden = true;
-      this.popup.active = false;
 
-      this.dispatchEvent(
-        new Event('mid-after-hide', { bubbles: true, composed: true })
-      );
+      this.removeOpenListeners();
+      this.panel.hidden = true;
+      this.popup.open = false;
     }
   }
 
   override render() {
     return html`
-      <mid-popup
+      <mid-dropdown
         id="combobox"
         distance=${this.distance}
         placement="bottom-end"
@@ -479,7 +455,7 @@ export class MinidCombobox extends styled(LitElement, styles) {
       >
         <slot
           class="combobox__trigger"
-          slot="anchor"
+          slot="trigger"
           name="trigger"
           @click=${this.handleTriggerClick}
           @keydown=${this.handleTriggerKeyDown}
@@ -487,35 +463,14 @@ export class MinidCombobox extends styled(LitElement, styles) {
           @slotchange=${this.handleTriggerSlotChange}
           @mid-country-click=${this.handleCountryClick}
         ></slot>
-        <div
-          class="bg-accent"
-          aria-hidden=${this.open ? 'false' : 'true'}
-          aria-labelledby="combobox"
-        >
-          <slot
-            class="combobox__panel"
-            part="panel"
-            @keydown=${this.handleKeyDown}
-            @mid-select=${this.handlePanelSelect}
-          ></slot>
-        </div>
-      </mid-popup>
+
+        <slot
+          class="combobox__panel"
+          part="panel"
+          @keydown=${this.handleKeyDown}
+          @mid-select=${this.handlePanelSelect}
+        ></slot>
+      </mid-dropdown>
     `;
   }
 }
-
-setDefaultAnimation('combobox.show', {
-  keyframes: [
-    { opacity: 0, scale: 0.9 },
-    { opacity: 1, scale: 1 },
-  ],
-  options: { duration: 100, easing: 'ease' },
-});
-
-setDefaultAnimation('combobox.hide', {
-  keyframes: [
-    { opacity: 1, scale: 1 },
-    { opacity: 0, scale: 0.9 },
-  ],
-  options: { duration: 100, easing: 'ease' },
-});

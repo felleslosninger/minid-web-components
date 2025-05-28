@@ -13,10 +13,10 @@ import { MinidPopup } from './popup.component';
 import { watch } from '../internal/watch.ts';
 import { animateTo, stopAnimations } from '../internal/animate.ts';
 import { getTabbableBoundary } from '../internal/tabbable.ts';
-import { MinidButton } from '../components/button.component.ts';
+import { MinidButton } from './button.component.ts';
 import type { MidSelectEvent } from '../events/mid-select.ts';
-import { MinidMenu } from '../components/menu.component.ts';
-import { MinidMenuItem } from '../components/menu-item.component.ts';
+import { MinidMenu } from './menu.component.ts';
+import { MinidMenuItem } from './menu-item.component.ts';
 
 declare global {
   interface HTMLElementTagNameMap {

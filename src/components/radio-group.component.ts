@@ -3,10 +3,10 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { styled } from '../mixins/tailwind.mixin';
 import './label.component';
 import { ConstraintsValidationMixin } from '../mixins/form-controller.mixin';
-import { MinidRadioButton } from '../components/radio-button.component';
+import { MinidRadioButton } from './radio-button.component';
 import { classMap } from 'lit/directives/class-map.js';
 import { watch } from '../internal/watch';
-import { MinidRadio } from '../components/radio.component';
+import { MinidRadio } from './radio.component';
 
 declare global {
   interface HTMLElementTagNameMap {
