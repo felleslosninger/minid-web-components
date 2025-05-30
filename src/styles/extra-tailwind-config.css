@@ -34,3 +34,9 @@
     }
   }
 }
+
+@layer components {
+  .mid-input {
+    @apply focus-within:focus-ring border-neutral bg-neutral-surface h-12 items-center rounded-md border px-3;
+  }
+}
