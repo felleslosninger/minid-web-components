@@ -7,7 +7,7 @@ import '../components/phone-input.component';
 import '../components/icon/icon.component';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { CountryCode, getCountries } from 'libphonenumber-js';
-import countryLabelsNO from '../utilities/country-labels-no';
+import { countryLabelsNo } from '../utilities/countries';
 
 type PhoneInputProps = Partial<{
   'mid-country-click': Event;
@@ -108,7 +108,7 @@ export const Main: Story = {
                 library="country"
                 name="${country}"
               ></mid-icon>
-              <span class="truncate">${countryLabelsNO[country]}</span>
+              <span class="truncate">${countryLabelsNo[country]}</span>
             </mid-menu-item>`;
           })}
       </mid-menu>
