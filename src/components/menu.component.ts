@@ -261,9 +261,7 @@ export class MinidMenu extends styled(LitElement, styles) {
 
   override render() {
     return html`
-      <div
-        class="text-neutral border-neutral-subtle rounded-md border shadow-md"
-      >
+      <div class="border-neutral-subtle rounded-md border shadow-md">
         ${!this.searchable
           ? nothing
           : html`<div
