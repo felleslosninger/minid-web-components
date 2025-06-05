@@ -17,3 +17,4 @@ custom-elements.json
 /demo/dist/
 /dist-cdn/
 /dev/node_modules/
+.DS_Store
