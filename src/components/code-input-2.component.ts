@@ -3,6 +3,7 @@ import { customElement, property, queryAll, state } from 'lit/decorators.js';
 import { styled } from '../mixins/tailwind.mixin';
 import '@preline/pin-input';
 import { watch } from '../internal/watch';
+import { live } from 'lit/directives/live.js';
 
 const styles = [
   css`
@@ -15,37 +16,44 @@ const styles = [
 
 @customElement('mid-code-input-2')
 export class MinidCodeInput2 extends styled(LitElement, styles) {
+  #skipValueUpdate = false;
+
   @queryAll('input')
   private inputElements!: NodeListOf<HTMLInputElement>;
 
-  @property()
+  @property({ type: String })
   value = '';
 
+  /**
+   * Number of input characters or digits
+   */
   @property({ type: Number })
   length = 5;
-
-  connectedCallback(): void {
-    super.connectedCallback();
-  }
 
   @state()
   private values = Array<string>();
 
-  // el.addEventListener('input', (evt) => this.onInput(evt, index));
-  // el.addEventListener('paste', (evt) => this.onPaste(evt));
-  // el.addEventListener('keydown', (evt) => this.onKeydown(evt, index));
-  // el.addEventListener('focusin', () => this.onFocusIn(index));
-  // el.addEventListener('focusout', () => this.onFocusOut(index));
+  connectedCallback() {
+    super.connectedCallback();
+    this.values = Array(this.length).fill('');
+    // this.updateInputValues(); // Initialize values if `value` was set before connectedCallback
+  }
 
   private handleFocus(index: number) {
     return () => {
       this.inputElements[index].setAttribute('placeholder', '');
+      this.inputElements[index].setSelectionRange(0, 0);
+    };
+  }
+
+  private handleBlur(index: number) {
+    return () => {
+      this.inputElements[index].setAttribute('placeholder', '○');
     };
   }
 
   private handleKeydown(index: number) {
     return (event: KeyboardEvent) => {
-      console.log(index, event);
       this.values[index] = (event.target as HTMLInputElement).value;
       this.value = this.values.join('');
       const input = event.target as HTMLInputElement;
@@ -55,12 +63,12 @@ export class MinidCodeInput2 extends styled(LitElement, styles) {
           // If current input is empty, move to previous and clear it
           this.inputElements[index - 1].focus();
           this.values[index - 1] = '';
-          this.updateValueAndEmit();
+          this.updateValueAndEmit(true);
         } else if (input.value !== '') {
           // If current input has a value, clear it
           input.value = '';
           this.values[index] = '';
-          this.updateValueAndEmit();
+          this.updateValueAndEmit(true);
         }
       } else if (event.key === 'ArrowLeft') {
         if (index > 0) {
@@ -74,24 +82,8 @@ export class MinidCodeInput2 extends styled(LitElement, styles) {
         // Clear current field without moving
         input.value = '';
         this.values[index] = '';
-        this.updateValueAndEmit();
-      } else if (event.key.length === 1 && !/\d/.test(event.key)) {
-        // Prevent non-numeric characters from being typed
-        // event.preventDefault();
+        this.updateValueAndEmit(true);
       }
-      console.log(this.values, this.value);
-      console.log(this.inputElements);
-
-      // if (event.key === 'Backspace' && index > 0) {
-      //   if ((this.items[index] as HTMLInputElement).value === '') {
-      //     (this.items[index - 1] as HTMLInputElement).value = '';
-      //     (this.items[index - 1] as HTMLInputElement).focus();
-      //   } else {
-      //     (this.items[index] as HTMLInputElement).value = '';
-      //   }
-      // }
-      // this.setCurrentValue();
-      // this.toggleCompleted();
     };
   }
 
@@ -99,6 +91,7 @@ export class MinidCodeInput2 extends styled(LitElement, styles) {
     return (event: InputEvent) => {
       const input = event.target as HTMLInputElement;
       let inputValue = input.value;
+      console.log('handle input', inputValue);
 
       // Only allow single digit input
       if (inputValue.length > 1) {
@@ -106,14 +99,8 @@ export class MinidCodeInput2 extends styled(LitElement, styles) {
         input.value = inputValue; // Correct the input value
       }
 
-      // Only allow numeric input
-      if (!/^\d*$/.test(inputValue)) {
-        input.value = ''; // Clear non-numeric input
-        return;
-      }
-
       this.values[index] = inputValue;
-      this.updateValueAndEmit();
+      this.updateValueAndEmit(true);
 
       // Auto-focus next input if a digit was entered and it's not the last one
       if (inputValue !== '' && index < this.length - 1) {
@@ -126,17 +113,16 @@ export class MinidCodeInput2 extends styled(LitElement, styles) {
     return (event: ClipboardEvent) => {
       event.preventDefault(); // Prevent default paste behavior
       const pasteData = event.clipboardData?.getData('text').trim();
-      console.log('paste', pasteData);
 
-      if (pasteData && /^\d+$/.test(pasteData)) {
+      if (pasteData) {
         const pasteChars = pasteData.split('');
         for (let i = 0; i < this.length; i++) {
           if (index + i < this.length && pasteChars[i]) {
             this.values[index + i] = pasteChars[i];
             // Update the actual input element's value directly as well
-            if (this.inputElements[index + i]) {
-              this.inputElements[index + i].value = pasteChars[i];
-            }
+            // if (this.inputElements[index + i]) {
+            //   this.inputElements[index + i].value = pasteChars[i];
+            // }
           }
         }
         this.updateValueAndEmit();
@@ -151,11 +137,11 @@ export class MinidCodeInput2 extends styled(LitElement, styles) {
     };
   }
 
-  private updateValueAndEmit() {
+  private updateValueAndEmit(skipValueUpdate = false) {
+    this.#skipValueUpdate = skipValueUpdate;
     this.value = this.values.join('');
     this.dispatchEvent(
-      new CustomEvent('mid-code-change', {
-        detail: { value: this.value },
+      new Event('mid-change', {
         bubbles: true,
         composed: true,
       })
@@ -166,8 +152,7 @@ export class MinidCodeInput2 extends styled(LitElement, styles) {
       this.values.every((digit) => digit !== '')
     ) {
       this.dispatchEvent(
-        new CustomEvent('mid-code-complete', {
-          detail: { value: this.value },
+        new Event('mid-complete', {
           bubbles: true,
           composed: true,
         })
@@ -180,28 +165,39 @@ export class MinidCodeInput2 extends styled(LitElement, styles) {
     this.values = Array(this.length).fill('');
   }
 
-  private input(index: number) {
-    return html`
-      <!-- class="border-neutral rounded border" -->
-      <input
-        data-index=${index}
-        id="mid-code-input-${index}"
-        class="focus:focus-ring-sm border-neutral bg-neutral-surface block size-9 rounded-md border text-center font-mono disabled:pointer-events-none disabled:opacity-50"
-        type="text"
-        placeholder="○"
-        min="0"
-        max="9"
-        size="1"
-        maxlength="1"
-        @keydown=${this.handleKeydown(index)}
-        @input=${this.handleInput(index)}
-        @paste=${this.handlePaste(index)}
-        @focus=${this.handleFocus(index)}
-      />
-    `;
+  @watch('value')
+  handleValueChange() {
+    if (this.#skipValueUpdate) {
+      this.#skipValueUpdate = false;
+      return;
+    }
+
+    const chars = this.value.split('');
+    this.values.forEach((_, index) => {
+      this.values[index] = chars[index];
+    });
   }
 
   override render() {
-    return html` ${this.values.map((_, index) => this.input(index))} `;
+    return html`
+      ${this.values.map((value, index) => {
+        return html`
+          <input
+            data-index=${index}
+            id="mid-code-input-${index}"
+            class="focus:focus-ring-sm placeholder:text-neutral-surface-active border-neutral bg-neutral-surface block size-9 rounded-md border text-center font-mono disabled:pointer-events-none disabled:opacity-50"
+            type="text"
+            placeholder="○"
+            size="1"
+            .value="${live(value || '')}"
+            @keydown=${this.handleKeydown(index)}
+            @input=${this.handleInput(index)}
+            @paste=${this.handlePaste(index)}
+            @focusin=${this.handleFocus(index)}
+            @blur=${this.handleBlur(index)}
+          />
+        `;
+      })}
+    `;
   }
 }
