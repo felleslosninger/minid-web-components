@@ -1,4 +1,4 @@
-import { css, html, LitElement, nothing } from 'lit';
+import { css, html, LitElement } from 'lit';
 import { customElement, property, queryAll, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { styled } from '../mixins/tailwind.mixin';
@@ -44,22 +44,16 @@ export class MinidCodeInput2 extends FormControlMixin(
   disabled = false;
 
   @property({ type: Boolean })
-  readonly = false;
-
-  @property({ type: Boolean })
   autofocus = false;
 
   @property({ type: Boolean })
   hidelabel = false;
 
-  @state()
-  private values = Array<string>();
+  @property()
+  inputMode = 'numeric';
 
-  connectedCallback() {
-    super.connectedCallback();
-    this.values = Array(this.length).fill('');
-    // this.updateInputValues(); // Initialize values if `value` was set before connectedCallback
-  }
+  @state()
+  private internalValues = Array<string>(this.length).fill('');
 
   private handleFocus(index: number) {
     return () => {
@@ -76,20 +70,20 @@ export class MinidCodeInput2 extends FormControlMixin(
 
   private handleKeydown(index: number) {
     return (event: KeyboardEvent) => {
-      this.values[index] = (event.target as HTMLInputElement).value;
-      this.value = this.values.join('');
+      this.internalValues[index] = (event.target as HTMLInputElement).value;
+      this.value = this.internalValues.join('');
       const input = event.target as HTMLInputElement;
 
       if (event.key === 'Backspace') {
         if (input.value === '' && index > 0) {
           // If current input is empty, move to previous and clear it
           this.inputElements[index - 1].focus();
-          this.values[index - 1] = '';
+          this.internalValues[index - 1] = '';
           this.updateValueAndEmit(true);
         } else if (input.value !== '') {
           // If current input has a value, clear it
           input.value = '';
-          this.values[index] = '';
+          this.internalValues[index] = '';
           this.updateValueAndEmit(true);
         }
       } else if (event.key === 'ArrowLeft') {
@@ -103,7 +97,7 @@ export class MinidCodeInput2 extends FormControlMixin(
       } else if (event.key === 'Delete') {
         // Clear current field without moving
         input.value = '';
-        this.values[index] = '';
+        this.internalValues[index] = '';
         this.updateValueAndEmit(true);
       }
     };
@@ -113,7 +107,6 @@ export class MinidCodeInput2 extends FormControlMixin(
     return (event: InputEvent) => {
       const input = event.target as HTMLInputElement;
       let inputValue = input.value;
-      console.log('handle input', inputValue);
 
       // Only allow single digit input
       if (inputValue.length > 1) {
@@ -121,7 +114,7 @@ export class MinidCodeInput2 extends FormControlMixin(
         input.value = inputValue; // Correct the input value
       }
 
-      this.values[index] = inputValue;
+      this.internalValues[index] = inputValue;
       this.updateValueAndEmit(true);
 
       // Auto-focus next input if a digit was entered and it's not the last one
@@ -140,7 +133,7 @@ export class MinidCodeInput2 extends FormControlMixin(
         const pasteChars = pasteData.split('');
         for (let i = 0; i < this.length; i++) {
           if (index + i < this.length && pasteChars[i]) {
-            this.values[index + i] = pasteChars[i];
+            this.internalValues[index + i] = pasteChars[i];
             // Update the actual input element's value directly as well
             // if (this.inputElements[index + i]) {
             //   this.inputElements[index + i].value = pasteChars[i];
@@ -161,7 +154,7 @@ export class MinidCodeInput2 extends FormControlMixin(
 
   private updateValueAndEmit(skipValueUpdate = false) {
     this.#skipValueUpdate = skipValueUpdate;
-    this.value = this.values.join('');
+    this.value = this.internalValues.join('');
     this.dispatchEvent(
       new Event('mid-change', {
         bubbles: true,
@@ -171,7 +164,7 @@ export class MinidCodeInput2 extends FormControlMixin(
 
     if (
       this.value.length === this.length &&
-      this.values.every((digit) => digit !== '')
+      this.internalValues.every((digit) => digit !== '')
     ) {
       this.dispatchEvent(
         new Event('mid-complete', {
@@ -184,7 +177,7 @@ export class MinidCodeInput2 extends FormControlMixin(
 
   @watch('length')
   handleLengthChange() {
-    this.values = Array(this.length).fill('');
+    this.internalValues = Array(this.length).fill('');
   }
 
   @watch('value')
@@ -195,8 +188,8 @@ export class MinidCodeInput2 extends FormControlMixin(
     }
 
     const chars = this.value.split('');
-    this.values.forEach((_, index) => {
-      this.values[index] = chars[index];
+    this.internalValues.forEach((_, index) => {
+      this.internalValues[index] = chars[index];
     });
   }
 
@@ -210,17 +203,10 @@ export class MinidCodeInput2 extends FormControlMixin(
           'sr-only': this.hidelabel || !hasLabel,
         })} mb-2 block items-center gap-1 font-medium"
       >
-        ${this.readonly
-          ? html`<mid-icon
-              class="size-5"
-              library="system"
-              name="padlock-locked-fill"
-            ></mid-icon>`
-          : nothing}
         <slot name="label"> ${this.label} </slot>
       </label>
       <div class="text-heading-md inline-flex gap-2">
-        ${this.values.map((value, index) => {
+        ${this.internalValues.map((value, index) => {
           return html`
             <input
               .value="${live(value || '')}"
@@ -232,6 +218,7 @@ export class MinidCodeInput2 extends FormControlMixin(
               size="1"
               ?autofocus=${!index && this.autofocus}
               ?disabled=${this.disabled}
+              inputmode=${this.inputMode}
               @keydown=${this.handleKeydown(index)}
               @input=${this.handleInput(index)}
               @paste=${this.handlePaste(index)}
