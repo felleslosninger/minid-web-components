@@ -2,6 +2,10 @@
   @apply ring-focus-inner outline-focus-outer ring-[3px] outline-[3px] outline-offset-[3px];
 }
 
+@utility focus-ring-sm {
+  @apply ring-focus-inner outline-focus-outer ring-2 outline-2 outline-offset-2;
+}
+
 @custom-variant slotted (& ::slotted(*));
 
 @theme {

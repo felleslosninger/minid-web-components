@@ -21,9 +21,20 @@ type Story = StoryObj<CodeInputProps>;
 
 export const Main: Story = {
   args: {},
-  render: ({ length: fields }: CodeInputProps) => {
+  render: ({ length }: CodeInputProps) => {
     return html`<mid-code-input-2
-      fields="${ifDefined(fields)}"
-    ></mid-code-input-2>`;
+        class="text-body-xl"
+        length="${ifDefined(length)}"
+      ></mid-code-input-2>
+
+      <script>
+        var codeInput = document.querySelector('mid-code-input-2');
+        codeInput.addEventListener('mid-code-change', () => {
+          console.log(codeInput.value);
+        });
+        codeInput.addEventListener('mid-code-complete', () => {
+          console.log(codeInput.value);
+        });
+      </script> `;
   },
 };
