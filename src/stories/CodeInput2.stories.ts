@@ -6,6 +6,11 @@ import { ifDefined } from 'lit/directives/if-defined.js';
 type CodeInputProps = Partial<{
   length: number;
   value: string;
+  label: string;
+  autofocus: boolean;
+  disabled: boolean;
+  readonly: boolean;
+  hidelabel: boolean;
 }>;
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories
@@ -23,12 +28,29 @@ type Story = StoryObj<CodeInputProps>;
 // More on writing stories with args: https://storybook.js.org/docs/writing-stories/args
 
 export const Main: Story = {
-  args: {},
-  render: ({ length, value }: CodeInputProps) => {
-    return html`<mid-code-input-2
-        class="text-heading-md"
+  args: {
+    autofocus: true,
+    label: 'Engangskode',
+  },
+  render: ({
+    length,
+    value,
+    label,
+    autofocus,
+    disabled,
+    hidelabel,
+    readonly,
+  }: CodeInputProps) => {
+    return html`
+      <mid-code-input-2
+        id="code-input"
         value="${ifDefined(value)}"
+        label="${ifDefined(label)}"
         length="${ifDefined(length)}"
+        ?hidelabel=${hidelabel}
+        ?readonly=${readonly}
+        ?autofocus=${autofocus}
+        ?disabled=${disabled}
       ></mid-code-input-2>
 
       <script>
@@ -39,6 +61,7 @@ export const Main: Story = {
         codeInput.addEventListener('mid-complete', () => {
           console.log(codeInput.value);
         });
-      </script> `;
+      </script>
+    `;
   },
 };

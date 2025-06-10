@@ -1,34 +1,56 @@
-import { css, html, LitElement } from 'lit';
+import { css, html, LitElement, nothing } from 'lit';
 import { customElement, property, queryAll, state } from 'lit/decorators.js';
+import { classMap } from 'lit/directives/class-map.js';
 import { styled } from '../mixins/tailwind.mixin';
 import '@preline/pin-input';
 import { watch } from '../internal/watch';
 import { live } from 'lit/directives/live.js';
+import { FormControlMixin } from '../mixins/form-control.mixin';
+import { HasSlotController } from '../internal/slot';
+import './icon/icon.component.ts';
 
 const styles = [
   css`
     :host {
-      display: flex;
+      display: block;
       gap: calc(var(--spacing) * 2);
     }
   `,
 ];
 
 @customElement('mid-code-input-2')
-export class MinidCodeInput2 extends styled(LitElement, styles) {
+export class MinidCodeInput2 extends FormControlMixin(
+  styled(LitElement, styles)
+) {
+  private readonly hasSlotControler = new HasSlotController(this, 'label');
   #skipValueUpdate = false;
 
   @queryAll('input')
   private inputElements!: NodeListOf<HTMLInputElement>;
 
-  @property({ type: String })
+  @property()
   value = '';
+
+  @property()
+  label = '';
 
   /**
    * Number of input characters or digits
    */
   @property({ type: Number })
   length = 5;
+
+  @property({ type: Boolean })
+  disabled = false;
+
+  @property({ type: Boolean })
+  readonly = false;
+
+  @property({ type: Boolean })
+  autofocus = false;
+
+  @property({ type: Boolean })
+  hidelabel = false;
 
   @state()
   private values = Array<string>();
@@ -179,25 +201,46 @@ export class MinidCodeInput2 extends styled(LitElement, styles) {
   }
 
   override render() {
+    const hasLabelSlot = this.hasSlotControler.test('label');
+    const hasLabel = !!this.label || !!hasLabelSlot;
     return html`
-      ${this.values.map((value, index) => {
-        return html`
-          <input
-            data-index=${index}
-            id="mid-code-input-${index}"
-            class="focus:focus-ring-sm placeholder:text-neutral-surface-active border-neutral bg-neutral-surface block size-9 rounded-md border text-center font-mono disabled:pointer-events-none disabled:opacity-50"
-            type="text"
-            placeholder="○"
-            size="1"
-            .value="${live(value || '')}"
-            @keydown=${this.handleKeydown(index)}
-            @input=${this.handleInput(index)}
-            @paste=${this.handlePaste(index)}
-            @focusin=${this.handleFocus(index)}
-            @blur=${this.handleBlur(index)}
-          />
-        `;
-      })}
+      <label
+        id="mid-code-input-label"
+        class="${classMap({
+          'sr-only': this.hidelabel || !hasLabel,
+        })} mb-2 block items-center gap-1 font-medium"
+      >
+        ${this.readonly
+          ? html`<mid-icon
+              class="size-5"
+              library="system"
+              name="padlock-locked-fill"
+            ></mid-icon>`
+          : nothing}
+        <slot name="label"> ${this.label} </slot>
+      </label>
+      <div class="text-heading-md inline-flex gap-2">
+        ${this.values.map((value, index) => {
+          return html`
+            <input
+              .value="${live(value || '')}"
+              id="mid-code-input-${index}"
+              class="focus:focus-ring-sm disabled:opacity-disabled placeholder:text-neutral-surface-active border-neutral bg-neutral-surface block size-9 rounded-md border text-center font-mono disabled:cursor-not-allowed"
+              type="text"
+              placeholder="○"
+              aria-labelledby="mid-code-input-label"
+              size="1"
+              ?autofocus=${!index && this.autofocus}
+              ?disabled=${this.disabled}
+              @keydown=${this.handleKeydown(index)}
+              @input=${this.handleInput(index)}
+              @paste=${this.handlePaste(index)}
+              @focusin=${this.handleFocus(index)}
+              @blur=${this.handleBlur(index)}
+            />
+          `;
+        })}
+      </div>
     `;
   }
 }
