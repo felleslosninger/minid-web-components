@@ -1,11 +1,11 @@
-import { css, html, LitElement } from 'lit';
+import { css, html, LitElement, PropertyValues } from 'lit';
 import { customElement, property, queryAll, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
-import { styled } from '../mixins/tailwind.mixin';
 import '@preline/pin-input';
-import { watch } from '../internal/watch';
 import { live } from 'lit/directives/live.js';
+import { watch } from '../internal/watch';
 import { FormControlMixin } from '../mixins/form-control.mixin';
+import { styled } from '../mixins/tailwind.mixin';
 import { HasSlotController } from '../internal/slot';
 import './icon/icon.component.ts';
 import {
@@ -13,12 +13,24 @@ import {
   minLengthValidator,
   patternValidator,
   requiredValidator,
-} from 'src/mixins/validators.ts';
+} from '../mixins/validators.ts';
+import { webOtpApiInit } from '../utilities/web-otp-api.ts';
+
+let nextUniqueId = 0;
 
 const styles = [
   css`
     :host {
       display: block;
+    }
+
+    /* Hide increment/decrement buttons on inputs */
+    input[type='number']::-webkit-outer-spin-button,
+    input[type='number']::-webkit-inner-spin-button,
+    input[type='number'] {
+      -webkit-appearance: none;
+      margin: 0;
+      -moz-appearance: textfield !important;
     }
   `,
 ];
@@ -27,20 +39,21 @@ const styles = [
  *
  * @event mid-change - Emitted when a change to the input value is comitted by the user
  * @event mid-input - Emitted when the input element recieves input
- * @event mid-clear - Emitted when the input value is cleared
- * @event mid-focus - Emitted when input element is focused
- * @event mid-blur - Emitted when focus moves away from input element
  * @event {detail: { validity: ValidityState }} mid-invalid-hide - Emitted when the error message should be hidden
  * @event {detail: { validity: ValidityState }} mid-invalid-show - Emitted when the error message should be shown
  *
- * @slot label - The input's label. Alternatively, you can use the `label` attribute.
+ * @slot label - The input's label if you need to use HTML. Alternatively, you can use the `label` attribute.
+ *
+ * @csspart input-container - The wrapper around the input elements. This can be used to adjust font-size.
+ *
  */
 @customElement('mid-code-input-2')
 export class MinidCodeInput2 extends FormControlMixin(
   styled(LitElement, styles)
 ) {
   private readonly hasSlotControler = new HasSlotController(this, 'label');
-  #skipValueUpdate = false;
+  #skipValueVisualUpdate = false;
+  private readonly labelId = `mid-code-input-label-${nextUniqueId++}`;
 
   @queryAll('input')
   private inputElements!: NodeListOf<HTMLInputElement>;
@@ -51,6 +64,21 @@ export class MinidCodeInput2 extends FormControlMixin(
   @property()
   label = '';
 
+  @property()
+  type: 'number' | 'text' = 'text';
+
+  /**
+   * For displaying appropriate virtual keyboard
+   */
+  @property()
+  inputmode: 'numeric' | 'text' = 'text';
+
+  /**
+   * Adjusts the font-size of the code inputs
+   */
+  @property()
+  size: 'sm' | 'md' | 'lg' = 'sm';
+
   /**
    * Number of input characters or digits
    */
@@ -60,6 +88,9 @@ export class MinidCodeInput2 extends FormControlMixin(
   @property({ type: Boolean })
   disabled = false;
 
+  /**
+   * Focuses the first input element on page load
+   */
   @property({ type: Boolean })
   autofocus = false;
 
@@ -68,12 +99,6 @@ export class MinidCodeInput2 extends FormControlMixin(
    */
   @property({ type: Number })
   minlength?: number;
-
-  /**
-   *  The maximum length of input that will be considered valid.
-   */
-  @property({ type: Number })
-  maxlength?: number;
 
   /**
    * Error message to display when the input is invalid, also activates invalid styling
@@ -94,10 +119,10 @@ export class MinidCodeInput2 extends FormControlMixin(
   required = false;
 
   /**
-   *
+   * A regular expression pattern to validate input against.
    */
   @property()
-  inputmode = 'numeric';
+  pattern?: string;
 
   @state()
   private internalValues = Array<string>(this.length).fill('');
@@ -115,10 +140,13 @@ export class MinidCodeInput2 extends FormControlMixin(
     return this.inputElements?.length ? this.inputElements[0] : null;
   }
 
+  protected firstUpdated(_changedProperties: PropertyValues): void {
+    webOtpApiInit(this.renderRoot);
+  }
+
   private handleFocus(index: number) {
     return () => {
       this.inputElements[index].setAttribute('placeholder', '');
-      this.inputElements[index].setSelectionRange(0, 0);
     };
   }
 
@@ -169,7 +197,7 @@ export class MinidCodeInput2 extends FormControlMixin(
           // When using an Input Method Editor (IME), pressing enter will cause the form to submit unexpectedly. One way
           // to check for this is to look at event.isComposing, which will be true when the IME is open.
           if (!event.defaultPrevented && !event.isComposing) {
-            this.form.requestSubmit();
+            this.form?.requestSubmit();
           }
         });
       }
@@ -230,7 +258,7 @@ export class MinidCodeInput2 extends FormControlMixin(
   }
 
   private updateValueAndEmit(skipValueUpdate = false) {
-    this.#skipValueUpdate = skipValueUpdate;
+    this.#skipValueVisualUpdate = skipValueUpdate;
     this.value = this.internalValues.join('');
     this.dispatchEvent(
       new Event('mid-change', {
@@ -252,7 +280,7 @@ export class MinidCodeInput2 extends FormControlMixin(
     }
   }
 
-  private updateInternalValues(value: string) {
+  private valueVisualUpdate(value: string) {
     const chars = value.split('');
     this.internalValues.forEach((_, index) => {
       this.internalValues[index] = chars[index];
@@ -262,20 +290,19 @@ export class MinidCodeInput2 extends FormControlMixin(
   @watch('length')
   handleLengthChange() {
     this.internalValues = Array(this.length).fill('');
-    this.updateInternalValues(this.value);
+    this.valueVisualUpdate(this.value);
   }
 
   @watch('value')
   handleValueChange() {
     this.setValue(this.value);
-    console.log(this.value, this.validity);
 
-    if (this.#skipValueUpdate) {
-      this.#skipValueUpdate = false;
+    if (this.#skipValueVisualUpdate) {
+      this.#skipValueVisualUpdate = false;
       return;
     }
 
-    this.updateInternalValues(this.value);
+    this.valueVisualUpdate(this.value);
   }
 
   override render() {
@@ -283,14 +310,22 @@ export class MinidCodeInput2 extends FormControlMixin(
     const hasLabel = !!this.label || !!hasLabelSlot;
     return html`
       <label
-        id="mid-code-input-label"
+        id="${this.labelId}"
         class="${classMap({
           'sr-only': this.hidelabel || !hasLabel,
+          'opacity-disabled': this.disabled,
         })} mb-2 block items-center gap-1 font-medium"
       >
         <slot name="label"> ${this.label} </slot>
       </label>
-      <div class="text-heading-md inline-flex gap-2">
+      <div
+        part="input-container"
+        class="${classMap({
+          'text-heading-sm': this.size === 'sm',
+          'text-heading-md': this.size === 'md',
+          'text-heading-lg': this.size === 'lg',
+        })} inline-flex gap-2"
+      >
         ${this.internalValues.map((value, index) => {
           return html`
             <input
@@ -298,26 +333,26 @@ export class MinidCodeInput2 extends FormControlMixin(
               id="mid-code-input-${index}"
               class="${classMap({
                 border: !this.invalidmessage,
-                'border-neutral': !this.invalidmessage,
-                'bg-neutral': !this.invalidmessage,
-                'placeholder:text-neutral-surface-active': !this.invalidmessage,
                 'border-2': this.invalidmessage,
+                'border-neutral': !this.invalidmessage,
                 'border-danger': this.invalidmessage,
+                'bg-neutral': !this.invalidmessage,
                 'bg-danger-tinted': this.invalidmessage,
+                'placeholder:text-neutral-surface-active': !this.invalidmessage,
                 'placeholder:text-danger-surface-active': this.invalidmessage,
               })} focus:focus-ring-sm disabled:opacity-disabled size-9 rounded-md text-center font-mono disabled:cursor-not-allowed"
-              type="text"
+              type="${this.type}"
               placeholder="○"
-              aria-labelledby="mid-code-input-label"
+              aria-labelledby="${this.labelId}"
               size="1"
-              ?autofocus=${!index && this.autofocus}
-              ?disabled=${this.disabled}
-              inputmode=${this.inputmode}
-              @keydown=${this.handleKeydown(index)}
-              @input=${this.handleInput(index)}
-              @paste=${this.handlePaste(index)}
-              @focusin=${this.handleFocus(index)}
-              @blur=${this.handleBlur(index)}
+              ?autofocus="${!index && this.autofocus}"
+              ?disabled="${this.disabled}"
+              inputmode="${this.inputmode}"
+              @keydown="${this.handleKeydown(index)}"
+              @input="${this.handleInput(index)}"
+              @paste="${this.handlePaste(index)}"
+              @focus="${this.handleFocus(index)}"
+              @blur="${this.handleBlur(index)}"
             />
           `;
         })}
