@@ -24,14 +24,14 @@ export const minLengthValidator: Validator = {
   attribute: 'minlength',
   key: 'tooShort',
   message(
-    instance: FormControlInterface & { minLength: number },
+    instance: FormControlInterface & { minlength: number },
     value: FormValue
   ): string {
     const _value = (value as string) || '';
-    return `Please use at least ${instance.minLength} characters (you are currently using ${_value.length} characters).`;
+    return `Please use at least ${instance.minlength} characters (you are currently using ${_value.length} characters).`;
   },
   isValid(
-    instance: HTMLElement & { minLength: number },
+    instance: HTMLElement & { minlength: number },
     value: string
   ): boolean {
     /** If no value is provided, this validator should return true */
@@ -39,7 +39,7 @@ export const minLengthValidator: Validator = {
       return true;
     }
 
-    if (!!value && instance.minLength > value.length) {
+    if (!!value && instance.minlength > value.length) {
       return false;
     }
 

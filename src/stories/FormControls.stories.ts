@@ -3,6 +3,7 @@ import { html } from 'lit';
 import '../components/textfield.component.js';
 import '../components/button.component.js';
 import '../components/code-input.component.js';
+import '../components/code-input-2.component.js';
 import '../components/checkbox.component.js';
 import '../components/combobox.component';
 import '../components/menu.component';
@@ -79,18 +80,70 @@ export const Main: Story = {
       </script> `,
 };
 
+// export const CodeInput: Story = {
+//   args: {},
+//   render: () =>
+//     html`<form id="form-2" class="flex w-100 flex-col gap-4">
+//         <mid-code-input
+//           id="code-input-1"
+//           label="Tekst input"
+//           name="otc"
+//           required
+//           hidelabel
+//         >
+//         </mid-code-input>
+//         <div class="flex flex-row-reverse items-end justify-end gap-4">
+//           <pre id="output-2"></pre>
+//           <mid-button type="submit"> Submit </mid-button>
+//         </div>
+//       </form>
+
+//       <script>
+//         var codeInput = document.getElementById('code-input-1');
+//         var form2 = document.getElementById('form-2');
+//         var output2 = document.getElementById('output-2');
+
+//         form2.addEventListener('submit', (event) => {
+//           event.preventDefault();
+//           const formData = new FormData(form2);
+//           const data = Object.fromEntries(formData);
+//           output2.textContent = JSON.stringify({
+//             ...data,
+//           });
+//         });
+
+//         codeInput.addEventListener('input', (event) => {
+//           codeInput.invalidmessage = '';
+//         });
+
+//         codeInput.addEventListener('invalid', (event) => {
+//           event.preventDefault();
+//           const { validity } = event.target;
+//           if (validity.valueMissing) {
+//             codeInput.invalidmessage = 'Feltet må fylles ut';
+//           }
+//           if (validity.tooShort) {
+//             codeInput.invalidmessage = 'Litt kort bare';
+//           }
+//         });
+//       </script> `,
+// };
+
 export const CodeInput: Story = {
   args: {},
   render: () =>
     html`<form id="form-2" class="flex w-100 flex-col gap-4">
-        <mid-code-input
+        <mid-code-input-2
           id="code-input-1"
           label="Tekst input"
           name="otc"
           required
           hidelabel
+          minlength="5"
+          length="5"
+          value="1234"
         >
-        </mid-code-input>
+        </mid-code-input-2>
         <div class="flex flex-row-reverse items-end justify-end gap-4">
           <pre id="output-2"></pre>
           <mid-button type="submit"> Submit </mid-button>
@@ -115,8 +168,9 @@ export const CodeInput: Story = {
           codeInput.invalidmessage = '';
         });
 
-        codeInput.addEventListener('invalid', (event) => {
+        codeInput.addEventListener('mid-invalid-show', (event) => {
           event.preventDefault();
+
           const { validity } = event.target;
           if (validity.valueMissing) {
             codeInput.invalidmessage = 'Feltet må fylles ut';
@@ -181,7 +235,6 @@ export const PhoneInput: Story = {
             class="phone-input w-full"
             country="NO"
             label="Telefonnummer"
-            required
           >
           </mid-phone-input>
           <mid-menu searchable style="--max-height: 14rem">

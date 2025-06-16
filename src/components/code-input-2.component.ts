@@ -8,16 +8,33 @@ import { live } from 'lit/directives/live.js';
 import { FormControlMixin } from '../mixins/form-control.mixin';
 import { HasSlotController } from '../internal/slot';
 import './icon/icon.component.ts';
+import {
+  maxLengthValidator,
+  minLengthValidator,
+  patternValidator,
+  requiredValidator,
+} from 'src/mixins/validators.ts';
 
 const styles = [
   css`
     :host {
       display: block;
-      gap: calc(var(--spacing) * 2);
     }
   `,
 ];
 
+/**
+ *
+ * @event mid-change - Emitted when a change to the input value is comitted by the user
+ * @event mid-input - Emitted when the input element recieves input
+ * @event mid-clear - Emitted when the input value is cleared
+ * @event mid-focus - Emitted when input element is focused
+ * @event mid-blur - Emitted when focus moves away from input element
+ * @event {detail: { validity: ValidityState }} mid-invalid-hide - Emitted when the error message should be hidden
+ * @event {detail: { validity: ValidityState }} mid-invalid-show - Emitted when the error message should be shown
+ *
+ * @slot label - The input's label. Alternatively, you can use the `label` attribute.
+ */
 @customElement('mid-code-input-2')
 export class MinidCodeInput2 extends FormControlMixin(
   styled(LitElement, styles)
@@ -46,14 +63,57 @@ export class MinidCodeInput2 extends FormControlMixin(
   @property({ type: Boolean })
   autofocus = false;
 
+  /**
+   *  The minimum length of input that will be considered valid.
+   */
+  @property({ type: Number })
+  minlength?: number;
+
+  /**
+   *  The maximum length of input that will be considered valid.
+   */
+  @property({ type: Number })
+  maxlength?: number;
+
+  /**
+   * Error message to display when the input is invalid, also activates invalid styling
+   */
+  @property()
+  invalidmessage = '';
+
+  /**
+   * Visually hides `label` (still available for screen readers)
+   */
   @property({ type: Boolean })
   hidelabel = false;
 
+  /**
+   * Makes the input required
+   */
+  @property({ type: Boolean })
+  required = false;
+
+  /**
+   *
+   */
   @property()
-  inputMode = 'numeric';
+  inputmode = 'numeric';
 
   @state()
   private internalValues = Array<string>(this.length).fill('');
+
+  static get formControlValidators() {
+    return [
+      requiredValidator,
+      maxLengthValidator,
+      minLengthValidator,
+      patternValidator,
+    ];
+  }
+
+  get validationTarget() {
+    return this.inputElements?.length ? this.inputElements[0] : null;
+  }
 
   private handleFocus(index: number) {
     return () => {
@@ -73,6 +133,8 @@ export class MinidCodeInput2 extends FormControlMixin(
       this.internalValues[index] = (event.target as HTMLInputElement).value;
       this.value = this.internalValues.join('');
       const input = event.target as HTMLInputElement;
+      const hasModifier =
+        event.metaKey || event.ctrlKey || event.shiftKey || event.altKey;
 
       if (event.key === 'Backspace') {
         if (input.value === '' && index > 0) {
@@ -99,6 +161,17 @@ export class MinidCodeInput2 extends FormControlMixin(
         input.value = '';
         this.internalValues[index] = '';
         this.updateValueAndEmit(true);
+      } else if (event.key === 'Enter' && !hasModifier) {
+        // Pressing enter when focused on an input should submit the form like a native input, but we wait a tick before
+        // submitting to allow users to cancel the keydown event if they need to
+        setTimeout(() => {
+          //
+          // When using an Input Method Editor (IME), pressing enter will cause the form to submit unexpectedly. One way
+          // to check for this is to look at event.isComposing, which will be true when the IME is open.
+          if (!event.defaultPrevented && !event.isComposing) {
+            this.form.requestSubmit();
+          }
+        });
       }
     };
   }
@@ -121,6 +194,10 @@ export class MinidCodeInput2 extends FormControlMixin(
       if (inputValue !== '' && index < this.length - 1) {
         this.inputElements[index + 1].focus();
       }
+
+      this.dispatchEvent(
+        new Event('mid-input', { bubbles: true, composed: true })
+      );
     };
   }
 
@@ -175,22 +252,30 @@ export class MinidCodeInput2 extends FormControlMixin(
     }
   }
 
+  private updateInternalValues(value: string) {
+    const chars = value.split('');
+    this.internalValues.forEach((_, index) => {
+      this.internalValues[index] = chars[index];
+    });
+  }
+
   @watch('length')
   handleLengthChange() {
     this.internalValues = Array(this.length).fill('');
+    this.updateInternalValues(this.value);
   }
 
   @watch('value')
   handleValueChange() {
+    this.setValue(this.value);
+    console.log(this.value, this.validity);
+
     if (this.#skipValueUpdate) {
       this.#skipValueUpdate = false;
       return;
     }
 
-    const chars = this.value.split('');
-    this.internalValues.forEach((_, index) => {
-      this.internalValues[index] = chars[index];
-    });
+    this.updateInternalValues(this.value);
   }
 
   override render() {
@@ -211,14 +296,23 @@ export class MinidCodeInput2 extends FormControlMixin(
             <input
               .value="${live(value || '')}"
               id="mid-code-input-${index}"
-              class="focus:focus-ring-sm disabled:opacity-disabled placeholder:text-neutral-surface-active border-neutral bg-neutral-surface block size-9 rounded-md border text-center font-mono disabled:cursor-not-allowed"
+              class="${classMap({
+                border: !this.invalidmessage,
+                'border-neutral': !this.invalidmessage,
+                'bg-neutral': !this.invalidmessage,
+                'placeholder:text-neutral-surface-active': !this.invalidmessage,
+                'border-2': this.invalidmessage,
+                'border-danger': this.invalidmessage,
+                'bg-danger-tinted': this.invalidmessage,
+                'placeholder:text-danger-surface-active': this.invalidmessage,
+              })} focus:focus-ring-sm disabled:opacity-disabled size-9 rounded-md text-center font-mono disabled:cursor-not-allowed"
               type="text"
               placeholder="○"
               aria-labelledby="mid-code-input-label"
               size="1"
               ?autofocus=${!index && this.autofocus}
               ?disabled=${this.disabled}
-              inputmode=${this.inputMode}
+              inputmode=${this.inputmode}
               @keydown=${this.handleKeydown(index)}
               @input=${this.handleInput(index)}
               @paste=${this.handlePaste(index)}
@@ -227,6 +321,17 @@ export class MinidCodeInput2 extends FormControlMixin(
             />
           `;
         })}
+      </div>
+      <div
+        class="text-danger-subtle mt-2 flex gap-1"
+        aria-live="polite"
+        ?hidden=${!this.invalidmessage}
+      >
+        <mid-icon
+          name="xmark-octagon-fill"
+          class="mt-1 min-h-5 min-w-5"
+        ></mid-icon>
+        ${this.invalidmessage}
       </div>
     `;
   }

@@ -31,6 +31,7 @@ export const Main: Story = {
   args: {
     autofocus: true,
     label: 'Engangskode',
+    value: '1234',
   },
   render: ({
     length,
@@ -51,7 +52,8 @@ export const Main: Story = {
         ?readonly=${readonly}
         ?autofocus=${autofocus}
         ?disabled=${disabled}
-      ></mid-code-input-2>
+      >
+      </mid-code-input-2>
 
       <script>
         var codeInput = document.querySelector('mid-code-input-2');
