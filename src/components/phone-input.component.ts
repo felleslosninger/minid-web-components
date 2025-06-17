@@ -255,8 +255,12 @@ export class MinidPhoneInput extends FormControlMixin(
       this.skipCountryUpdate = true;
     }
 
-    this.value = value;
-    this.nationalnumber = this.removePhonePrefix(value);
+    if (value !== this.value) {
+      this.value = value;
+      this.setValue(this.value.replaceAll(' ', ''));
+      this.nationalnumber = this.removePhonePrefix(value);
+    }
+
     this.dispatchEvent(this.currentEvent);
   };
 
@@ -305,11 +309,6 @@ export class MinidPhoneInput extends FormControlMixin(
     );
     this.input.dispatchEvent(new Event('input', { bubbles: true }));
     this.input.dispatchEvent(new Event('change', { bubbles: true }));
-  }
-
-  @watch('value')
-  handleValueChange() {
-    this.setValue(this.value.replaceAll(' ', ''));
   }
 
   override render() {

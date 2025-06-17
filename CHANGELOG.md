@@ -2,6 +2,10 @@
 
 A changelog for logging changes.
 
+## 0.0.113
+
+- Fixed a bug where phone input would not update it's value when the country changed
+
 ## 0.0.112
 
 - Fix build
