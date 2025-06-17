@@ -1,6 +1,6 @@
 {
   "name": "@felleslosninger/minid-elements",
-  "version": "0.0.108",
+  "version": "0.0.110",
   "description": "MinID Web Components",
   "author": "Digitaliseringsdirektoratet",
   "license": "MIT",
@@ -42,9 +42,9 @@
       "import": "./dist/components/code-input.js",
       "types": "./dist/components/code-input.component.d.ts"
     },
-    "./country-labels-no": {
-      "import": "./dist/utilities/country-labels-no.js",
-      "types": "./dist/components/country-labels-no.d.ts"
+    "./countries": {
+      "import": "./dist/utilities/countries.js",
+      "types": "./dist/utilities/countries.d.ts"
     },
     "./combobox": {
       "import": "./dist/components/combobox.js",

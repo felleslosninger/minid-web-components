@@ -2,6 +2,15 @@
 
 A changelog for logging changes.
 
+## 0.0.110
+
+- Fix static storybook build
+
+## 0.0.109
+
+- English list of countries
+- Country label exports moved to `@felleslosninger/minid-elements/countries`
+
 ## 0.0.108
 
 - Step indicator improved a11y

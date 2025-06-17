@@ -27,3 +27,4 @@ export { MinidTooltip } from './components/tooltip.component.ts';
 export { MinidValidationMessage } from './components/validation-message.component.ts';
 
 export * from './events/events.ts';
+export * from './utilities/countries.ts';

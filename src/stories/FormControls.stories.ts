@@ -9,8 +9,11 @@ import '../components/menu.component';
 import '../components/menu-item.component';
 import '../components/phone-input.component';
 import '../components/icon/icon.component';
-import { CountryCode, getCountries } from 'libphonenumber-js';
-import countryLabelsNO from '../utilities/country-labels-no';
+import {
+  CountryCode,
+  countryLabelsNo,
+  getCountries,
+} from '../utilities/countries';
 
 export interface FormControlProps {}
 
@@ -204,7 +207,7 @@ export const PhoneInput: Story = {
                     library="country"
                     name="${country}"
                   ></mid-icon>
-                  <span class="truncate">${countryLabelsNO[country]}</span>
+                  <span class="truncate">${countryLabelsNo[country]}</span>
                 </mid-menu-item>`;
               })}
           </mid-menu>
