@@ -2,7 +2,6 @@ import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import '../components/textfield.component.js';
 import '../components/button.component.js';
-import '../components/code-input-old.component.js';
 import '../components/code-input.component.js';
 import '../components/checkbox.component.js';
 import '../components/combobox.component';
@@ -85,7 +84,7 @@ export const CodeInput: Story = {
   args: {},
   render: () =>
     html`<form id="form-2" class="flex w-100 flex-col gap-4">
-        <mid-code-input-2
+        <mid-code-input
           id="code-input-1"
           label="Engangskode"
           name="otc"
@@ -94,7 +93,7 @@ export const CodeInput: Story = {
           length="5"
           pattern="^[0-9]+$"
         >
-        </mid-code-input-2>
+        </mid-code-input>
         <div class="flex flex-row-reverse items-end justify-end gap-4">
           <pre id="output-2"></pre>
           <mid-button type="submit"> Submit </mid-button>

@@ -63,7 +63,7 @@ export class MinidCodeInput extends FormControlMixin(
   @queryAll('input')
   private inputElements!: NodeListOf<HTMLInputElement>;
 
-  @property()
+  @property({ reflect: true })
   value = '';
 
   @property()
