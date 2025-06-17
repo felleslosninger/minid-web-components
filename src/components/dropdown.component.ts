@@ -447,7 +447,7 @@ export class MinidDropdown extends styled(LitElement, styles) {
         >
         </slot>
         <div
-          class="bg-accent min-w-68"
+          class="bg-accent"
           aria-hidden=${this.open ? 'false' : 'true'}
           aria-labelledby="${this.popupId}"
         >

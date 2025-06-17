@@ -2,6 +2,7 @@ import './styles/global.css';
 export { MinidAlert } from './components/alert.component.ts';
 export { MinidButton } from './components/button.component.ts';
 export { MinidCheckbox } from './components/checkbox.component.ts';
+export { MinidCodeInputOld } from './components/code-input-old.component.ts';
 export { MinidCodeInput } from './components/code-input.component.ts';
 export { MinidCombobox } from './components/combobox.component.ts';
 export { MinidCountdown } from './components/countdown.component.ts';

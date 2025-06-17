@@ -181,6 +181,7 @@
     "@types/webappsec-credential-management": "^0.6.9",
     "@typescript-eslint/eslint-plugin": "^8.31.0",
     "@typescript-eslint/parser": "^8.31.0",
+    "@u-elements/u-datalist": "^1.0.5",
     "@vitejs/plugin-basic-ssl": "^2.0.0",
     "@vitejs/plugin-legacy": "^6.1.0",
     "composed-offset-position": "^0.0.6",

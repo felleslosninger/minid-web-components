@@ -194,10 +194,6 @@ export class MinidTextfield extends FormControlMixin(
     ];
   }
 
-  get validationTarget() {
-    return this.input;
-  }
-
   constructor() {
     super();
     nextUniqueId++;

@@ -56,25 +56,26 @@ export const Main: Story = {
           event.preventDefault();
           const formData = new FormData(form1);
           const data = Object.fromEntries(formData);
-          output1.textContent = JSON.stringify({
-            ...data,
-          });
+          output1.textContent = JSON.stringify(data);
         });
 
         form1.addEventListener('reset', () => {
           output1.textContent = '';
         });
 
-        textfield.addEventListener('mid-invalid-show', (event) => {
-          if (event.detail.validity.patternMismatch) {
-            textfield.invalidmessage = 'Verdien har ugyldig format';
-          } else if (event.detail.validity.valueMissing) {
-            textfield.invalidmessage = 'Feltet må fylles ut';
-          } else {
-            textfield.invalidmessage = 'Ugyldig verdi';
+        textfield.addEventListener(
+          'mid-invalid-show',
+          ({ detail: { validity } }) => {
+            if (validity.patternMismatch) {
+              textfield.invalidmessage = 'Verdien har ugyldig format';
+            } else if (validity.valueMissing) {
+              textfield.invalidmessage = 'Feltet må fylles ut';
+            } else {
+              textfield.invalidmessage = 'Ugyldig verdi';
+            }
+            output1.textContent = '';
           }
-          output1.textContent = '';
-        });
+        );
 
         textfield.addEventListener('mid-invalid-hide', (event) => {
           textfield.invalidmessage = '';
@@ -88,10 +89,12 @@ export const CodeInput: Story = {
     html`<form id="form-2" class="flex w-100 flex-col gap-4">
         <mid-code-input
           id="code-input-1"
-          label="Tekst input"
+          label="Engangskode"
           name="otc"
           required
-          hidelabel
+          minlength="5"
+          length="5"
+          pattern="^[0-9]+$"
         >
         </mid-code-input>
         <div class="flex flex-row-reverse items-end justify-end gap-4">
@@ -109,25 +112,28 @@ export const CodeInput: Story = {
           event.preventDefault();
           const formData = new FormData(form2);
           const data = Object.fromEntries(formData);
-          output2.textContent = JSON.stringify({
-            ...data,
-          });
+          output2.textContent = JSON.stringify(data);
         });
 
-        codeInput.addEventListener('input', (event) => {
+        codeInput.addEventListener('mid-invalid-hide', (event) => {
           codeInput.invalidmessage = '';
         });
 
-        codeInput.addEventListener('invalid', (event) => {
-          event.preventDefault();
-          const { validity } = event.target;
-          if (validity.valueMissing) {
-            codeInput.invalidmessage = 'Feltet må fylles ut';
+        codeInput.addEventListener(
+          'mid-invalid-show',
+          ({ detail: { validity } }) => {
+            event.preventDefault();
+            output2.textContent = '';
+
+            if (validity.valueMissing) {
+              codeInput.invalidmessage = 'Feltet må fylles ut';
+            } else if (validity.tooShort) {
+              codeInput.invalidmessage = 'Litt kort bare';
+            } else if (validity.patternMismatch) {
+              codeInput.invalidmessage = 'Kan bare inneholde tall';
+            }
           }
-          if (validity.tooShort) {
-            codeInput.invalidmessage = 'Litt kort bare';
-          }
-        });
+        );
       </script> `,
 };
 
@@ -153,18 +159,16 @@ export const CheckboxInput: Story = {
           event.preventDefault();
           const formData = new FormData(form3);
           const data = Object.fromEntries(formData);
-          output3.textContent = JSON.stringify({
-            ...data,
-          });
+          output3.textContent = JSON.stringify(data);
         });
 
-        checkbox1.addEventListener('input', (event) => {
+        checkbox1.addEventListener('mid-invalid-hide', (event) => {
           checkbox1.invalid = false;
         });
 
         checkbox1.addEventListener('mid-invalid-show', (event) => {
           const { validity } = event.target;
-
+          this.output3.textContent = '';
           if (validity.valueMissing) {
             checkbox1.invalid = true;
           }
@@ -184,7 +188,6 @@ export const PhoneInput: Story = {
             class="phone-input w-full"
             country="NO"
             label="Telefonnummer"
-            required
           >
           </mid-phone-input>
           <mid-menu searchable style="--max-height: 14rem">
@@ -229,24 +232,25 @@ export const PhoneInput: Story = {
 
           const formData = new FormData(form4);
           const data = Object.fromEntries(formData);
-          output4.textContent = JSON.stringify({
-            ...data,
-          });
+          output4.textContent = JSON.stringify(data);
         });
 
-        phoneInput1.addEventListener('mid-invalid-show', (event) => {
-          if (event.detail.validity.patternMismatch) {
-            phoneInput1.invalid = true;
-            invalidMessage1.textContent = 'Verdien har ugyldig format';
-          } else if (event.detail.validity.valueMissing) {
-            phoneInput1.invalid = true;
-            invalidMessage1.textContent = 'Feltet må fylles ut';
-          } else {
-            phoneInput1.invalid = true;
-            invalidMessage1.textContent = 'Ugyldig verdi';
+        phoneInput1.addEventListener(
+          'mid-invalid-show',
+          ({ detail: { validity } }) => {
+            if (validity.patternMismatch) {
+              phoneInput1.invalid = true;
+              invalidMessage1.textContent = 'Verdien har ugyldig format';
+            } else if (validity.valueMissing) {
+              phoneInput1.invalid = true;
+              invalidMessage1.textContent = 'Feltet må fylles ut';
+            } else {
+              phoneInput1.invalid = true;
+              invalidMessage1.textContent = 'Ugyldig verdi';
+            }
+            output1.textContent = '';
           }
-          output1.textContent = '';
-        });
+        );
 
         phoneInput1.addEventListener('mid-invalid-hide', (event) => {
           phoneInput1.invalid = false;

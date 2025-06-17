@@ -90,30 +90,6 @@ export class MinidCheckbox extends FormControlMixin(styled(LitElement)) {
     this.input.blur();
   }
 
-  /** Gets the validity state object */
-
-  /**
-   *  Checks for validity but does not show a validation message. Returns `true` when valid and `false` when invalid.
-   */
-  checkValidity() {
-    return this.input.checkValidity();
-  }
-
-  /**
-   *  Checks for validity and shows the browser's validation message if the control is invalid.
-   */
-  reportValidity() {
-    return this.input.reportValidity();
-  }
-
-  /**
-   * Sets a custom validation message. The value provided will be shown to the user when the form is submitted. To clear
-   * the custom validation message, call this method with an empty string.
-   */
-  setCustomValidity(message: string) {
-    this.input.setCustomValidity(message);
-  }
-
   @watch(['checked', 'value'])
   handleStateChange() {
     // this.input.indeterminate = this.indeterminate; // force a sync update
@@ -148,7 +124,7 @@ export class MinidCheckbox extends FormControlMixin(styled(LitElement)) {
             ?disabled=${this.disabled}
             ?checked=${this.checked}
             ?readonly=${this.readonly}
-            .required=${this.required}
+            ?required=${this.required}
             @click=${this.handleClick}
           />
           ${this.checked

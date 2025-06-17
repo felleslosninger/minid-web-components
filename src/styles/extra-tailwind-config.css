@@ -2,6 +2,10 @@
   @apply ring-focus-inner outline-focus-outer ring-[3px] outline-[3px] outline-offset-[3px];
 }
 
+@utility focus-ring-sm {
+  @apply ring-focus-inner outline-focus-outer ring-2 outline-2 outline-offset-2;
+}
+
 @custom-variant slotted (& ::slotted(*));
 
 @theme {
@@ -32,5 +36,31 @@
     to {
       opacity: 0;
     }
+  }
+}
+
+@layer components {
+  .mid-input {
+    @apply focus-within:focus-ring border-neutral bg-neutral-surface h-12 items-center rounded-md border px-3;
+  }
+
+  .mid-menu {
+    @apply border-neutral-subtle rounded-md border shadow-md;
+  }
+
+  .mid-menu-item {
+    @apply bg-neutral block w-full rounded border-l-[5px] border-transparent px-3 py-2 font-medium;
+  }
+
+  .mid-menu-item:hover {
+    @apply border-accent-base bg-accent-tinted;
+  }
+
+  .mid-menu-item:focus {
+    @apply border-accent-base bg-accent-tinted outline-0;
+  }
+
+  .mid-menu-item:active {
+    @apply border-accent-base bg-accent-tinted;
   }
 }
