@@ -2,6 +2,10 @@
 
 A changelog for logging changes.
 
+## 0.0.112
+
+- Fix build
+
 ## 0.0.111
 
 - Updated design and functionality of the code input component

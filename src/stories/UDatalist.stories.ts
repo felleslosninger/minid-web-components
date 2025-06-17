@@ -7,10 +7,11 @@ import '../components/menu.component';
 import '../components/menu-item.component';
 import '../components/textfield.component';
 import '@u-elements/u-datalist';
-import countryLabelsNO, {
+import {
   type CountryCode,
+  countryLabelsNo,
   getCountries,
-} from '../utilities/country-labels-no';
+} from '../utilities/countries';
 
 type ComboboxProps = Partial<{}>;
 
@@ -55,7 +56,7 @@ export const Main: Story = {
                 library="country"
                 name="${country}"
               ></mid-icon>
-              <span>${countryLabelsNO[country]}</span>
+              <span>${countryLabelsNo[country]}</span>
             </u-option>`;
           })}
       </u-datalist>
