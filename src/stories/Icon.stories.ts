@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/web-components';
+import type { Meta, StoryObj } from '@storybook/web-components-vite';
 import { MidIconName } from '../types/icon-name';
 import { html } from 'lit';
 import '../components/icon/icon.component';
