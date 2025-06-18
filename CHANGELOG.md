@@ -2,6 +2,11 @@
 
 A changelog for logging changes.
 
+## 0.0.114
+
+- Upgraded to Storybook 9
+- Added tags to show development stage of components
+
 ## 0.0.113
 
 - Fixed a bug where phone input would not update it's value when the country changed

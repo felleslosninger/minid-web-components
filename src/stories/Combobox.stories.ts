@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/web-components';
+import type { Meta, StoryObj } from '@storybook/web-components-vite';
 import { html } from 'lit';
 
 import '../components/combobox.component';
@@ -12,7 +12,8 @@ type ComboboxProps = Partial<{
 }>;
 
 const meta: Meta = {
-  title: 'Komponenter/Under arbeid/Combobox',
+  title: 'Komponenter/Combobox',
+  tags: ['experimental'],
   component: 'mid-combobox',
   argTypes: {
     size: {

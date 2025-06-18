@@ -4,8 +4,8 @@ const config: StorybookConfig = {
   stories: ['../src/**/*.mdx', '../src/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
   addons: [
     '@storybook/addon-links',
-    '@storybook/addon-essentials',
     '@storybook/addon-docs',
+    'storybook-addon-tag-badges',
   ],
   framework: '@storybook/web-components-vite',
   core: {
@@ -19,7 +19,7 @@ const config: StorybookConfig = {
 
     return mergeConfig(config, {
       optimizeDeps: {
-        include: ['storybook-dark-mode', '@storybook/web-components'],
+        include: ['storybook-dark-mode', '@storybook/web-components-vite'],
       },
     });
   },

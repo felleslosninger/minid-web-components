@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/web-components';
+import type { Meta, StoryObj } from '@storybook/web-components-vite';
 import { html } from 'lit';
 import '../components/code-input-old.component';
 import '../components/button.component';
@@ -17,7 +17,8 @@ type CodeInputProps = Partial<{
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories
 const meta = {
-  title: 'Komponenter/Under arbeid/Code Input Old',
+  title: 'Komponenter/Code Input Old',
+  tags: ['deprecated'],
   component: 'mid-code-input-old',
   argTypes: {},
 } satisfies Meta<CodeInputProps>;

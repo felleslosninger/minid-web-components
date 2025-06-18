@@ -1,11 +1,10 @@
-import type { Meta, StoryObj } from '@storybook/web-components';
+import type { Meta, StoryObj } from '@storybook/web-components-vite';
 import { html } from 'lit';
 import '../components/countdown.component';
 
 const meta: Meta = {
-  title: 'Komponenter/Under arbeid/Countdown',
+  title: 'Komponenter/Countdown',
   component: 'mid-countdown',
-
   argTypes: {
     expiry: { control: 'date' },
     size: { control: 'number' },

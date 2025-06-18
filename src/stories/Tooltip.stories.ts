@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/web-components';
+import type { Meta, StoryObj } from '@storybook/web-components-vite';
 import { html, nothing, Part } from 'lit';
 import '../components/tooltip.component';
 import '../components/button.component';

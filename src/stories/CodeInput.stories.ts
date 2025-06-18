@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/web-components';
+import type { Meta, StoryObj } from '@storybook/web-components-vite';
 import { html, nothing, Part } from 'lit';
 import '../components/code-input.component';
 import { ifDefined } from 'lit/directives/if-defined.js';
@@ -28,8 +28,9 @@ type CodeInputProps = Partial<{
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories
 const meta = {
-  title: 'Komponenter/Under arbeid/Code Input',
+  title: 'Komponenter/Code Input',
   component: 'mid-code-input',
+  tags: ['beta'],
   argTypes: {
     value: { type: 'string' },
     pattern: { type: 'string' },

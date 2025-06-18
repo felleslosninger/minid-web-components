@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/web-components';
+import type { Meta, StoryObj } from '@storybook/web-components-vite';
 import { html } from 'lit';
 
 import '../components/combobox.component';
@@ -16,7 +16,8 @@ import {
 type ComboboxProps = Partial<{}>;
 
 const meta: Meta = {
-  title: 'Komponenter/Under arbeid/U-Datalist',
+  title: 'Komponenter/U-Datalist',
+  tags: ['experimental'],
   argTypes: {},
 };
 

@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/web-components';
+import type { Meta, StoryObj } from '@storybook/web-components-vite';
 import { html, Part } from 'lit';
 import '../components/radio-group.component';
 import '../components/radio.component';
@@ -23,7 +23,8 @@ export type RadioProps = Partial<{
 }>;
 
 const meta: Meta<RadioProps> = {
-  title: 'Komponenter/Under arbeid/Radio',
+  title: 'Komponenter/Radio',
+  tags: ['experimental'],
   component: 'mid-radio-group',
   subcomponents: { MidRadio: 'mid-radio' },
   argTypes: {
