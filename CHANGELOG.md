@@ -2,6 +2,10 @@
 
 A changelog for logging changes.
 
+## 0.0.115
+
+- Fixed a bug where value was not initialized in phone input
+
 ## 0.0.114
 
 - Upgraded to Storybook 9

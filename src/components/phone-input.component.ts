@@ -148,8 +148,9 @@ export class MinidPhoneInput extends FormControlMixin(
       : '+';
 
     this.value = formatIncompletePhoneNumber(this.value);
-    this.value ??= this.countrycode;
+    this.value ||= this.countrycode;
     this.nationalnumber = this.removePhonePrefix(this.value);
+    this.setValue(this.value.replaceAll(' ', ''));
 
     setTimeout(() => {
       this.input.value = `${this.countrycode} ${this.nationalnumber}`;
