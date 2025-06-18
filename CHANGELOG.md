@@ -2,6 +2,10 @@
 
 A changelog for logging changes.
 
+## 0.0.116
+
+- Instead of tailwind styles `<link>` element requiring `id=tailwind-styles` it now requires `data-mid-tailwind` attribute instead `<link data-mid-tailwind href="/tailwind.css" rel="stylesheet" />`
+
 ## 0.0.115
 
 - Fixed a bug where value was not initialized in phone input

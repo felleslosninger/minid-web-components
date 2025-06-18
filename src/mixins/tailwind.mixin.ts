@@ -13,8 +13,8 @@ export const styled = <T extends Constructor<LitElement>>(
 
     constructor(..._: any[]) {
       super();
-      this.tailwindLinkElement = document.getElementById(
-        'tailwind-styles'
+      this.tailwindLinkElement = document.querySelector(
+        '[data-mid-tailwind]'
       ) as HTMLStyleElement;
     }
 
