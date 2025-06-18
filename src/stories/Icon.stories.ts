@@ -19,7 +19,7 @@ type IconProps = Partial<{
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories
 const meta = {
-  title: 'Komponenter/Under arbeid/Icon',
+  title: 'Komponenter/Icon',
   component: 'mid-icon',
   argTypes: {
     name: {

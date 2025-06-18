@@ -17,7 +17,8 @@ type CodeInputProps = Partial<{
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories
 const meta = {
-  title: 'Komponenter/Under arbeid/Code Input Old',
+  title: 'Komponenter/Code Input Old',
+  tags: ['deprecated'],
   component: 'mid-code-input-old',
   argTypes: {},
 } satisfies Meta<CodeInputProps>;

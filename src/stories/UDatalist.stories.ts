@@ -16,7 +16,8 @@ import {
 type ComboboxProps = Partial<{}>;
 
 const meta: Meta = {
-  title: 'Komponenter/Under arbeid/U-Datalist',
+  title: 'Komponenter/U-Datalist',
+  tags: ['experimental'],
   argTypes: {},
 };
 

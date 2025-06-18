@@ -7,9 +7,9 @@ import { ifDefined } from 'lit/directives/if-defined.js';
 import { RadioProps } from './Radio.stories';
 
 const meta: Meta<RadioProps> = {
-  title: 'Komponenter/Under arbeid/Radio Button',
+  title: 'Komponenter/Radio Button',
+  tags: ['experimental'],
   component: 'mid-radio-group',
-
   subcomponents: { MidRadioButton: 'mid-radio-button' },
   argTypes: {
     name: { type: 'string' },

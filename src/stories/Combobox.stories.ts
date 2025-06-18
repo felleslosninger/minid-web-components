@@ -12,7 +12,8 @@ type ComboboxProps = Partial<{
 }>;
 
 const meta: Meta = {
-  title: 'Komponenter/Under arbeid/Combobox',
+  title: 'Komponenter/Combobox',
+  tags: ['experimental'],
   component: 'mid-combobox',
   argTypes: {
     size: {
