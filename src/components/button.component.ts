@@ -4,8 +4,8 @@ import { classMap } from 'lit/directives/class-map.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { html, literal } from 'lit/static-html.js';
 import { styled } from '../mixins/tailwind.mixin.ts';
-import { FormControllerMixin } from '../mixins/form-controller.mixin.ts';
 import './spinner.component.ts';
+import { FormControlMixin } from 'src/mixins/form-control.mixin.ts';
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -25,9 +25,7 @@ const styles = [
  * A regular old button
  */
 @customElement('mid-button')
-export class MinidButton extends FormControllerMixin(
-  styled(LitElement, styles)
-) {
+export class MinidButton extends FormControlMixin(styled(LitElement, styles)) {
   @query('.button')
   button!: HTMLButtonElement | HTMLLinkElement;
 
@@ -84,17 +82,14 @@ export class MinidButton extends FormControllerMixin(
 
   handleClick() {
     if (this.type === 'submit') {
-      this.value && this.setFormValue(this.value);
-      this.internals.form!.requestSubmit();
+      this.value && this.setValue(this.value);
+      this.internals.form?.requestSubmit();
     } else if (this.type === 'reset') {
-      this.internals.form!.reset();
+      this.internals.form?.reset();
     }
   }
 
-  /**
-   * @ignore
-   */
-  get isLink() {
+  private get isLink() {
     return !!this.href;
   }
 
@@ -148,7 +143,7 @@ export class MinidButton extends FormControllerMixin(
         relative: spinnerOnly,
         'gap-0': spinnerOnly,
         'opacity-disabled': this.disabled && !this.loading,
-      })}  grow focus-visible:focus-ring leading-sm flex h-fit min-h-12 min-w-12 items-center justify-center gap-2 rounded border font-medium"
+      })} grow focus-visible:focus-ring leading-sm flex h-fit min-h-12 min-w-12 items-center justify-center gap-2 rounded border font-medium"
       type=${this.type}
       aria-busy=${this.loading}
       ?disabled=${this.disabled || this.loading}
@@ -158,10 +153,10 @@ export class MinidButton extends FormControllerMixin(
       <slot
         class="${classMap({
           invisible: spinnerOnly,
-          hidden: this.loading && this.loadingtext,
         })}"
+        ?hidden=${this.loading && !!this.loadingtext}
       ></slot>
-      <span class="${classMap({ hidden: !this.loading || !this.loadingtext })}">
+      <span ?hidden=${!this.loading || !this.loadingtext}>
         ${this.loadingtext}
       </span>
       ${

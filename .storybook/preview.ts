@@ -32,14 +32,22 @@ const preview: Preview = {
         transform: (source) => source.replace(/=\"\"/g, ''), // Remove ="" on boolean attributes
       },
     },
+    a11y: {
+      // Optional selector to inspect
+      context: 'body',
+      /*
+       * Axe's options parameter
+       * See https://github.com/dequelabs/axe-core/blob/develop/doc/API.md#options-parameter
+       * to learn more about the available options.
+       */
+      options: {},
+    },
   },
   tags: ['autodocs'],
 };
 
-// 👇 Extend TypeScript types for safety
 export type ShadowQueries = ReturnType<typeof withinShadow>;
 
-// Since Storybook@8.6
 declare module 'storybook/internal/csf' {
   interface Canvas extends ShadowQueries {}
 }

@@ -3,7 +3,7 @@ import { html } from 'lit';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import '../components/button.component';
 import { MinidButton } from '../components/button.component';
-import { expect, fn, waitFor } from 'storybook/test';
+import { expect, fn } from 'storybook/test';
 
 type ButtonProps = Partial<{
   variant: MinidButton['variant'];
@@ -11,6 +11,7 @@ type ButtonProps = Partial<{
   type: MinidButton['type'];
   label: string;
   href: string;
+  value: string;
   disabled: boolean;
   iconstyled: boolean;
   loading: boolean;
@@ -55,7 +56,7 @@ type Story = StoryObj<ButtonProps>;
 // More on writing stories with args: https://storybook.js.org/docs/writing-stories/args
 
 const render = ({
-  handleClick: onClick,
+  handleClick,
   variant,
   size,
   label,
@@ -65,14 +66,16 @@ const render = ({
   iconstyled,
   loading,
   loadingtext,
+  value,
 }: ButtonProps) => {
   return html`
     <mid-button
-      @click=${onClick}
+      @click=${handleClick}
       type="${ifDefined(type)}"
       size=${ifDefined(size)}
       variant=${ifDefined(variant)}
       href=${ifDefined(href)}
+      value=${ifDefined(value)}
       loadingtext=${ifDefined(loadingtext)}
       ?disabled=${disabled}
       ?iconstyled=${iconstyled}
@@ -87,7 +90,9 @@ export const Main: Story = {
   render,
   play: async ({ canvas, args, userEvent }) => {
     const button = await canvas.findByShadowRole('button');
+    const spinner = button.querySelector('mid-spinner');
 
+    await expect(spinner).not.toBeInTheDocument();
     await userEvent.click(button);
     await expect(args.handleClick).toHaveBeenCalledOnce();
   },
@@ -132,7 +137,7 @@ export const ButtonLink: Story = {
     label: 'Link knapp',
   },
   render,
-  play: async ({ canvas, args, userEvent }) => {
+  play: async ({ canvas, args }) => {
     const link = await canvas.findByShadowRole('link', { name: args.label });
     await expect(link).toHaveAttribute('href', args.href!);
   },
