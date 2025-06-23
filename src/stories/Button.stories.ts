@@ -3,6 +3,7 @@ import { html } from 'lit';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import '../components/button.component';
 import { MinidButton } from '../components/button.component';
+import { expect, fn, waitFor } from 'storybook/test';
 
 type ButtonProps = Partial<{
   variant: MinidButton['variant'];
@@ -15,6 +16,7 @@ type ButtonProps = Partial<{
   loading: boolean;
   loadingtext: string;
   button: HTMLElement;
+  handleClick: () => void;
 }>;
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories
@@ -39,6 +41,12 @@ const meta = {
     },
     button: { control: { disable: true } },
   },
+  args: {
+    label: 'Knapp',
+    handleClick: fn(() => {
+      console.log('Button clicked');
+    }),
+  },
 } satisfies Meta<ButtonProps>;
 
 export default meta;
@@ -46,34 +54,86 @@ type Story = StoryObj<ButtonProps>;
 
 // More on writing stories with args: https://storybook.js.org/docs/writing-stories/args
 
+const render = ({
+  handleClick: onClick,
+  variant,
+  size,
+  label,
+  type,
+  href,
+  disabled,
+  iconstyled,
+  loading,
+  loadingtext,
+}: ButtonProps) => {
+  return html`
+    <mid-button
+      @click=${onClick}
+      type="${ifDefined(type)}"
+      size=${ifDefined(size)}
+      variant=${ifDefined(variant)}
+      href=${ifDefined(href)}
+      loadingtext=${ifDefined(loadingtext)}
+      ?disabled=${disabled}
+      ?iconstyled=${iconstyled}
+      ?loading=${loading}
+    >
+      ${label}
+    </mid-button>
+  `;
+};
+
 export const Main: Story = {
-  args: {
-    label: 'Knapp',
+  render,
+  play: async ({ canvas, args, userEvent }) => {
+    const button = await canvas.findByShadowRole('button');
+
+    await userEvent.click(button);
+    await expect(args.handleClick).toHaveBeenCalledOnce();
   },
-  render: ({
-    variant,
-    size,
-    label,
-    type,
-    href,
-    disabled,
-    iconstyled,
-    loading,
-    loadingtext,
-  }: ButtonProps) => {
-    return html`
-      <mid-button
-        @click=${console.log}
-        type="${ifDefined(type)}"
-        size=${ifDefined(size)}
-        variant=${ifDefined(variant)}
-        href=${ifDefined(href)}
-        loadingtext=${ifDefined(loadingtext)}
-        ?disabled=${disabled}
-        ?iconstyled=${iconstyled}
-        ?loading=${loading}
-        >${label}
-      </mid-button>
-    `;
+};
+
+export const Disabled: Story = {
+  args: {
+    disabled: true,
+  },
+  render,
+  play: async ({ canvas, args, userEvent }) => {
+    const button = canvas.getByShadowRole('button');
+
+    await expect(button).toBeDisabled();
+    await userEvent.click(button);
+    await expect(args.handleClick).not.toHaveBeenCalled();
+  },
+};
+
+export const Loading: Story = {
+  args: {
+    loading: true,
+    loadingtext: 'Laster...',
+  },
+  render,
+  play: async ({ canvas, args, userEvent }) => {
+    const button = await canvas.findByShadowRole('button', {
+      name: args.loadingtext!,
+    });
+    const spinner = button.querySelector('mid-spinner');
+    await expect(spinner).toBeInTheDocument();
+    await expect(button).toHaveTextContent(args.loadingtext!);
+    await expect(button).toBeDisabled();
+    await userEvent.click(button);
+    await expect(args.handleClick).not.toHaveBeenCalled();
+  },
+};
+
+export const ButtonLink: Story = {
+  args: {
+    href: 'https://example.com',
+    label: 'Link knapp',
+  },
+  render,
+  play: async ({ canvas, args, userEvent }) => {
+    const link = await canvas.findByShadowRole('link', { name: args.label });
+    await expect(link).toHaveAttribute('href', args.href!);
   },
 };

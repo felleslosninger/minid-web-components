@@ -151,7 +151,7 @@ export class MinidButton extends FormControllerMixin(
       })}  grow focus-visible:focus-ring leading-sm flex h-fit min-h-12 min-w-12 items-center justify-center gap-2 rounded border font-medium"
       type=${this.type}
       aria-busy=${this.loading}
-      ?disabled=${this.disabled}
+      ?disabled=${this.disabled || this.loading}
       href="${ifDefined(this.href)}"
       @click="${this.handleClick}"
     >

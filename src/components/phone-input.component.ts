@@ -207,7 +207,7 @@ export class MinidPhoneInput extends FormControlMixin(
     }
 
     onKeyDown(
-      event,
+      event as any,
       this.input,
       this.parseTemplate,
       this.formatTemplate,
@@ -234,7 +234,7 @@ export class MinidPhoneInput extends FormControlMixin(
     this.currentTemplate = this.formatter.getTemplate();
 
     onChange(
-      event,
+      event as any,
       this.input,
       this.parseTemplate,
       this.formatTemplate,

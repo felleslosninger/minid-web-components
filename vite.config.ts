@@ -49,8 +49,7 @@ const generateEntries = () => {
   return entries;
 };
 
-// eslint-disable-next-line no-empty-pattern
-export default defineConfig(({}) => {
+export default defineConfig(() => {
   return {
     publicDir: 'src/public',
     build: {
