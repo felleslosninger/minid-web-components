@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/web-components-vite';
 import { html } from 'lit';
-
 import '../components/combobox.component';
 import '../components/dropdown.component';
 import '../components/menu.component';

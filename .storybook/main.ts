@@ -6,13 +6,15 @@ const config: StorybookConfig = {
     '@storybook/addon-links',
     '@storybook/addon-docs',
     'storybook-addon-tag-badges',
+    '@storybook/addon-vitest',
+    '@storybook/addon-a11y'
   ],
   framework: '@storybook/web-components-vite',
   core: {
     builder: '@storybook/builder-vite',
     disableTelemetry: true,
   },
-  staticDirs: ['../.storybook/public'],
+  staticDirs: ['./public'],
   async viteFinal(config) {
     // Merge custom configuration into the default config
     const { mergeConfig } = await import('vite');
