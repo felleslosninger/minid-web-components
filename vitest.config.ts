@@ -39,6 +39,23 @@ export default mergeConfig(
           },
         },
       ],
+      coverage: {
+        provider: 'istanbul', // or 'istanbul'
+        reporter: ['text', 'html'],
+        // Ensure these paths are correct and don't include generated/external files
+        include: ['src/**/*.{ts,js,jsx,tsx}'], // Only include your source files
+        exclude: [
+          'src/**/*.stories.{ts,js,jsx,tsx}', // Exclude story files
+          'src/**/*.test.{ts,js,jsx,tsx}', // Exclude test files
+          'node_modules/',
+          'dist/',
+          '.storybook/',
+          'vite.config.ts',
+          'vitest.config.ts',
+          'coverage/',
+        ],
+        all: true, // Set to true if you want to include files not hit by tests
+      },
     },
   })
 );

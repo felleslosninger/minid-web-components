@@ -184,6 +184,7 @@
     "@vitejs/plugin-basic-ssl": "^2.0.0",
     "@vitejs/plugin-legacy": "^6.1.0",
     "@vitest/browser": "^3.2.4",
+    "@vitest/coverage-istanbul": "^3.2.4",
     "@vitest/coverage-v8": "^3.2.4",
     "axe-playwright": "^2.1.0",
     "composed-offset-position": "^0.0.6",

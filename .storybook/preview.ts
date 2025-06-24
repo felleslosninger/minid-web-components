@@ -35,6 +35,7 @@ const preview: Preview = {
     a11y: {
       // Optional selector to inspect
       context: 'body',
+      test: 'error',
       /*
        * Axe's options parameter
        * See https://github.com/dequelabs/axe-core/blob/develop/doc/API.md#options-parameter

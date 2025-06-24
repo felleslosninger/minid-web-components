@@ -5,7 +5,7 @@ import { ifDefined } from 'lit/directives/if-defined.js';
 import { html, literal } from 'lit/static-html.js';
 import { styled } from '../mixins/tailwind.mixin.ts';
 import './spinner.component.ts';
-import { FormControlMixin } from 'src/mixins/form-control.mixin.ts';
+import { FormControlMixin } from '../mixins/form-control.mixin.ts';
 
 declare global {
   interface HTMLElementTagNameMap {
