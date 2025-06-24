@@ -1,6 +1,6 @@
 import { defineConfig } from 'vite';
 import { resolve } from 'path';
-import { glob } from 'glob';
+import glob from 'glob';
 //import * as path from 'node:path';
 
 // eslint-disable-next-line no-empty-pattern

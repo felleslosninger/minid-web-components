@@ -377,7 +377,9 @@ export class MinidTextfield extends FormControlMixin(
             type=${this.type === 'password' && this.passwordvisible
               ? 'text'
               : this.type}
-            aria-describedby="${this.descriptionId}"
+            aria-describedby="${ifDefined(
+              (this.description && this.descriptionId) || undefined
+            )}"
             aria-errormessage="${this.validationId}"
             placeholder=${ifDefined(this.placeholder)}
             minlength=${ifDefined(this.minlength)}

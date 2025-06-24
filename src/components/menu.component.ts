@@ -57,11 +57,6 @@ export class MinidMenu extends styled(LitElement, styles) {
     });
   }
 
-  connectedCallback() {
-    super.connectedCallback();
-    this.setAttribute('role', 'menu');
-  }
-
   private handleClick(event: MouseEvent) {
     const menuItemTypes = ['menuitem', 'menuitemcheckbox'];
 
@@ -282,6 +277,7 @@ export class MinidMenu extends styled(LitElement, styles) {
               />
             </div>`}
         <ul
+          role="menu"
           class="item-list max-h-(--max-height) max-w-(--max-width) overflow-y-auto px-2 py-3"
         >
           <slot

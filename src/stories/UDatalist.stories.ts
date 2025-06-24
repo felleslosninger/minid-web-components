@@ -30,7 +30,7 @@ export const Main: Story = {
   render: (_: ComboboxProps) => html`
     <label class="mb-2 block" for="my-input"> Choose a country </label>
     <mid-dropdown sync="width" distance="2">
-      <input class="mid-input" list="my-list" slot="trigger" />
+      <input class="mid-input" id="my-input" list="my-list" slot="trigger" />
       <u-datalist
         class="mid-menu max-h-40 overflow-y-auto p-1"
         id="my-list"
