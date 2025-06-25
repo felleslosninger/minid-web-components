@@ -4,6 +4,10 @@ A changelog for logging changes.
 
 ## 0.0.117
 
+- Fix cdn build
+
+## 0.0.117
+
 - Fix a11y issues
 - Interaction tests for alert component
 - Fix cdn vite config

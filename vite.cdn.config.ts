@@ -1,10 +1,22 @@
 import { defineConfig } from 'vite';
-import { resolve } from 'path';
+import path from 'path';
 import glob from 'glob';
-//import * as path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 // eslint-disable-next-line no-empty-pattern
 export default defineConfig(({}) => {
+  // Determine the directory name, supporting both CommonJS (__dirname) and ES Modules (import.meta.url)
+  const dirname =
+    typeof __dirname !== 'undefined'
+      ? __dirname
+      : path.dirname(fileURLToPath(import.meta.url));
+
+  const entryPaths = [].concat(
+    glob.sync('src/index.ts', { cwd: dirname }),
+    glob.sync('src/**/*.component.ts', { cwd: dirname }),
+    glob.sync('src/styles/designsystemet-tailwind.css', { cwd: dirname })
+  );
+
   return {
     build: {
       minify: 'esbuild',
@@ -17,10 +29,7 @@ export default defineConfig(({}) => {
       outDir: 'dist-cdn',
 
       lib: {
-        entry: glob.sync([
-          resolve(__dirname, 'src/{**/*.component.ts,index.ts}'),
-          resolve(__dirname, 'src/styles/designsystemet-tailwind.css'),
-        ]),
+        entry: entryPaths,
         name: 'MinID-Elements',
         formats: ['es'],
         fileName: (_format, entryName) =>
