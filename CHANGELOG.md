@@ -2,6 +2,12 @@
 
 A changelog for logging changes.
 
+## 0.0.117
+
+- Fix a11y issues
+- Interaction tests for alert component
+- Fix cdn vite config
+
 ## 0.0.116
 
 - Instead of tailwind styles `<link>` element requiring `id=tailwind-styles` it now requires `data-mid-tailwind` attribute instead `<link data-mid-tailwind href="/tailwind.css" rel="stylesheet" />`

@@ -347,6 +347,7 @@ export class MinidPhoneInput extends FormControlMixin(
         <div part="base" class="flex h-12">
           <button
             part="country-button"
+            aria-label="Open country selector"
             class="${classMap({
               'border-neutral': !this.readonly,
               'border-neutral-subtle': this.readonly,

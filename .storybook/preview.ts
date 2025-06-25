@@ -29,7 +29,7 @@ const preview: Preview = {
       source: {
         format: true,
         excludeDecorators: true,
-        transform: (source) => source.replace(/=\"\"/g, ''), // Remove ="" on boolean attributes
+        transform: (source: any) => source.replace(/=\"\"/g, ''), // Remove ="" on boolean attributes
       },
     },
     a11y: {

@@ -45,7 +45,7 @@ export const Main: Story = {
       ?stayopenonselect=${stayopenonselect}
       sync="width"
     >
-      <mid-textfield slot="trigger"></mid-textfield>
+      <mid-textfield label="Velg en verdi" slot="trigger"></mid-textfield>
       <mid-menu>
         <mid-menu-item value="value"> Label </mid-menu-item>
         <mid-menu-item value="value"> Label </mid-menu-item>
