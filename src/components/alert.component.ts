@@ -372,7 +372,7 @@ ${this.notificationContent?.details}</pre
                   'hover:bg-warning-surface-hover': warning,
                 })} -my-4 -mr-4 flex self-center rounded p-4"
                 @click="${this.hide}"
-                aria-label="Close alert"
+                aria-label="Dismiss alert"
               >
                 <mid-icon class="size-6" name="xmark"> </mid-icon>
               </button>

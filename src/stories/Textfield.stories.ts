@@ -114,7 +114,6 @@ type Story = StoryObj<TextfieldProps>;
 export const Main: Story = {
   args: {
     labelAttr: 'Tekst input',
-    description: 'Dette er en beskrivelse av tekstfeltet.',
   },
   decorators: [(story) => html`<div class="w-100">${story()}</div>`],
   render: ({
