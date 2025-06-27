@@ -67,16 +67,6 @@ export class MinidMenu extends styled(LitElement, styles) {
 
     if (!target) return;
 
-    const closestMenu = composedPath.find(
-      (el) => (el as HTMLElement)?.getAttribute?.('role') === 'menu'
-    );
-    const clickHasSubmenu = closestMenu !== this;
-
-    // Make sure we're the menu thats supposed to be handling the click event.
-    if (clickHasSubmenu) {
-      return;
-    }
-
     // This isn't true. But we use it for TypeScript checks below.
     const item = target as MinidMenuItem;
 

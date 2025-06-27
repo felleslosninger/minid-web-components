@@ -6,6 +6,7 @@ import '../components/menu.component';
 import '../components/menu-item.component';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { MinidDropdown } from '../components/dropdown.component';
+import { MidSelectEvent } from '../events/mid-select';
 
 type DropdownProps = Partial<{
   open: boolean;
@@ -19,6 +20,9 @@ type DropdownProps = Partial<{
   trigger: unknown;
   panel: unknown;
   '--': unknown;
+  click1: Function;
+  click2: Function;
+  select: (event: MidSelectEvent) => void;
 }>;
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories
@@ -61,7 +65,23 @@ const meta = {
     panel: { control: { disable: true } },
     '--': { name: '-', control: { disable: true } },
   },
+  args: {
+    click1: () => {
+      console.log('click 1');
+    },
+    click2: () => {
+      console.log('click 2');
+    },
+    select: ({ detail: { item } }) => {
+      console.log(item);
+    },
+  },
 
+  parameters: {
+    controls: {
+      exclude: ['click1', 'click2', 'select'],
+    },
+  },
   subcomponents: {
     Menu: 'mid-menu',
     MenuItem: 'mid-menu-item',
@@ -89,6 +109,9 @@ export const Main: Story = {
     skidding,
     arrow,
     sync,
+    click1,
+    click2,
+    select,
   }: DropdownProps) => html`
     <mid-dropdown
       ?open=${open}
@@ -99,6 +122,7 @@ export const Main: Story = {
       size=${ifDefined(size)}
       skidding=${ifDefined(skidding)}
       sync=${ifDefined(sync)}
+      @mid-select=${select}
     >
       <mid-button slot="trigger"> Nedtrekk </mid-button>
       <mid-menu>
@@ -114,12 +138,4 @@ export const Main: Story = {
       var dropdown = document.querySelector('mid-dropdown');
     </script>
   `,
-};
-
-const click1 = () => {
-  console.log('click 1');
-};
-
-const click2 = () => {
-  console.log('click 2');
 };

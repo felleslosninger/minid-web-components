@@ -8,8 +8,14 @@ export const styled = <T extends Constructor<LitElement>>(
   elementCss: CSSResultArray = []
 ): T =>
   class extends superClass {
+    /**
+     * @ignore
+     */
     static styles = [tailwindSheet, elementCss];
-    tailwindLinkElement: HTMLStyleElement;
+    /**
+     * @ignore
+     */
+    private tailwindLinkElement: HTMLStyleElement;
 
     constructor(..._: any[]) {
       super();

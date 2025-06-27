@@ -105,7 +105,7 @@ export class MinidCombobox extends styled(LitElement, styles) {
    * components that use a combobox internally.
    */
   @property({ attribute: false })
-  containingElement?: HTMLElement;
+  private containingElement?: HTMLElement;
 
   connectedCallback() {
     super.connectedCallback();

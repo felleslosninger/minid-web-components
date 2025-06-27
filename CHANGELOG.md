@@ -2,6 +2,10 @@
 
 A changelog for logging changes.
 
+## 0.0.118
+
+- Fix `mid-select` event not being fired properly in the `mid-menu` component
+
 ## 0.0.117
 
 - Fix cdn build
