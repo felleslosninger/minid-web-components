@@ -158,6 +158,7 @@
     "input-format": "^0.3.11",
     "libphonenumber-js": "^1.11.15",
     "lit": "^3.3.0",
+    "maska": "^3.2.0",
     "qrcode": "^1.5.4"
   },
   "devDependencies": {

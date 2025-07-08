@@ -15,6 +15,7 @@ import {
 } from '../mixins/validators';
 import { watch } from '../internal/watch';
 import './icon/icon.component.ts';
+import { MaskInput, type MaskType } from 'maska';
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -60,6 +61,7 @@ export class MinidTextfield extends FormControlMixin(
   private readonly descriptionId!: string;
   private readonly validationId!: string;
   private readonly hasSlotControler = new HasSlotController(this, 'label');
+  private inputMask?: MaskInput;
   private initialValue = '';
 
   @query('.input')
@@ -182,6 +184,16 @@ export class MinidTextfield extends FormControlMixin(
   @property({ type: Boolean })
   hidelabel = false;
 
+  /**
+   * Modify input value based on mask e.g:  `"##:##"` = 12:34.
+   * `#`: /[0-9]/
+   * `@`: /[a-zA-Z]/
+   * `*`: /[a-zA-Z0-9]/
+   * For more information go to https://beholdr.github.io/maska
+   */
+  @property()
+  mask?: MaskType;
+
   @state()
   hasFocus = false;
 
@@ -205,6 +217,10 @@ export class MinidTextfield extends FormControlMixin(
   override connectedCallback(): void {
     super.connectedCallback();
     this.initialValue = this.value;
+  }
+
+  disconnectedCallback(): void {
+    this.inputMask?.destroy();
   }
 
   private handleKeydown(event: KeyboardEvent) {
@@ -294,6 +310,17 @@ export class MinidTextfield extends FormControlMixin(
   @watch('value')
   handleValueUpdate() {
     this.setValue(this.value);
+  }
+
+  @watch('mask')
+  async handleMaskUpdate() {
+    if (!this.mask) return;
+    await this.updateComplete;
+    this.inputMask?.destroy();
+    this.inputMask = new MaskInput(this.input, {
+      mask: this.mask,
+      eager: true,
+    });
   }
 
   override render() {
