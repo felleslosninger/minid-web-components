@@ -12,6 +12,7 @@ type CodeInputProps = Partial<{
   type: 'number' | 'text';
   size: 'sm' | 'md' | 'lg';
   inputmode: 'numeric' | 'text';
+  invalidmessage: string;
   pattern: string;
   autofocus: boolean;
   disabled: boolean;
@@ -75,6 +76,7 @@ export const Main: Story = {
     hidelabel,
     readonly,
     inputmode,
+    invalidmessage,
   }: CodeInputProps) => {
     return html`
       <mid-code-input
@@ -85,6 +87,7 @@ export const Main: Story = {
         type=${ifDefined(type)}
         size=${ifDefined(size)}
         inputmode=${ifDefined(inputmode)}
+        invalidmessage=${ifDefined(invalidmessage)}
         ?hidelabel=${hidelabel}
         ?readonly=${readonly}
         ?autofocus=${autofocus}

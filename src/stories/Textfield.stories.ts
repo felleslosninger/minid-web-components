@@ -3,6 +3,7 @@ import '../components/textfield.component';
 import '../components/button.component';
 import { html, nothing, Part } from 'lit';
 import { ifDefined } from 'lit/directives/if-defined.js';
+import { type MaskType } from 'maska';
 
 type TextfieldProps = Partial<{
   label: string;
@@ -23,6 +24,7 @@ type TextfieldProps = Partial<{
   passwordtoggle: boolean;
   passwordvisible: boolean;
   pattern: string;
+  mask: MaskType;
   autocomplete: string;
   autofocus: boolean;
   minlength: number;
@@ -90,6 +92,7 @@ const meta = {
       ],
     },
     pattern: { type: 'string' },
+    mask: { type: 'string' },
     'mid-change': { control: { disable: true } },
     'mid-input': { control: { disable: true } },
     'mid-clear': { control: { disable: true } },
@@ -135,6 +138,7 @@ export const Main: Story = {
     passwordtoggle,
     passwordvisible,
     pattern,
+    mask,
     autocomplete,
     autofocus,
     min,
@@ -166,6 +170,7 @@ export const Main: Story = {
       max=${ifDefined(max)}
       minlength=${ifDefined(minlength)}
       maxlength=${ifDefined(maxlength)}
+      mask=${ifDefined(mask ?? undefined)}
     >
       ${prefix ? html`<span slot="prefix">${prefix}</span>` : nothing}
       ${suffix ? html`<span slot="suffix">${suffix}</span>` : nothing}
