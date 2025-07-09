@@ -2,7 +2,12 @@
 
 A changelog for logging changes.
 
+## 0.0.122
+
+- Text is now selected on focusing a character in the code-input component
+
 ## 0.0.121
+
 - CDN stylesheet fix.
 
 ## 0.0.120

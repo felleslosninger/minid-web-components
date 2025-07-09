@@ -152,6 +152,7 @@ export class MinidCodeInput extends FormControlMixin(
   private handleFocus(index: number) {
     return () => {
       this.inputElements[index].setAttribute('placeholder', '');
+      this.inputElements[index].select();
     };
   }
 
