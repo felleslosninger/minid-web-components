@@ -32,8 +32,7 @@ Alternatively, you can use MinId Elements directly from our CDN. Here's an examp
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>MinID CDN Example</title>
-      <link rel="stylesheet" href="https://cdn.minid.no/minid-elements/latest/index.css" />
-      <link rel="stylesheet" href="https://cdn.minid.no/minid-elements/latest/theme/digdir/tokens.css" /> 
+      <link rel="stylesheet" href="https://cdn.minid.no/minid-elements/latest/index.css" data-mid-tailwind />
       <script type="module" src="https://cdn.minid.no/minid-elements/latest/index.js"></script>
     </head>
     <body>

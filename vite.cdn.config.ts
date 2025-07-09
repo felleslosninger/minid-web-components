@@ -14,7 +14,6 @@ export default defineConfig(({}) => {
   const entryPaths = [].concat(
     glob.sync('src/index.ts', { cwd: dirname }),
     glob.sync('src/**/*.component.ts', { cwd: dirname }),
-    glob.sync('src/styles/designsystemet-tailwind.css', { cwd: dirname })
   );
 
   return {
