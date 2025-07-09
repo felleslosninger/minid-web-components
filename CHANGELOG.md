@@ -2,15 +2,18 @@
 
 A changelog for logging changes.
 
-## 0.0.119
+## 0.0.121
+- CDN stylesheet fix.
+
+## 0.0.120
 
 - New mask feature for textfield component. Input value can be modified with a mask.
 
-## 0.0.118
+## 0.0.119
 
 - Fix `mid-select` event not being fired properly in the `mid-menu` component
 
-## 0.0.117
+## 0.0.118
 
 - Fix cdn build
 

@@ -85,8 +85,6 @@ jobs:
           cd minid-elements
           echo $VERSION > version.txt
           ln -sfn $VERSION latest      
-          mkdir -p $VERSION/theme
-          cp -r ../../node_modules/@digdir/designsystemet-theme/brand/* $VERSION/theme/
 
       - name: Commit Changes to CDN Repo (using SSH)
         run: |
