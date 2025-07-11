@@ -2,6 +2,10 @@
 
 A changelog for logging changes.
 
+## 0.0.123
+
+- Minor documentation update
+
 ## 0.0.122
 
 - Text is now selected on focusing a character in the code-input component
