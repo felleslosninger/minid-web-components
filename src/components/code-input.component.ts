@@ -293,6 +293,12 @@ export class MinidCodeInput extends FormControlMixin(
     });
   }
 
+  focus(options?: FocusOptions): void {
+    if (this.inputElements.length > 0) {
+      this.inputElements[0].focus(options);
+    }
+  }
+
   @watch('length')
   handleLengthChange() {
     this.internalValues = Array(this.length).fill('');

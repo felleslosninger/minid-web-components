@@ -2,6 +2,10 @@
 
 A changelog for logging changes.
 
+## 0.0.124
+
+- Code input can now be focused with `focus()` function
+
 ## 0.0.123
 
 - Minor documentation update
