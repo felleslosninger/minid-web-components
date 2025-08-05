@@ -27,7 +27,7 @@ You can have a look at the raw theme file [here](https://github.com/felleslosnin
 @import '@felleslosninger/minid-elements/designsystemet-tailwind';
 ```
 
-The tailwind file should be included in the head with `id="tailwind-styles"`. This css sheet is inserted into the shadow dom of the custom comopnents.
+The tailwind file should be included in the head with `data-mid-tailwind`. This css sheet is inserted into the shadow dom of the custom comopnents.
 
 ```html
 <!doctype html>
@@ -37,11 +37,7 @@ The tailwind file should be included in the head with `id="tailwind-styles"`. Th
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <!-- Tailwind styles for the component library -->
-    <link
-      id="tailwind-styles"
-      href="src/styles/tailwind.css"
-      rel="stylesheet"
-    />
+    <link data-mid-tailwind href="src/styles/tailwind.css" rel="stylesheet" />
   </head>
   <body>
     <mid-button>Click me</mid-button>
@@ -49,13 +45,13 @@ The tailwind file should be included in the head with `id="tailwind-styles"`. Th
 </html>
 ```
 
-The consuming application should generate tailwind classes for minid-elements.
+The consuming application should generate tailwind classes for minid-elements. The minid-elements dist folder should be included as a tailwind source so
 
 ```css
 // tailwind.css
 @import 'tailwindcss';
 @import '@felleslosninger/minid-elements/designsystemet-tailwind';
-@source "../../node_modules/@felleslosninger/minid-elements/dist";
+@source '../../node_modules/@felleslosninger/minid-elements/dist';
 ```
 
 MiniID elements also has some global CSS that should be imported.

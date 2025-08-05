@@ -1,0 +1,107 @@
+import {
+  Meta,
+  Canvas,
+  Title,
+  Stories,
+  Source,
+} from '@storybook/addon-docs/blocks';
+
+<Meta title="Installation" />
+
+# Installation
+
+## Quick Start (CDN)
+
+The fastest way to use Minid Elements is via CDN. No build steps required — just add the following to your app's `<head>`:
+
+```html
+<link
+  rel="stylesheet"
+  href="https://cdn.minid.no/minid-elements/latest/index.css"
+  data-mid-tailwind
+/>
+<script
+  type="module"
+  src="https://cdn.minid.no/minid-elements/latest/index.js"
+></script>
+```
+
+Tip: You can cherry-pick specific components to reduce bundle size. For example, to use only the button component:
+
+```html
+<script
+  type="module"
+  src="https://cdn.minid.no/minid-elements/latest/button.js"
+></script>
+```
+
+## Installation via Package Manager
+
+Install MinID elements with your favorite package manager:
+
+```bash
+npm install @felleslosninger/minid-elements
+```
+
+```bash
+yarn add @felleslosninger/minid-elements
+```
+
+And then import the components you need.
+
+```javascript
+/* <mid-button> */
+import '@felleslosninger/minid-elements/button';
+/* <mid-code-input> */
+import '@felleslosninger/minid-elements/code-input';
+```
+
+### Tailwind
+
+Minid Elements are styled with Tailwind CSS. While you can use them without Tailwind, it is recommended. See the [Tailwind documentation](https://tailwindcss.com/docs/installation) for setup instructions.
+We provide a theme file based on [Designsystemet](https://github.com/digdir/designsystemet). Import it in your CSS, and include the Minid Elements `dist` folder in your Tailwind sources:
+
+```css
+// tailwind.css
+@import 'tailwindcss';
+@import '@felleslosninger/minid-elements/designsystemet-tailwind'; // Designsystemet Tailwind theme
+@source '../../node_modules/@felleslosninger/minid-elements/dist'; // Minid Elements added as a Tailwind source
+```
+
+Link your Tailwind file in the `<head>` with a `data-mid-tailwind` attribute. This ensures the stylesheet is injected into the shadow DOM of custom components, keeping your bundle size minimal:
+
+```html
+<link data-mid-tailwind href="src/styles/tailwind.css" rel="stylesheet" />
+```
+
+### Vite
+
+Vite may remove the `data-mid-tailwind` attribute during production builds. To prevent this, add the following plugin to your Vite config:
+
+```typescript
+//vite.config.ts
+import { defineConfig } from 'vite';
+import tailwindcss from '@tailwindcss/vite';
+
+export default defineConfig({
+  plugins: [
+    tailwindcss(),
+    {
+      name: 'add-tailwind-data-attribute',
+      enforce: 'post',
+      transformIndexHtml(html) {
+        return html.replace('.css">', '.css" data-mid-tailwind>');
+      },
+    },
+  ],
+});
+```
+
+### Without Tailwind
+
+You can import a ready made stylesheet that includes styles for all components
+
+```css
+// index.css
+@import '@felleslosninger/minid-elements/component-styles'
+```
