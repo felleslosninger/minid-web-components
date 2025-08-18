@@ -2,6 +2,10 @@
 
 A changelog for logging changes.
 
+## 0.0.125
+
+- Added 'crossorigin' attribute to style tag in cdn example code. 
+- 
 ## 0.0.124
 
 - Code input can now be focused with `focus()` function
