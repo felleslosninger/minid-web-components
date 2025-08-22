@@ -56,11 +56,19 @@
     @apply border-accent-base bg-accent-tinted;
   }
 
-  .mid-menu-item:focus {
+  .mid-menu-item:focus-visible {
     @apply border-accent-base bg-accent-tinted outline-0;
   }
 
   .mid-menu-item:active {
     @apply border-accent-base bg-accent-tinted;
+  }
+
+  .mid-button {
+    @apply bg-accent-base text-accent-base-contrast hover:bg-accent-base-hover active:bg-accent-base-active focus-visible:focus-ring leading-sm flex h-fit min-h-12 min-w-12 grow cursor-pointer items-center justify-center gap-2 rounded border border-transparent px-4 py-2 font-medium;
+  }
+
+  .mid-label {
+    @apply block font-medium;
   }
 }
