@@ -2,6 +2,15 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
+/**
+ * This script reads the CSS variables from the `@digdir/designsystemet-theme` package
+ * and generates a Tailwind CSS theme file.
+ * It extracts colors, typography, spacing, border-radius, and other design tokens
+ * and formats them into a Tailwind-compatible CSS file.
+ * There are also som extra Tailwind configurations appended from a separate file
+ * called `extra-tailwind-config.css`.
+ *
+ */
 const run = () => {
   const __filename = fileURLToPath(import.meta.url);
   const projectRoot = path.dirname(__filename) + '/..';

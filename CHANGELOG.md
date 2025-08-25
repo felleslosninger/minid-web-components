@@ -2,6 +2,13 @@
 
 A changelog for logging changes.
 
+## Current
+
+- Updated icon set to `@navikt/aksel-icons v7.23.2`
+- Fixed checkbox description
+- Added native style classes `mid-button` and `mid-input`
+- Improvements to the documentation
+
 ## 0.0.125
 
 - Added 'crossorigin' attribute to style tag in cdn example code.
