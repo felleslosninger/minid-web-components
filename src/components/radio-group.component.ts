@@ -2,11 +2,12 @@ import { css, html, LitElement, type PropertyValues } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { styled } from '../mixins/tailwind.mixin';
 import './label.component';
-import { ConstraintsValidationMixin } from '../mixins/form-controller.mixin';
 import { MinidRadioButton } from '../components/radio-button.component';
 import { classMap } from 'lit/directives/class-map.js';
 import { watch } from '../internal/watch';
 import { MinidRadio } from '../components/radio.component';
+import { FormControlMixin } from '../mixins/form-control.mixin';
+import { HasSlotController } from '../internal/slot';
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -38,9 +39,10 @@ const styles = [
  * @csspart base - Select the container around the radios
  */
 @customElement('mid-radio-group')
-export class MinidRadioGroup extends ConstraintsValidationMixin(
+export class MinidRadioGroup extends FormControlMixin(
   styled(LitElement, styles)
 ) {
+  private readonly hasSlotController = new HasSlotController(this, 'label');
   /**
    * The name of the radio group.
    */
@@ -74,12 +76,12 @@ export class MinidRadioGroup extends ConstraintsValidationMixin(
   protected firstUpdated(_changedProperties: PropertyValues): void {
     super.firstUpdated(_changedProperties);
     this.defaultValue = this.value;
-    this.setFormValue(this.value);
+    this.setValue(this.value);
   }
 
-  protected formResetCallback() {
+  resetFormControl() {
     this.value = this.defaultValue;
-    this.setFormValue(this.value);
+    this.setValue(this.value);
     this.updateCheckedRadio();
   }
 
@@ -173,7 +175,7 @@ export class MinidRadioGroup extends ConstraintsValidationMixin(
 
     this.value = radios[index].value;
     radios[index].checked = true;
-    this.setFormValue(this.value);
+    this.setValue(this.value);
 
     if (!this.hasButtonRadios) {
       radios[index].element.setAttribute('tabindex', '0');
@@ -226,7 +228,7 @@ export class MinidRadioGroup extends ConstraintsValidationMixin(
     }
 
     this.value = target.value;
-    this.setFormValue(this.value);
+    this.setValue(this.value);
 
     this.updateCheckedRadio();
 
@@ -284,22 +286,10 @@ export class MinidRadioGroup extends ConstraintsValidationMixin(
   }
 
   override render() {
+    const hasLabelSlot = this.hasSlotController.test('label');
+    const hasLabel = this.label ? true : !!hasLabelSlot;
+
     return html`
-      <label
-        part="form-control-label"
-        id="label"
-        class="class=${classMap({
-          'fds-label': true,
-          'fds-label--spacing': true,
-          'fds-label--sm': this.size === 'sm',
-          'fds-label--md': this.size === 'md',
-          'fds-label--lg': this.size === 'lg',
-          'sr-only': this.labelhidden,
-        })}"
-        @click=${this.handleLabelClick}
-      >
-        ${this.label}
-      </label>
       <fieldset
         class="${classMap({
           'fds-togglegroup': this.hasButtonRadios,
@@ -308,6 +298,21 @@ export class MinidRadioGroup extends ConstraintsValidationMixin(
         role="radiogroup"
         aria-labelledby="label"
       >
+        <label
+          part="form-control-label"
+          id="label"
+          class="class=${classMap({
+            'fds-label': true,
+            'fds-label--spacing': true,
+            'fds-label--sm': this.size === 'sm',
+            'fds-label--md': this.size === 'md',
+            'fds-label--lg': this.size === 'lg',
+            'sr-only': this.labelhidden,
+          })}"
+          @click=${this.handleLabelClick}
+        >
+          <slot name="label">${this.label}</slot>
+        </label>
         <div
           class="${classMap({
             grid: true,
@@ -319,6 +324,7 @@ export class MinidRadioGroup extends ConstraintsValidationMixin(
           aria-label=${this.label}
         >
           <slot
+            class="flex flex-col flex-wrap gap-3.5"
             @slotchange=${this.syncRadios}
             @click=${this.handleRadioClick}
             @keydown=${this.handleKeyDown}

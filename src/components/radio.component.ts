@@ -4,6 +4,7 @@ import { classMap } from 'lit/directives/class-map.js';
 import { live } from 'lit/directives/live.js';
 import { watch } from '../internal/watch';
 import { styled } from '../mixins/tailwind.mixin';
+import { FormControlMixin } from '../mixins/form-control.mixin';
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -14,57 +15,8 @@ declare global {
 const styles = [
   css`
     :host {
-      --color-checked: #0062ba;
-      --color-border: #7a818c;
-
-      color: white;
-      padding: 0.25rem 0;
-      display: grid;
-      grid-template-columns: auto 1fr;
-      gap: 0.5rem;
+      display: inline-flex;
       cursor: pointer;
-      font-weight: 400;
-    }
-
-    :host > * {
-      cursor: pointer;
-    }
-
-    :host:has(input:focus-visible) {
-      --fds-focus-border-width: 3px;
-      box-shadow: 0 0 0 var(--fds-focus-border-width)
-        var(--fds-semantic-border-focus-boxshadow);
-    }
-
-    :host:has(input:disabled),
-    :host:has(input:disabled) > * {
-      cursor: not-allowed;
-    }
-
-    :host:has(input:disabled) > * {
-      opacity: 0.3;
-    }
-
-    .label {
-      font-weight: 400;
-    }
-
-    .radio {
-      -webkit-appearance: none;
-      appearance: none;
-
-      border-radius: 999px;
-      display: grid;
-      place-content: center;
-      border: 2px solid var(--color-border);
-      transform: translateY(-0.075em);
-    }
-
-    .radio:checked {
-      border-color: var(--color-checked);
-      background:
-        radial-gradient(circle closest-side, currentcolor 45%, transparent 50%),
-        var(--color-checked);
     }
   `,
 ];
@@ -80,8 +32,8 @@ const styles = [
  * @csspart label - Select the label element
  */
 @customElement('mid-radio')
-export class MinidRadio extends styled(LitElement, styles) {
-  @query('.radio')
+export class MinidRadio extends FormControlMixin(styled(LitElement, styles)) {
+  @query('input[type="radio"]')
   element!: HTMLInputElement;
 
   @property()
@@ -180,27 +132,17 @@ export class MinidRadio extends styled(LitElement, styles) {
         part="radio"
         name="${this.name}"
         class="${classMap({
-          radio: true,
           'h-7': this.size === 'lg',
           'w-7': this.size === 'lg',
           'w-6': this.size === 'md',
           'h-6': this.size === 'md',
           'w-5': this.size === 'sm',
           'h-5': this.size === 'sm',
-        })} shadow-none"
+        })} focus-visible:focus-ring-sm rounded-full shadow-none"
         ?checked=${live(this.checked)}
         ?disabled=${this.disabled}
       />
-      <label
-        part="label"
-        class="${classMap({
-          label: true,
-          'fds-label': true,
-          'fds-label--sm': this.size === 'sm',
-          'fds-label--md': this.size === 'md',
-          'fds-label--lg': this.size === 'lg',
-        })}"
-      >
+      <label part="label" class="${classMap({})} pl-2">
         <slot></slot>
       </label>
     `;

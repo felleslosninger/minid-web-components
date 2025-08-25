@@ -8,7 +8,7 @@ import { ifDefined } from 'lit/directives/if-defined.js';
 import { FormControlMixin } from '../mixins/form-control.mixin.ts';
 import { watch } from '../internal/watch.ts';
 import { requiredValidator } from '../mixins/validators.ts';
-import { HasSlotController } from 'src/internal/slot.ts';
+import { HasSlotController } from '../internal/slot.ts';
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -123,6 +123,7 @@ export class MinidCheckbox extends FormControlMixin(styled(LitElement)) {
           class="${classMap({
             'bg-accent-base': !this.readonly && this.checked && !this.invalid,
             'bg-danger-base': !this.readonly && this.checked && this.invalid,
+            'bg-neutral-surface': !this.readonly && !this.checked,
             'border-accent-base':
               !this.readonly && this.checked && !this.invalid,
             'border-neutral': !this.readonly && !this.checked && !this.invalid,

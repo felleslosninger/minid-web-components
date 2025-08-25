@@ -22,11 +22,13 @@ const styles = [
 ];
 
 /**
- * A regular old button
+ * @slot -- The default slot for the button's text content
+ * @csspart base - Select the button or anchor element
+ * @csspart spinner - Select the spinner element
  */
 @customElement('mid-button')
 export class MinidButton extends FormControlMixin(styled(LitElement, styles)) {
-  @query('.button')
+  @query('[part="base"]')
   button!: HTMLButtonElement | HTMLLinkElement;
 
   /**
@@ -66,11 +68,14 @@ export class MinidButton extends FormControlMixin(styled(LitElement, styles)) {
   disabled = false;
 
   /**
-   *
+   * Toggle loading state
    */
   @property({ type: Boolean })
   loading = false;
 
+  /**
+   * Text to show when button is in loading state
+   */
   @property()
   loadingtext = '';
 
@@ -118,7 +123,6 @@ export class MinidButton extends FormControlMixin(styled(LitElement, styles)) {
     return html`<${tag}
       part="base"
       class="${classMap({
-        button: true,
         'w-12': this.iconstyled,
         'h-12': this.iconstyled,
         'py-2': !this.iconstyled,
