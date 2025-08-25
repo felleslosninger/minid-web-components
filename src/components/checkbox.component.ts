@@ -8,6 +8,7 @@ import { ifDefined } from 'lit/directives/if-defined.js';
 import { FormControlMixin } from '../mixins/form-control.mixin.ts';
 import { watch } from '../internal/watch.ts';
 import { requiredValidator } from '../mixins/validators.ts';
+import { HasSlotController } from 'src/internal/slot.ts';
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -16,11 +17,19 @@ declare global {
 }
 
 /**
+ * @slot -- The default slot for the label text of the checkbox
+ * @slot description - The slot for the description text of the checkbox
  *
+ * @event mid-change - Emitted when the checked state changes
  */
 
 @customElement('mid-checkbox')
 export class MinidCheckbox extends FormControlMixin(styled(LitElement)) {
+  private readonly hasSlotController = new HasSlotController(
+    this,
+    'description'
+  );
+
   @query('input[type="checkbox"]')
   private input!: HTMLInputElement;
 
@@ -38,6 +47,9 @@ export class MinidCheckbox extends FormControlMixin(styled(LitElement)) {
 
   @property({ type: Boolean })
   checked = false;
+
+  @property()
+  description?: string;
 
   @property({ type: Boolean })
   disabled = false;
@@ -97,6 +109,9 @@ export class MinidCheckbox extends FormControlMixin(styled(LitElement)) {
   }
 
   override render() {
+    const hasDescriptionSlot = this.hasSlotController.test('description');
+    const hasDescription = this.description ? true : !!hasDescriptionSlot;
+
     return html`
       <label
         class="${classMap({
@@ -140,6 +155,16 @@ export class MinidCheckbox extends FormControlMixin(styled(LitElement)) {
           <slot></slot>
         </div>
       </label>
+
+      <slot
+        name="description"
+        part="description"
+        name="description"
+        class="text-neutral-subtle mt-2 block"
+        aria-hidden=${hasDescription ? 'false' : 'true'}
+      >
+        ${this.description}
+      </slot>
     `;
   }
 }

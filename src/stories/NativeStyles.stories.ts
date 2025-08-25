@@ -29,6 +29,6 @@ export const Button: Story = {
 export const Input: Story = {
   args: {},
   render: () =>
-    html`<label for="data" class="mid-label"> Input: </label>
-      <input id="data" class="mid-input" /> `,
+    html`<label for="input-1" class="mid-label mb-2"> Input </label>
+      <input id="input-1" class="mid-input" /> `,
 };

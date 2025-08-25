@@ -69,6 +69,6 @@
   }
 
   .mid-label {
-    @apply block font-medium;
+    @apply inline-block font-medium;
   }
 }
