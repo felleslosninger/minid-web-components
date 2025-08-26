@@ -2,12 +2,14 @@
 
 A changelog for logging changes.
 
-## Current
+## 0.0.127
 
 - Updated icon set to `@navikt/aksel-icons v7.23.2`
 - Fixed checkbox description
 - Added native style classes `mid-button` and `mid-input`
 - Improvements to the documentation
+- Updated/fixed radio component
+- Removed radio button component from sidebar
 
 ## 0.0.125
 

@@ -20,9 +20,9 @@ yarn add @felleslosninger/minid-elements
 
 Import the desired components into your project:
 
-```javascript
+```html
 import '@felleslosninger/minid-elements/button';
-<mid-button variant="primary">Click me</mid-button>;
+<mid-button variant="primary">Click me</mid-button>
 ```
 
 ## CDN Usage
