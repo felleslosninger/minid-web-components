@@ -368,6 +368,6 @@
   }
 
   .mid-label {
-    @apply inline-block font-medium;
+    @apply block font-medium;
   }
 }

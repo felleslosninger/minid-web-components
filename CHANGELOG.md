@@ -2,6 +2,10 @@
 
 A changelog for logging changes.
 
+## 0.0.128
+
+- Fix `mid-label` class styling
+
 ## 0.0.127
 
 - Updated icon set to `@navikt/aksel-icons v7.23.2`
