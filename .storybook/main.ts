@@ -7,7 +7,7 @@ const config: StorybookConfig = {
     '@storybook/addon-docs',
     'storybook-addon-tag-badges',
     '@storybook/addon-vitest',
-    '@storybook/addon-a11y'
+    '@storybook/addon-a11y',
   ],
   framework: '@storybook/web-components-vite',
   core: {

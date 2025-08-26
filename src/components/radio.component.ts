@@ -1,9 +1,11 @@
 import { css, html, LitElement } from 'lit';
 import { customElement, property, query } from 'lit/decorators.js';
-import { classMap } from 'lit/directives/class-map.js';
 import { live } from 'lit/directives/live.js';
+import { classMap } from 'lit/directives/class-map.js';
 import { watch } from '../internal/watch';
 import { styled } from '../mixins/tailwind.mixin';
+import { FormControlMixin } from '../mixins/form-control.mixin';
+import './icon/icon.component.ts';
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -14,57 +16,11 @@ declare global {
 const styles = [
   css`
     :host {
-      --color-checked: #0062ba;
-      --color-border: #7a818c;
-
-      color: white;
-      padding: 0.25rem 0;
-      display: grid;
-      grid-template-columns: auto 1fr;
-      gap: 0.5rem;
-      cursor: pointer;
-      font-weight: 400;
-    }
-
-    :host > * {
+      display: inline-flex;
       cursor: pointer;
     }
-
-    :host:has(input:focus-visible) {
-      --fds-focus-border-width: 3px;
-      box-shadow: 0 0 0 var(--fds-focus-border-width)
-        var(--fds-semantic-border-focus-boxshadow);
-    }
-
-    :host:has(input:disabled),
-    :host:has(input:disabled) > * {
+    :host:has(input:disabled) {
       cursor: not-allowed;
-    }
-
-    :host:has(input:disabled) > * {
-      opacity: 0.3;
-    }
-
-    .label {
-      font-weight: 400;
-    }
-
-    .radio {
-      -webkit-appearance: none;
-      appearance: none;
-
-      border-radius: 999px;
-      display: grid;
-      place-content: center;
-      border: 2px solid var(--color-border);
-      transform: translateY(-0.075em);
-    }
-
-    .radio:checked {
-      border-color: var(--color-checked);
-      background:
-        radial-gradient(circle closest-side, currentcolor 45%, transparent 50%),
-        var(--color-checked);
     }
   `,
 ];
@@ -80,10 +36,13 @@ const styles = [
  * @csspart label - Select the label element
  */
 @customElement('mid-radio')
-export class MinidRadio extends styled(LitElement, styles) {
-  @query('.radio')
-  element!: HTMLInputElement;
+export class MinidRadio extends FormControlMixin(styled(LitElement, styles)) {
+  @query('input[type="radio"]')
+  input!: HTMLInputElement;
 
+  /**
+   * The name of the radio, used to bind together multiple radios.
+   */
   @property()
   name = 'option';
 
@@ -105,12 +64,16 @@ export class MinidRadio extends styled(LitElement, styles) {
   @property({ type: Boolean, reflect: true })
   disabled = false;
 
-  /**
-   * The radio button's size. When used inside a radio group, the size will be determined by the radio group's size so
-   * this attribute can typically be omitted.
-   */
-  @property({ reflect: true })
-  size: 'sm' | 'md' | 'lg' = 'md';
+  @property({ type: Boolean })
+  invalid = false;
+
+  shouldFormValueUpdate(): boolean {
+    return this.checked;
+  }
+
+  get validationTarget() {
+    return this.input;
+  }
 
   constructor() {
     super();
@@ -125,6 +88,24 @@ export class MinidRadio extends styled(LitElement, styles) {
     this.setAttribute('aria-disabled', this.disabled ? 'true' : 'false');
 
     this.classList.add('rounded');
+  }
+
+  private handleKeydown(event: KeyboardEvent) {
+    const hasModifier =
+      event.metaKey || event.ctrlKey || event.shiftKey || event.altKey;
+
+    // Pressing enter when focused on an input should submit the form like a native input, but we wait a tick before
+    // submitting to allow users to cancel the keydown event if they need to
+    if (event.key === 'Enter' && !hasModifier) {
+      setTimeout(() => {
+        //
+        // When using an Input Method Editor (IME), pressing enter will cause the form to submit unexpectedly. One way
+        // to check for this is to look at event.isComposing, which will be true when the IME is open.
+        if (!event.defaultPrevented && !event.isComposing) {
+          this.form.requestSubmit();
+        }
+      });
+    }
   }
 
   private handleBlur() {
@@ -153,6 +134,7 @@ export class MinidRadio extends styled(LitElement, styles) {
     }
 
     this.checked = true;
+    this.dispatchEvent(new Event('mid-change'));
   }
 
   @watch('disabled', { waitUntilFirstUpdate: true })
@@ -162,45 +144,36 @@ export class MinidRadio extends styled(LitElement, styles) {
 
   @watch('checked', { waitUntilFirstUpdate: true })
   handleCheckChange() {
-    this.element.checked = this.checked;
+    this.input.checked = this.checked;
   }
 
   /**
    * Sets focus on the radio button.
    */
   focus(options?: FocusOptions) {
-    // this.classList.add('shadow-focus-visible');
-    this.element.focus(options);
+    this.input.focus(options);
   }
 
   override render() {
     return html`
-      <input
-        type="radio"
-        part="radio"
-        name="${this.name}"
-        class="${classMap({
-          radio: true,
-          'h-7': this.size === 'lg',
-          'w-7': this.size === 'lg',
-          'w-6': this.size === 'md',
-          'h-6': this.size === 'md',
-          'w-5': this.size === 'sm',
-          'h-5': this.size === 'sm',
-        })} shadow-none"
-        ?checked=${live(this.checked)}
-        ?disabled=${this.disabled}
-      />
       <label
         part="label"
-        class="${classMap({
-          label: true,
-          'fds-label': true,
-          'fds-label--sm': this.size === 'sm',
-          'fds-label--md': this.size === 'md',
-          'fds-label--lg': this.size === 'lg',
-        })}"
+        class="has-disabled:opacity-disabled grid cursor-pointer grid-cols-[auto_1fr] gap-2 has-disabled:cursor-not-allowed"
       >
+        <input
+          type="radio"
+          part="radio"
+          name="${this.name}"
+          class="${classMap({
+            'bg-neutral': !this.invalid,
+            'border-neutral': !this.invalid,
+            'bg-danger-tinted': this.invalid,
+            'border-danger-base': this.invalid,
+          })} checked:bg-accent-base checked:before:bg-neutral focus-visible:focus-ring-sm checked:border-accent-base my-0.5 grid size-6 cursor-pointer appearance-none place-content-center rounded-full border-2 p-0.5 shadow-none before:size-2.5 before:scale-0 before:rounded-full before:transition-transform before:duration-100 checked:before:scale-100 disabled:cursor-not-allowed"
+          ?checked=${live(this.checked)}
+          ?disabled=${this.disabled}
+          @keydown=${this.handleKeydown}
+        />
         <slot></slot>
       </label>
     `;

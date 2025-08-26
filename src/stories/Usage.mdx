@@ -1,0 +1,70 @@
+import {
+  Meta,
+  Canvas,
+  Title,
+  Stories,
+  Source,
+} from '@storybook/addon-docs/blocks';
+
+<Meta title="Usage" />
+
+# Usage
+
+## Attributes and Properties
+
+Web components can be configured using attributes and properties. To set the `variant` attribute of a button component:
+
+```html
+<mid-button variant="primary">Click me</mid-button>
+```
+
+Or in JavaScript:
+
+```javascript
+const button = document.querySelector('mid-button');
+button.variant = 'primary';
+```
+
+## Events
+
+Components can emit events. For example, the button component emits a `click` event when clicked:
+
+```javascript
+const button = document.querySelector('mid-button');
+button.addEventListener('click', () => {
+  console.log('Button clicked!');
+});
+```
+
+There are also custom events like `mid-select` for the `<mid-menu>` component:
+
+```javascript
+const menu = document.querySelector('mid-menu');
+menu.addEventListener('mid-select', (event) => {
+  console.log('Selected item:', event.detail);
+});
+```
+
+## Methods
+
+Some components have methods you can call. For example, the `<mid-code-input>` component has a `focus()` method:
+
+```javascript
+const codeInput = document.querySelector('mid-code-input');
+codeInput.focus();
+```
+
+## Slots
+
+Some components support slots for custom content. For example, the `<mid-dialog>` component can have a heading and a footer slot:
+
+```html
+<mid-dialog>
+  <span slot="heading">Dialog title</span>
+  <div>Card Content</div>
+  <div slot="footer">
+    <mid-button variant="primary">Save</mid-button>
+    <mid-button variant="secondary">Cancel</mid-button>
+  </div>
+</mid-dialog>
+```

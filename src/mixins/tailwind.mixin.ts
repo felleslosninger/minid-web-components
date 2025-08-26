@@ -61,7 +61,7 @@ export const styled = <T extends Constructor<LitElement>>(
         });
       } else {
         console.warn(
-          'Error getting css stylesheet from element with id "tailwind-styles"'
+          'Error getting css stylesheet from element with data attribute "data-mid-tailwind"'
         );
       }
     }

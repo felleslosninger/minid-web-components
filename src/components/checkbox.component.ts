@@ -8,6 +8,7 @@ import { ifDefined } from 'lit/directives/if-defined.js';
 import { FormControlMixin } from '../mixins/form-control.mixin.ts';
 import { watch } from '../internal/watch.ts';
 import { requiredValidator } from '../mixins/validators.ts';
+import { HasSlotController } from '../internal/slot.ts';
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -16,11 +17,19 @@ declare global {
 }
 
 /**
+ * @slot -- The default slot for the label text of the checkbox
+ * @slot description - The slot for the description text of the checkbox
  *
+ * @event mid-change - Emitted when the checked state changes
  */
 
 @customElement('mid-checkbox')
 export class MinidCheckbox extends FormControlMixin(styled(LitElement)) {
+  private readonly hasSlotController = new HasSlotController(
+    this,
+    'description'
+  );
+
   @query('input[type="checkbox"]')
   private input!: HTMLInputElement;
 
@@ -38,6 +47,9 @@ export class MinidCheckbox extends FormControlMixin(styled(LitElement)) {
 
   @property({ type: Boolean })
   checked = false;
+
+  @property()
+  description?: string;
 
   @property({ type: Boolean })
   disabled = false;
@@ -61,6 +73,24 @@ export class MinidCheckbox extends FormControlMixin(styled(LitElement)) {
 
   get validationTarget() {
     return this.input;
+  }
+
+  private handleKeydown(event: KeyboardEvent) {
+    const hasModifier =
+      event.metaKey || event.ctrlKey || event.shiftKey || event.altKey;
+
+    // Pressing enter when focused on an input should submit the form like a native input, but we wait a tick before
+    // submitting to allow users to cancel the keydown event if they need to
+    if (event.key === 'Enter' && !hasModifier) {
+      setTimeout(() => {
+        //
+        // When using an Input Method Editor (IME), pressing enter will cause the form to submit unexpectedly. One way
+        // to check for this is to look at event.isComposing, which will be true when the IME is open.
+        if (!event.defaultPrevented && !event.isComposing) {
+          this.form.requestSubmit();
+        }
+      });
+    }
   }
 
   private handleClick() {
@@ -97,6 +127,9 @@ export class MinidCheckbox extends FormControlMixin(styled(LitElement)) {
   }
 
   override render() {
+    const hasDescriptionSlot = this.hasSlotController.test('description');
+    const hasDescription = this.description ? true : !!hasDescriptionSlot;
+
     return html`
       <label
         class="${classMap({
@@ -108,6 +141,7 @@ export class MinidCheckbox extends FormControlMixin(styled(LitElement)) {
           class="${classMap({
             'bg-accent-base': !this.readonly && this.checked && !this.invalid,
             'bg-danger-base': !this.readonly && this.checked && this.invalid,
+            'bg-neutral-surface': !this.readonly && !this.checked,
             'border-accent-base':
               !this.readonly && this.checked && !this.invalid,
             'border-neutral': !this.readonly && !this.checked && !this.invalid,
@@ -126,6 +160,7 @@ export class MinidCheckbox extends FormControlMixin(styled(LitElement)) {
             ?readonly=${this.readonly}
             ?required=${this.required}
             @click=${this.handleClick}
+            @keydown=${this.handleKeydown}
           />
           ${this.checked
             ? html`<mid-icon
@@ -140,6 +175,15 @@ export class MinidCheckbox extends FormControlMixin(styled(LitElement)) {
           <slot></slot>
         </div>
       </label>
+      <slot
+        name="description"
+        part="description"
+        name="description"
+        class="text-neutral-subtle mt-2 block"
+        aria-hidden=${hasDescription ? 'false' : 'true'}
+      >
+        ${this.description}
+      </slot>
     `;
   }
 }

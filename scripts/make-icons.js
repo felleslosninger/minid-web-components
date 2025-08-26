@@ -4,24 +4,29 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
+/**
+ * This script copies SVG icons from the `@navikt/aksel-icons` package
+ * to the local `src/public/icons` folder and generates a TypeScript
+ * type definition file for the icon names at `src/types/icon-name.ts`.
+ */
 const run = () => {
   const __filename = fileURLToPath(import.meta.url);
   const projectRoot = path.dirname(__filename) + '/..';
   const iconSrcFolder =
     projectRoot + '/node_modules/@navikt/aksel-icons/dist/svg';
-  const destination = projectRoot + '/src/assets/icons';
+  const destination = projectRoot + '/src/public/icons';
   const tsDestination = projectRoot + '/src/types';
   const tsFileName = tsDestination + '/icon-name.ts';
 
   fs.readdir(iconSrcFolder, { recursive: true }, (err, files) => {
-    let tsContent = 'export type MidIconName = \n\t|';
+    let tsContent = 'export type MidIconName =\n  |';
     files.forEach((file) => {
       if (file.endsWith('.svg')) {
         const fileName = file.substring(0, file.indexOf('.svg'));
         const kebabCase = fileName
           .replace(/([a-z0–9])([A-Z])/g, '$1-$2')
           .toLowerCase();
-        tsContent += " '" + kebabCase + "'\n\t|";
+        tsContent += " '" + kebabCase + "'\n  |";
 
         fs.copyFile(
           iconSrcFolder + '/' + file,
@@ -40,10 +45,10 @@ const run = () => {
     });
 
     if (tsContent.endsWith('|')) {
-      tsContent = tsContent.substring(0, tsContent.length - 1);
+      tsContent = tsContent.substring(0, tsContent.length - 4);
     }
 
-    tsContent += '\n';
+    tsContent += ';\n';
 
     fs.writeFile(tsFileName, tsContent, { encoding: 'utf-8' }, (error) => {
       if (error) {

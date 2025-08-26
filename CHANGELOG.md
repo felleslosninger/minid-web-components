@@ -2,10 +2,19 @@
 
 A changelog for logging changes.
 
+## 0.0.127
+
+- Updated icon set to `@navikt/aksel-icons v7.23.2`
+- Fixed checkbox description
+- Added native style classes `mid-button` and `mid-input`
+- Improvements to the documentation
+- Updated/fixed radio component
+- Removed radio button component from sidebar
+
 ## 0.0.125
 
-- Added 'crossorigin' attribute to style tag in cdn example code. 
-- 
+- Added 'crossorigin' attribute to style tag in cdn example code.
+
 ## 0.0.124
 
 - Code input can now be focused with `focus()` function

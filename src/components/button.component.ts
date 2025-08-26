@@ -22,11 +22,13 @@ const styles = [
 ];
 
 /**
- * A regular old button
+ * @slot -- The default slot for the button's text content
+ * @csspart base - Select the button or anchor element
+ * @csspart spinner - Select the spinner element
  */
 @customElement('mid-button')
 export class MinidButton extends FormControlMixin(styled(LitElement, styles)) {
-  @query('.button')
+  @query('[part="base"]')
   button!: HTMLButtonElement | HTMLLinkElement;
 
   /**
@@ -66,11 +68,14 @@ export class MinidButton extends FormControlMixin(styled(LitElement, styles)) {
   disabled = false;
 
   /**
-   *
+   * Toggle loading state
    */
   @property({ type: Boolean })
   loading = false;
 
+  /**
+   * Text to show when button is in loading state
+   */
   @property()
   loadingtext = '';
 
@@ -110,15 +115,11 @@ export class MinidButton extends FormControlMixin(styled(LitElement, styles)) {
     const primary = this.variant === 'primary';
     const secondary = this.variant === 'secondary';
     const tertiary = this.variant === 'tertiary';
-    const sm = this.size === 'sm';
-    const md = this.size === 'md';
-    const lg = this.size === 'lg';
     const spinnerOnly = this.loading && !this.loadingtext;
 
     return html`<${tag}
       part="base"
       class="${classMap({
-        button: true,
         'w-12': this.iconstyled,
         'h-12': this.iconstyled,
         'py-2': !this.iconstyled,
@@ -134,9 +135,9 @@ export class MinidButton extends FormControlMixin(styled(LitElement, styles)) {
         'text-accent-subtle': secondary || tertiary,
         'hover:text-accent': secondary || tertiary,
         'border-accent-strong': secondary,
-        'text-body-sm': sm,
-        'text-body-md': md,
-        'text-body-lg': lg,
+        'text-body-sm': this.size === 'sm',
+        'text-body-md': this.size === 'md',
+        'text-body-lg': this.size === 'lg',
         'cursor-wait': this.loading && !this.disabled,
         'cursor-pointer': !this.loading && !this.disabled,
         'cursor-not-allowed': this.disabled,

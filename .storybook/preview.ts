@@ -14,7 +14,14 @@ const preview: Preview = {
   parameters: {
     options: {
       storySort: {
-        order: ['Introduction', 'Styling', '*'],
+        order: [
+          'About',
+          'Installation',
+          'Usage',
+          'Form Controls',
+          'Styling',
+          '*',
+        ],
       },
     },
     controls: {
