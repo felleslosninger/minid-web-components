@@ -23,7 +23,7 @@ declare global {
 @customElement('mid-radio-button')
 export class MinidRadioButton extends styled(LitElement) {
   @query('.radio')
-  element!: HTMLButtonElement;
+  input!: HTMLButtonElement;
 
   @property()
   name = 'option';
@@ -84,14 +84,14 @@ export class MinidRadioButton extends styled(LitElement) {
    * Sets focus on the radio button.
    */
   focus(options?: FocusOptions) {
-    this.element.focus(options);
+    this.input.focus(options);
   }
 
   /**
    * Removes focus from the radio button.
    */
   blur() {
-    this.element.blur();
+    this.input.blur();
   }
 
   override render() {

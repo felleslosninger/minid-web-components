@@ -8,7 +8,7 @@ import { RadioProps } from './Radio.stories';
 
 const meta: Meta<RadioProps> = {
   title: 'Komponenter/Radio Button',
-  tags: ['experimental'],
+  tags: ['experimental', '!dev', '!autodocs'],
   component: 'mid-radio-group',
   subcomponents: { MidRadioButton: 'mid-radio-button' },
   argTypes: {

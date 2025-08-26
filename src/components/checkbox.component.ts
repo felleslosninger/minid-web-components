@@ -75,6 +75,24 @@ export class MinidCheckbox extends FormControlMixin(styled(LitElement)) {
     return this.input;
   }
 
+  private handleKeydown(event: KeyboardEvent) {
+    const hasModifier =
+      event.metaKey || event.ctrlKey || event.shiftKey || event.altKey;
+
+    // Pressing enter when focused on an input should submit the form like a native input, but we wait a tick before
+    // submitting to allow users to cancel the keydown event if they need to
+    if (event.key === 'Enter' && !hasModifier) {
+      setTimeout(() => {
+        //
+        // When using an Input Method Editor (IME), pressing enter will cause the form to submit unexpectedly. One way
+        // to check for this is to look at event.isComposing, which will be true when the IME is open.
+        if (!event.defaultPrevented && !event.isComposing) {
+          this.form.requestSubmit();
+        }
+      });
+    }
+  }
+
   private handleClick() {
     this.checked = !this.checked;
     // this.indeterminate = false;
@@ -142,6 +160,7 @@ export class MinidCheckbox extends FormControlMixin(styled(LitElement)) {
             ?readonly=${this.readonly}
             ?required=${this.required}
             @click=${this.handleClick}
+            @keydown=${this.handleKeydown}
           />
           ${this.checked
             ? html`<mid-icon
@@ -156,7 +175,6 @@ export class MinidCheckbox extends FormControlMixin(styled(LitElement)) {
           <slot></slot>
         </div>
       </label>
-
       <slot
         name="description"
         part="description"

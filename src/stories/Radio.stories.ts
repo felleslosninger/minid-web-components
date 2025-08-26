@@ -5,6 +5,7 @@ import '../components/radio.component';
 import '../components/button.component';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { MinidRadioGroup } from '../components/radio-group.component';
+import { classMap } from 'lit/directives/class-map.js';
 
 export type RadioProps = Partial<{
   label: string;
@@ -12,8 +13,10 @@ export type RadioProps = Partial<{
   value: string;
   checked: boolean;
   disabled: boolean;
+  invalidmessage: string;
+  required: boolean;
   labelhidden: boolean;
-  size: MinidRadioGroup['size'];
+  size: 'sm' | 'md' | 'lg';
   '--': string;
   'mid-change': Event;
   'mid-input': Event;
@@ -24,7 +27,7 @@ export type RadioProps = Partial<{
 
 const meta: Meta<RadioProps> = {
   title: 'Komponenter/Radio',
-  tags: ['experimental'],
+  tags: ['alpha'],
   component: 'mid-radio-group',
   subcomponents: { MidRadio: 'mid-radio' },
   argTypes: {
@@ -33,6 +36,7 @@ const meta: Meta<RadioProps> = {
     size: {
       control: { type: 'radio' },
       options: ['sm', 'md', 'lg'],
+      description: 'Adjust the size by setting the font size on the group.',
     },
     '--': { name: '-', control: { disable: true } },
     'mid-change': { control: { disable: true } },
@@ -49,7 +53,7 @@ type Story = StoryObj<RadioProps>;
 
 export const Main: Story = {
   args: {
-    label: 'Velg en av følgende',
+    label: 'Hei, hva med å velge en ting?',
     name: 'berry',
   },
   render: ({
@@ -59,19 +63,28 @@ export const Main: Story = {
     labelhidden,
     size,
     disabled,
+    invalidmessage,
+    required,
   }: RadioProps) => html`
     <mid-radio-group
+      class=${classMap({
+        'text-body-sm': size === 'sm',
+        'text-body-md': size === 'md',
+        'text-body-lg': size === 'lg',
+      })}
       name="${ifDefined(name)}"
       value=${ifDefined(value)}
       label=${ifDefined(label)}
+      invalidmessage=${ifDefined(invalidmessage)}
       size=${ifDefined(size)}
       ?disabled=${disabled}
+      ?required=${required}
       ?labelhidden=${labelhidden}
     >
       <mid-radio value="gooseberry"> Stikkelsbær </mid-radio>
       <mid-radio value="currant"> Rips </mid-radio>
       <mid-radio disabled value="rock"> Rockemusikk </mid-radio>
-      <mid-radio value="kielland"> Alexander Kielland </mid-radio>
+      <mid-radio value="kielland"> Alexander Kielland</mid-radio>
     </mid-radio-group>
   `,
   decorators: [

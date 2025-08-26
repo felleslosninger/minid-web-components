@@ -8,6 +8,7 @@ import { watch } from '../internal/watch';
 import { MinidRadio } from '../components/radio.component';
 import { FormControlMixin } from '../mixins/form-control.mixin';
 import { HasSlotController } from '../internal/slot';
+import { requiredValidator } from 'src/mixins/validators';
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -19,10 +20,6 @@ const styles = [
   css`
     :host {
       display: block;
-    }
-
-    .fds-label {
-      margin-bottom: 1rem;
     }
   `,
 ];
@@ -43,11 +40,13 @@ export class MinidRadioGroup extends FormControlMixin(
   styled(LitElement, styles)
 ) {
   private readonly hasSlotController = new HasSlotController(this, 'label');
+  private readonly validationId = `radio-group-${MinidRadioGroup._uniqueId++}`;
+  private static _uniqueId = 0;
   /**
-   * The name of the radio group.
+   * The name of the radio group, submitted as a name/value pair with form data.
    */
-  @property()
-  name = 'option';
+  @property({ reflect: true })
+  name: string | null = null;
 
   /**
    * The current value of the radio group.
@@ -58,20 +57,34 @@ export class MinidRadioGroup extends FormControlMixin(
   @property()
   label = '';
 
-  @property()
-  size: 'sm' | 'md' | 'lg' = 'md';
-
   @property({ type: Boolean })
   labelhidden = false;
 
   @property({ type: Boolean })
   disabled = false;
 
+  @property({ type: Boolean, reflect: true })
+  required = false;
+
+  @property()
+  invalidmessage = '';
+
   @state()
   private hasButtonRadios = false;
 
   @state()
   defaultValue: string | null = null;
+
+  get validationTarget() {
+    const radio = this.querySelector<MinidRadio>(
+      ':is(mid-radio):not([disabled])'
+    );
+    return radio ?? undefined;
+  }
+
+  static get formcontrolValidators() {
+    return [requiredValidator];
+  }
 
   protected firstUpdated(_changedProperties: PropertyValues): void {
     super.firstUpdated(_changedProperties);
@@ -96,7 +109,6 @@ export class MinidRadioGroup extends FormControlMixin(
       radios.map(async (radio) => {
         await radio.updateComplete;
         radio.checked = radio.value === this.value;
-        radio.size = this.size;
       })
     );
 
@@ -107,7 +119,7 @@ export class MinidRadioGroup extends FormControlMixin(
           buttonRadio.setAttribute('tabindex', '0');
         }
       } else {
-        radios[0].element.setAttribute('tabindex', '0');
+        radios[0].input.setAttribute('tabindex', '0');
       }
     }
   }
@@ -169,7 +181,7 @@ export class MinidRadioGroup extends FormControlMixin(
       radio.checked = false;
 
       if (!this.hasButtonRadios) {
-        radio.element.setAttribute('tabindex', '-1');
+        radio.input.setAttribute('tabindex', '-1');
       }
     });
 
@@ -178,7 +190,7 @@ export class MinidRadioGroup extends FormControlMixin(
     this.setValue(this.value);
 
     if (!this.hasButtonRadios) {
-      radios[index].element.setAttribute('tabindex', '0');
+      radios[index].input.setAttribute('tabindex', '0');
       radios[index].focus();
     } else {
       radios[index].shadowRoot!.querySelector('button')!.focus();
@@ -197,11 +209,7 @@ export class MinidRadioGroup extends FormControlMixin(
   }
 
   private getAllRadios() {
-    return Array.from(
-      this.querySelectorAll<MinidRadioButton | MinidRadio>(
-        'mid-radio, mid-radio-button'
-      )
-    );
+    return Array.from(this.querySelectorAll<MinidRadio>('mid-radio'));
   }
 
   private updateCheckedRadio() {
@@ -268,6 +276,13 @@ export class MinidRadioGroup extends FormControlMixin(
     });
   }
 
+  @watch('invalidmessage')
+  handleInvalidChange() {
+    this.getAllRadios().forEach((radio) => {
+      radio.invalid = !!this.invalidmessage;
+    });
+  }
+
   /**
    *  Sets focus on the radio-group.
    */
@@ -291,46 +306,42 @@ export class MinidRadioGroup extends FormControlMixin(
 
     return html`
       <fieldset
-        class="${classMap({
-          'fds-togglegroup': this.hasButtonRadios,
-        })} flex"
+        class="flex flex-col gap-2"
         part="form-control"
         role="radiogroup"
         aria-labelledby="label"
+        aria-errormessage="${this.validationId}"
       >
         <label
           part="form-control-label"
           id="label"
           class="class=${classMap({
-            'fds-label': true,
-            'fds-label--spacing': true,
-            'fds-label--sm': this.size === 'sm',
-            'fds-label--md': this.size === 'md',
-            'fds-label--lg': this.size === 'lg',
             'sr-only': this.labelhidden,
-          })}"
+            'mb-2': hasLabel,
+          })} mid-label"
           @click=${this.handleLabelClick}
         >
           <slot name="label">${this.label}</slot>
         </label>
-        <div
-          class="${classMap({
-            grid: true,
-            'gap-3': true,
-            'fds-togglegroup__content': this.hasButtonRadios,
-          })}"
-          part="base"
-          role="presentation"
-          aria-label=${this.label}
-        >
-          <slot
-            class="flex flex-col flex-wrap gap-3.5"
-            @slotchange=${this.syncRadios}
-            @click=${this.handleRadioClick}
-            @keydown=${this.handleKeyDown}
-          ></slot>
-        </div>
+        <slot
+          class="flex flex-col flex-wrap gap-3.5"
+          @slotchange=${this.syncRadios}
+          @click=${this.handleRadioClick}
+          @keydown=${this.handleKeyDown}
+        ></slot>
       </fieldset>
+      <div
+        class="text-danger-subtle mt-2 flex gap-1"
+        id="${this.validationId}"
+        aria-live="polite"
+        ?hidden=${!this.invalidmessage}
+      >
+        <mid-icon
+          name="xmark-octagon-fill"
+          class="mt-1 min-h-6 min-w-6"
+        ></mid-icon>
+        ${this.invalidmessage}
+      </div>
     `;
   }
 }

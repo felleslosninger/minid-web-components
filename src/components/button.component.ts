@@ -115,9 +115,6 @@ export class MinidButton extends FormControlMixin(styled(LitElement, styles)) {
     const primary = this.variant === 'primary';
     const secondary = this.variant === 'secondary';
     const tertiary = this.variant === 'tertiary';
-    const sm = this.size === 'sm';
-    const md = this.size === 'md';
-    const lg = this.size === 'lg';
     const spinnerOnly = this.loading && !this.loadingtext;
 
     return html`<${tag}
@@ -138,9 +135,9 @@ export class MinidButton extends FormControlMixin(styled(LitElement, styles)) {
         'text-accent-subtle': secondary || tertiary,
         'hover:text-accent': secondary || tertiary,
         'border-accent-strong': secondary,
-        'text-body-sm': sm,
-        'text-body-md': md,
-        'text-body-lg': lg,
+        'text-body-sm': this.size === 'sm',
+        'text-body-md': this.size === 'md',
+        'text-body-lg': this.size === 'lg',
         'cursor-wait': this.loading && !this.disabled,
         'cursor-pointer': !this.loading && !this.disabled,
         'cursor-not-allowed': this.disabled,

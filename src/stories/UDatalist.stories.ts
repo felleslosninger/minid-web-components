@@ -45,19 +45,21 @@ export const Main: Story = {
           )
           .slice(0, 10)
           .map((country) => {
-            return html`<u-option
-              class="mid-menu-item truncate p-2"
-              @change=${(event) => {
-                console.log(event);
-              }}
-            >
-              <mid-icon
-                class="h-4 w-6 overflow-hidden rounded"
-                library="country"
-                name="${country}"
-              ></mid-icon>
-              <span>${countryLabelsNo[country]}</span>
-            </u-option>`;
+            return html`
+              <u-option
+                class="mid-menu-item truncate p-2"
+                @change=${(event) => {
+                  console.log(event);
+                }}
+              >
+                <mid-icon
+                  class="h-4 w-6 overflow-hidden rounded"
+                  library="country"
+                  name="${country}"
+                ></mid-icon>
+                <span>${countryLabelsNo[country]}</span>
+              </u-option>
+            `;
           })}
       </u-datalist>
     </mid-dropdown>
