@@ -2,6 +2,11 @@
 
 A changelog for logging changes.
 
+## 0.0.129
+
+- Added `mid-link` class styling
+- Added `clear()` method to `<mid-code-input>`
+
 ## 0.0.128
 
 - Fix `mid-label` class styling

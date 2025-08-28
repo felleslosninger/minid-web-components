@@ -88,6 +88,7 @@ export const CodeInput: Story = {
   render: () =>
     html`<form id="form-2" class="flex w-100 flex-col gap-4">
         <mid-code-input
+          class="min-h-30"
           id="code-input-1"
           label="Engangskode"
           name="otc"

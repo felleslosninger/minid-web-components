@@ -51,6 +51,8 @@ const styles = [
  *
  * @csspart input-container - The wrapper around the input elements. This can be used to adjust font-size.
  *
+ * @method focus - Focuses the first input element
+ * @method clear - Clears all input elements
  */
 @customElement('mid-code-input')
 export class MinidCodeInput extends FormControlMixin(
@@ -293,6 +295,11 @@ export class MinidCodeInput extends FormControlMixin(
     });
   }
 
+  clear() {
+    this.internalValues = Array(this.length).fill('');
+    this.updateValueAndEmit();
+  }
+
   focus(options?: FocusOptions): void {
     if (this.inputElements.length > 0) {
       this.inputElements[0].focus(options);
@@ -307,6 +314,8 @@ export class MinidCodeInput extends FormControlMixin(
 
   @watch('value')
   handleValueChange() {
+    console.log('handleValueChange', this.value);
+
     this.setValue(this.value);
 
     if (this.#skipValueVisualUpdate) {
