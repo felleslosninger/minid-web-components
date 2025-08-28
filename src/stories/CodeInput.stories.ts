@@ -25,6 +25,8 @@ type CodeInputProps = Partial<{
   'mid-invalid-show': Event;
   'mid-invalid-hide': Event;
   'input-container': Part;
+  clear: Function;
+  focus: Function;
 }>;
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories
@@ -51,6 +53,16 @@ const meta = {
     'mid-invalid-hide': { control: { disable: true } },
     'input-container': { control: { disable: true } },
     event: { table: { disable: true } },
+    clear: {
+      table: { category: 'Methods' },
+      type: 'function',
+      description: 'Clears all input elements',
+    },
+    focus: {
+      table: { category: 'Methods' },
+      type: 'function',
+      description: 'Focuses the first input element',
+    },
   },
 } satisfies Meta<CodeInputProps>;
 

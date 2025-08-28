@@ -42,3 +42,15 @@ export const Input: Story = {
     html`<label for="input-1" class="mid-label mb-2"> Input </label>
       <input id="input-1" class="mid-input" /> `,
 };
+
+export const Link: Story = {
+  args: {},
+  decorators: [
+    (story) => html`<div class="grid grid-rows-2 gap-4">${story()}</div>`,
+  ],
+  render: () =>
+    html`<a href="#" class="mid-link">Dette er en link</a>
+      <button @click=${console.log} class="mid-link">
+        Dette er en knapp
+      </button> `,
+};
