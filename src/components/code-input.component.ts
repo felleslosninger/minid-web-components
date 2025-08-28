@@ -314,8 +314,6 @@ export class MinidCodeInput extends FormControlMixin(
 
   @watch('value')
   handleValueChange() {
-    console.log('handleValueChange', this.value);
-
     this.setValue(this.value);
 
     if (this.#skipValueVisualUpdate) {
