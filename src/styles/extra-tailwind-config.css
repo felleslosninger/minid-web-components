@@ -49,19 +49,7 @@
   }
 
   .mid-menu-item {
-    @apply bg-neutral block w-full rounded border-l-[5px] border-transparent px-3 py-2 font-medium;
-  }
-
-  .mid-menu-item:hover {
-    @apply border-accent-base bg-accent-tinted;
-  }
-
-  .mid-menu-item:focus-visible {
-    @apply border-accent-base bg-accent-tinted outline-0;
-  }
-
-  .mid-menu-item:active {
-    @apply border-accent-base bg-accent-tinted;
+    @apply active:border-accent-base active:bg-accent-tinted focus-visible:border-accent-base focus-visible:bg-accent-tinted hover:border-accent-base hover:bg-accent-tinted bg-neutral block w-full rounded border-l-[5px] border-transparent px-3 py-2 font-medium outline-0;
   }
 
   .mid-button {
@@ -70,5 +58,9 @@
 
   .mid-label {
     @apply block font-medium;
+  }
+
+  .mid-link {
+    @apply text-accent-subtle visited:text-link-visited focus-visible:bg-focus-outer hover:text-accent inline-flex items-center gap-2 underline decoration-[.0625rem] underline-offset-[.27em] outline-0 hover:decoration-[.125rem] focus-visible:text-white;
   }
 }
