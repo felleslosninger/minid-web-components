@@ -2,6 +2,11 @@
 
 A changelog for logging changes.
 
+## 0.0.131
+
+- Fix poor experience for mobile users of `mid-code-input`
+- Fix WebOTP API for `mid-code-input`
+
 ## 0.0.129
 
 - Added `mid-link` class styling
