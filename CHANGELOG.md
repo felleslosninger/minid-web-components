@@ -2,6 +2,9 @@
 
 A changelog for logging changes.
 
+## 0.0.132
+- Fix race condition at form submit through WebOTP
+
 ## 0.0.131
 
 - Fix poor experience for mobile users of `mid-code-input`
