@@ -101,6 +101,7 @@ export const CodeInput: Story = {
         <div class="flex flex-row-reverse items-end justify-end gap-4">
           <pre id="output-2"></pre>
           <mid-button type="submit"> Submit </mid-button>
+          <mid-button type="reset" variant="secondary"> Reset </mid-button>
         </div>
       </form>
 

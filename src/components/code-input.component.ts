@@ -255,11 +255,19 @@ export class MinidCodeInput extends FormControlMixin(
     // Update the component's public `value` property if it has changed.
     if (this.value !== value) {
       this.value = value;
+      this.setValue(value);
     }
 
     this.dispatchEvent(
       new Event('mid-input', { bubbles: true, composed: true }),
     );
+
+      if (this.value.length === this.length && this.value.length > 0) {
+        this.dispatchEvent(
+          new Event('mid-complete', { bubbles: true, composed: true }),
+        );
+      }
+
   }
 
   private handleChange() {
@@ -290,7 +298,13 @@ export class MinidCodeInput extends FormControlMixin(
 
   clear() {
     this.value = '';
+    this.setValue('');
   }
+
+  resetFormControl() {
+    this.clear();
+  }
+
 
   focus(options?: FocusOptions): void {
     this.inputElement?.focus(options);
@@ -303,23 +317,6 @@ export class MinidCodeInput extends FormControlMixin(
     }
   }
 
-  @watch('value')
-  handleValueChange() {
-    this.setValue(this.value);
-
-    if (this.inputElement && this.inputElement.value !== this.value) {
-      this.inputElement.value = this.value;
-    }
-
-    if (this.value.length === this.length && this.value.length > 0) {
-      this.dispatchEvent(
-        new Event('mid-complete', {
-          bubbles: true,
-          composed: true,
-        }),
-      );
-    }
-  }
 
   override render() {
     const hasLabelSlot = this.hasSlotControler.test('label');
