@@ -28,6 +28,15 @@ const styles = [
     :host {
       display: block;
     }
+      
+    /* Hide increment/decrement buttons on inputs */
+    input[type='number']::-webkit-outer-spin-button,
+    input[type='number']::-webkit-inner-spin-button,
+    input[type='number'] {
+        -webkit-appearance: none;
+        margin: 0;
+        -moz-appearance: textfield !important;
+    }
   `,
 ];
 
@@ -126,7 +135,7 @@ export class MinidTextfield extends FormControlMixin(
 
   @property()
   type:
-    | 'date'
+    'date'
     | 'datetime-local'
     | 'email'
     | 'file'
@@ -139,6 +148,19 @@ export class MinidTextfield extends FormControlMixin(
     | 'time'
     | 'url'
     | 'week' = 'text';
+
+  /**
+   * For displaying appropriate virtual keyboard
+   */
+  @property()
+  inputmode:
+    'none'
+    | 'text'
+    | 'tel'
+    | 'url'
+    | 'email'
+    | 'numeric'
+    | 'decimal' = 'text';
 
   /**
    * Adds a clear button when the input is not empty.
@@ -256,7 +278,13 @@ export class MinidTextfield extends FormControlMixin(
   }
 
   private handleInput() {
-    this.value = this.input.value;
+    let tmp_value = this.input.value;
+
+    if (this.type === 'number') {
+      tmp_value = tmp_value.replace(/[^0-9]/g, '');
+    }
+
+    this.value = tmp_value;
     this.setValue(this.value);
     this.dispatchEvent(
       new Event('mid-input', { bubbles: true, composed: true })

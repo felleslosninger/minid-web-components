@@ -2,6 +2,11 @@
 
 A changelog for logging changes.
 
+## 0.0.133
+- Fix bug with iOS zoom on `<mid-code-input>`
+- Change auto-submit of WebOTP to trigger on 'mid-complete' event.
+- Added inputmode control to `<mid-textfield>`
+
 ## 0.0.132
 - Fix race condition at form submit through WebOTP
 
