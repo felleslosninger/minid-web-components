@@ -91,17 +91,18 @@ const meta = {
         'url',
         'week',
       ],
-      inputmode: {
-        control: { type: 'select' },
-        options: [
-          'none',
-          'text',
-          'tel',
-          'url',
-          'email',
-          'numeric',
-          'decimal'
-        ],
+    },
+    inputmode: {
+      control: { type: 'select' },
+      options: [
+        'none',
+        'text',
+        'tel',
+        'url',
+        'email',
+        'numeric',
+        'decimal'
+      ],
     },
     pattern: { type: 'string' },
     mask: { type: 'string' },

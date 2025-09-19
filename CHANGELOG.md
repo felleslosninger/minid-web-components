@@ -2,7 +2,7 @@
 
 A changelog for logging changes.
 
-## 0.0.133
+## 0.0.134
 - Fix bug with iOS zoom on `<mid-code-input>`
 - Change auto-submit of WebOTP to trigger on 'mid-complete' event.
 - Added inputmode control to `<mid-textfield>`
