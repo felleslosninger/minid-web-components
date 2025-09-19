@@ -141,8 +141,12 @@ export class MinidCodeInput extends FormControlMixin(
   @property()
   label = '';
 
+  //Todo change to another value than type?
+  /**
+   * Change what characters are allowed to be used in the code field
+   */
   @property()
-  type: 'number' | 'text' = 'number';
+  type: 'digits' | 'alphanumeric' | 'any' = 'digits';
 
   /**
    * For displaying appropriate virtual keyboard
@@ -204,6 +208,9 @@ export class MinidCodeInput extends FormControlMixin(
   @state()
   private isFocused = false;
 
+  @state()
+  private _isComposing = false;
+
   static get formControlValidators() {
     return [
       requiredValidator,
@@ -241,36 +248,61 @@ export class MinidCodeInput extends FormControlMixin(
     this.isFocused = false;
   }
 
-  private handleInput(event: InputEvent) {
-    const input = event.target as HTMLInputElement;
-    let value = input.value;
+  private filterToChar(s: string) {
+   switch (this.type) {
+     case 'digits':
+       return s.replace(/\D/g, '');
+     case 'alphanumeric':
+       return s.replace(/[^A-Za-z0-9]/g, '');
+     default:
+       return s;
+   }
+ }
 
-    if (this.type === 'number') {
-      value = value.replace(/[^0-9]/g, '');
+ private _syncFromDom() {
+   const input = this.inputElement;
+   const raw = input.value || '';
+   const cleaned = this.filterToChar(raw);
+   const value = cleaned.slice(0, this.length);
+
+
+   if (input.value !== value) input.value = value;
+
+   if(this.value !== value){
+     this.value = value;
+     this.setValue(value);
+
+
+   console.log(this.value);
+
+   this.dispatchEvent(new Event('mid-input', { bubbles: true, composed: true }));
+
+   if (this.value.length === this.length && this.value.length > 0) {
+     this.dispatchEvent(new Event('mid-complete', { bubbles: true, composed: true }));
+   }}
+ }
+
+
+  private handleBeforeInput(e: InputEvent) {
+    if(e.inputType.startsWith('insertComposition')) return;
+    if(e.inputType.startsWith('insertForm')) return;
+    if (e.inputType === 'insertText' && e.data && this.filterToChar(e.data) === '') {
+      e.preventDefault();
     }
+  }
 
-    value = value.substring(0, this.length);
+  private handleInput(_e: InputEvent) {
+    if (this._isComposing) return;
+    this._syncFromDom();
+  }
 
-    if (input.value !== value) {
-      input.value = value;
-    }
+  private handleCompositionStart() {
+    this._isComposing = true;
+  }
 
-    // Update the component's public `value` property if it has changed.
-    if (this.value !== value) {
-      this.value = value;
-      this.setValue(value);
-    }
-
-    this.dispatchEvent(
-      new Event('mid-input', { bubbles: true, composed: true }),
-    );
-
-      if (this.value.length === this.length && this.value.length > 0) {
-        this.dispatchEvent(
-          new Event('mid-complete', { bubbles: true, composed: true }),
-        );
-      }
-
+  private handleCompositionEnd() {
+    this._isComposing = false;
+    this._syncFromDom();
   }
 
   private handleChange() {
@@ -313,12 +345,14 @@ export class MinidCodeInput extends FormControlMixin(
     this.inputElement?.focus(options);
   }
 
-  @watch('length')
+  /**@watch('length')
   handleLengthChange() {
     if (this.value.length > this.length) {
-      this.value = this.value.substring(0, this.length);
+      const trimmed = this.value.substring(0, this.length);
+      this.value = trimmed;
+      if (this.inputElement) this.inputElement.value = trimmed;
     }
-  }
+  }*/
 
 
   override render() {
@@ -331,6 +365,16 @@ export class MinidCodeInput extends FormControlMixin(
       (_, i) => chars[i] || '',
     );
     const caretIndex = this.disabled ? -1 : this.value.length;
+
+    const derivedPattern =
+      this.pattern ??
+      (this.type === 'digits'
+        ? '^[0-9]*$'
+        : this.type === 'alphanumeric'
+          ? '^[A-Za-z0-9]*$'
+          : undefined);
+
+
 
     return html`
       <label
@@ -386,16 +430,20 @@ export class MinidCodeInput extends FormControlMixin(
           class="hidden-input"
           .value="${live(this.value)}"
           id="mid-code-input-hidden"
-          type="${this.type}"
+          type="text"
           aria-labelledby="${this.labelId}"
           maxlength="${this.length}"
           ?autofocus="${this.autofocus}"
           ?disabled="${this.disabled}"
           ?required="${this.required}"
-          .pattern="${this.pattern}"
+          .pattern="${derivedPattern}"
           inputmode="${this.inputmode}"
+          type="${this.type}"
           autocomplete="one-time-code"
           @input="${this.handleInput}"
+          @compositionstart=${this.handleCompositionStart}
+          @compositionend=${this.handleCompositionEnd}
+          @beforeInput="${this.handleBeforeInput}"
           @change="${this.handleChange}"
           @keydown="${this.handleKeydown}"
           @focus="${this.handleFocus}"

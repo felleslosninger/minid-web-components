@@ -2,14 +2,14 @@ import type { Meta, StoryObj } from '@storybook/web-components-vite';
 import { html, nothing, Part } from 'lit';
 import '../components/code-input.component';
 import { ifDefined } from 'lit/directives/if-defined.js';
-
+//Todo remove type, or change out with charset!
 type CodeInputProps = Partial<{
   length: number;
   minlength: number;
   value: string;
   label: string;
   labelAttr: string;
-  type: 'number' | 'text';
+  type: 'digits' | 'alphanumeric' | 'any';
   size: 'sm' | 'md' | 'lg';
   inputmode: 'numeric' | 'text';
   invalidmessage: string;
@@ -39,7 +39,8 @@ const meta = {
     pattern: { type: 'string' },
     minlength: { type: 'number' },
     size: { control: 'radio', options: ['sm', 'md', 'lg'] },
-    type: { control: 'radio', options: ['number', 'text'] },
+    //type: { control: 'radio', options: ['number', 'text'] },
+    type: { control: 'radio', options: ['digits', 'alphanumeric', 'any'] },
     inputmode: { control: 'radio', options: ['numeric', 'text'] },
     labelAttr: {
       name: 'label',
