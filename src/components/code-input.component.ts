@@ -261,20 +261,20 @@ export class MinidCodeInput extends FormControlMixin(
       this.setValue(value);
     }
 
-    this.dispatchEvent(
+    this.inputElement.dispatchEvent(
       new Event('mid-input', { bubbles: true, composed: true }),
     );
 
-      if (this.value.length === this.length && this.value.length > 0) {
-        this.dispatchEvent(
-          new Event('mid-complete', { bubbles: true, composed: true }),
-        );
-      }
+    if (this.value.length === this.length && this.value.length > 0) {
+      this.inputElement.dispatchEvent(
+        new Event('mid-complete', { bubbles: true, composed: true }),
+      );
+    }
 
   }
 
   private handleChange() {
-    this.dispatchEvent(
+    this.inputElement.dispatchEvent(
       new Event('mid-change', {
         bubbles: true,
         composed: true,
