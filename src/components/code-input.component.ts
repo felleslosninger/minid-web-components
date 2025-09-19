@@ -59,8 +59,7 @@ const styles = [
           color: transparent;
           /* Hide the real caret */
           caret-color: transparent;
-          /* Make font tiny to avoid visual artifacts */
-          font-size: 1px;
+          font-size: 16px; /* Must be at least 16px to prevent ios from zooming in */
           /* Allow clicks to pass through to elements underneath */
           pointer-events: none;
       }
@@ -244,11 +243,15 @@ export class MinidCodeInput extends FormControlMixin(
 
   private handleInput(event: InputEvent) {
     const input = event.target as HTMLInputElement;
-    const value = input.value.substring(0, this.length);
+    let value = input.value;
 
-    // If the browser allowed a value longer than our length (e.g. on type="number"),
-    // we need to truncate the underlying input's value directly to keep it in sync.
-    if (input.value.length > this.length) {
+    if (this.type === 'number') {
+      value = value.replace(/[^0-9]/g, '');
+    }
+
+    value = value.substring(0, this.length);
+
+    if (input.value !== value) {
       input.value = value;
     }
 

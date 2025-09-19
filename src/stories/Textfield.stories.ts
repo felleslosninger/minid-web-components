@@ -12,6 +12,7 @@ type TextfieldProps = Partial<{
   value: string;
   placeholder: string;
   type: 'text';
+  inputmode: 'text';
   size: 'sm' | 'md' | 'lg';
   prefix: string;
   suffix: string;
@@ -90,6 +91,17 @@ const meta = {
         'url',
         'week',
       ],
+      inputmode: {
+        control: { type: 'select' },
+        options: [
+          'none',
+          'text',
+          'tel',
+          'url',
+          'email',
+          'numeric',
+          'decimal'
+        ],
     },
     pattern: { type: 'string' },
     mask: { type: 'string' },
@@ -125,6 +137,7 @@ export const Main: Story = {
     placeholder,
     size,
     type,
+    inputmode,
     value,
     name,
     prefix,
@@ -165,6 +178,7 @@ export const Main: Story = {
       placeholder=${ifDefined(placeholder)}
       pattern=${ifDefined(pattern)}
       type=${ifDefined(type)}
+      inputmode=${ifDefined(inputmode)}
       size=${ifDefined(size)}
       min=${ifDefined(min)}
       max=${ifDefined(max)}
