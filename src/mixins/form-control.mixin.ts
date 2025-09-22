@@ -125,7 +125,7 @@ export function FormControlMixin<
     #forceError = false;
 
     /**
-     * Toggles to true whenever the element has been focused. This property
+     * Toggles to true whenever the element has been altered. This property
      * will reset whenever the control's formResetCallback is called.
      * @private
      * @ignore
@@ -153,13 +153,12 @@ export function FormControlMixin<
     #value: FormValue = '';
 
     /**
-     * Set this[touched] and this[focused]
+     * Set this[focused]
      * to true when the element is focused
      * @private
      * @ignore
      */
     #onFocus = (): void => {
-      this.#touched = true;
       this.#focused = true;
       this.#shouldShowError();
     };
@@ -293,11 +292,14 @@ export function FormControlMixin<
 
     /**
      * Sets the control's form value if the call to `shouldFormValueUpdate`
-     * returns `true`.
+     * returns `true`. Set this[touch] if connected and value changed.
      * @param value {FormValue} - The value to pass to the form
      * @ignore
      */
     setValue(value: FormValue): void {
+      if (this.isConnected && this.#value !== value) {
+        this.#touched = true;
+      }
       this.#forceError = false;
       this.validationMessageCallback?.('');
       this.#value = value;
