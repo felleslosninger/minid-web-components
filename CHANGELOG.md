@@ -2,6 +2,9 @@
 
 A changelog for logging changes.
 
+## 0.0.138
+- Bug fix, in the code input number field, numbers disappear when non number is written
+
 ## 0.0.137
 - Form control's `#touched` is set true when altered instead of focused.
 
