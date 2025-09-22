@@ -241,13 +241,17 @@ export class MinidCodeInput extends FormControlMixin(
     this.isFocused = false;
   }
 
+  private handleBeforeInput(e: InputEvent) {
+    if (e.inputType === 'insertText' && e.data) {
+      if(this.type == "number" && e.data.replace(/\D/g, '') == ''){
+        e.preventDefault();
+      }
+    }
+  }
+
   private handleInput(event: InputEvent) {
     const input = event.target as HTMLInputElement;
     let value = input.value;
-
-    if (this.type === 'number') {
-      value = value.replace(/[^0-9]/g, '');
-    }
 
     value = value.substring(0, this.length);
 
@@ -396,6 +400,7 @@ export class MinidCodeInput extends FormControlMixin(
           .pattern="${this.pattern}"
           inputmode="${this.inputmode}"
           autocomplete="one-time-code"
+          @beforeinput="${this.handleBeforeInput}"
           @input="${this.handleInput}"
           @change="${this.handleChange}"
           @keydown="${this.handleKeydown}"
