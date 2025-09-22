@@ -234,6 +234,7 @@ export class MinidTextfield extends FormControlMixin(
     this.inputId = `mid-textfield-input-${nextUniqueId}`;
     this.descriptionId = `mid-textfield-description-${nextUniqueId}`;
     this.validationId = `mid-textfield-validation-${nextUniqueId}`;
+    this.setValue(this.value);
   }
 
   override connectedCallback(): void {
