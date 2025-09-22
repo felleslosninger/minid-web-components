@@ -302,6 +302,7 @@ export class MinidCodeInput extends FormControlMixin(
   clear() {
     this.value = '';
     this.setValue('');
+    this.invalidmessage = '';
   }
 
   resetFormControl() {
