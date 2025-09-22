@@ -2,7 +2,6 @@ import { css, html, LitElement, PropertyValues } from 'lit';
 import { customElement, property, query, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { live } from 'lit/directives/live.js';
-import { watch } from '../internal/watch.ts';
 import { FormControlMixin } from '../mixins/form-control.mixin.ts';
 import { styled } from '../mixins/tailwind.mixin.ts';
 import { HasSlotController } from '../internal/slot.ts';
@@ -146,7 +145,7 @@ export class MinidCodeInput extends FormControlMixin(
    * Change what characters are allowed to be used in the code field
    */
   @property()
-  type: 'digits' | 'alphanumeric' | 'any' = 'digits';
+  allowedtype: 'digits' | 'alphanumeric' | 'any' = 'digits';
 
   /**
    * For displaying appropriate virtual keyboard
@@ -249,7 +248,7 @@ export class MinidCodeInput extends FormControlMixin(
   }
 
   private filterToChar(s: string) {
-   switch (this.type) {
+   switch (this.allowedtype) {
      case 'digits':
        return s.replace(/\D/g, '');
      case 'alphanumeric':
@@ -272,8 +271,6 @@ export class MinidCodeInput extends FormControlMixin(
      this.value = value;
      this.setValue(value);
 
-
-   console.log(this.value);
 
    this.inputElement.dispatchEvent(new Event('mid-input', { bubbles: true, composed: true }));
 
@@ -345,15 +342,6 @@ export class MinidCodeInput extends FormControlMixin(
     this.inputElement?.focus(options);
   }
 
-  /**@watch('length')
-  handleLengthChange() {
-    if (this.value.length > this.length) {
-      const trimmed = this.value.substring(0, this.length);
-      this.value = trimmed;
-      if (this.inputElement) this.inputElement.value = trimmed;
-    }
-  }*/
-
 
   override render() {
     const hasLabelSlot = this.hasSlotControler.test('label');
@@ -368,9 +356,9 @@ export class MinidCodeInput extends FormControlMixin(
 
     const derivedPattern =
       this.pattern ??
-      (this.type === 'digits'
+      (this.allowedtype === 'digits'
         ? '^[0-9]*$'
-        : this.type === 'alphanumeric'
+        : this.allowedtype === 'alphanumeric'
           ? '^[A-Za-z0-9]*$'
           : undefined);
 
@@ -438,7 +426,7 @@ export class MinidCodeInput extends FormControlMixin(
           ?required="${this.required}"
           .pattern="${derivedPattern}"
           inputmode="${this.inputmode}"
-          type="${this.type}"
+          allowedtype="${this.allowedtype}"
           autocomplete="one-time-code"
           @input="${this.handleInput}"
           @compositionstart=${this.handleCompositionStart}

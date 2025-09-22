@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/web-components-vite';
 import { html, nothing, Part } from 'lit';
 import '../components/code-input.component';
 import { ifDefined } from 'lit/directives/if-defined.js';
+import { action } from 'storybook/actions';
 //Todo remove type, or change out with charset!
 type CodeInputProps = Partial<{
   length: number;
@@ -9,7 +10,7 @@ type CodeInputProps = Partial<{
   value: string;
   label: string;
   labelAttr: string;
-  type: 'digits' | 'alphanumeric' | 'any';
+  allowedtype: 'digits' | 'alphanumeric' | 'any';
   size: 'sm' | 'md' | 'lg';
   inputmode: 'numeric' | 'text';
   invalidmessage: string;
@@ -40,7 +41,7 @@ const meta = {
     minlength: { type: 'number' },
     size: { control: 'radio', options: ['sm', 'md', 'lg'] },
     //type: { control: 'radio', options: ['number', 'text'] },
-    type: { control: 'radio', options: ['digits', 'alphanumeric', 'any'] },
+    allowedtype: { control: 'radio', options: ['digits', 'alphanumeric', 'any'] },
     inputmode: { control: 'radio', options: ['numeric', 'text'] },
     labelAttr: {
       name: 'label',
@@ -82,7 +83,7 @@ export const Main: Story = {
     value,
     label,
     labelAttr,
-    type,
+    allowedtype,
     size,
     autofocus,
     disabled,
@@ -97,7 +98,7 @@ export const Main: Story = {
         label=${ifDefined(labelAttr)}
         length=${ifDefined(length)}
         minlength=${ifDefined(minlength)}
-        type=${ifDefined(type)}
+        allowedtype=${ifDefined(allowedtype)}
         size=${ifDefined(size)}
         inputmode=${ifDefined(inputmode)}
         invalidmessage=${ifDefined(invalidmessage)}
@@ -105,6 +106,7 @@ export const Main: Story = {
         ?readonly=${readonly}
         ?autofocus=${autofocus}
         ?disabled=${disabled}
+        
       >
         ${label ? html`<span slot="label">${label}</span>` : nothing}
       </mid-code-input>
