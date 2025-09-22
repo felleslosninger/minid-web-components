@@ -9,7 +9,7 @@ type CodeInputProps = Partial<{
   value: string;
   label: string;
   labelAttr: string;
-  type: 'number' | 'text';
+  allowedtype: 'digits' | 'alphanumeric' | 'any';
   size: 'sm' | 'md' | 'lg';
   inputmode: 'numeric' | 'text';
   invalidmessage: string;
@@ -39,7 +39,7 @@ const meta = {
     pattern: { type: 'string' },
     minlength: { type: 'number' },
     size: { control: 'radio', options: ['sm', 'md', 'lg'] },
-    type: { control: 'radio', options: ['number', 'text'] },
+    allowedtype: { control: 'radio', options: ['digits', 'alphanumeric', 'any'] },
     inputmode: { control: 'radio', options: ['numeric', 'text'] },
     labelAttr: {
       name: 'label',
@@ -81,7 +81,7 @@ export const Main: Story = {
     value,
     label,
     labelAttr,
-    type,
+    allowedtype,
     size,
     autofocus,
     disabled,
@@ -96,7 +96,7 @@ export const Main: Story = {
         label=${ifDefined(labelAttr)}
         length=${ifDefined(length)}
         minlength=${ifDefined(minlength)}
-        type=${ifDefined(type)}
+        allowedtype=${ifDefined(allowedtype)}
         size=${ifDefined(size)}
         inputmode=${ifDefined(inputmode)}
         invalidmessage=${ifDefined(invalidmessage)}

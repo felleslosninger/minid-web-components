@@ -3,7 +3,10 @@
 A changelog for logging changes.
 
 ## 0.0.137
-- Form control's `#touched` is set true when altered instead of focused. 
+- Form control's `#touched` is set true when altered instead of focused.
+
+## 0.0.136
+- Fix bugs with code input field where numbers disappear when a character is entered
 
 ## 0.0.135
 - Events are now dispatched from the hidden input field in `<mid-code-input>`
