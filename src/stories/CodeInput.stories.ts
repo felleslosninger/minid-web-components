@@ -2,8 +2,7 @@ import type { Meta, StoryObj } from '@storybook/web-components-vite';
 import { html, nothing, Part } from 'lit';
 import '../components/code-input.component';
 import { ifDefined } from 'lit/directives/if-defined.js';
-import { action } from 'storybook/actions';
-//Todo remove type, or change out with charset!
+
 type CodeInputProps = Partial<{
   length: number;
   minlength: number;
@@ -40,7 +39,6 @@ const meta = {
     pattern: { type: 'string' },
     minlength: { type: 'number' },
     size: { control: 'radio', options: ['sm', 'md', 'lg'] },
-    //type: { control: 'radio', options: ['number', 'text'] },
     allowedtype: { control: 'radio', options: ['digits', 'alphanumeric', 'any'] },
     inputmode: { control: 'radio', options: ['numeric', 'text'] },
     labelAttr: {
@@ -106,7 +104,6 @@ export const Main: Story = {
         ?readonly=${readonly}
         ?autofocus=${autofocus}
         ?disabled=${disabled}
-        
       >
         ${label ? html`<span slot="label">${label}</span>` : nothing}
       </mid-code-input>

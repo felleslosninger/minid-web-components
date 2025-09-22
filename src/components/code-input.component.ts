@@ -6,12 +6,6 @@ import { FormControlMixin } from '../mixins/form-control.mixin.ts';
 import { styled } from '../mixins/tailwind.mixin.ts';
 import { HasSlotController } from '../internal/slot.ts';
 import './icon/icon.component.ts';
-import {
-  maxLengthValidator,
-  minLengthValidator,
-  patternValidator,
-  requiredValidator,
-} from '../mixins/validators.ts';
 import { webOtpApiInit } from '../utilities/web-otp-api.ts';
 
 declare global {
@@ -140,9 +134,8 @@ export class MinidCodeInput extends FormControlMixin(
   @property()
   label = '';
 
-  //Todo change to another value than type?
   /**
-   * Change what characters are allowed to be used in the code field
+   * Change what characters are allowed to be used in the code field.
    */
   @property()
   allowedtype: 'digits' | 'alphanumeric' | 'any' = 'digits';
@@ -210,14 +203,6 @@ export class MinidCodeInput extends FormControlMixin(
   @state()
   private _isComposing = false;
 
-  static get formControlValidators() {
-    return [
-      requiredValidator,
-      maxLengthValidator,
-      minLengthValidator,
-      patternValidator,
-    ];
-  }
 
   get validationTarget() {
     return this.inputElement;
@@ -282,7 +267,7 @@ export class MinidCodeInput extends FormControlMixin(
 
   private handleBeforeInput(e: InputEvent) {
     if(e.inputType.startsWith('insertComposition')) return;
-    if(e.inputType.startsWith('insertForm')) return;
+    if(e.inputType.startsWith('insertFrom')) return;
     if (e.inputType === 'insertText' && e.data && this.filterToChar(e.data) === '') {
       e.preventDefault();
     }
@@ -431,7 +416,7 @@ export class MinidCodeInput extends FormControlMixin(
           @input="${this.handleInput}"
           @compositionstart=${this.handleCompositionStart}
           @compositionend=${this.handleCompositionEnd}
-          @beforeInput="${this.handleBeforeInput}"
+          @beforeinput="${this.handleBeforeInput}"
           @change="${this.handleChange}"
           @keydown="${this.handleKeydown}"
           @focus="${this.handleFocus}"
