@@ -362,6 +362,12 @@ export class MinidTextfield extends FormControlMixin(
     const hasClearIcon = this.clearable && !this.disabled && !this.readonly;
     const isClearIconVisible =
       hasClearIcon && (typeof this.value === 'number' || this.value.length > 0);
+    const describedBy = [
+      this.description ? this.descriptionId : undefined,
+      this.invalidmessage ? this.validationId : undefined,
+    ]
+      .filter(Boolean)
+      .join(' ');
 
     return html`
       <div
@@ -433,10 +439,11 @@ export class MinidTextfield extends FormControlMixin(
             type=${this.type === 'password' && this.passwordvisible
               ? 'text'
               : this.type}
-            aria-describedby="${ifDefined(
-              (this.description && this.descriptionId) || undefined
-            )}"
-            aria-errormessage="${this.validationId}"
+            aria-describedby=${ifDefined(describedBy || undefined)}
+            aria-invalid=${this.invalidmessage ? 'true' : 'false'}
+            aria-errormessage=${ifDefined(
+              this.invalidmessage ? this.validationId : undefined
+            )}
             placeholder=${ifDefined(this.placeholder)}
             minlength=${ifDefined(this.minlength)}
             maxlength=${ifDefined(this.maxlength)}

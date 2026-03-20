@@ -83,6 +83,18 @@ export class MinidIcon extends styled(LitElement, styles) {
 
   private hasRendered = false;
 
+  private updateAccessibilityAttributes() {
+    if (typeof this.alt === 'string' && this.alt.length > 0) {
+      this.setAttribute('role', 'img');
+      this.setAttribute('aria-label', this.alt);
+      this.removeAttribute('aria-hidden');
+    } else {
+      this.removeAttribute('role');
+      this.removeAttribute('aria-label');
+      this.setAttribute('aria-hidden', 'true');
+    }
+  }
+
   /**
    * Given a URL, this function returns the resulting SVG element or an appropriate error symbol.
    */
@@ -134,20 +146,13 @@ export class MinidIcon extends styled(LitElement, styles) {
 
   firstUpdated() {
     this.hasRendered = true;
+    this.updateAccessibilityAttributes();
     this.setIcon();
   }
 
   @watch('alt')
   handleLabelChange() {
-    if (typeof this.alt === 'string' && this.alt.length > 0) {
-      this.setAttribute('role', 'img');
-      this.setAttribute('aria-label', this.alt);
-      this.removeAttribute('aria-hidden');
-    } else {
-      this.removeAttribute('role');
-      this.removeAttribute('aria-label');
-      this.setAttribute('aria-hidden', 'true');
-    }
+    this.updateAccessibilityAttributes();
   }
 
   @watch(['name', 'src', 'library'])
