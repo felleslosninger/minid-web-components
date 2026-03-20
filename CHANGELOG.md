@@ -2,6 +2,15 @@
 
 A changelog for logging changes.
 
+## 0.0.139
+Minor improvements:
+ - Screen readers:
+    - Code Input "○" is now hidden for screen readers.
+    - Text field and Code Input @mid-invalid-show will be read by the screen reader.
+    - Phone Input now has internal invalidMessage that will display under the field. Also focus no longer highlight the text to compensate for screen readers.
+    - Icons are no longer read as image by screen readers.
+ - Minor fixes
+   - Code Field focus highlight will be kept on last square so the user don't lose focus.
 ## 0.0.138
 - Bug fix, in the code input number field, numbers disappear when non number is written
 

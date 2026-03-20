@@ -1,6 +1,7 @@
 import { css, html, LitElement, nothing } from 'lit';
 import { customElement, property, query, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
+import { ifDefined } from 'lit/directives/if-defined.js';
 import { styled } from '../mixins/tailwind.mixin';
 import {
   AsYouType,
@@ -35,6 +36,8 @@ const styles = [
   `,
 ];
 
+let nextUniqueId = 0;
+
 /**
  * @event {Event} mid-country-click - Emitted when the country button is clicked
  * @event {Event} mid-change - Emitted when the value is modified by the user
@@ -52,13 +55,16 @@ const styles = [
 export class MinidPhoneInput extends FormControlMixin(
   styled(LitElement, styles)
 ) {
+  private readonly inputId: string;
+  private readonly validationId: string;
+  private readonly labelId = `mid-code-input-label-${nextUniqueId++}`;
   private formatter = new AsYouType();
   private skipCountryUpdate = false; // avoids unwanted update loop
   private currentEvent = new Event(''); // the event to be emitted after value is set
   private currentTemplate = '';
   private hasSlotControler = new HasSlotController(this, 'label');
 
-  @query('#input')
+  @query('input')
   input!: HTMLInputElement;
 
   /**
@@ -106,6 +112,12 @@ export class MinidPhoneInput extends FormControlMixin(
   invalid = false;
 
   /**
+   * Error message to display when the input is invalid, also activates invalid styling
+   */
+  @property()
+  invalidmessage = '';
+
+  /**
    * Makes the input required
    */
   @property({ type: Boolean })
@@ -122,6 +134,25 @@ export class MinidPhoneInput extends FormControlMixin(
 
   static get formControlValidators() {
     return [requiredValidator];
+  }
+
+  constructor() {
+    super();
+    nextUniqueId++;
+    this.inputId = `mid-phone-input-input-${nextUniqueId}`;
+    this.validationId = `mid-phone-input-validation-${nextUniqueId}`;
+  }
+
+  get validationTarget() {
+    return this.input;
+  }
+
+  validationMessageCallback(message: string) {
+    this.invalidmessage = message;
+  }
+
+  resetFormControl() {
+    this.invalidmessage = '';
   }
 
   handleCountryClick() {
@@ -282,14 +313,8 @@ export class MinidPhoneInput extends FormControlMixin(
     return value;
   }
 
-  focus() {
-    this.input.focus();
-    setTimeout(() => {
-      this.input.setSelectionRange(
-        (this.countrycode?.length ?? 0) + 1,
-        this.input.value.length
-      );
-    }, 0);
+  focus(options?: FocusOptions): void {
+    this.input.focus(options);
   }
 
   @watch('country', { waitUntilFirstUpdate: true })
@@ -319,8 +344,16 @@ export class MinidPhoneInput extends FormControlMixin(
 
     const hasLabelSlot = this.hasSlotControler.test('label');
     const hasLabel = !!this.label || !!hasLabelSlot;
+    const hasError = this.invalid || !!this.invalidmessage;
+    const describedBy = this.invalidmessage ? this.validationId : undefined;
 
     return html`
+      <label
+        id="${this.labelId}"
+        class="${classMap({
+          'sr-only': this.hidelabel || !hasLabel,
+        })} mb-2 block items-center gap-1 font-medium"
+      > 
       <div
         part="field"
         class="${classMap({
@@ -330,7 +363,7 @@ export class MinidPhoneInput extends FormControlMixin(
         })}"
       >
         <label
-          for="input"
+          for="${this.inputId}"
           class="${classMap({
             'sr-only': this.hidelabel || !hasLabel,
           })} mb-2 inline-flex items-center gap-1 font-medium"
@@ -375,27 +408,44 @@ export class MinidPhoneInput extends FormControlMixin(
           </button>
 
           <input
-            id="input"
+            id="${this.inputId}"
             class="${classMap({
-              'border-neutral': !this.invalid && !this.readonly,
-              'border-danger': this.invalid && !this.readonly,
+              'border-neutral': !hasError && !this.readonly,
+              'border-danger': hasError && !this.readonly,
               'border-neutral-subtle': this.readonly,
               'bg-neutral-surface-tinted': this.readonly,
               'bg-neutral-surface': !this.readonly,
-              'border-2': this.invalid,
-              border: !this.invalid,
+              'border-2': hasError,
+              border: !hasError,
             })} focus-visible:focus-ring grow rounded-r px-3"
             part="phone-number"
             type="tel"
             autocomplete="tel"
             ?readonly=${this.readonly}
             value=${this.value}
+            aria-describedby=${ifDefined(describedBy)}
+            aria-invalid=${hasError ? 'true' : 'false'}
+            aria-errormessage=${ifDefined(
+              this.invalidmessage ? this.validationId : undefined
+            )}
             @input=${this.handleInput}
             @focus=${this.handleFocus}
             @blur=${this.handleBlur}
             @keydown=${this.handleKeydown}
             @change=${this.handleChange}
           />
+        </div>
+        <div
+          class="text-danger-subtle mt-2 flex gap-1"
+          id="${this.validationId}"
+          aria-live="polite"
+          ?hidden=${!this.invalidmessage}
+        >
+          <mid-icon
+            name="xmark-octagon-fill"
+            class="mt-1 min-h-5 min-w-5"
+          ></mid-icon>
+          ${this.invalidmessage}
         </div>
       </div>
     `;

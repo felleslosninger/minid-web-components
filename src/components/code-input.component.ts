@@ -1,6 +1,7 @@
 import { css, html, LitElement, PropertyValues } from 'lit';
 import { customElement, property, query, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
+import { ifDefined } from 'lit/directives/if-defined.js';
 import { live } from 'lit/directives/live.js';
 import { watch } from '../internal/watch.ts';
 import { FormControlMixin } from '../mixins/form-control.mixin.ts';
@@ -131,6 +132,7 @@ export class MinidCodeInput extends FormControlMixin(
 ) {
   private readonly hasSlotControler = new HasSlotController(this, 'label');
   private readonly labelId = `mid-code-input-label-${nextUniqueId++}`;
+  private readonly validationId = `mid-code-input-validation-${nextUniqueId++}`;
 
   @query('.hidden-input')
   private inputElement!: HTMLInputElement;
@@ -329,13 +331,18 @@ export class MinidCodeInput extends FormControlMixin(
   override render() {
     const hasLabelSlot = this.hasSlotControler.test('label');
     const hasLabel = !!this.label || !!hasLabelSlot;
+    const describedBy = this.invalidmessage ? this.validationId : undefined;
 
     const chars = this.value.split('');
     const displayValues = Array.from(
       { length: this.length },
       (_, i) => chars[i] || '',
     );
-    const caretIndex = this.disabled ? -1 : this.value.length;
+    const isComplete = this.value.length >= this.length;
+    const caretIndex =
+      this.disabled || this.length === 0
+        ? -1
+        : Math.min(this.value.length, this.length - 1);
 
     return html`
       <label
@@ -357,9 +364,10 @@ export class MinidCodeInput extends FormControlMixin(
     })}"
         @click=${() => this.focus()}
       >
-        <div part="character-boxes" class="character-boxes">
+        <div part="character-boxes" class="character-boxes" aria-hidden="true">
           ${displayValues.map((char, index) => {
-      const hasCaret = this.isFocused && index === caretIndex;
+      const isFocusTarget = this.isFocused && index === caretIndex;
+      const hasCaret = isFocusTarget && !isComplete;
       return html`
               <div
                 part="character-box"
@@ -375,7 +383,7 @@ export class MinidCodeInput extends FormControlMixin(
         'text-danger-surface-active': !char && this.invalidmessage,
         'character-box--caret': hasCaret,
         'character-box--empty': !char,
-        'focus-ring-sm': hasCaret,
+        'focus-ring-sm': isFocusTarget,
       })} size-9 rounded-md text-center font-mono"
                 @click=${(e: MouseEvent) => {
         e.stopPropagation();
@@ -393,6 +401,11 @@ export class MinidCodeInput extends FormControlMixin(
           id="mid-code-input-hidden"
           type="${this.type}"
           aria-labelledby="${this.labelId}"
+          aria-describedby=${ifDefined(describedBy)}
+          aria-invalid=${this.invalidmessage ? 'true' : 'false'}
+          aria-errormessage=${ifDefined(
+            this.invalidmessage ? this.validationId : undefined
+          )}
           maxlength="${this.length}"
           ?autofocus="${this.autofocus}"
           ?disabled="${this.disabled}"
@@ -410,6 +423,7 @@ export class MinidCodeInput extends FormControlMixin(
       </div>
       <div
         class="text-danger-subtle mt-2 flex gap-1"
+        id="${this.validationId}"
         aria-live="polite"
         ?hidden=${!this.invalidmessage}
       >
