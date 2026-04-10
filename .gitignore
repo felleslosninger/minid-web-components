@@ -3,17 +3,14 @@
 /test/
 /build/
 /dist/
-yarn.lock
 /.vite/
 /.idea/
 *storybook.log
 storybook-static/
 custom-elements.json
-/demo/package-lock.json
 /demo/yarn-error.log
 /yarn-error.log
 /minimal/
-/package-lock.json
 /demo/dist/
 /dist-cdn/
 /dev/node_modules/

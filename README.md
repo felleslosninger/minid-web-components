@@ -66,9 +66,9 @@ View the complete component documentation and examples in our Storybook:
 If you're contributing to this project, follow these steps:
 
 1. Clone the repository.
-2. Install dependencies: `npm install` or `yarn install`.
-3. Run the development server: `npm run dev` or `yarn dev`.
-4. Build the project: `npm run build` or `yarn build`.
+2. Install dependencies: `pnpm install`.
+3. Build the project: `pnpm run build`.
+4. Run the development server: `pnpm run storybook:dev`.
 
 ## Contributing
 
