@@ -20,14 +20,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '24.x'
-
       #👇 Add Storybook build and deploy to GitHub Pages as a step in the workflow
       - uses: bitovi/github-actions-storybook-to-github-pages@v1.0.3
         with:
-          install_command: yarn install # default: npm ci
-          build_command: yarn storybook:build # default: npm run build-storybook
+          install_command: pnpm install # default: npm ci
+          build_command: pnpm storybook:build # default: npm run build-storybook
           path: storybook-static # default: dist/storybook
           checkout: false # default: true

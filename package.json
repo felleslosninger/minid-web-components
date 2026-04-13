@@ -140,6 +140,9 @@
     "url": "git+https://github.com/felleslosninger/minid-web-components.git"
   },
   "customElements": "custom-elements.json",
+  "engines": {
+    "node": ">=24.14.1"
+  },
   "scripts": {
     "make-icons": "node ./scripts/make-icons.js",
     "make-tailwind": "node ./scripts/make-tailwind-theme.js",
