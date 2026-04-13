@@ -328,7 +328,7 @@ export class MinidAlert extends styled(LitElement) {
           })} size-7"
           name="${iconName}"
           library="system"
-          alt=${ifDefined(this.iconlabel)}
+          aria-hidden="true"
         ></mid-icon>
         <div aria-live="polite">
           <slot>
