@@ -33,6 +33,7 @@ const styles = [
       .input-wrapper {
           position: relative;
           cursor: text;
+          width: fit-content;
       }
 
       .character-boxes {
@@ -45,6 +46,7 @@ const styles = [
           align-items: center;
           justify-content: center;
           position: relative;
+          user-select: none;
       }
 
       .hidden-input {
@@ -144,7 +146,7 @@ export class MinidCodeInput extends FormControlMixin(
   label = '';
 
   @property()
-  type: 'number' | 'text' = 'number';
+  type: 'number' | 'text' = 'text';
 
   /**
    * For displaying appropriate virtual keyboard
@@ -237,6 +239,11 @@ export class MinidCodeInput extends FormControlMixin(
 
   private handleFocus() {
     this.isFocused = true;
+    /* don't select text, move caret to the end */
+    if (this.value.length > 0) {
+      const length = this.value.length;
+      this.inputElement.setSelectionRange(length, length);
+    }
   }
 
   private handleBlur() {
@@ -318,6 +325,11 @@ export class MinidCodeInput extends FormControlMixin(
 
   focus(options?: FocusOptions): void {
     this.inputElement?.focus(options);
+    /* don't select text, move caret to the end */
+    if (this.value.length > 0) {
+      const length = this.value.length;
+      this.inputElement.setSelectionRange(length, length);
+    }
   }
 
   @watch('length')
@@ -347,6 +359,7 @@ export class MinidCodeInput extends FormControlMixin(
     return html`
       <label
         id="${this.labelId}"
+        for="mid-code-input-hidden"
         class="${classMap({
       'sr-only': this.hidelabel || !hasLabel,
       'opacity-disabled': this.disabled,
@@ -371,6 +384,7 @@ export class MinidCodeInput extends FormControlMixin(
       return html`
               <div
                 part="character-box"
+                aria-hidden="true"
                 class="character-box ${classMap({
         'border': !this.invalidmessage,
         'border-2': this.invalidmessage,
