@@ -3,7 +3,6 @@ import { customElement, property, query, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { styled } from '../mixins/tailwind.mixin.ts';
 import './icon/icon.component';
-import { ifDefined } from 'lit/directives/if-defined.js';
 import { watch } from '../internal/watch';
 import {
   getAnimation,
