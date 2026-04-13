@@ -23,7 +23,7 @@ export default mergeConfig(
               configDir: path.join(dirname, '.storybook'),
               // This should match your package.json script to run Storybook
               // The --ci flag will skip prompts and not open a browser
-              storybookScript: 'yarn storybook --ci',
+              storybookScript: 'pnpm storybook --ci',
             }),
           ],
           test: {
