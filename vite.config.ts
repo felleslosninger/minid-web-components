@@ -3,18 +3,18 @@ import { hmrPlugin, presets } from 'vite-plugin-web-components-hmr';
 import path from 'path';
 import dts from 'vite-plugin-dts';
 import { externalizeDeps } from 'vite-plugin-externalize-deps';
-import glob from 'glob';
+import { globSync } from 'glob';
 import { fileURLToPath } from 'node:url';
 
 const generateEntries = () => {
-  const entries = {};
+  const entries: Record<string, string> = {};
 
   const dirname =
     typeof __dirname !== 'undefined'
       ? __dirname
       : path.dirname(fileURLToPath(import.meta.url));
 
-  const componentFiles = glob.sync(path.resolve(dirname, '**/*.component.ts'));
+  const componentFiles = globSync(path.resolve(dirname, '**/*.component.ts'));
 
   componentFiles.forEach((file) => {
     const name = path
@@ -23,7 +23,7 @@ const generateEntries = () => {
     entries[`components/${name}`] = file; // Create entry with nested paths
   });
 
-  const utilityFiles = glob.sync(path.resolve(dirname, 'src/utilities/*.ts'));
+  const utilityFiles = globSync(path.resolve(dirname, 'src/utilities/*.ts'));
 
   utilityFiles.forEach((file) => {
     const name = path
@@ -32,7 +32,7 @@ const generateEntries = () => {
     entries[`utilities/${name}`] = file; // Create entry with nested paths
   });
 
-  const mixinFiles = glob.sync(path.resolve(dirname, 'src/mixins/*.ts'));
+  const mixinFiles = globSync(path.resolve(dirname, 'src/mixins/*.ts'));
   mixinFiles.forEach((file) => {
     const name = path
       .relative(path.resolve(dirname, 'src/mixins'), file)
@@ -40,7 +40,7 @@ const generateEntries = () => {
     entries[`mixins/${name}`] = file; // Create entry with nested paths
   });
 
-  const internalFiles = glob.sync(path.resolve(dirname, 'src/internal/*.ts'));
+  const internalFiles = globSync(path.resolve(dirname, 'src/internal/*.ts'));
   internalFiles.forEach((file) => {
     const name = path
       .relative(path.resolve(dirname, 'src/internal'), file)
