@@ -17,13 +17,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Setup Node.js, pnpm and install dependencies
+        uses: ./.github/actions/gh-setup
         with:
-          node-version: '24.x'
-          registry-url: 'https://registry.npmjs.org'
-          scope: '@felleslosninger'
-          token: ${{ secrets.NPM_TOKEN }}
+          npm-token: ${{ secrets.NPM_TOKEN }}
 
       - name: Increment version
         run: |
@@ -45,9 +42,6 @@ jobs:
           curl -s -X PUT -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
            -d "{\"message\":\"[skip actions] new version $VERSION\", \"content\":\"$CONTENT\", \"branch\":\"main\", \"sha\":\"$SHA\"}" \
            https://api.github.com/repos/${{ github.repository }}/contents/$file
-
-      - name: Install dependencies
-        run: pnpm install
 
       - name: Build web components
         run: pnpm build
