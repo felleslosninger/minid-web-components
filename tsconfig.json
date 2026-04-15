@@ -17,7 +17,6 @@
     "noEmit": true,
     "declaration": true,
     "declarationMap": true,
-    "typeRoots": ["./dist/index.d.ts"],
 
     /* Linting */
     "strict": true,
@@ -28,7 +27,6 @@
       "vite/client"
       //      "@types/webappsec-credential-management"
     ],
-    "baseUrl": ".",
     "paths": {
       "src/*": ["./src/*"],
       "components/*": ["./src/components/*"],
@@ -38,7 +36,7 @@
       "types/*": ["./src/types/*"]
     }
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", ".storybook/**/*.ts"],
   "exclude": ["src/**/*.stories.ts", "src/stories"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
