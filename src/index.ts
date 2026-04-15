@@ -1,5 +1,5 @@
 import './styles/global.css';
-import "@digdir/designsystemet-web";
+import '@digdir/designsystemet-web';
 export { MinidAlert } from './components/alert.component.ts';
 export { MinidButton } from './components/button.component.ts';
 export { MinidCheckbox } from './components/checkbox.component.ts';

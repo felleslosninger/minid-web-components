@@ -3,7 +3,7 @@ import { setCustomElementsManifest } from '@storybook/web-components-vite';
 import customElements from '../custom-elements.json';
 import { within as withinShadow } from 'shadow-dom-testing-library';
 import '../src/styles/vendor.css';
-import "../src/index.ts";
+import '../src/index.ts';
 
 setCustomElementsManifest(customElements);
 
