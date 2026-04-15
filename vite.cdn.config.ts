@@ -1,6 +1,6 @@
 import { defineConfig } from 'vite';
 import path from 'path';
-import glob from 'glob';
+import { globSync } from 'glob';
 import { fileURLToPath } from 'node:url';
 
 // eslint-disable-next-line no-empty-pattern
@@ -11,10 +11,10 @@ export default defineConfig(({}) => {
       ? __dirname
       : path.dirname(fileURLToPath(import.meta.url));
 
-  const entryPaths = [].concat(
-    glob.sync('src/index.ts', { cwd: dirname }),
-    glob.sync('src/**/*.component.ts', { cwd: dirname }),
-  );
+  const entryPaths = [
+    ...globSync('src/index.ts', { cwd: dirname }),
+    ...globSync('src/**/*.component.ts', { cwd: dirname }),
+  ];
 
   return {
     build: {
