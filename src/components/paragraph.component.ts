@@ -33,13 +33,8 @@ export class MinidParagraph extends styled(LitElement) {
 
   override render() {
     return html`<p
-      class="${classMap({
-        'mb-2': this.spacing,
-        'text-body-xs': this.size === 'xs',
-        'text-body-sm': this.size === 'sm',
-        'text-body-md': this.size === 'md',
-        'text-body-lg': this.size === 'lg',
-      })}"
+      class="ds-paragraph"
+      data-size=${this.size}
     >
       <slot></slot>
     </p> `;

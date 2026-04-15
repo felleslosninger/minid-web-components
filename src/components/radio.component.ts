@@ -1,7 +1,6 @@
 import { css, html, LitElement } from 'lit';
 import { customElement, property, query } from 'lit/decorators.js';
 import { live } from 'lit/directives/live.js';
-import { classMap } from 'lit/directives/class-map.js';
 import { watch } from '../internal/watch';
 import { styled } from '../mixins/tailwind.mixin';
 import { FormControlMixin } from '../mixins/form-control.mixin';
@@ -156,26 +155,23 @@ export class MinidRadio extends FormControlMixin(styled(LitElement, styles)) {
 
   override render() {
     return html`
+    <ds-field class="ds-field">
+      <input
+        type="radio"
+        part="radio"
+        name="${this.name}"
+        class="ds-input"
+        ?checked=${live(this.checked)}
+        ?disabled=${this.disabled}
+        @keydown=${this.handleKeydown}
+      />
       <label
         part="label"
-        class="has-disabled:opacity-disabled grid cursor-pointer grid-cols-[auto_1fr] gap-2 has-disabled:cursor-not-allowed"
+        class="ds-label"
       >
-        <input
-          type="radio"
-          part="radio"
-          name="${this.name}"
-          class="${classMap({
-            'bg-neutral': !this.invalid,
-            'border-neutral': !this.invalid,
-            'bg-danger-tinted': this.invalid,
-            'border-danger-base': this.invalid,
-          })} checked:bg-accent-base checked:before:bg-neutral focus-visible:focus-ring-sm checked:border-accent-base my-0.5 grid size-6 cursor-pointer appearance-none place-content-center rounded-full border-2 p-0.5 shadow-none before:size-2.5 before:scale-0 before:rounded-full before:transition-transform before:duration-100 checked:before:scale-100 disabled:cursor-not-allowed"
-          ?checked=${live(this.checked)}
-          ?disabled=${this.disabled}
-          @keydown=${this.handleKeydown}
-        />
         <slot></slot>
       </label>
+    </ds-field>
     `;
   }
 }
