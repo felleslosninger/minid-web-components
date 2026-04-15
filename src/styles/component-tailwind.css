@@ -1,3 +1,7 @@
+@layer theme, base, ds.theme, ds.base, ds.components, components, utilities;
 @import 'tailwindcss' source('../components');
-@import '../public/designsystemet-tailwind.css';
-@import './global.css';
+@import '../../design-tokens-build/digdir.css' layer(ds.theme);
+@import '@digdir/designsystemet-css' layer(ds.base);
+@import '../../design-tokens-build/digdir.tailwind.css';
+@import './extra-tailwind-config.css';
+@import './global.css' layer(ds.base);
