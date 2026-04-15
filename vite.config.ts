@@ -78,9 +78,7 @@ export default defineConfig(() => {
       },
     },
     plugins: [
-      externalizeDeps({
-        except: ['@digdir/designsystemet-web'],
-      }),
+      externalizeDeps(),
       dts(),
       hmrPlugin({
         include: ['./src/**/*.ts'],
