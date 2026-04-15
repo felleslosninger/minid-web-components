@@ -69,7 +69,7 @@ export class MinidTextfield extends FormControlMixin(
   private readonly inputId!: string;
   private readonly descriptionId!: string;
   private readonly validationId!: string;
-  private readonly hasSlotControler = new HasSlotController(this, 'label');
+  private readonly hasSlotControler = new HasSlotController(this, 'label', 'prefix', 'suffix');
   private inputMask?: MaskInput;
   private initialValue = '';
 
@@ -353,12 +353,11 @@ export class MinidTextfield extends FormControlMixin(
   }
 
   override render() {
-    const lg = this.size === 'lg';
-    const md = this.size === 'md';
-    const sm = this.size === 'sm';
-
     const hasLabelSlot = this.hasSlotControler.test('label');
     const hasLabel = !!this.label || !!hasLabelSlot;
+    const hasPrefix = this.hasSlotControler.test('prefix');
+    const hasSuffix = this.hasSlotControler.test('suffix');
+    const hasAffixes = hasPrefix || hasSuffix;
     const hasClearIcon = this.clearable && !this.disabled && !this.readonly;
     const isClearIconVisible =
       hasClearIcon && (typeof this.value === 'number' || this.value.length > 0);
@@ -370,20 +369,16 @@ export class MinidTextfield extends FormControlMixin(
       .join(' ');
 
     return html`
-      <div
+      <ds-field
         part="field"
-        class="${classMap({
-          'opacity-disabled': this.disabled,
-          'text-body-sm': sm,
-          'text-body-md': md,
-          'text-body-lg': lg,
-        })} max-w-full"
+        class="ds-field"
+        data-size=${this.size}
       >
         <label
           for="${this.inputId}"
           class="${classMap({
             'sr-only': this.hidelabel || !hasLabel,
-          })} mb-2 inline-flex items-center gap-1 font-medium"
+          })} ds-label"
         >
           ${this.readonly
             ? html`<mid-icon
@@ -399,9 +394,10 @@ export class MinidTextfield extends FormControlMixin(
               <div
                 id="${this.descriptionId}"
                 part="description"
+                data-field="description"
                 class="${classMap({
                   'sr-only': this.hidelabel,
-                })} text-neutral-subtle mb-2"
+                })}"
               >
                 ${this.description}
               </div>
@@ -409,27 +405,12 @@ export class MinidTextfield extends FormControlMixin(
           : nothing}
         <div
           part="base"
-          class="${classMap({
-            'border-neutral': !this.invalidmessage && !this.readonly,
-            'border-danger': this.invalidmessage && !this.readonly,
-            'border-neutral-subtle': this.readonly,
-            'bg-neutral-surface-tinted': this.readonly,
-            'bg-neutral-surface': !this.readonly,
-            border: !this.invalidmessage,
-            'border-2': this.invalidmessage,
-          })} focus-within:focus-ring flex h-12 items-center rounded-md px-3"
+          class="${hasAffixes ? 'ds-field-affixes' : ''}"
         >
-          <span class="slotted:!mr-2 slotted:rounded flex items-center">
-            <slot name="prefix"></slot>
-          </span>
+          ${hasPrefix ? html`<span class="ds-field-affix"><slot name="prefix"></slot></span>` : html`<slot name="prefix"></slot>`}
           <input
             id="${this.inputId}"
-            class="${classMap({
-              'w-full': !isClearIconVisible,
-              'w-[calc(100%-var(--spacing)*7)]': isClearIconVisible,
-              '[&::-webkit-search-cancel-button]:appearance-none':
-                this.type === 'search',
-            })} input grow overflow-clip focus-visible:outline-0"
+            class="ds-input"
             part="input"
             .value=${live(this.value)}
             ?disabled=${this.disabled}
@@ -501,23 +482,18 @@ export class MinidTextfield extends FormControlMixin(
                 </button>
               `
             : ''}
-          <span part="suffix" class="slotted:!ml-2 slotted:rounded">
-            <slot name="suffix"></slot>
-          </span>
+          ${hasSuffix ? html`<span part="suffix" class="ds-field-affix"><slot name="suffix"></slot></span>` : html`<slot name="suffix"></slot>`}
         </div>
-        <div
-          class="text-danger-subtle mt-2 flex gap-1"
+        <p
+          class="ds-validation-message"
+          data-field="validation"
           id="${this.validationId}"
           aria-live="polite"
           ?hidden=${!this.invalidmessage}
         >
-          <mid-icon
-            name="xmark-octagon-fill"
-            class="mt-1 min-h-5 min-w-5"
-          ></mid-icon>
           ${this.invalidmessage}
-        </div>
-      </div>
+        </p>
+      </ds-field>
     `;
   }
 }
