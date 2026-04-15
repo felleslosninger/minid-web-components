@@ -1,6 +1,5 @@
 import { html, LitElement } from 'lit';
 import { customElement, property, query } from 'lit/decorators.js';
-import { classMap } from 'lit/directives/class-map.js';
 import { live } from 'lit/directives/live.js';
 import { styled } from '../mixins/tailwind.mixin';
 import './icon/icon.component.ts';
@@ -8,7 +7,6 @@ import { ifDefined } from 'lit/directives/if-defined.js';
 import { FormControlMixin } from '../mixins/form-control.mixin.ts';
 import { watch } from '../internal/watch.ts';
 import { requiredValidator } from '../mixins/validators.ts';
-import { HasSlotController } from '../internal/slot.ts';
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -25,11 +23,6 @@ declare global {
 
 @customElement('mid-checkbox')
 export class MinidCheckbox extends FormControlMixin(styled(LitElement)) {
-  private readonly hasSlotController = new HasSlotController(
-    this,
-    'description'
-  );
-
   @query('input[type="checkbox"]')
   private input!: HTMLInputElement;
 
@@ -127,63 +120,36 @@ export class MinidCheckbox extends FormControlMixin(styled(LitElement)) {
   }
 
   override render() {
-    const hasDescriptionSlot = this.hasSlotController.test('description');
-    const hasDescription = this.description ? true : !!hasDescriptionSlot;
 
     return html`
-      <label
-        class="${classMap({
-          'opacity-disabled': this.disabled,
-          'cursor-not-allowed': this.disabled,
-        })} grid grid-cols-[auto_1fr] gap-2"
-      >
-        <span
-          class="${classMap({
-            'bg-accent-base': !this.readonly && this.checked && !this.invalid,
-            'bg-danger-base': !this.readonly && this.checked && this.invalid,
-            'bg-neutral-surface': !this.readonly && !this.checked,
-            'border-accent-base':
-              !this.readonly && this.checked && !this.invalid,
-            'border-neutral': !this.readonly && !this.checked && !this.invalid,
-            'border-danger-base': !this.readonly && this.invalid,
-            'border-neutral-subtle': this.readonly,
-            'bg-neutral-surface-tinted': this.readonly,
-          })} focus-within:focus-ring inline-flex size-6 shrink-0 items-center justify-center rounded-sm border-2"
-        >
-          <input
-            class="pointer-events-none appearance-none"
-            type="checkbox"
-            value=${ifDefined(this.value)}
-            .checked=${live(this.checked)}
-            ?disabled=${this.disabled}
-            ?checked=${this.checked}
-            ?readonly=${this.readonly}
-            ?required=${this.required}
-            @click=${this.handleClick}
-            @keydown=${this.handleKeydown}
+      <ds-field class="ds-field">
+      <input
+      class="ds-input"
+      type="checkbox"
+      value=${ifDefined(this.value)}
+      .checked=${live(this.checked)}
+          ?disabled=${this.disabled}
+          ?checked=${this.checked}
+          ?readonly=${this.readonly}
+          ?required=${this.required}
+          @click=${this.handleClick}
+          @keydown=${this.handleKeydown}
           />
-          ${this.checked
-            ? html`<mid-icon
-                class="${classMap({
-                  'text-accent-base-contrast': this.checked && !this.readonly,
-                })} size-6 shrink-0 scale-125"
-                name="checkmark"
-              ></mid-icon>`
-            : ''}
-        </span>
-        <div part="label">
+        <label
+          class="ds-label"
+          part="label"
+        >
           <slot></slot>
+        </label>
+        <div data-field="description">
+          <slot
+            name="description"
+            part="description"
+          >
+            ${this.description}
+          </slot>
         </div>
-      </label>
-      <slot
-        name="description"
-        part="description"
-        name="description"
-        class="text-neutral-subtle mt-2 block"
-        aria-hidden=${hasDescription ? 'false' : 'true'}
-      >
-        ${this.description}
-      </slot>
+      </ds-field>
     `;
   }
 }

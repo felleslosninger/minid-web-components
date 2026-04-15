@@ -298,86 +298,63 @@ export class MinidAlert extends styled(LitElement) {
     return html`
       <div
         part="base"
-        class="${classMap({
-          'text-body-sm': sm,
-          'text-body-md': md,
-          'text-body-lg': lg,
-          'bg-danger-surface-tinted': danger,
-          'bg-info-surface-tinted': info,
-          'bg-success-surface-tinted': success,
-          'bg-warning-surface-tinted': warning,
-          'border-danger': danger,
-          'border-info': info,
-          'border-success': success,
-          'border-warning': warning,
-          'text-danger': danger,
-          'text-info': info,
-          'text-success': success,
-          'text-warning': warning,
-          'shadow-md': this.elevated,
-        })} grid grid-cols-[auto_1fr_auto] gap-2 rounded border p-6"
+        class="ds-alert"
+        data-size="${this.size}"
+        data-color="${this.severity}"
         @mouseenter=${this.pauseAutoHide}
         @mouseleave=${this.resumeAutoHide}
       >
-        <mid-icon
-          class="${classMap({
-            'text-info-subtle': info,
-            'text-danger-subtle': danger,
-            'text-success-subtle': success,
-            'text-warning-subtle': warning,
-          })} size-7"
-          name="${iconName}"
-          library="system"
-          alt=${ifDefined(this.iconlabel)}
-        ></mid-icon>
-        <div aria-live="polite">
-          <slot>
-            ${!this.notificationContent?.title
-              ? nothing
-              : html`<h2 class="text-heading-xs">
-                  ${this.notificationContent?.title}
-                </h2>`}
-            ${this.notificationContent?.message}
-            ${!this.notificationContent?.details
-              ? nothing
-              : html`<div
-                  class="${classMap({
-                    'border-danger': danger,
-                    'border-info': info,
-                    'border-success': success,
-                    'border-warning': warning,
-                    'bg-danger-surface-hover': danger,
-                    'bg-info-surface-hover': info,
-                    'bg-success-surface-hover': success,
-                    'bg-warning-surface-hover': warning,
-                  })} text-body-sm mt-0.5 border-l-4 p-3"
-                >
-                  <pre class="break-all whitespace-pre-wrap">
-${this.notificationContent?.details}</pre
+        <div style="display: grid; grid-template-columns: 1fr ${this.closable ? 'auto' : ''};">
+          <div aria-live="polite">
+            <slot>
+              ${!this.notificationContent?.title
+                ? nothing
+                : html`<h2 class="text-heading-xs">
+                    ${this.notificationContent?.title}
+                  </h2>`}
+              ${this.notificationContent?.message}
+              ${!this.notificationContent?.details
+                ? nothing
+                : html`<div
+                    class="${classMap({
+                      'border-danger': danger,
+                      'border-info': info,
+                      'border-success': success,
+                      'border-warning': warning,
+                      'bg-danger-surface-hover': danger,
+                      'bg-info-surface-hover': info,
+                      'bg-success-surface-hover': success,
+                      'bg-warning-surface-hover': warning,
+                    })} text-body-sm mt-0.5 border-l-4 p-3"
                   >
-                </div>`}
-          </slot>
+                    <pre class="break-all whitespace-pre-wrap">
+${this.notificationContent?.details}</pre
+                    >
+                  </div>`}
+            </slot>
+          </div>
+          ${this.closable
+            ? html`
+                <button
+                  class="${classMap({
+                    'text-info-subtle': info,
+                    'text-danger-subtle': danger,
+                    'text-success-subtle': success,
+                    'text-warning-subtle': warning,
+                    'hover:bg-danger-surface-hover': danger,
+                    'hover:bg-info-surface-hover': info,
+                    'hover:bg-success-surface-hover': success,
+                    'hover:bg-warning-surface-hover': warning,
+                  })} flex rounded p-2"
+                  style="align-self: start; justify-self: end;"
+                  @click="${this.hide}"
+                  aria-label="Dismiss alert"
+                >
+                  <mid-icon class="size-6" name="xmark"> </mid-icon>
+                </button>
+              `
+            : nothing}
         </div>
-        ${this.closable
-          ? html`
-              <button
-                class="${classMap({
-                  'text-info-subtle': info,
-                  'text-danger-subtle': danger,
-                  'text-success-subtle': success,
-                  'text-warning-subtle': warning,
-                  'hover:bg-danger-surface-hover': danger,
-                  'hover:bg-info-surface-hover': info,
-                  'hover:bg-success-surface-hover': success,
-                  'hover:bg-warning-surface-hover': warning,
-                })} -my-4 -mr-4 flex self-center rounded p-4"
-                @click="${this.hide}"
-                aria-label="Dismiss alert"
-              >
-                <mid-icon class="size-6" name="xmark"> </mid-icon>
-              </button>
-            `
-          : nothing}
       </div>
     `;
   }
