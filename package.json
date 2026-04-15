@@ -153,7 +153,7 @@
     "storybook:dev": "concurrently --kill-others \"npm run analyze -- --watch\" \"npx @tailwindcss/cli -i ./src/styles/tailwind.css -o ./.storybook/public/tailwind.css --watch\" \"npm run storybook\"",
     "storybook:build": "npm run build && rimraf storybook-static && npm run analyze && npx @tailwindcss/cli -i ./src/styles/tailwind.css -o ./.storybook/public/tailwind.css && storybook build",
     "analyze": "custom-elements-manifest analyze",
-    "build:theme": "pnpx @digdir/designsystemet tokens create --config designsystemet.config.json && pnpx @digdir/designsystemet tokens build --config designsystemet.config.json --experimental-tailwind"
+    "build:theme": "pnpm exec designsystemet tokens create --config designsystemet.config.json && pnpm exec designsystemet tokens build --config designsystemet.config.json --experimental-tailwind"
   },
   "dependencies": {
     "@digdir/designsystemet-css": "^1.13.2",
