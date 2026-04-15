@@ -150,8 +150,8 @@
     "build:cdn": "rimraf dist-cdn && tsc && vite build --config vite.cdn.config.js && npx @tailwindcss/cli -i ./src/styles/component-tailwind.css -o ./dist-cdn/index.css ",
     "dev:cdn": "node cdn-dev-server.js",
     "storybook": "storybook dev -p 6006",
-    "storybook:dev": "concurrently --kill-others \"npm run analyze -- --watch\" \"npx @tailwindcss/cli -i ./src/styles/tailwind.css -o ./.storybook/public/tailwind.css --watch\" \"npm run storybook\"",
-    "storybook:build": "npm run build && rimraf storybook-static && npm run analyze && npx @tailwindcss/cli -i ./src/styles/tailwind.css -o ./.storybook/public/tailwind.css && storybook build",
+    "storybook:dev": "concurrently --kill-others \"pnpm run analyze -- --watch\" \"npx @tailwindcss/cli -i ./src/styles/tailwind.css -o ./.storybook/public/tailwind.css --watch\" \"pnpm run storybook\"",
+    "storybook:build": "pnpm run build && rimraf storybook-static && pnpm run analyze && npx @tailwindcss/cli -i ./src/styles/tailwind.css -o ./.storybook/public/tailwind.css && pnpm exec storybook build",
     "analyze": "custom-elements-manifest analyze",
     "build:theme": "pnpm exec designsystemet tokens create --config designsystemet.config.json && pnpm exec designsystemet tokens build --config designsystemet.config.json --experimental-tailwind"
   },
