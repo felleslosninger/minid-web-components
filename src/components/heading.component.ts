@@ -1,7 +1,6 @@
 import { html, literal } from 'lit/static-html.js';
 import { customElement, property } from 'lit/decorators.js';
 import { styled } from '../mixins/tailwind.mixin';
-import { classMap } from 'lit/directives/class-map.js';
 import { LitElement } from 'lit';
 
 declare global {
