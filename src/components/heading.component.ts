@@ -1,7 +1,6 @@
 import { html, literal } from 'lit/static-html.js';
 import { customElement, property } from 'lit/decorators.js';
 import { styled } from '../mixins/tailwind.mixin';
-import { classMap } from 'lit/directives/class-map.js';
 import { LitElement } from 'lit';
 
 declare global {
@@ -45,15 +44,6 @@ export class MinidHeading extends styled(LitElement) {
                 ? literal`h5`
                 : literal`h6`;
 
-    return html`<${tag} class="${classMap({
-      'mb-2': this.spacing,
-      'text-heading-2xs': this.size === '2xs',
-      'text-heading-xs': this.size === 'xs',
-      'text-heading-sm': this.size === 'sm',
-      'text-heading-md': this.size === 'md',
-      'text-heading-lg': this.size === 'lg',
-      'text-heading-xl': this.size === 'xl',
-      'text-heading-2xl': this.size === '2xl',
-    })}"><slot></slot></${tag}>`;
+    return html`<${tag} class="ds-heading" data-size=${this.size}><slot></slot></${tag}>`;
   }
 }

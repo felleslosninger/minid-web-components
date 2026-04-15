@@ -2,8 +2,9 @@ import type { Preview } from '@storybook/web-components-vite';
 import { setCustomElementsManifest } from '@storybook/web-components-vite';
 import customElements from '../custom-elements.json';
 import { within as withinShadow } from 'shadow-dom-testing-library';
-import '../src/styles/global.css';
 import '../src/styles/vendor.css';
+import '../src/styles/global.css';
+import '@digdir/designsystemet-web';
 
 setCustomElementsManifest(customElements);
 

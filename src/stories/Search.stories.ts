@@ -7,7 +7,6 @@ import { MinidSearch } from '../components/search.component';
 type SearchProps = Partial<{
   label: string;
   placeholder: string;
-  size: MinidSearch['size'];
   value: string;
   debounce: number;
 }>;
@@ -17,9 +16,6 @@ const meta = {
   title: 'Komponenter/Search',
   tags: ['autodocs'],
   component: 'mid-search',
-  argTypes: {
-    size: { control: { type: 'radio' }, options: ['sm', 'md', 'lg'] },
-  },
 } satisfies Meta<SearchProps>;
 
 export default meta;
@@ -31,12 +27,11 @@ export const Main: Story = {
     placeholder: 'Søk',
   },
   decorators: [(story) => html` <div class="w-100">${story()}</div>`],
-  render: ({ label, value, placeholder, size, debounce }: SearchProps) =>
+  render: ({ label, value, placeholder, debounce }: SearchProps) =>
     html`<mid-search
       label=${ifDefined(label)}
       value=${ifDefined(value)}
       placeholder=${ifDefined(placeholder)}
-      size=${ifDefined(size)}
       debounce=${ifDefined(debounce)}
       @mid-input=${(event) => {
         console.log(event.target.value);

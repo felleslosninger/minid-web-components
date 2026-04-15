@@ -1,6 +1,5 @@
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { classMap } from 'lit/directives/class-map.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { styled } from '../mixins/tailwind.mixin';
 
@@ -40,17 +39,9 @@ export class MinidLabel extends styled(LitElement) {
     return html`
       <label
         for=${ifDefined(this.for)}
-        class=${classMap({
-          'fds-label': true,
-          'fds-label--spacing': this.spacing,
-          'fds-label--xs': this.size === 'xs',
-          'fds-label--sm': this.size === 'sm',
-          'fds-label--md': this.size === 'md',
-          'fds-label--lg': this.size === 'lg',
-          'fds-label--medium-weight': this.weight === 'medium',
-          'fds-label--regular-weight': this.weight === 'normal',
-          'fds-label--semibold-weight': this.weight === 'semibold',
-        })}
+        class="ds-label"
+        data-weight=${this.weight}
+        data-size=${this.size}
       >
         <slot></slot>
       </label>

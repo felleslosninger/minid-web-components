@@ -152,9 +152,12 @@
     "storybook": "storybook dev -p 6006",
     "storybook:dev": "concurrently --kill-others \"npm run analyze -- --watch\" \"npx @tailwindcss/cli -i ./src/styles/tailwind.css -o ./.storybook/public/tailwind.css --watch\" \"npm run storybook\"",
     "storybook:build": "npm run build && rimraf storybook-static && npm run analyze && npx @tailwindcss/cli -i ./src/styles/tailwind.css -o ./.storybook/public/tailwind.css && storybook build",
-    "analyze": "custom-elements-manifest analyze"
+    "analyze": "custom-elements-manifest analyze",
+    "build:theme": "pnpm exec designsystemet tokens create --config designsystemet.config.json && pnpm exec designsystemet tokens build --config designsystemet.config.json --experimental-tailwind"
   },
   "dependencies": {
+    "@digdir/designsystemet-css": "^1.13.2",
+    "@digdir/designsystemet-web": "^1.13.2",
     "@floating-ui/dom": "^1.6.10",
     "@floating-ui/utils": "^0.2.9",
     "composed-offset-position": "^0.0.6",
@@ -167,7 +170,7 @@
   },
   "devDependencies": {
     "@custom-elements-manifest/analyzer": "^0.10.3",
-    "@digdir/designsystemet-theme": "^1.0.3",
+    "@digdir/designsystemet": "^1.13.2",
     "@floating-ui/dom": "^1.6.10",
     "@navikt/aksel-icons": "^7.1.2",
     "@storybook/addon-a11y": "^9.0.12",
@@ -192,7 +195,6 @@
     "@vitest/coverage-istanbul": "^3.2.4",
     "@vitest/coverage-v8": "^3.2.4",
     "axe-playwright": "^2.1.0",
-    "composed-offset-position": "^0.0.6",
     "concurrently": "^9.0.1",
     "eslint": "^9.25.1",
     "eslint-plugin-storybook": "^9.0.12",
