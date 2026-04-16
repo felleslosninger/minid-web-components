@@ -23,7 +23,7 @@ jobs:
 
       - name: Create Release Pull Request or Publish to npm
         id: changesets
-        # Forked version of the changesets action that supports aggregated releases
+        # Use the upstream Changesets GitHub Action for release PR creation and publishing
         uses: changesets/action@v1
         with:
           publish: pnpm release
