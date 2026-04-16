@@ -70,6 +70,24 @@ If you're contributing to this project, follow these steps:
 3. Build the project: `pnpm run build`.
 4. Run the development server: `pnpm run storybook:dev`.
 
+## Publishing
+
+This project uses [changesets](https://github.com/changesets/changesets) for versioning and publishing.
+
+### Adding a changeset
+
+When you make a change that should be released, add a changeset:
+
+```bash
+pnpm changeset
+```
+
+Follow the prompts to select the bump type (patch, minor, or major) and describe the change. This creates a markdown file in the `.changeset/` directory that should be committed with your PR.
+
+### Releasing
+
+When PRs with changesets are merged to `main`, the changesets action will automatically create a "Version Packages" PR that bumps versions and updates the changelog. Merging that PR triggers the actual publish to npm and deploys the new version to the CDN.
+
 ## Contributing
 
 We welcome contributions! Please feel free to open issues and pull requests.

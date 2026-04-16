@@ -1,75 +1,54 @@
-name: Build and Publish Web Components
+name: Release
 
 on:
   push:
     branches:
       - main
 
-jobs:
-  build-and-publish:
+concurrency: ${{ github.workflow }}-${{ github.ref }}
 
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
     permissions:
       contents: write
+      pull-requests: write
       id-token: write
-
-    runs-on: ubuntu-latest
+      packages: write
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - name: Setup Node.js, pnpm and install dependencies
-        uses: ./.github/actions/gh-setup
+      - uses: ./.github/actions/gh-setup # this installs Node.js, pnpm and dependencies
+
+      - name: Create Release Pull Request or Publish to npm
+        id: changesets
+        # Use the upstream Changesets GitHub Action for release PR creation and publishing
+        uses: changesets/action@v1
         with:
-          npm-token: ${{ secrets.NPM_TOKEN }}
-
-      - name: Increment version
-        run: |
-          git config user.email ""
-          git config user.name ""
-          npm --no-git-tag-version version patch
-
-      - name: Commit package.json
-        run: |
-          echo "Committing changes..."
-          VERSION=$(node -p "require('./package.json').version")
-          file=package.json
-          CONTENT=$(base64 -w 0 $file)
-          FILENAME=$(basename $file)
-          SHA=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/${{ github.repository }}/contents/$file?ref=main | jq -r .sha)
-          if [ "$SHA" == "null" ]; then
-           SHA=""
-          fi
-          curl -s -X PUT -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-           -d "{\"message\":\"[skip actions] new version $VERSION\", \"content\":\"$CONTENT\", \"branch\":\"main\", \"sha\":\"$SHA\"}" \
-           https://api.github.com/repos/${{ github.repository }}/contents/$file
-
-      - name: Build web components
-        run: pnpm build
-
-      #################################
-      # Publish to public npm repo
-      ################################
-      - name: Publish to public npm repo
-        run: |
-          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
-          npm publish --provenance --access public
+          publish: pnpm release
         env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: "" # https://github.com/changesets/changesets/issues/1152#issuecomment-3190884868
+          NPM_CONFIG_PROVENANCE: true
 
       #################################
       # Publish to MinID CDN
       ################################
       - name: Setup SSH Deploy Key
+        if: steps.changesets.outputs.published == 'true'
         uses: shimataro/ssh-key-action@v2
         with:
           key: ${{ secrets.CDN_DEPLOY_KEY }}
           known_hosts: ${{ secrets.KNOWN_HOSTS }}
 
       - name: Clone CDN Repo (using SSH)
+        if: steps.changesets.outputs.published == 'true'
         run: |
           git clone git@github.com:felleslosninger/minid-cdn.git cdn
 
       - name: Build CDN version, and copy files to CDN repo
+        if: steps.changesets.outputs.published == 'true'
         run: |
           pnpm run build:cdn
           cd cdn
@@ -81,6 +60,7 @@ jobs:
           ln -sfn $VERSION latest      
 
       - name: Commit Changes to CDN Repo (using SSH)
+        if: steps.changesets.outputs.published == 'true'
         run: |
           VERSION=$(node -p "require('./package.json').version")
           cd cdn
