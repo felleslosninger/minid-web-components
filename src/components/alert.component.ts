@@ -3,7 +3,6 @@ import { customElement, property, query, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { styled } from '../mixins/tailwind.mixin.ts';
 import './icon/icon.component';
-import { ifDefined } from 'lit/directives/if-defined.js';
 import { watch } from '../internal/watch';
 import {
   getAnimation,
@@ -11,7 +10,6 @@ import {
 } from '../utilities/animation-registry';
 import { waitForEvent } from '../internal/event';
 import { animateTo, stopAnimations } from '../internal/animate';
-import { type MidIconName } from '../types/icon-name';
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -281,14 +279,6 @@ export class MinidAlert extends styled(LitElement) {
     const warning = this.severity === 'warning';
     const info = this.severity === 'info';
     const success = this.severity === 'success';
-    const sm = this.size === 'sm';
-    const md = this.size === 'md';
-    const lg = this.size === 'lg';
-    const iconName: MidIconName =
-      (danger && 'xmark-octagon-fill') ||
-      (warning && 'exclamationmark-triangle-fill') ||
-      (success && 'checkmark-circle-fill') ||
-      'information-square-fill';
     this.iconlabel ??=
       (danger && 'Feil') ||
       (warning && 'Advarsel') ||

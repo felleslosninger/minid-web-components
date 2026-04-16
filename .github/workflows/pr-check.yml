@@ -1,0 +1,25 @@
+name: PR Check
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js, pnpm and install dependencies
+        uses: ./.github/actions/gh-setup
+
+      - name: Build web components
+        run: pnpm build
+
+      - name: Build CDN version
+        run: pnpm build:cdn
+
+      - name: Build Storybook
+        run: pnpm storybook:build
