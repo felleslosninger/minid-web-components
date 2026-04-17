@@ -9,6 +9,7 @@ import {
   Description,
 } from '@storybook/addon-docs/blocks';
 import '../components/icon/icon.component';
+import {systemIcons} from '../components/icon/system.icon-library';
 import * as IconStories from './Icon.stories';
 
 <Meta of={IconStories} />
@@ -19,46 +20,14 @@ import * as IconStories from './Icon.stories';
 <Canvas of={IconStories.Main} />
 <Controls of={IconStories.Main} />
 
-## Gallery
+## System icons
 
 TODO: add icons
 
 <IconGallery>
-  <IconItem name="books-fill">
-    <mid-icon style={{ fontSize: '38px' }} name="books-fill"></mid-icon>
-  </IconItem>
-  <IconItem name="bicycle">
-    <mid-icon style={{ fontSize: '38px' }} name="bicycle"></mid-icon>
-  </IconItem>
-  <IconItem name="bell">
-    <mid-icon style={{ fontSize: '38px' }} name="bell"></mid-icon>
-  </IconItem>
-  <IconItem name="dog">
-    <mid-icon style={{ fontSize: '38px' }} name="dog"></mid-icon>
-  </IconItem>
-  <IconItem name="books-fill">
-    <mid-icon style={{ fontSize: '38px' }} name="books-fill"></mid-icon>
-  </IconItem>
-  <IconItem name="bicycle">
-    <mid-icon style={{ fontSize: '38px' }} name="bicycle"></mid-icon>
-  </IconItem>
-  <IconItem name="bell">
-    <mid-icon style={{ fontSize: '38px' }} name="bell"></mid-icon>
-  </IconItem>
-  <IconItem name="dog">
-    <mid-icon style={{ fontSize: '38px' }} name="dog"></mid-icon>
-  </IconItem>
-  <IconItem name="books-fill">
-    <mid-icon style={{ fontSize: '38px' }} name="books-fill"></mid-icon>
-  </IconItem>
-  <IconItem name="bicycle">
-    <mid-icon style={{ fontSize: '38px' }} name="bicycle"></mid-icon>
-  </IconItem>
-  <IconItem name="bell">
-    <mid-icon style={{ fontSize: '38px' }} name="bell"></mid-icon>
-  </IconItem>
-  <IconItem name="dog">
-    <mid-icon style={{ fontSize: '38px' }} name="dog"></mid-icon>
-  </IconItem>
-
+  {Object.keys(systemIcons).map((iconName) => (
+    <IconItem key={iconName} name={iconName}>
+      <mid-icon style={{ fontSize: '38px' }} name={iconName}></mid-icon>
+    </IconItem>
+  ))}
 </IconGallery>
