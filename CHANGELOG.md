@@ -1,34 +1,49 @@
 # Changelog
 
+## 0.0.140
+
+### Patch Changes
+
+- 345f717: add @digdir/designsystemet-web
+
 A changelog for logging changes.
 
 ## 0.0.139
+
 Minor improvements:
- - Screen readers:
-    - Code Input "○" is now hidden for screen readers.
-    - Text field and Code Input @mid-invalid-show will be read by the screen reader.
-    - Phone Input now has internal invalidMessage that will display under the field. Also focus no longer highlight the text to compensate for screen readers.
-    - Icons are no longer read as image by screen readers.
- - Minor fixes
-   - Code Field focus highlight will be kept on last square so the user don't lose focus.
+
+- Screen readers:
+  - Code Input "○" is now hidden for screen readers.
+  - Text field and Code Input @mid-invalid-show will be read by the screen reader.
+  - Phone Input now has internal invalidMessage that will display under the field. Also focus no longer highlight the text to compensate for screen readers.
+  - Icons are no longer read as image by screen readers.
+- Minor fixes
+  - Code Field focus highlight will be kept on last square so the user don't lose focus.
+
 ## 0.0.138
+
 - Bug fix, in the code input number field, numbers disappear when non number is written
 
 ## 0.0.137
+
 - Form control's `#touched` is set true when altered instead of focused.
 
 ## 0.0.136
+
 - Fix bugs with code input field where numbers disappear when a character is entered
 
 ## 0.0.135
+
 - Events are now dispatched from the hidden input field in `<mid-code-input>`
 
 ## 0.0.134
+
 - Fix bug with iOS zoom on `<mid-code-input>`
 - Change auto-submit of WebOTP to trigger on 'mid-complete' event.
 - Added inputmode control to `<mid-textfield>`
 
 ## 0.0.132
+
 - Fix race condition at form submit through WebOTP
 
 ## 0.0.131
