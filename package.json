@@ -21,10 +21,20 @@
       "types": "./dist/index.d.ts"
     },
     "./styles": {
-      "import": "./dist/index.css"
+      "import": "./dist/styles.css",
+      "default": "./dist/styles.css"
+    },
+    "./theme": {
+      "import": "./dist/theme.css",
+      "default": "./dist/theme.css"
+    },
+    "./globals": {
+      "import": "./dist/index.css",
+      "default": "./dist/index.css"
     },
     "./designsystemet-tailwind": {
-      "import": "./dist/designsystemet-tailwind.css"
+      "import": "./dist/designsystemet-tailwind.css",
+      "default": "./dist/designsystemet-tailwind.css"
     },
     "./alert": {
       "import": "./dist/components/alert.js",
@@ -146,7 +156,7 @@
   "scripts": {
     "make-icons": "node ./scripts/make-icons.js",
     "make-tailwind": "node ./scripts/make-tailwind-theme.js",
-    "build": "rimraf dist && tsc && npm run analyze && vite build",
+    "build": "rimraf dist && designsystemet tokens create --config designsystemet.config.json && designsystemet tokens build --config designsystemet.config.json --experimental-tailwind && node ./scripts/make-tailwind-theme.js && tsc && custom-elements-manifest analyze && vite build",
     "build:cdn": "rimraf dist-cdn && tsc && vite build --config vite.cdn.config.js && npx @tailwindcss/cli -i ./src/styles/component-tailwind.css -o ./dist-cdn/index.css ",
     "dev:cdn": "node cdn-dev-server.js",
     "storybook": "storybook dev -p 6006",
