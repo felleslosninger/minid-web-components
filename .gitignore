@@ -16,3 +16,9 @@ custom-elements.json
 /dev/node_modules/
 .DS_Store
 .storybook/public/tailwind.css
+/src/public/styles.css
+/src/public/theme.css
+/felleslosninger-minid-elements-*.tgz
+/design-tokens/
+/design-tokens-build/
+.pnpm-store/
