@@ -31,7 +31,7 @@ const styles = [
     :host {
       display: block;
     }
-      
+
     /* Hide increment/decrement buttons on inputs */
     input[type='number']::-webkit-outer-spin-button,
     input[type='number']::-webkit-inner-spin-button,
@@ -39,6 +39,10 @@ const styles = [
         -webkit-appearance: none;
         margin: 0;
         -moz-appearance: textfield !important;
+    }
+
+    .ds-field-affixes {
+      background: var(--ds-color-neutral-background-tinted);
     }
   `,
 ];
@@ -356,8 +360,8 @@ export class MinidTextfield extends FormControlMixin(styled(LitElement, styles))
     const hasLabel = !!this.label || !!hasLabelSlot;
     const hasPrefix = this.hasSlotControler.test('prefix');
     const hasSuffix = this.hasSlotControler.test('suffix');
-    const hasAffixes = hasPrefix || hasSuffix;
     const hasClearIcon = this.clearable && !this.disabled && !this.readonly;
+    const hasAffixes = hasPrefix || hasSuffix || hasClearIcon || (this.passwordtoggle && !this.disabled);
     const isClearIconVisible =
       hasClearIcon && (typeof this.value === 'number' || this.value.length > 0);
     const describedBy = [
@@ -379,13 +383,6 @@ export class MinidTextfield extends FormControlMixin(styled(LitElement, styles))
             'sr-only': this.hidelabel || !hasLabel,
           })} ds-label"
         >
-          ${this.readonly
-            ? html`<mid-icon
-                class="size-5"
-                library="system"
-                name="padlock-locked-fill"
-              ></mid-icon>`
-            : nothing}
           <slot name="label"> ${this.label} </slot>
         </label>
         ${this.description
@@ -440,47 +437,49 @@ export class MinidTextfield extends FormControlMixin(styled(LitElement, styles))
           />
           ${isClearIconVisible
             ? html`
-                <button
-                  part="clear-button"
-                  type="button"
-                  class="focus-visible:focus-ring ml-2 flex items-center justify-center rounded-sm"
-                  aria-label=${t.clear}
-                  @click=${this.handleClearClick}
-                >
-                  <mid-icon
-                    class="size-7"
-                    library="system"
-                    name="xmark"
-                  ></mid-icon>
-                </button>
+                <span class="ds-field-affix" part="clear-button">
+                  <button
+                    type="button"
+                    class="focus-visible:focus-ring flex items-center justify-center rounded-sm"
+                    aria-label=${t.clear}
+                    @click=${this.handleClearClick}
+                  >
+                    <mid-icon
+                      class="size-7"
+                      library="nav-aksel"
+                      name="trash"
+                    ></mid-icon>
+                  </button>
+                </span>
               `
             : ''}
           ${this.passwordtoggle && !this.disabled
             ? html`
-                <button
-                  part="password-toggle-button"
-                  type="button"
-                  class="ml-2 flex items-center justify-center rounded-sm"
-                  aria-label=${this.passwordvisible
-                    ? t.hidePassword
-                    : t.showPassword}
-                  @click=${this.handlePasswordToggle}
-                  tabindex="-1"
-                >
-                  ${this.passwordvisible
-                    ? html` <mid-icon
-                        class="size-7"
-                        library="system"
-                        name="eye-slash"
-                      ></mid-icon>`
-                    : html`
-                        <mid-icon
+                <span class="ds-field-affix" part="password-toggle-button">
+                  <button
+                    type="button"
+                    class="flex items-center justify-center rounded-sm"
+                    aria-label=${this.passwordvisible
+                      ? t.hidePassword
+                      : t.showPassword}
+                    @click=${this.handlePasswordToggle}
+                    tabindex="-1"
+                  >
+                    ${this.passwordvisible
+                      ? html` <mid-icon
                           class="size-7"
                           library="system"
-                          name="eye"
-                        ></mid-icon>
-                      `}
-                </button>
+                          name="eye-slash"
+                        ></mid-icon>`
+                      : html`
+                          <mid-icon
+                            class="size-7"
+                            library="system"
+                            name="eye"
+                          ></mid-icon>
+                        `}
+                  </button>
+                </span>
               `
             : ''}
           ${hasSuffix ? html`<span part="suffix" class="ds-field-affix"><slot name="suffix"></slot></span>` : html`<slot name="suffix"></slot>`}
