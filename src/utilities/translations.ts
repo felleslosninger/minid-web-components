@@ -3,17 +3,11 @@
  * icon-only buttons). Every supported language must provide all keys.
  */
 export interface ComponentTranslations {
-  /** aria-label for the clear/reset button */
   clear: string;
-  /** aria-label for the "show password" toggle button */
   showPassword: string;
-  /** aria-label for the "hide password" toggle button */
   hidePassword: string;
 }
 
-// ---------------------------------------------------------------------------
-// Built-in defaults
-// ---------------------------------------------------------------------------
 
 const builtins: Record<string, ComponentTranslations> = {
   nb: {
@@ -37,10 +31,6 @@ const builtins: Record<string, ComponentTranslations> = {
     hidePassword: 'Hide password',
   },
 };
-
-// ---------------------------------------------------------------------------
-// Registry
-// ---------------------------------------------------------------------------
 
 const registry = new Map<string, ComponentTranslations>(
   Object.entries(builtins)
@@ -75,10 +65,6 @@ export function setTranslations(
   const existing = registry.get(lang) ?? registry.get(base) ?? builtins.nb;
   registry.set(lang, { ...existing, ...translations });
 }
-
-// ---------------------------------------------------------------------------
-// Lookup
-// ---------------------------------------------------------------------------
 
 /**
  * Returns the translations for the given BCP-47 language tag.

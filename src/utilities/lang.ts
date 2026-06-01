@@ -1,7 +1,6 @@
 /**
  * Gets the effective language for a given element by walking up the DOM tree,
  * traversing shadow DOM host boundaries along the way.
- * Falls back to the document's `lang` attribute, then `'nb'` (Norwegian Bokmål).
  */
 export function getLang(element: HTMLElement): string {
   let current: Node | null = element;
