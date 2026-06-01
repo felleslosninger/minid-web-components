@@ -29,3 +29,5 @@ export { MinidValidationMessage } from './components/validation-message.componen
 
 export * from './events/events.ts';
 export * from './utilities/countries.ts';
+export { setTranslations } from './utilities/translations.ts';
+export type { ComponentTranslations } from './utilities/translations.ts';

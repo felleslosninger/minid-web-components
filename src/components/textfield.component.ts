@@ -16,6 +16,9 @@ import {
 import { watch } from '../internal/watch';
 import './icon/icon.component.ts';
 import { MaskInput, type MaskType } from 'maska';
+import { getLang } from '../utilities/lang';
+import { getTranslations } from '../utilities/translations';
+import { LangController } from '../controllers/lang.controller.js';
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -63,9 +66,7 @@ let nextUniqueId = 0;
  * @csspart password-toggle-button - The button for toggling password visibility
  */
 @customElement('mid-textfield')
-export class MinidTextfield extends FormControlMixin(
-  styled(LitElement, styles)
-) {
+export class MinidTextfield extends FormControlMixin(styled(LitElement, styles)) {
   private readonly inputId!: string;
   private readonly descriptionId!: string;
   private readonly validationId!: string;
@@ -73,7 +74,7 @@ export class MinidTextfield extends FormControlMixin(
   private inputMask?: MaskInput;
   private initialValue = '';
 
-  @query('.input')
+  @query('input')
   input!: HTMLInputElement;
 
   @property()
@@ -135,7 +136,7 @@ export class MinidTextfield extends FormControlMixin(
 
   @property()
   type:
-    'date'
+    | 'date'
     | 'datetime-local'
     | 'email'
     | 'file'
@@ -154,7 +155,7 @@ export class MinidTextfield extends FormControlMixin(
    */
   @property()
   inputmode:
-    'none'
+    | 'none'
     | 'text'
     | 'tel'
     | 'url'
@@ -164,7 +165,7 @@ export class MinidTextfield extends FormControlMixin(
 
   /**
    * Adds a clear button when the input is not empty.
-   * */
+   */
   @property({ type: Boolean })
   clearable = false;
 
@@ -230,6 +231,7 @@ export class MinidTextfield extends FormControlMixin(
 
   constructor() {
     super();
+    new LangController(this);
     nextUniqueId++;
     this.inputId = `mid-textfield-input-${nextUniqueId}`;
     this.descriptionId = `mid-textfield-description-${nextUniqueId}`;
@@ -250,13 +252,8 @@ export class MinidTextfield extends FormControlMixin(
     const hasModifier =
       event.metaKey || event.ctrlKey || event.shiftKey || event.altKey;
 
-    // Pressing enter when focused on an input should submit the form like a native input, but we wait a tick before
-    // submitting to allow users to cancel the keydown event if they need to
     if (event.key === 'Enter' && !hasModifier) {
       setTimeout(() => {
-        //
-        // When using an Input Method Editor (IME), pressing enter will cause the form to submit unexpectedly. One way
-        // to check for this is to look at event.isComposing, which will be true when the IME is open.
         if (!event.defaultPrevented && !event.isComposing) {
           this.form.requestSubmit();
         }
@@ -353,6 +350,8 @@ export class MinidTextfield extends FormControlMixin(
   }
 
   override render() {
+    const lang = getLang(this);
+    const t = getTranslations(lang);
     const hasLabelSlot = this.hasSlotControler.test('label');
     const hasLabel = !!this.label || !!hasLabelSlot;
     const hasPrefix = this.hasSlotControler.test('prefix');
@@ -412,6 +411,7 @@ export class MinidTextfield extends FormControlMixin(
             id="${this.inputId}"
             class="ds-input"
             part="input"
+            lang=${lang}
             .value=${live(this.value)}
             ?disabled=${this.disabled}
             ?readonly=${this.readonly}
@@ -431,6 +431,7 @@ export class MinidTextfield extends FormControlMixin(
             min=${ifDefined(this.min)}
             max=${ifDefined(this.max)}
             pattern=${ifDefined(this.pattern)}
+            inputmode=${this.inputmode}
             @input=${this.handleInput}
             @change=${this.handleChange}
             @focus=${this.handleFocus}
@@ -443,7 +444,7 @@ export class MinidTextfield extends FormControlMixin(
                   part="clear-button"
                   type="button"
                   class="focus-visible:focus-ring ml-2 flex items-center justify-center rounded-sm"
-                  aria-label="Tøm"
+                  aria-label=${t.clear}
                   @click=${this.handleClearClick}
                 >
                   <mid-icon
@@ -461,8 +462,8 @@ export class MinidTextfield extends FormControlMixin(
                   type="button"
                   class="ml-2 flex items-center justify-center rounded-sm"
                   aria-label=${this.passwordvisible
-                    ? 'skjul passord'
-                    : 'vis passord'}
+                    ? t.hidePassword
+                    : t.showPassword}
                   @click=${this.handlePasswordToggle}
                   tabindex="-1"
                 >
