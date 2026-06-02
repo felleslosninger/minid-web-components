@@ -83,11 +83,13 @@ export class MinidAlert extends styled(LitElement) {
   elevated = false;
 
   /**
-   * Sets the `aria-label` on the icon
-   * Use this to inform screenreaders of severity. Defaults to Norwegian.
+   * Sets the `aria-live` attribute on the alert host element.
+   * Prefer wrapping the alert in a `role="alert"` or `aria-live` container instead.
+   * Use `"polite"` for non-urgent updates and `"assertive"` for time-sensitive ones.
+   * Defaults to `"off"`.
    */
-  @property({ type: String })
-  iconlabel?: string;
+  @property({ reflect: true })
+  arialive: 'polite' | 'assertive' | 'off' = 'off';
 
   @state()
   private remainingTime = this.duration;
@@ -279,11 +281,6 @@ export class MinidAlert extends styled(LitElement) {
     const warning = this.severity === 'warning';
     const info = this.severity === 'info';
     const success = this.severity === 'success';
-    this.iconlabel ??=
-      (danger && 'Feil') ||
-      (warning && 'Advarsel') ||
-      (success && 'Suksess') ||
-      'Informasjon';
 
     return html`
       <div
@@ -295,7 +292,7 @@ export class MinidAlert extends styled(LitElement) {
         @mouseleave=${this.resumeAutoHide}
       >
         <div style="display: grid; grid-template-columns: 1fr ${this.closable ? 'auto' : ''};">
-          <div aria-live="polite">
+          <div aria-live="${this.arialive}">
             <slot>
               ${!this.notificationContent?.title
                 ? nothing
