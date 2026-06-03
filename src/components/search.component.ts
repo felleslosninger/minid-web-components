@@ -4,6 +4,9 @@ import { styled } from '../mixins/tailwind.mixin';
 import { live } from 'lit/directives/live.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { debounce } from '../internal/debounce.ts';
+import { getLang } from '../utilities/lang';
+import { getTranslations } from '../utilities/translations';
+import { LangController } from '../controllers/lang.controller.js';
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -32,6 +35,11 @@ const styles = [
  */
 @customElement('mid-search')
 export class MinidSearch extends styled(LitElement, styles) {
+  constructor() {
+    super();
+    new LangController(this);
+  }
+
   @query('input')
   input!: HTMLInputElement;
 
@@ -94,8 +102,10 @@ export class MinidSearch extends styled(LitElement, styles) {
   }
 
   override render() {
+    const lang = getLang(this);
+    const t = getTranslations(lang);
     return html`
-    <ds-field class="ds-field">
+    <ds-field class="ds-field" lang=${lang}>
       ${this.label
         ? html`<label class="ds-label mb-2">${this.label}</label>`
         : nothing}
@@ -120,7 +130,7 @@ export class MinidSearch extends styled(LitElement, styles) {
           data-icon="true"
           data-variant="tertiary"
           type="reset"
-          aria-label="Tøm"
+          aria-label=${t.clear}
           @click=${this.handleClear}
         ></button>
       </div>
