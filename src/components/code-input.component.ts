@@ -26,88 +26,224 @@ let nextUniqueId = 0;
 
 const styles = [
   css`
-      :host {
-          display: block;
-      }
+    :host {
+      display: block;
+    }
 
-      .input-wrapper {
-          position: relative;
-          cursor: text;
-          width: fit-content;
-      }
+    .code-input-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      margin-block-end: 0.5rem;
+      font-weight: 500;
+    }
 
-      .character-boxes {
-          display: inline-flex;
-          gap: 0.5rem; /* Corresponds to gap-2 in tailwind */
-      }
+    .code-input-label--hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
 
-      .character-box {
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          position: relative;
-          user-select: none;
-      }
+    .code-input-label--disabled,
+    .input-wrapper--disabled {
+      opacity: var(--ds-opacity-disabled, 0.38);
+    }
 
-      .hidden-input {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          padding: 0;
-          margin: 0;
-          background: transparent;
-          border: none;
-          color: transparent;
-          /* Hide the real caret */
-          caret-color: transparent;
-          font-size: 16px; /* Must be at least 16px to prevent ios from zooming in */
-          /* Allow clicks to pass through to elements underneath */
-          pointer-events: none;
-      }
+    .input-wrapper {
+      position: relative;
+      cursor: text;
+      width: fit-content;
+      font-size: 1rem;
+      line-height: 1.3;
+      font-weight: 500;
+    }
 
-      .hidden-input:focus {
-          outline: none;
-      }
+    .input-wrapper--sm {
+      font-size: var(--ds-heading-sm-font-size, 1.125rem);
+      line-height: var(--ds-heading-sm-line-height, 1.3);
+      font-weight: var(--ds-heading-sm-font-weight, 500);
+    }
 
-      .hidden-input:disabled {
-          cursor: not-allowed;
-      }
+    .input-wrapper--md {
+      font-size: var(--ds-heading-md-font-size, 1.25rem);
+      line-height: var(--ds-heading-md-line-height, 1.3);
+      font-weight: var(--ds-heading-md-font-weight, 500);
+    }
 
-      /* Fake caret using a CSS animation */
-      @keyframes blink {
-          0%,
-          100% {
-              opacity: 1;
-          }
-          50% {
-              opacity: 0;
-          }
-      }
+    .input-wrapper--lg {
+      font-size: var(--ds-heading-lg-font-size, 1.5rem);
+      line-height: var(--ds-heading-lg-line-height, 1.3);
+      font-weight: var(--ds-heading-lg-font-weight, 500);
+    }
 
-      .character-box--caret::after {
-          content: '';
-          position: absolute;
-          width: 2px;
-          height: 60%;
-          background-color: var(--color-accent-base, blue);
-          animation: blink 1s step-end infinite;
-      }
+    .input-wrapper--disabled {
+      cursor: not-allowed;
+    }
 
-      /* Hide placeholder circle when the caret is present */
-      .character-box--caret.character-box--empty {
-          color: transparent;
-      }
+    .character-boxes {
+      display: inline-flex;
+      gap: var(--mid-code-input-gap, 0.5rem);
+    }
 
-      /* Hide increment/decrement buttons on inputs */
-      input[type='number']::-webkit-outer-spin-button,
-      input[type='number']::-webkit-inner-spin-button,
-      input[type='number'] {
-          -webkit-appearance: none;
-          margin: 0;
-          -moz-appearance: textfield !important;
+    .character-box {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      box-sizing: border-box;
+      width: var(--mid-code-input-box-size, var(--ds-size-13, 3.25rem));
+      height: var(--mid-code-input-box-size, var(--ds-size-13, 3.25rem));
+      padding-inline: 0.25rem;
+      user-select: none;
+      text-align: center;
+      font-family:
+        ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+        'Liberation Mono', 'Courier New', monospace;
+      line-height: 1;
+      border: var(--ds-border-width-default, 1px) solid
+        var(
+          --mid-code-input-border-color,
+          var(--ds-color-neutral-border-default, #717a84)
+        );
+      border-radius: var(
+        --mid-code-input-border-radius,
+        var(--ds-border-radius-md, 0.25rem)
+      );
+      background-color: var(
+        --mid-code-input-background,
+        var(--ds-color-neutral-background-default, #ffffff)
+      );
+      color: var(--mid-code-input-text-color, inherit);
+    }
+
+    .character-box--empty {
+      color: var(
+        --mid-code-input-placeholder-color,
+        var(--ds-color-neutral-surface-active, #c7cacf)
+      );
+    }
+
+    .character-box--empty::before {
+      content: '';
+      box-sizing: border-box;
+      width: 0.55em;
+      height: 0.55em;
+      border: 2px solid currentColor;
+      border-radius: 50%;
+    }
+
+    .character-box--invalid {
+      border-width: 2px;
+      border-color: var(
+        --mid-code-input-danger-border-color,
+        var(--ds-color-danger-border-default, #ce4d4d)
+      );
+      background-color: var(
+        --mid-code-input-danger-background,
+        var(--ds-color-danger-surface-tinted, #f8e4e4)
+      );
+    }
+
+    .character-box--invalid.character-box--empty {
+      color: var(
+        --mid-code-input-danger-placeholder-color,
+        var(--ds-color-danger-surface-active, #edbfbf)
+      );
+    }
+
+    .focus-ring-sm {
+      outline: 2px solid var(--ds-color-focus-outer, #1f2c3d);
+      outline-offset: 2px;
+      box-shadow: 0 0 0 2px var(--ds-color-focus-inner, #ffffff);
+    }
+
+    /* Ensure hidden attribute always hides elements even when Tailwind's
+       @layer base [hidden] rule is not available in the shadow DOM */
+    [hidden] {
+      display: none !important;
+    }
+
+    .hidden-input {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      padding: 0;
+      margin: 0;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: transparent;
+      caret-color: transparent;
+      font-size: 16px; /* Minimum 16px prevents iOS zoom on focus */
+      pointer-events: none;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    .hidden-input:focus {
+      outline: none;
+    }
+
+    .hidden-input:disabled {
+      cursor: not-allowed;
+    }
+
+    @keyframes blink {
+      0%,
+      100% {
+        opacity: 1;
       }
+      50% {
+        opacity: 0;
+      }
+    }
+
+    .character-box--caret::after {
+      content: '';
+      position: absolute;
+      width: 2px;
+      height: 60%;
+      background-color: var(
+        --color-accent-base,
+        var(--ds-color-accent-base-default, blue)
+      );
+      animation: blink 1s step-end infinite;
+    }
+
+    /* Hide placeholder circle when the caret is at this position */
+    .character-box--caret.character-box--empty {
+      color: transparent;
+    }
+
+    /* Hide increment/decrement buttons on number inputs */
+    input[type='number']::-webkit-outer-spin-button,
+    input[type='number']::-webkit-inner-spin-button,
+    input[type='number'] {
+      -webkit-appearance: none;
+      margin: 0;
+      -moz-appearance: textfield !important;
+    }
+
+    .validation-message {
+      display: flex;
+      gap: 0.25rem;
+      margin-block-start: 0.5rem;
+      color: var(--ds-color-danger-text-subtle, #a22e2e);
+    }
+
+    .validation-icon {
+      margin-block-start: 0.25rem;
+      min-width: 1.25rem;
+      min-height: 1.25rem;
+    }
   `,
 ];
 
@@ -252,7 +388,7 @@ export class MinidCodeInput extends FormControlMixin(
 
   private handleBeforeInput(e: InputEvent) {
     if (e.inputType === 'insertText' && e.data) {
-      if(this.type == "number" && e.data.replace(/\D/g, '') == ''){
+      if (this.type == 'number' && e.data.replace(/\D/g, '') == '') {
         e.preventDefault();
       }
     }
@@ -275,15 +411,14 @@ export class MinidCodeInput extends FormControlMixin(
     }
 
     this.inputElement.dispatchEvent(
-      new Event('mid-input', { bubbles: true, composed: true }),
+      new Event('mid-input', { bubbles: true, composed: true })
     );
 
     if (this.value.length === this.length && this.value.length > 0) {
       this.inputElement.dispatchEvent(
-        new Event('mid-complete', { bubbles: true, composed: true }),
+        new Event('mid-complete', { bubbles: true, composed: true })
       );
     }
-
   }
 
   private handleChange() {
@@ -291,7 +426,7 @@ export class MinidCodeInput extends FormControlMixin(
       new Event('mid-change', {
         bubbles: true,
         composed: true,
-      }),
+      })
     );
   }
 
@@ -322,7 +457,6 @@ export class MinidCodeInput extends FormControlMixin(
     this.clear();
   }
 
-
   focus(options?: FocusOptions): void {
     this.inputElement?.focus(options);
     /* don't select text, move caret to the end */
@@ -339,7 +473,6 @@ export class MinidCodeInput extends FormControlMixin(
     }
   }
 
-
   override render() {
     const hasLabelSlot = this.hasSlotControler.test('label');
     const hasLabel = !!this.label || !!hasLabelSlot;
@@ -348,7 +481,7 @@ export class MinidCodeInput extends FormControlMixin(
     const chars = this.value.split('');
     const displayValues = Array.from(
       { length: this.length },
-      (_, i) => chars[i] || '',
+      (_, i) => chars[i] || ''
     );
     const isComplete = this.value.length >= this.length;
     const caretIndex =
@@ -360,54 +493,46 @@ export class MinidCodeInput extends FormControlMixin(
       <label
         id="${this.labelId}"
         for="mid-code-input-hidden"
-        class="${classMap({
-      'sr-only': this.hidelabel || !hasLabel,
-      'opacity-disabled': this.disabled,
-    })} mb-2 block items-center gap-1 font-medium"
+        class="code-input-label ${classMap({
+          'code-input-label--hidden': this.hidelabel || !hasLabel,
+          'code-input-label--disabled': this.disabled,
+        })}"
       >
         <slot name="label"> ${this.label} </slot>
       </label>
       <div
         part="input-container"
         class="input-wrapper ${classMap({
-      'text-heading-sm': this.size === 'sm',
-      'text-heading-md': this.size === 'md',
-      'text-heading-lg': this.size === 'lg',
-      'opacity-disabled': this.disabled,
-    })}"
+          'input-wrapper--sm': this.size === 'sm',
+          'input-wrapper--md': this.size === 'md',
+          'input-wrapper--lg': this.size === 'lg',
+          'input-wrapper--disabled': this.disabled,
+        })}"
         @click=${() => this.focus()}
       >
         <div part="character-boxes" class="character-boxes" aria-hidden="true">
           ${displayValues.map((char, index) => {
-      const isFocusTarget = this.isFocused && index === caretIndex;
-      const hasCaret = isFocusTarget && !isComplete;
-      return html`
+            const isFocusTarget = this.isFocused && index === caretIndex;
+            const hasCaret = isFocusTarget && !isComplete;
+            return html`
               <div
                 part="character-box"
                 aria-hidden="true"
                 class="character-box ${classMap({
-        'border': !this.invalidmessage,
-        'border-2': this.invalidmessage,
-        'border-neutral': !this.invalidmessage,
-        'border-danger': this.invalidmessage,
-        'bg-neutral': !this.invalidmessage,
-        'bg-danger-tinted': this.invalidmessage,
-        'text-neutral-surface-active':
-          !char && !this.invalidmessage,
-        'text-danger-surface-active': !char && this.invalidmessage,
-        'character-box--caret': hasCaret,
-        'character-box--empty': !char,
-        'focus-ring-sm': isFocusTarget,
-      })} size-9 rounded-md text-center font-mono"
+                  'character-box--invalid': !!this.invalidmessage,
+                  'character-box--caret': hasCaret,
+                  'character-box--empty': !char,
+                  'focus-ring-sm': isFocusTarget,
+                })}"
                 @click=${(e: MouseEvent) => {
-        e.stopPropagation();
-        this.handleBoxClick(index);
-      }}
+                  e.stopPropagation();
+                  this.handleBoxClick(index);
+                }}
               >
-                ${char || '○'}
+                ${char}
               </div>
             `;
-    })}
+          })}
         </div>
         <input
           class="hidden-input"
@@ -424,7 +549,7 @@ export class MinidCodeInput extends FormControlMixin(
           ?autofocus="${this.autofocus}"
           ?disabled="${this.disabled}"
           ?required="${this.required}"
-          .pattern="${this.pattern}"
+          pattern=${ifDefined(this.pattern)}
           inputmode="${this.inputmode}"
           autocomplete="one-time-code"
           @beforeinput="${this.handleBeforeInput}"
@@ -436,15 +561,12 @@ export class MinidCodeInput extends FormControlMixin(
         />
       </div>
       <div
-        class="text-danger-subtle mt-2 flex gap-1"
+        class="validation-message"
         id="${this.validationId}"
         aria-live="polite"
         ?hidden=${!this.invalidmessage}
       >
-        <mid-icon
-          name="xmark-octagon-fill"
-          class="mt-1 min-h-5 min-w-5"
-        ></mid-icon>
+        <mid-icon name="xmark-octagon-fill" class="validation-icon"></mid-icon>
         ${this.invalidmessage}
       </div>
     `;
