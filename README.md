@@ -16,13 +16,60 @@ or
 yarn add @felleslosninger/minid-elements
 ```
 
+## CSS Setup
+
+minid-elements uses Tailwind CSS v4 and CSS cascade layers internally. To prevent style conflicts, you must declare the layer order **before** importing Tailwind in your global stylesheet:
+
+```css
+/* Establish layer order before @import 'tailwindcss', so ds.* layers sit
+   between base and utilities rather than after utilities. */
+@layer theme, base, ds.theme, ds.base, ds.components, components, utilities;
+@import 'tailwindcss';
+@import '@felleslosninger/minid-elements/styles';
+@source '../../node_modules/@felleslosninger/minid-elements/dist';
+```
+
+The stylesheet link in your HTML must have the `data-mid-tailwind` attribute so the components can resolve scoped styles correctly:
+
+```html
+<link rel="stylesheet" href="./styles/tailwind.css" data-mid-tailwind />
+```
+
+### CSS entrypoints
+
+| Import path | File | Description |
+|---|---|---|
+| `@felleslosninger/minid-elements/styles` | `dist/styles.css` | Component styles |
+| `@felleslosninger/minid-elements/theme` | `dist/theme.css` | Design tokens / theme |
+| `@felleslosninger/minid-elements/globals` | `dist/index.css` | Global base styles |
+
 ## Usage
 
 Import the desired components into your project:
 
-```html
+```ts
 import '@felleslosninger/minid-elements/button';
+```
+
+```html
 <mid-button variant="primary">Click me</mid-button>
+```
+
+### Translations
+
+Built-in UI labels (e.g. "Clear", "Show password", "Open country selector") are available in Norwegian Bokmål, Nynorsk, Northern Sami, and English. Components pick up the page language automatically via the `lang` attribute.
+
+To override or add translations for a language:
+
+```ts
+import { registerTranslations } from '@felleslosninger/minid-elements';
+
+registerTranslations('en', {
+  clear: 'Remove',
+  showPassword: 'Reveal password',
+  hidePassword: 'Conceal password',
+  openCountrySelector: 'Choose country',
+});
 ```
 
 ## CDN Usage
