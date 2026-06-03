@@ -15,7 +15,7 @@ type AlertProps = Partial<{
   closable: boolean;
   open: boolean;
   severity: MinidAlert['severity'];
-  iconlabel: string;
+  arialive: MinidAlert['arialive'];
   duration: number;
   size: MinidAlert['size'];
   base: Part;
@@ -46,8 +46,9 @@ const meta = {
       },
       options: ['warning', 'info', 'danger', 'success'],
     },
-    iconlabel: {
-      control: { type: 'text' },
+    arialive: {
+      control: { type: 'radio' },
+      options: ['off', 'polite', 'assertive'],
     },
     duration: { type: 'number' },
     base: { control: false },
@@ -102,7 +103,7 @@ export const Main: Story = {
     severity,
     title,
     elevated,
-    iconlabel,
+    arialive,
     size,
     duration,
     closable,
@@ -114,7 +115,7 @@ export const Main: Story = {
       ?elevated=${elevated}
       ?closable=${closable}
       size=${ifDefined(size)}
-      iconlabel=${ifDefined(iconlabel)}
+      arialive=${ifDefined(arialive)}
       severity=${ifDefined(severity)}
       duration=${ifDefined(duration)}
     >
@@ -164,7 +165,7 @@ export const Toast: Story = {
       severity,
       title,
       elevated,
-      iconlabel,
+      arialive,
       size,
       duration,
       toast,
@@ -174,7 +175,7 @@ export const Toast: Story = {
     <mid-alert
       ?elevated=${elevated}
       size=${ifDefined(size)}
-      iconlabel=${ifDefined(iconlabel)}
+      arialive=${ifDefined(arialive)}
       severity=${ifDefined(severity)}
       duration=${ifDefined(duration)}
     >

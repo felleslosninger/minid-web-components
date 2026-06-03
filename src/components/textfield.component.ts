@@ -458,12 +458,11 @@ export class MinidTextfield extends FormControlMixin(styled(LitElement, styles))
                 <span class="ds-field-affix" part="password-toggle-button">
                   <button
                     type="button"
-                    class="flex items-center justify-center rounded-sm"
+                    class="focus-visible:focus-ring flex items-center justify-center rounded-sm"
                     aria-label=${this.passwordvisible
                       ? t.hidePassword
                       : t.showPassword}
                     @click=${this.handlePasswordToggle}
-                    tabindex="-1"
                   >
                     ${this.passwordvisible
                       ? html` <mid-icon
