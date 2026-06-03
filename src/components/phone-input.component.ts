@@ -8,6 +8,7 @@ import {
   formatIncompletePhoneNumber,
   getCountryCallingCode,
   type CountryCode,
+  parsePhoneNumberFromString,
   parsePhoneNumberCharacter,
 } from 'libphonenumber-js';
 import './icon/icon.component';
@@ -21,12 +22,17 @@ import { watch } from '../internal/watch';
 import { HasSlotController } from '../internal/slot';
 import { FormControlMixin } from '../mixins/form-control.mixin';
 import { requiredValidator } from '../mixins/validators';
+import { LangController } from '../controllers/lang.controller.js';
+import { getLang } from '../utilities/lang';
+import { getTranslations } from '../utilities/translations';
 
 declare global {
   interface HTMLElementTagNameMap {
     'mid-phone-input': MinidPhoneInput;
   }
 }
+
+type PhoneAutocomplete = 'tel' | 'tel-national';
 
 const styles = [
   css`
@@ -106,6 +112,17 @@ export class MinidPhoneInput extends FormControlMixin(
   country?: CountryCode;
 
   /**
+   * Controls the native browser autofill token used for the phone number input.
+   *
+   * `tel` expects a full phone number, including country code when available.
+   * If a value without a country code matches the selected country, the country
+   * prefix is added.
+   * `tel-national` expects the national number and prefixes the selected country.
+   */
+  @property()
+  autocomplete: PhoneAutocomplete = 'tel';
+
+  /**
    * Activates invalid styling
    */
   @property({ type: Boolean })
@@ -138,6 +155,7 @@ export class MinidPhoneInput extends FormControlMixin(
 
   constructor() {
     super();
+    new LangController(this);
     nextUniqueId++;
     this.inputId = `mid-phone-input-input-${nextUniqueId}`;
     this.validationId = `mid-phone-input-validation-${nextUniqueId}`;
@@ -255,12 +273,41 @@ export class MinidPhoneInput extends FormControlMixin(
     this.handleNewValue(event);
   }
 
+  private getCountryCodePrefix() {
+    if (this.country) {
+      return `+${getCountryCallingCode(this.country)}`;
+    }
+
+    return this.countrycode;
+  }
+
+  private applyAutocompletePrefix(value: string) {
+    if (value.startsWith('+')) {
+      return value;
+    }
+
+    const countryCodePrefix = this.getCountryCodePrefix();
+    if (this.autocomplete === 'tel-national' && countryCodePrefix) {
+      return `${countryCodePrefix}${value}`;
+    }
+
+    if (this.autocomplete === 'tel' && this.country) {
+      const phoneNumber = parsePhoneNumberFromString(value, this.country);
+      const valueWithPlus = `+${value.replaceAll(/\D/g, '')}`;
+
+      if (phoneNumber?.isValid() && phoneNumber.number !== valueWithPlus) {
+        return phoneNumber.number;
+      }
+    }
+
+    return `+${value}`;
+  }
+
   private handleNewValue(event: Event) {
     this.formatter.reset();
 
-    if (!this.input.value.startsWith('+')) {
-      this.input.value = `+${this.input.value}`;
-    }
+    this.input.value = this.applyAutocompletePrefix(this.input.value);
+
     this.formatter.input(this.input.value);
     this.currentTemplate = this.formatter.getTemplate();
 
@@ -342,6 +389,8 @@ export class MinidPhoneInput extends FormControlMixin(
     const md = true;
     const sm = false;
 
+    const lang = getLang(this);
+    const t = getTranslations(lang);
     const hasLabelSlot = this.hasSlotControler.test('label');
     const hasLabel = !!this.label || !!hasLabelSlot;
     const hasError = this.invalid || !!this.invalidmessage;
@@ -380,7 +429,7 @@ export class MinidPhoneInput extends FormControlMixin(
         <div part="base" class="flex h-12">
           <button
             part="country-button"
-            aria-label="Open country selector"
+            aria-label=${t.openCountrySelector}
             class="${classMap({
               'border-neutral': !this.readonly,
               'border-neutral-subtle': this.readonly,
@@ -420,7 +469,7 @@ export class MinidPhoneInput extends FormControlMixin(
             })} focus-visible:focus-ring grow rounded-r px-3"
             part="phone-number"
             type="tel"
-            autocomplete="tel"
+            autocomplete=${this.autocomplete}
             ?readonly=${this.readonly}
             value=${this.value}
             aria-describedby=${ifDefined(describedBy)}
