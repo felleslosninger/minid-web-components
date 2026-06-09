@@ -1,5 +1,8 @@
-import { css, html, LitElement } from 'lit';
+import { css, html, LitElement, nothing } from 'lit';
 import { customElement, property, query } from 'lit/decorators.js';
+import { getLang } from '../utilities/lang';
+import { getTranslations } from '../utilities/translations';
+import { LangController } from '../controllers/lang.controller.js';
 import { waitForEvent } from '../internal/event';
 import { watch } from '../internal/watch';
 import { styled } from '../mixins/tailwind.mixin';
@@ -70,6 +73,13 @@ export class MinidDialog extends styled(LitElement, styles) {
   @property({ reflect: true })
   heading = '';
 
+  /**
+   * When set, the dialog uses `role="alertdialog"` instead of `role="dialog"`, signalling urgency to screen readers.
+   * Use this for blocking dialogs that require immediate user attention.
+   */
+  @property({ type: Boolean, reflect: true })
+  alertdialog = false;
+
   private requestClose(source: 'close-button' | 'keyboard' | 'overlay') {
     const requestCloseEvent = new CustomEvent('mid-request-close', {
       bubbles: true,
@@ -114,6 +124,10 @@ export class MinidDialog extends styled(LitElement, styles) {
       );
       // this.addOpenListeners();
       this.dialog.showModal();
+
+      if (this.alertdialog) {
+        this.dialog.focus();
+      }
 
       lockBodyScrolling(this);
 
@@ -177,11 +191,22 @@ export class MinidDialog extends styled(LitElement, styles) {
     return waitForEvent(this, 'mid-after-hide');
   }
 
+  constructor() {
+    super();
+    new LangController(this);
+  }
+
   override render() {
+    const t = getTranslations(getLang(this));
+
     return html`
       <dialog
         part="base"
         id="dialog"
+        tabindex="-1"
+        role=${this.alertdialog ? 'alertdialog' : 'dialog'}
+        aria-label=${this.heading || nothing}
+        aria-modal="true"
         class="text-neutral m-auto max-h-[calc(100%---spacing(8))] w-(--width) max-w-[calc(100%---spacing(8))] flex-col rounded-lg p-6 shadow-xl backdrop:bg-black/50 open:flex open:animate-none"
         @cancel=${this.handleDialogCancel}
         @click=${this.handleBackdropClick}
@@ -191,6 +216,7 @@ export class MinidDialog extends styled(LitElement, styles) {
           <div class="h-0">
             <button
               autofocus
+              aria-label=${t.close}
               @click="${() => this.requestClose('close-button')}"
               class="text-body-md focus-visible:focus-ring text-neutral hover:bg-neutral-surface-hover float-right flex size-12 translate-x-3 -translate-y-3 items-center justify-center rounded"
             >
