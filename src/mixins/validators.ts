@@ -88,3 +88,30 @@ export const patternValidator: Validator = {
     return !!regExp.exec(value);
   },
 };
+
+export const typeMismatchValidator: Validator = {
+  attribute: 'type',
+  key: 'typeMismatch',
+  message(instance: HTMLElement & { input?: HTMLInputElement }): string {
+    return instance.input?.validationMessage || 'Please enter a valid value';
+  },
+  isValid(
+    instance: HTMLElement & { type?: HTMLInputElement['type'] },
+    value: FormValue
+  ): boolean {
+    if (
+      !value ||
+      typeof value !== 'string' ||
+      (instance.type !== 'email' && instance.type !== 'url') ||
+      typeof document === 'undefined'
+    ) {
+      return true;
+    }
+
+    const input = document.createElement('input');
+    input.type = instance.type;
+    input.value = value;
+
+    return !input.validity.typeMismatch;
+  },
+};

@@ -7,6 +7,7 @@ export interface ComponentTranslations {
   showPassword: string;
   hidePassword: string;
   openCountrySelector: string;
+  close: string;
 }
 
 
@@ -16,24 +17,28 @@ const builtins: Record<string, ComponentTranslations> = {
     showPassword: 'Vis passord',
     hidePassword: 'Skjul passord',
     openCountrySelector: 'Åpne landsvelger',
+    close: 'Lukk',
   },
   nn: {
     clear: 'Tøm',
     showPassword: 'Vis passord',
     hidePassword: 'Gøym passord',
     openCountrySelector: 'Opna landsveljar',
+    close: 'Lukk',
   },
   se: {
     clear: 'Sihko',
     showPassword: 'Čájet sátnesuodji',
     hidePassword: 'Čiehka sátnesuodji',
     openCountrySelector: 'Rahpat riikkaválljenjoavkku',
+    close: 'Gidde',
   },
   en: {
     clear: 'Clear',
     showPassword: 'Show password',
     hidePassword: 'Hide password',
     openCountrySelector: 'Open country selector',
+    close: 'Close',
   },
 };
 

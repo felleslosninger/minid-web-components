@@ -1,4 +1,4 @@
-import { css, html, LitElement, nothing } from 'lit';
+import { css, html, LitElement, nothing, type PropertyValues } from 'lit';
 import { customElement, property, query, state } from 'lit/decorators.js';
 import { live } from 'lit/directives/live.js';
 import { stringConverter } from '../internal/string-converter';
@@ -12,6 +12,7 @@ import {
   minLengthValidator,
   patternValidator,
   requiredValidator,
+  typeMismatchValidator,
 } from '../mixins/validators';
 import { watch } from '../internal/watch';
 import './icon/icon.component.ts';
@@ -230,6 +231,7 @@ export class MinidTextfield extends FormControlMixin(styled(LitElement, styles))
       maxLengthValidator,
       minLengthValidator,
       patternValidator,
+      typeMismatchValidator,
     ];
   }
 
@@ -246,6 +248,15 @@ export class MinidTextfield extends FormControlMixin(styled(LitElement, styles))
   override connectedCallback(): void {
     super.connectedCallback();
     this.initialValue = this.value;
+  }
+
+  get validationTarget() {
+    return this.input;
+  }
+
+  protected firstUpdated(_changedProperties: PropertyValues): void {
+    super.firstUpdated(_changedProperties);
+    this.setValue(this.value);
   }
 
   disconnectedCallback(): void {

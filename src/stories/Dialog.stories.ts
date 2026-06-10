@@ -6,6 +6,7 @@ import '../components/paragraph.component';
 
 type DialogProps = Partial<{
   open: boolean;
+  alertdialog: boolean;
   'mid-show': Event;
   'mid-hide': Event;
   'mid-after-show': Event;
@@ -27,6 +28,10 @@ const meta = {
   title: 'Komponenter/Dialog',
   component: 'mid-dialog',
   argTypes: {
+    alertdialog: {
+      control: { type: 'boolean' },
+      description: 'When set, uses `role="alertdialog"` for urgent blocking dialogs that require immediate attention.',
+    },
     'mid-request-close': {
       control: { type: 'select' },
       options: ['preventDefault', 'normal'],
@@ -67,10 +72,43 @@ type Story = StoryObj<DialogProps>;
 
 // More on writing stories with args: https://storybook.js.org/docs/writing-stories/args
 
+export const AlertDialog: Story = {
+  args: { open: true, alertdialog: true },
+  render: ({ 'mid-request-close': requestClose }: DialogProps) => {
+    return html`
+      <mid-button class="dialog-button">Åpne varsel-dialog</mid-button>
+      <mid-dialog
+        open
+        alertdialog
+        class="dialog"
+        @mid-request-close=${(event: Event) =>
+          requestClose === 'preventDefault' && event.preventDefault()}
+      >
+        <h2 class="mb-2" slot="heading">Tidsfristen har gått ut</h2>
+        <mid-paragraph spacing>
+          Du har gått tom for tid og må starte prosessen på nytt.
+        </mid-paragraph>
+        <div slot="footer" class="flex flex-row-reverse gap-4 self-stretch justify-self-end">
+          <mid-button class="confirm-button">Gå til start</mid-button>
+        </div>
+      </mid-dialog>
+      <script>
+        var dialogButton = document.querySelector('.dialog-button');
+        var dialog = document.querySelector('.dialog');
+        var confirmButton = document.querySelector('.confirm-button');
+
+        dialogButton.addEventListener('click', () => dialog.show());
+        confirmButton.addEventListener('click', () => dialog.hide());
+      </script>
+    `;
+  },
+};
+
 export const Main: Story = {
   args: {},
   render: ({
     open,
+    alertdialog,
     footerSlot,
     heading,
     'mid-request-close': requestClose,
@@ -80,6 +118,7 @@ export const Main: Story = {
       <mid-button class="dialog-button">Dialog</mid-button>
       <mid-dialog
         ?open=${open}
+        ?alertdialog=${alertdialog}
         class="dialog"
         @mid-request-close=${(event: Event) =>
           requestClose === 'preventDefault' && event.preventDefault()}
