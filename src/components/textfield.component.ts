@@ -401,7 +401,7 @@ export class MinidTextfield extends FormControlMixin(styled(LitElement, styles))
               <div
                 id="${this.descriptionId}"
                 part="description"
-                data-field="description"
+                aria-hidden="true"
                 class="${classMap({
                   'sr-only': this.hidelabel,
                 })}"
@@ -496,7 +496,6 @@ export class MinidTextfield extends FormControlMixin(styled(LitElement, styles))
         </div>
         <p
           class="ds-validation-message"
-          data-field="validation"
           id="${this.validationId}"
           aria-live="polite"
           ?hidden=${!this.invalidmessage}
