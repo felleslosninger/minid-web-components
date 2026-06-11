@@ -88,6 +88,10 @@
       "import": "./dist/components/label.js",
       "types": "./dist/components/label.component.d.ts"
     },
+    "./language-selector": {
+      "import": "./dist/components/language-selector.js",
+      "types": "./dist/components/language-selector.component.d.ts"
+    },
     "./link": {
       "import": "./dist/components/link.js",
       "types": "./dist/components/link.component.d.ts"
