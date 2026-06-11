@@ -1,5 +1,6 @@
-import { html, LitElement } from 'lit';
-import { customElement } from 'lit/decorators.js';
+import { html, LitElement, nothing } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
+import { classMap } from 'lit/directives/class-map.js';
 import { styled } from '../mixins/tailwind.mixin';
 import './icon/icon.component.ts';
 
@@ -11,14 +12,33 @@ declare global {
 
 @customElement('mid-validation-message')
 export class MinidValidationMessage extends styled(LitElement) {
+  @property()
+  color: 'danger' | 'success' | 'warning' | 'info' = 'danger';
+
   override render() {
+    const iconMap = {
+      danger: 'xmark-octagon-fill',
+      success: 'checkmark-circle-fill',
+      warning: 'exclamationmark-triangle-fill',
+      info: 'information-square-fill',
+    } as const;
+
     return html`
-      <div class="text-danger-subtle mt-2 flex gap-1" aria-live="polite">
+      <div
+        class=${classMap({
+          'mt-2 flex gap-1': true,
+          'text-danger-subtle': this.color === 'danger',
+          'text-success-subtle': this.color === 'success',
+          'text-warning-subtle': this.color === 'warning',
+          'text-info-subtle': this.color === 'info',
+        })}
+        aria-live=${this.color === 'danger' ? 'polite' : nothing}
+      >
         <mid-icon
-          name="xmark-octagon-fill"
+          name=${iconMap[this.color]}
           class="mt-1 min-h-5 min-w-5"
         ></mid-icon>
-        <slot> </slot>
+        <slot></slot>
       </div>
     `;
   }
