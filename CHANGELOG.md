@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.3
+
+### Patch Changes
+
+- d1e95d6: Add `mid-language-selector` component for locale switching, using Designsystemet dropdown styling
+
 ## 0.1.2
 
 ### Patch Changes
