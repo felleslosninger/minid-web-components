@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.4
+
+### Patch Changes
+
+- 8a68530: Replace inline styles in `mid-alert` with Tailwind utility classes to fix CSP violations. Add `id`/`for` pairing to `mid-checkbox` input and label for correct accessibility.
+
 ## 0.1.3
 
 ### Patch Changes
