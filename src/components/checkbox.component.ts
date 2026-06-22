@@ -124,6 +124,7 @@ export class MinidCheckbox extends FormControlMixin(styled(LitElement)) {
     return html`
       <ds-field class="ds-field">
       <input
+      id="input"
       class="ds-input"
       type="checkbox"
       value=${ifDefined(this.value)}
@@ -138,6 +139,7 @@ export class MinidCheckbox extends FormControlMixin(styled(LitElement)) {
         <label
           class="ds-label"
           part="label"
+          for="input"
         >
           <slot></slot>
         </label>

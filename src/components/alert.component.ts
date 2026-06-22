@@ -291,7 +291,7 @@ export class MinidAlert extends styled(LitElement) {
         @mouseenter=${this.pauseAutoHide}
         @mouseleave=${this.resumeAutoHide}
       >
-        <div style="display: grid; grid-template-columns: 1fr ${this.closable ? 'auto' : ''};">
+        <div class="${classMap({ 'grid-cols-[1fr_auto]': this.closable })} grid">
           <div aria-live="${this.arialive}">
             <slot>
               ${!this.notificationContent?.title
@@ -332,8 +332,7 @@ ${this.notificationContent?.details}</pre
                     'hover:bg-info-surface-hover': info,
                     'hover:bg-success-surface-hover': success,
                     'hover:bg-warning-surface-hover': warning,
-                  })} flex rounded p-2"
-                  style="align-self: start; justify-self: end;"
+                  })} flex rounded p-2 self-start justify-self-end"
                   @click="${this.hide}"
                   aria-label="Dismiss alert"
                 >
