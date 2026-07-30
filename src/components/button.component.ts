@@ -6,6 +6,9 @@ import { html, literal } from 'lit/static-html.js';
 import { styled } from '../mixins/tailwind.mixin.ts';
 import './spinner.component.ts';
 import { FormControlMixin } from '../mixins/form-control.mixin.ts';
+import { getLang } from '../utilities/lang.js';
+import { getTranslations } from '../utilities/translations.js';
+import { LangController } from '../controllers/lang.controller.js';
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -85,6 +88,11 @@ export class MinidButton extends FormControlMixin(styled(LitElement, styles)) {
   @property({ type: Boolean })
   iconstyled = false;
 
+  constructor() {
+    super();
+    new LangController(this);
+  }
+
   handleClick() {
     if (this.type === 'submit') {
       this.value && this.setValue(this.value);
@@ -116,6 +124,7 @@ export class MinidButton extends FormControlMixin(styled(LitElement, styles)) {
     const secondary = this.variant === 'secondary';
     const tertiary = this.variant === 'tertiary';
     const spinnerOnly = this.loading && !this.loadingtext;
+    const translations = getTranslations(getLang(this));
 
     return html`<${tag}
       part="base"
@@ -170,6 +179,7 @@ export class MinidButton extends FormControlMixin(styled(LitElement, styles)) {
                 'left-[calc(50%_-_0.5em)]': spinnerOnly,
               })}"
               part="spinner"
+              label=${spinnerOnly ? translations.loading : ''}
             ></mid-spinner>`
           : ''
       }
