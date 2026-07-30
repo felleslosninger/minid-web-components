@@ -136,10 +136,10 @@ export class MinidDialog extends styled(LitElement, styles) {
         this.dialog,
         panelAnimation.keyframes,
         panelAnimation.options
-      ),
-        this.dispatchEvent(
-          new Event('mid-after-show', { bubbles: true, composed: true })
-        );
+      );
+      this.dispatchEvent(
+        new Event('mid-after-show', { bubbles: true, composed: true })
+      );
     } else {
       // Hide
       this.dispatchEvent(

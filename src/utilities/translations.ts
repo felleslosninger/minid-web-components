@@ -8,6 +8,7 @@ export interface ComponentTranslations {
   hidePassword: string;
   openCountrySelector: string;
   close: string;
+  loading: string;
 }
 
 
@@ -18,6 +19,7 @@ const builtins: Record<string, ComponentTranslations> = {
     hidePassword: 'Skjul passord',
     openCountrySelector: 'Åpne landsvelger',
     close: 'Lukk',
+    loading: 'Laster',
   },
   nn: {
     clear: 'Tøm',
@@ -25,6 +27,7 @@ const builtins: Record<string, ComponentTranslations> = {
     hidePassword: 'Gøym passord',
     openCountrySelector: 'Opna landsveljar',
     close: 'Lukk',
+    loading: 'Lastar',
   },
   se: {
     clear: 'Sihko',
@@ -32,6 +35,7 @@ const builtins: Record<string, ComponentTranslations> = {
     hidePassword: 'Čiehka sátnesuodji',
     openCountrySelector: 'Rahpat riikkaválljenjoavkku',
     close: 'Gidde',
+    loading: 'Viežžamin',
   },
   en: {
     clear: 'Clear',
@@ -39,6 +43,7 @@ const builtins: Record<string, ComponentTranslations> = {
     hidePassword: 'Hide password',
     openCountrySelector: 'Open country selector',
     close: 'Close',
+    loading: 'Loading',
   },
 };
 

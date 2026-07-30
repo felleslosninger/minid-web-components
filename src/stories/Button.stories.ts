@@ -131,6 +131,19 @@ export const Loading: Story = {
   },
 };
 
+export const LoadingWithoutText: Story = {
+  args: {
+    loading: true,
+  },
+  render: (args) => html`<div lang="nb">${render(args)}</div>`,
+  play: async ({ canvas }) => {
+    const button = await canvas.findByShadowRole('button', { name: /Laster/ });
+
+    await expect(button).toBeDisabled();
+    await expect(button).toHaveAttribute('aria-busy', 'true');
+  },
+};
+
 export const ButtonLink: Story = {
   args: {
     href: 'https://example.com',

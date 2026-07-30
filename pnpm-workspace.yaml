@@ -1,3 +1,15 @@
 minimumReleaseAge: 1440
 minimumReleaseAgeExclude:
-  - "@digdir/*"
+  - '@digdir/*'
+
+overrides:
+  # GHSA-mh99-v99m-4gvg (DoS) affects every brace-expansion <= 5.0.7, and the
+  # only fix is 5.0.8. minimatch@9 caps brace-expansion at ^2.0.2, so the 2.x
+  # line can never reach it. minimatch@10 depends on brace-expansion ^5.0.5, so
+  # forcing the two remaining minimatch@9 consumers (glob@10 via
+  # @vitest/coverage-*, and @vue/language-core via vite-plugin-dts) onto 10.x
+  # is what actually clears the advisory.
+  #
+  # Remove this once vitest reaches 4.x (its coverage packages drop test-exclude
+  # entirely) and vite-plugin-dts reaches 5.x (drops @vue/language-core).
+  minimatch@9: ^10.2.5
