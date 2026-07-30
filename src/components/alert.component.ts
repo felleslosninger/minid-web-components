@@ -255,7 +255,9 @@ export class MinidAlert extends styled(LitElement) {
 
       // Wait for the toast stack to render
       requestAnimationFrame(() => {
-        // Force a reflow for the initial transition
+        // Force a reflow for the initial transition. Reading the property is the
+        // side effect, so the "unused expression" here is deliberate.
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
         this.clientWidth;
         this.show();
       });
