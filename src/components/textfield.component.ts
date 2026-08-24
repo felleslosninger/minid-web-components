@@ -45,6 +45,17 @@ const styles = [
     .ds-field-affixes {
       background: var(--ds-color-neutral-background-tinted);
     }
+
+    /* The validation message stays in the DOM so its text lands in a live region
+       the screen reader is already watching - WebKit does not reliably announce
+       one revealed at the same moment the text arrives. When empty it must paint
+       nothing and take no room: the element drops the ds-validation-message class
+       (whose ::before paints an error icon regardless of the text) and this rule
+       cancels the sibling spacing from .ds-field > * + *, which the .ds-field >
+       prefix is enough to outrank without !important. */
+    .ds-field > .validation-message--empty {
+      margin-top: 0;
+    }
   `,
 ];
 
@@ -69,6 +80,7 @@ let nextUniqueId = 0;
  * @csspart field - The element that wraps the label, input, and help text.
  * @csspart clear-button - The clear button
  * @csspart password-toggle-button - The button for toggling password visibility
+ * @csspart validation-message - The error message shown by `invalidmessage`.
  */
 @customElement('mid-textfield')
 export class MinidTextfield extends FormControlMixin(styled(LitElement, styles)) {
@@ -423,6 +435,7 @@ export class MinidTextfield extends FormControlMixin(styled(LitElement, styles))
             .value=${live(this.value)}
             ?disabled=${this.disabled}
             ?readonly=${this.readonly}
+            ?required=${this.required}
             ?autofocus=${this.autofocus}
             autocomplete=${ifDefined(this.autocomplete as any)}
             type=${this.type === 'password' && this.passwordvisible
@@ -495,10 +508,13 @@ export class MinidTextfield extends FormControlMixin(styled(LitElement, styles))
           ${hasSuffix ? html`<span part="suffix" class="ds-field-affix"><slot name="suffix"></slot></span>` : html`<slot name="suffix"></slot>`}
         </div>
         <p
-          class="ds-validation-message"
+          class="${classMap({
+            'ds-validation-message': !!this.invalidmessage,
+            'validation-message--empty': !this.invalidmessage,
+          })}"
+          part="validation-message"
           id="${this.validationId}"
           aria-live="polite"
-          ?hidden=${!this.invalidmessage}
         >
           ${this.invalidmessage}
         </p>

@@ -9,6 +9,8 @@ type CodeInputProps = Partial<{
   value: string;
   label: string;
   labelAttr: string;
+  descriptionSlot: string;
+  descriptionAttr: string;
   type: 'number' | 'text';
   size: 'sm' | 'md' | 'lg';
   inputmode: 'numeric' | 'text';
@@ -16,8 +18,8 @@ type CodeInputProps = Partial<{
   pattern: string;
   autofocus: boolean;
   disabled: boolean;
-  readonly: boolean;
   hidelabel: boolean;
+  hidedescription: boolean;
   event: Event;
   'mid-change': Event;
   'mid-input': Event;
@@ -45,6 +47,16 @@ const meta = {
       name: 'label',
       type: 'string',
       table: { category: 'attributes', defaultValue: { summary: '' } },
+    },
+    descriptionAttr: {
+      name: 'description',
+      type: 'string',
+      table: { category: 'attributes', defaultValue: { summary: '' } },
+    },
+    descriptionSlot: {
+      name: 'description',
+      type: 'string',
+      table: { category: 'slots' },
     },
     'mid-change': { control: { disable: true } },
     'mid-input': { control: { disable: true } },
@@ -74,6 +86,8 @@ type Story = StoryObj<CodeInputProps>;
 export const Main: Story = {
   args: {
     labelAttr: 'Engangskode',
+    descriptionAttr:
+      'Vennligst tast inn engangskoden vi har tilsendt din mobil',
   },
   render: ({
     length,
@@ -81,12 +95,14 @@ export const Main: Story = {
     value,
     label,
     labelAttr,
+    descriptionSlot,
+    descriptionAttr,
     type,
     size,
     autofocus,
     disabled,
     hidelabel,
-    readonly,
+    hidedescription,
     inputmode,
     invalidmessage,
   }: CodeInputProps) => {
@@ -94,6 +110,7 @@ export const Main: Story = {
       <mid-code-input
         value=${ifDefined(value)}
         label=${ifDefined(labelAttr)}
+        description=${ifDefined(descriptionAttr)}
         length=${ifDefined(length)}
         minlength=${ifDefined(minlength)}
         type=${ifDefined(type)}
@@ -101,11 +118,14 @@ export const Main: Story = {
         inputmode=${ifDefined(inputmode)}
         invalidmessage=${ifDefined(invalidmessage)}
         ?hidelabel=${hidelabel}
-        ?readonly=${readonly}
+        ?hidedescription=${hidedescription}
         ?autofocus=${autofocus}
         ?disabled=${disabled}
       >
         ${label ? html`<span slot="label">${label}</span>` : nothing}
+        ${descriptionSlot
+          ? html`<span slot="description">${descriptionSlot}</span>`
+          : nothing}
       </mid-code-input>
     `;
   },

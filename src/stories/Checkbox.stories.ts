@@ -14,6 +14,8 @@ type CheckboxProps = Partial<{
   description: string;
   descriptionAttr: string;
   invalid: boolean;
+  invalidmessage: string;
+  required: boolean;
   value: string;
 }>;
 
@@ -54,6 +56,8 @@ export const Main: Story = {
     readonly,
     size,
     invalid,
+    invalidmessage,
+    required,
   }: CheckboxProps) => html`
     <mid-checkbox
       class="${classMap({
@@ -62,10 +66,12 @@ export const Main: Story = {
         'text-body-lg': size === 'lg',
       })}"
       description=${ifDefined(descriptionAttr)}
+      invalidmessage=${ifDefined(invalidmessage)}
       ?checked=${checked}
       ?readonly=${readonly}
       ?disabled=${disabled}
       ?invalid=${invalid}
+      ?required=${required}
     >
       ${label}
       ${!description

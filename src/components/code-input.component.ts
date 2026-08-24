@@ -1,4 +1,4 @@
-import { css, html, LitElement, PropertyValues } from 'lit';
+import { css, html, LitElement, nothing, PropertyValues } from 'lit';
 import { customElement, property, query, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
@@ -38,7 +38,32 @@ const styles = [
       font-weight: 500;
     }
 
-    .code-input-label--hidden {
+    .code-input-label--with-description {
+      margin-block-end: 0.25rem;
+    }
+
+    .code-input-label--sm {
+      font-size: var(--ds-body-sm-font-size, 1rem);
+      line-height: var(--ds-body-md-line-height, 1.5);
+    }
+
+    .code-input-label--md {
+      font-size: var(--ds-body-md-font-size, 1.125rem);
+      line-height: var(--ds-body-md-line-height, 1.5);
+    }
+
+    .code-input-label--lg {
+      font-size: var(--ds-body-lg-font-size, 1.3125rem);
+      line-height: var(--ds-body-md-line-height, 1.5);
+    }
+
+    .code-input-description {
+      margin-block-end: 0.5rem;
+      color: var(--ds-color-neutral-text-subtle, #545e6b);
+    }
+
+    .code-input-label--hidden,
+    .code-input-description--hidden {
       position: absolute;
       width: 1px;
       height: 1px;
@@ -51,6 +76,7 @@ const styles = [
     }
 
     .code-input-label--disabled,
+    .code-input-description--disabled,
     .input-wrapper--disabled {
       opacity: var(--ds-opacity-disabled, 0.38);
     }
@@ -218,25 +244,23 @@ const styles = [
       animation: blink 1s step-end infinite;
     }
 
+    .character-box--caret-leading::after {
+      inset-inline-start: 0;
+    }
+
     /* Hide placeholder circle when the caret is at this position */
     .character-box--caret.character-box--empty {
       color: transparent;
     }
 
-    /* Hide increment/decrement buttons on number inputs */
-    input[type='number']::-webkit-outer-spin-button,
-    input[type='number']::-webkit-inner-spin-button,
-    input[type='number'] {
-      -webkit-appearance: none;
-      margin: 0;
-      -moz-appearance: textfield !important;
-    }
-
     .validation-message {
       display: flex;
       gap: 0.25rem;
-      margin-block-start: 0.5rem;
       color: var(--ds-color-danger-text-subtle, #a22e2e);
+    }
+
+    .validation-message--visible {
+      margin-block-start: 0.5rem;
     }
 
     .validation-icon {
@@ -256,10 +280,13 @@ const styles = [
  * @event {detail: { validity: ValidityState }} mid-invalid-show - Emitted when the error message should be shown
  *
  * @slot label - The input's label if you need to use HTML. Alternatively, you can use the `label` attribute.
+ * @slot description - The input's description if you need to use HTML. Alternatively, you can use the `description` attribute.
  *
  * @csspart input-container - The wrapper around the input elements. This can be used to adjust font-size.
+ * @csspart description - The description shown between the label and the character boxes.
  * @csspart character-boxes - The container for the visual character boxes.
  * @csspart character-box - An individual character box.
+ * @csspart validation-message - The error message shown by `invalidmessage`.
  *
  * @method focus - Focuses the input element
  * @method clear - Clears the input
@@ -268,8 +295,13 @@ const styles = [
 export class MinidCodeInput extends FormControlMixin(
   styled(LitElement, styles)
 ) {
-  private readonly hasSlotControler = new HasSlotController(this, 'label');
+  private readonly hasSlotControler = new HasSlotController(
+    this,
+    'label',
+    'description'
+  );
   private readonly labelId = `mid-code-input-label-${nextUniqueId++}`;
+  private readonly descriptionId = `mid-code-input-description-${nextUniqueId++}`;
   private readonly validationId = `mid-code-input-validation-${nextUniqueId++}`;
 
   @query('.hidden-input')
@@ -280,6 +312,9 @@ export class MinidCodeInput extends FormControlMixin(
 
   @property()
   label = '';
+
+  @property()
+  description = '';
 
   @property()
   type: 'number' | 'text' = 'text';
@@ -295,6 +330,9 @@ export class MinidCodeInput extends FormControlMixin(
    */
   @property()
   size: 'sm' | 'md' | 'lg' = 'sm';
+
+  @property()
+  labelsize?: 'sm' | 'md' | 'lg';
 
   /**
    * Number of input characters or digits
@@ -329,6 +367,9 @@ export class MinidCodeInput extends FormControlMixin(
   @property({ type: Boolean })
   hidelabel = false;
 
+  @property({ type: Boolean })
+  hidedescription = false;
+
   /**
    * Makes the input required
    */
@@ -343,6 +384,9 @@ export class MinidCodeInput extends FormControlMixin(
 
   @state()
   private isFocused = false;
+
+  @state()
+  private caretPosition = 0;
 
   static get formControlValidators() {
     return [
@@ -361,6 +405,22 @@ export class MinidCodeInput extends FormControlMixin(
     webOtpApiInit(this.renderRoot);
   }
 
+  override connectedCallback() {
+    super.connectedCallback();
+    this.ownerDocument.addEventListener(
+      'selectionchange',
+      this.handleSelectionChange
+    );
+  }
+
+  override disconnectedCallback() {
+    super.disconnectedCallback();
+    this.ownerDocument.removeEventListener(
+      'selectionchange',
+      this.handleSelectionChange
+    );
+  }
+
   private handleBoxClick(index: number) {
     if (this.disabled) {
       return;
@@ -373,6 +433,34 @@ export class MinidCodeInput extends FormControlMixin(
     this.focus();
   }
 
+  /**
+   * Catches caret moves we did not make - arrow keys, Home/End, word jumps,
+   * shift-selection - without enumerating keys, and keeps up while a key is held.
+   *
+   * Must be listened for on the document: for a caret move the user made,
+   * Chromium fires it only there, not at the input and not into the shadow root,
+   * so an `@selectionchange` binding on either never runs.
+   */
+  private handleSelectionChange = () => {
+    // Fires for selection changes anywhere on the page
+    if (this.isFocused) {
+      this.syncCaretPosition();
+    }
+  };
+
+  private syncCaretPosition() {
+    const input = this.inputElement;
+
+    if (!input) {
+      return;
+    }
+
+    this.caretPosition =
+      (input.selectionDirection === 'backward'
+        ? input.selectionStart
+        : input.selectionEnd) ?? this.value.length;
+  }
+
   private handleFocus() {
     this.isFocused = true;
     /* don't select text, move caret to the end */
@@ -380,29 +468,73 @@ export class MinidCodeInput extends FormControlMixin(
       const length = this.value.length;
       this.inputElement.setSelectionRange(length, length);
     }
+    this.syncCaretPosition();
   }
 
   private handleBlur() {
     this.isFocused = false;
   }
 
+  private filterValue(value: string) {
+    return this.type === 'number' ? value.replace(/\D/g, '') : value;
+  }
+
   private handleBeforeInput(e: InputEvent) {
-    if (e.inputType === 'insertText' && e.data) {
-      if (this.type == 'number' && e.data.replace(/\D/g, '') == '') {
+    if (this.type === 'number' && e.inputType === 'insertText' && e.data) {
+      if (!/\d/.test(e.data)) {
         e.preventDefault();
       }
     }
   }
 
+  private handlePaste(event: ClipboardEvent) {
+    if (this.type !== 'number') {
+      return;
+    }
+
+    const pasted = event.clipboardData?.getData('text') ?? '';
+    const digits = this.filterValue(pasted);
+
+    if (digits === pasted) {
+      return;
+    }
+
+    event.preventDefault();
+
+    const input = this.inputElement;
+    const start = input.selectionStart ?? input.value.length;
+    const end = input.selectionEnd ?? start;
+    const next = (
+      input.value.slice(0, start) +
+      digits +
+      input.value.slice(end)
+    ).substring(0, this.length);
+
+    if (next === input.value) {
+      return;
+    }
+
+    input.value = next;
+    input.dispatchEvent(
+      new InputEvent('input', { bubbles: true, composed: true })
+    );
+
+    const caret = Math.min(start + digits.length, input.value.length);
+    input.setSelectionRange(caret, caret);
+    this.syncCaretPosition();
+  }
+
   private handleInput(event: InputEvent) {
     const input = event.target as HTMLInputElement;
-    let value = input.value;
+    let value = this.filterValue(input.value);
 
     value = value.substring(0, this.length);
 
     if (input.value !== value) {
       input.value = value;
     }
+
+    this.syncCaretPosition();
 
     // Update the component's public `value` property if it has changed.
     if (this.value !== value) {
@@ -451,6 +583,7 @@ export class MinidCodeInput extends FormControlMixin(
     this.value = '';
     this.setValue('');
     this.invalidmessage = '';
+    this.caretPosition = 0;
   }
 
   resetFormControl() {
@@ -464,6 +597,7 @@ export class MinidCodeInput extends FormControlMixin(
       const length = this.value.length;
       this.inputElement.setSelectionRange(length, length);
     }
+    this.syncCaretPosition();
   }
 
   @watch('length')
@@ -473,33 +607,71 @@ export class MinidCodeInput extends FormControlMixin(
     }
   }
 
+  @watch(['value', 'type'])
+  handleValueChange() {
+    const filtered = this.filterValue(this.value);
+
+    if (filtered !== this.value) {
+      this.value = filtered;
+    }
+
+    this.caretPosition = Math.min(this.caretPosition, this.value.length);
+  }
+
   override render() {
     const hasLabelSlot = this.hasSlotControler.test('label');
     const hasLabel = !!this.label || !!hasLabelSlot;
-    const describedBy = this.invalidmessage ? this.validationId : undefined;
+    const hasDescriptionSlot = this.hasSlotControler.test('description');
+    const hasDescription = !!this.description || !!hasDescriptionSlot;
+    const describedBy =
+      [
+        hasDescription ? this.descriptionId : undefined,
+        this.invalidmessage ? this.validationId : undefined,
+      ]
+        .filter(Boolean)
+        .join(' ') || undefined;
 
     const chars = this.value.split('');
     const displayValues = Array.from(
       { length: this.length },
       (_, i) => chars[i] || ''
     );
-    const isComplete = this.value.length >= this.length;
     const caretIndex =
       this.disabled || this.length === 0
         ? -1
-        : Math.min(this.value.length, this.length - 1);
+        : Math.min(this.caretPosition, this.length - 1);
+    const caretIsInABox = this.caretPosition < this.length;
 
     return html`
       <label
         id="${this.labelId}"
         for="mid-code-input-hidden"
         class="code-input-label ${classMap({
+          'code-input-label--sm': this.labelsize === 'sm',
+          'code-input-label--md': this.labelsize === 'md',
+          'code-input-label--lg': this.labelsize === 'lg',
           'code-input-label--hidden': this.hidelabel || !hasLabel,
+          'code-input-label--with-description': hasDescription,
           'code-input-label--disabled': this.disabled,
         })}"
       >
         <slot name="label"> ${this.label} </slot>
       </label>
+      ${hasDescription
+        ? html`
+            <div
+              id="${this.descriptionId}"
+              part="description"
+              aria-hidden="true"
+              class="code-input-description ${classMap({
+                'code-input-description--hidden': this.hidedescription,
+                'code-input-description--disabled': this.disabled,
+              })}"
+            >
+              <slot name="description"> ${this.description} </slot>
+            </div>
+          `
+        : nothing}
       <div
         part="input-container"
         class="input-wrapper ${classMap({
@@ -513,7 +685,7 @@ export class MinidCodeInput extends FormControlMixin(
         <div part="character-boxes" class="character-boxes" aria-hidden="true">
           ${displayValues.map((char, index) => {
             const isFocusTarget = this.isFocused && index === caretIndex;
-            const hasCaret = isFocusTarget && !isComplete;
+            const hasCaret = isFocusTarget && caretIsInABox;
             return html`
               <div
                 part="character-box"
@@ -521,6 +693,7 @@ export class MinidCodeInput extends FormControlMixin(
                 class="character-box ${classMap({
                   'character-box--invalid': !!this.invalidmessage,
                   'character-box--caret': hasCaret,
+                  'character-box--caret-leading': hasCaret && !!char,
                   'character-box--empty': !char,
                   'focus-ring-sm': isFocusTarget,
                 })}"
@@ -538,7 +711,7 @@ export class MinidCodeInput extends FormControlMixin(
           class="hidden-input"
           .value="${live(this.value)}"
           id="mid-code-input-hidden"
-          type="${this.type}"
+          type="text"
           aria-labelledby="${this.labelId}"
           aria-describedby=${ifDefined(describedBy)}
           aria-invalid=${this.invalidmessage ? 'true' : 'false'}
@@ -553,6 +726,7 @@ export class MinidCodeInput extends FormControlMixin(
           inputmode="${this.inputmode}"
           autocomplete="one-time-code"
           @beforeinput="${this.handleBeforeInput}"
+          @paste="${this.handlePaste}"
           @input="${this.handleInput}"
           @change="${this.handleChange}"
           @keydown="${this.handleKeydown}"
@@ -561,13 +735,20 @@ export class MinidCodeInput extends FormControlMixin(
         />
       </div>
       <div
-        class="validation-message"
+        class="validation-message ${classMap({
+          'validation-message--visible': !!this.invalidmessage,
+        })}"
+        part="validation-message"
         id="${this.validationId}"
         aria-live="polite"
-        ?hidden=${!this.invalidmessage}
       >
-        <mid-icon name="xmark-octagon-fill" class="validation-icon"></mid-icon>
-        ${this.invalidmessage}
+        ${this.invalidmessage
+          ? html`<mid-icon
+                name="xmark-octagon-fill"
+                class="validation-icon"
+              ></mid-icon>
+              ${this.invalidmessage}`
+          : nothing}
       </div>
     `;
   }
