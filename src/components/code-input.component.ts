@@ -616,6 +616,7 @@ export class MinidCodeInput extends FormControlMixin(
     }
 
     this.caretPosition = Math.min(this.caretPosition, this.value.length);
+    this.setValue(filtered);
   }
 
   override render() {
