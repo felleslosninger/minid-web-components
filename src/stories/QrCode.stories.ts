@@ -11,6 +11,7 @@ type QrCodeProps = Partial<{
   margin: number;
   label: string;
   width: number;
+  fallbackButtonLabel: string;
 }>;
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories
@@ -42,11 +43,13 @@ export const Main: Story = {
     margin,
     label,
     width,
+    fallbackButtonLabel,
   }: QrCodeProps) =>
     html`<mid-qr-code
       width=${ifDefined(width)}
       label=${ifDefined(label)}
       margin=${ifDefined(margin)}
+      fallback-button-label=${ifDefined(fallbackButtonLabel)}
       content=${ifDefined(content)}
       scale=${ifDefined(scale)}
       fill=${ifDefined(fill)}
