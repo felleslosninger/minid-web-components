@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/web-components-vite';
 import { html, nothing, Part } from 'lit';
 import '../components/code-input.component';
 import { ifDefined } from 'lit/directives/if-defined.js';
+import { expect } from 'storybook/test';
 
 type CodeInputProps = Partial<{
   length: number;
@@ -128,5 +129,83 @@ export const Main: Story = {
           : nothing}
       </mid-code-input>
     `;
+  },
+};
+
+/**
+ * Guards the invalid-event and focus contract that the OTC pages rely on:
+ * programmatic `value` changes must not dispatch `mid-invalid-*` or reset
+ * `forceError()` (a stray `mid-invalid-hide` erases the error the page is
+ * showing), and `focus()` before first render must be queued, not dropped.
+ */
+export const ValidationEvents: Story = {
+  args: {
+    labelAttr: 'Engangskode',
+    type: 'number',
+    length: 5,
+    minlength: 5,
+  },
+  render: ({ length, minlength, labelAttr, type }: CodeInputProps) => html`
+    <form @submit=${(e: Event) => e.preventDefault()}>
+      <mid-code-input
+        name="otc"
+        label=${ifDefined(labelAttr)}
+        length=${ifDefined(length)}
+        minlength=${ifDefined(minlength)}
+        type=${ifDefined(type)}
+      ></mid-code-input>
+      <button type="button">Neste felt</button>
+    </form>
+  `,
+  play: async ({ canvasElement, userEvent }) => {
+    const el = canvasElement.querySelector('mid-code-input')!;
+    const form = canvasElement.querySelector('form')!;
+    const otherButton = canvasElement.querySelector('button')!;
+    await el.updateComplete;
+
+    const events: string[] = [];
+    for (const name of ['mid-invalid-show', 'mid-invalid-hide']) {
+      el.addEventListener(name, () => events.push(name));
+    }
+
+    // Typing: exactly one invalid event per keystroke (a second one per key
+    // means setValue is running from the value watcher again).
+    el.focus();
+    await userEvent.keyboard('12345');
+    await el.updateComplete;
+    await expect(el.value).toBe('12345');
+    await expect(new FormData(form).get('otc')).toBe('12345');
+    await expect(events).toHaveLength(5);
+
+    // A server error pinned with forceError() must survive the blur caused
+    // by something else (e.g. a global alert) taking focus.
+    el.invalidmessage = 'Ugyldig kode. Prøv igjen';
+    el.forceError();
+    await el.updateComplete;
+    const beforeBlur = events.length;
+    otherButton.focus();
+    await el.updateComplete;
+    await expect(events.slice(beforeBlur)).not.toContain('mid-invalid-hide');
+    await expect(
+      el.shadowRoot!.querySelector('.validation-message')!.textContent,
+    ).toContain('Ugyldig kode');
+
+    // Programmatic reset: FormData syncs silently, no invalid events.
+    el.invalidmessage = '';
+    const beforeReset = events.length;
+    el.value = '';
+    await el.updateComplete;
+    await expect(events).toHaveLength(beforeReset);
+    await expect(new FormData(form).get('otc')).toBe('');
+
+    // focus() before first render is queued and lands after render.
+    const late = document.createElement('mid-code-input');
+    late.setAttribute('label', 'Sen montering');
+    late.setAttribute('length', '5');
+    canvasElement.appendChild(late);
+    late.focus();
+    await late.updateComplete;
+    await expect(late.shadowRoot!.activeElement).not.toBeNull();
+    late.remove();
   },
 };
