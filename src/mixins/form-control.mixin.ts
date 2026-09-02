@@ -315,6 +315,26 @@ export function FormControlMixin<
     }
 
     /**
+     * Updates the form value and re-runs validators without touching the
+     * error-display state: `#forceError` is left alone, no
+     * `validationMessageCallback('')`, no `mid-invalid-show`/`-hide` is
+     * dispatched, and the control is not marked touched (a programmatic set
+     * is not user interaction). For programmatic value changes where the host
+     * page owns the error presentation and a `setValue` would wipe it
+     * mid-flow.
+     * @param value {FormValue} - The value to pass to the form
+     */
+    syncFormValue(value: FormValue): void {
+      this.#value = value;
+      const valueToUpdate = this.shouldFormValueUpdate() ? value : null;
+      this.internals.setFormValue(valueToUpdate as string);
+      this.#runValidators(valueToUpdate);
+      if (this.valueChangedCallback) {
+        this.valueChangedCallback(valueToUpdate);
+      }
+    }
+
+    /**
      * Forces the control to show an error state. If a message is passed in,
      * it will be set as the control's internal validity state message.
      * @param message { string | undefined } - The message for internals validity state

@@ -388,6 +388,8 @@ export class MinidCodeInput extends FormControlMixin(
   @state()
   private caretPosition = 0;
 
+  private lastFormValue: string | null = null;
+
   static get formControlValidators() {
     return [
       requiredValidator,
@@ -539,6 +541,7 @@ export class MinidCodeInput extends FormControlMixin(
     // Update the component's public `value` property if it has changed.
     if (this.value !== value) {
       this.value = value;
+      this.lastFormValue = value;
       this.setValue(value);
     }
 
@@ -581,6 +584,7 @@ export class MinidCodeInput extends FormControlMixin(
 
   clear() {
     this.value = '';
+    this.lastFormValue = '';
     this.setValue('');
     this.invalidmessage = '';
     this.caretPosition = 0;
@@ -591,7 +595,22 @@ export class MinidCodeInput extends FormControlMixin(
   }
 
   focus(options?: FocusOptions): void {
-    this.inputElement?.focus(options);
+    if (!this.inputElement) {
+      this.updateComplete.then(() => {
+        if (this.isConnected) {
+          this.focusInput(options);
+        }
+      });
+      return;
+    }
+    this.focusInput(options);
+  }
+
+  private focusInput(options?: FocusOptions) {
+    if (!this.inputElement) {
+      return;
+    }
+    this.inputElement.focus(options);
     /* don't select text, move caret to the end */
     if (this.value.length > 0) {
       const length = this.value.length;
@@ -616,7 +635,11 @@ export class MinidCodeInput extends FormControlMixin(
     }
 
     this.caretPosition = Math.min(this.caretPosition, this.value.length);
-    this.setValue(filtered);
+
+    if (filtered !== this.lastFormValue) {
+      this.lastFormValue = filtered;
+      this.syncFormValue(filtered);
+    }
   }
 
   override render() {

@@ -46,6 +46,98 @@ const styles = [
       background: var(--ds-color-neutral-background-tinted);
     }
 
+    .has-field-buttons {
+      --mid-field-button-size: var(--ds-size-7);
+      --mid-field-button-gap: var(--ds-size-3);
+      --mid-field-button-border: var(--ds-border-width-default);
+      position: relative;
+      display: block;
+    }
+
+    .has-field-buttons .ds-input {
+      padding-inline-end: calc(
+        var(--mid-field-button-size) + 2 * var(--mid-field-button-gap)
+      );
+    }
+
+    .has-field-buttons--two .ds-input {
+      padding-inline-end: calc(
+        2 * (var(--mid-field-button-size) + 2 * var(--mid-field-button-gap))
+      );
+    }
+
+    .password-toggle-input::-ms-reveal,
+    .password-toggle-input::-ms-clear {
+      display: none;
+    }
+
+    .has-field-buttons .ds-input::-webkit-credentials-auto-fill-button {
+      margin-inline-end: calc(
+        var(--mid-field-button-size) + 2 * var(--mid-field-button-gap)
+      );
+    }
+
+    .has-field-buttons--two .ds-input::-webkit-credentials-auto-fill-button {
+      margin-inline-end: calc(
+        2 * (var(--mid-field-button-size) + 2 * var(--mid-field-button-gap))
+      );
+    }
+
+    .has-field-buttons:hover
+      .ds-input:not(:focus-visible, :disabled, [readonly], [aria-readonly='true']) {
+      outline: var(--dsc-input-outline-width--hover)
+        var(--dsc-input-outline-style--hover)
+        var(--dsc-input-outline-color--hover);
+    }
+
+    .has-field-buttons:hover
+      .ds-input[aria-invalid='true']:not(:focus-visible, :disabled, [readonly], [aria-readonly='true']) {
+      outline-color: var(--dsc-input-accent-color--invalid);
+    }
+
+    .field-buttons {
+      position: absolute;
+      inset-block: var(--mid-field-button-border);
+      inset-inline-end: var(--mid-field-button-border);
+      display: flex;
+      pointer-events: none;
+    }
+
+    .field-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--ds-color-neutral-text-subtle);
+      pointer-events: auto;
+    }
+
+    .field-buttons .field-button {
+      padding-inline: var(--mid-field-button-gap);
+    }
+
+    .field-button > span {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--ds-border-radius-sm);
+      block-size: var(--mid-field-button-size, var(--ds-size-7));
+      inline-size: var(--mid-field-button-size, var(--ds-size-7));
+    }
+
+    .field-button mid-icon {
+      font-size: var(--mid-field-button-size, var(--ds-size-7));
+    }
+
+    .field-button:focus-visible {
+      outline: none;
+    }
+
+    .field-button:focus-visible > span {
+      box-shadow: 0 0 0 var(--ds-border-width-focus) var(--ds-color-focus-inner);
+      outline: var(--ds-color-focus-outer) solid var(--ds-border-width-focus);
+      outline-offset: var(--ds-border-width-focus);
+    }
+
     /* The validation message stays in the DOM so its text lands in a live region
        the screen reader is already watching - WebKit does not reliably announce
        one revealed at the same moment the text arrives. When empty it must paint
@@ -327,6 +419,10 @@ export class MinidTextfield extends FormControlMixin(styled(LitElement, styles))
     this.passwordvisible = !this.passwordvisible;
   }
 
+  private handleInFieldButtonMousedown(event: MouseEvent) {
+    event.preventDefault();
+  }
+
   private handleClearClick(event: MouseEvent) {
     event.preventDefault();
 
@@ -384,7 +480,10 @@ export class MinidTextfield extends FormControlMixin(styled(LitElement, styles))
     const hasPrefix = this.hasSlotControler.test('prefix');
     const hasSuffix = this.hasSlotControler.test('suffix');
     const hasClearIcon = this.clearable && !this.disabled && !this.readonly;
-    const hasAffixes = hasPrefix || hasSuffix || hasClearIcon || (this.passwordtoggle && !this.disabled);
+    const hasPasswordToggle = this.passwordtoggle && !this.disabled;
+    const overlayFieldButtons =
+      (hasClearIcon || hasPasswordToggle) && !hasPrefix && !hasSuffix;
+    const hasAffixes = hasPrefix || hasSuffix;
     const isClearIconVisible =
       hasClearIcon && (typeof this.value === 'number' || this.value.length > 0);
     const describedBy = [
@@ -393,6 +492,40 @@ export class MinidTextfield extends FormControlMixin(styled(LitElement, styles))
     ]
       .filter(Boolean)
       .join(' ');
+
+    const passwordToggleButton = html`
+      <button
+        type="button"
+        part="password-toggle-button"
+        class="field-button"
+        aria-label=${this.passwordvisible ? t.hidePassword : t.showPassword}
+        aria-controls=${this.inputId}
+        @mousedown=${this.handleInFieldButtonMousedown}
+        @click=${this.handlePasswordToggle}
+      >
+        <span>
+          <mid-icon
+            library="system"
+            name=${this.passwordvisible ? 'eye-slash' : 'eye'}
+          ></mid-icon>
+        </span>
+      </button>
+    `;
+
+    const clearButton = html`
+      <button
+        type="button"
+        part="clear-button"
+        class="field-button"
+        aria-label=${t.clear}
+        @mousedown=${this.handleInFieldButtonMousedown}
+        @click=${this.handleClearClick}
+      >
+        <span>
+          <mid-icon library="nav-aksel" name="trash"></mid-icon>
+        </span>
+      </button>
+    `;
 
     return html`
       <ds-field
@@ -424,12 +557,20 @@ export class MinidTextfield extends FormControlMixin(styled(LitElement, styles))
           : nothing}
         <div
           part="base"
-          class="${hasAffixes ? 'ds-field-affixes' : ''}"
+          class="${classMap({
+            'ds-field-affixes': hasAffixes,
+            'has-field-buttons': overlayFieldButtons,
+            'has-field-buttons--two':
+              overlayFieldButtons && hasClearIcon && hasPasswordToggle,
+          })}"
         >
           ${hasPrefix ? html`<span class="ds-field-affix"><slot name="prefix"></slot></span>` : html`<slot name="prefix"></slot>`}
           <input
             id="${this.inputId}"
-            class="ds-input"
+            class="${classMap({
+              'ds-input': true,
+              'password-toggle-input': hasPasswordToggle,
+            })}"
             part="input"
             lang=${lang}
             .value=${live(this.value)}
@@ -459,52 +600,20 @@ export class MinidTextfield extends FormControlMixin(styled(LitElement, styles))
             @blur=${this.handleBlur}
             @keydown=${this.handleKeydown}
           />
-          ${isClearIconVisible
+          ${overlayFieldButtons
             ? html`
-                <span class="ds-field-affix" part="clear-button">
-                  <button
-                    type="button"
-                    class="focus-visible:focus-ring flex items-center justify-center rounded-sm"
-                    aria-label=${t.clear}
-                    @click=${this.handleClearClick}
-                  >
-                    <mid-icon
-                      class="size-7"
-                      library="nav-aksel"
-                      name="trash"
-                    ></mid-icon>
-                  </button>
-                </span>
+                <div class="field-buttons">
+                  ${isClearIconVisible ? clearButton : nothing}
+                  ${hasPasswordToggle ? passwordToggleButton : nothing}
+                </div>
               `
-            : ''}
-          ${this.passwordtoggle && !this.disabled
-            ? html`
-                <span class="ds-field-affix" part="password-toggle-button">
-                  <button
-                    type="button"
-                    class="focus-visible:focus-ring flex items-center justify-center rounded-sm"
-                    aria-label=${this.passwordvisible
-                      ? t.hidePassword
-                      : t.showPassword}
-                    @click=${this.handlePasswordToggle}
-                  >
-                    ${this.passwordvisible
-                      ? html` <mid-icon
-                          class="size-7"
-                          library="system"
-                          name="eye-slash"
-                        ></mid-icon>`
-                      : html`
-                          <mid-icon
-                            class="size-7"
-                            library="system"
-                            name="eye"
-                          ></mid-icon>
-                        `}
-                  </button>
-                </span>
-              `
-            : ''}
+            : nothing}
+          ${!overlayFieldButtons && isClearIconVisible
+            ? html`<span class="ds-field-affix">${clearButton}</span>`
+            : nothing}
+          ${!overlayFieldButtons && hasPasswordToggle
+            ? html`<span class="ds-field-affix">${passwordToggleButton}</span>`
+            : nothing}
           ${hasSuffix ? html`<span part="suffix" class="ds-field-affix"><slot name="suffix"></slot></span>` : html`<slot name="suffix"></slot>`}
         </div>
         <p
