@@ -50,25 +50,36 @@ let nextUniqueId = 0;
  * @event {Event} mid-input - Emitted after a new user input
  * @event {Event} mid-blur - Emitted after focus is moved away from input
  * @event {Event} mid-focus - Emitted after input gains focus
+ * @event {detail: { validity: ValidityState }} mid-invalid-show - Emitted when the error message should be shown
+ * @event {detail: { validity: ValidityState }} mid-invalid-hide - Emitted when the error message should be hidden
+ *
+ * @slot label - The input's label. Alternatively, you can use the `label` attribute.
+ * @slot description - The description if you need HTML. Alternatively, you can use the `description` attribute.
  *
  * @part base - Select the container outside the country button and phone number input
- * @part field - Select the container around the label and the inputs
+ * @part field - Select the container around the label, description, inputs and validation message
  * @part label - Select the label element
+ * @part description - Select the description element
  * @part country-button - Select the country button
- * @part input - Select the phone number input
+ * @part phone-number - Select the phone number input
+ * @part validation-message - The error message shown by `invalidmessage`
  */
 @customElement('mid-phone-input')
 export class MinidPhoneInput extends FormControlMixin(
   styled(LitElement, styles)
 ) {
   private readonly inputId: string;
+  private readonly descriptionId: string;
   private readonly validationId: string;
-  private readonly labelId = `mid-code-input-label-${nextUniqueId++}`;
   private formatter = new AsYouType();
   private skipCountryUpdate = false; // avoids unwanted update loop
   private currentEvent = new Event(''); // the event to be emitted after value is set
   private currentTemplate = '';
-  private hasSlotControler = new HasSlotController(this, 'label');
+  private hasSlotControler = new HasSlotController(
+    this,
+    'label',
+    'description'
+  );
 
   @query('input')
   input!: HTMLInputElement;
@@ -104,6 +115,20 @@ export class MinidPhoneInput extends FormControlMixin(
    */
   @property({ type: Boolean })
   hidelabel = false;
+
+  /**
+   * Description shown between the label and the input. Use the `description`
+   * slot when the text needs HTML.
+   */
+  @property()
+  description = '';
+
+  /**
+   * Visually hides `description` (still available for screen readers).
+   * Independent of `hidelabel`.
+   */
+  @property({ type: Boolean })
+  hidedescription = false;
 
   /**
    * The country selected. A two letter ISO country code like: `"NO"`
@@ -158,6 +183,7 @@ export class MinidPhoneInput extends FormControlMixin(
     new LangController(this);
     nextUniqueId++;
     this.inputId = `mid-phone-input-input-${nextUniqueId}`;
+    this.descriptionId = `mid-phone-input-description-${nextUniqueId}`;
     this.validationId = `mid-phone-input-validation-${nextUniqueId}`;
   }
 
@@ -385,33 +411,25 @@ export class MinidPhoneInput extends FormControlMixin(
   }
 
   override render() {
-    const lg = false;
-    const md = true;
-    const sm = false;
-
     const lang = getLang(this);
     const t = getTranslations(lang);
     const hasLabelSlot = this.hasSlotControler.test('label');
     const hasLabel = !!this.label || !!hasLabelSlot;
+    const hasDescriptionSlot = this.hasSlotControler.test('description');
+    const hasDescription = !!this.description || !!hasDescriptionSlot;
     const hasError = this.invalid || !!this.invalidmessage;
-    const describedBy = this.invalidmessage ? this.validationId : undefined;
+    const describedBy =
+      [
+        hasDescription ? this.descriptionId : undefined,
+        this.invalidmessage ? this.validationId : undefined,
+      ]
+        .filter(Boolean)
+        .join(' ') || undefined;
 
     return html`
-      <label
-        id="${this.labelId}"
-        class="${classMap({
-          'sr-only': this.hidelabel || !hasLabel,
-        })} mb-2 block items-center gap-1 font-medium"
-      > 
-      <div
-        part="field"
-        class="${classMap({
-          'text-body-sm': sm,
-          'text-body-md': md,
-          'text-body-lg': lg,
-        })}"
-      >
+      <div part="field" class="text-body-md">
         <label
+          part="label"
           for="${this.inputId}"
           class="${classMap({
             'sr-only': this.hidelabel || !hasLabel,
@@ -426,6 +444,20 @@ export class MinidPhoneInput extends FormControlMixin(
             : nothing}
           <slot name="label"> ${this.label} </slot>
         </label>
+        ${hasDescription
+          ? html`
+              <div
+                id="${this.descriptionId}"
+                part="description"
+                aria-hidden="true"
+                class="${classMap({
+                  'sr-only': this.hidedescription,
+                })} text-neutral-subtle mb-2"
+              >
+                <slot name="description"> ${this.description} </slot>
+              </div>
+            `
+          : nothing}
         <div part="base" class="flex h-12">
           <button
             part="country-button"

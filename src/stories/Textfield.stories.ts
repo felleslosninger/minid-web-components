@@ -24,8 +24,10 @@ type TextfieldProps = Partial<{
   readonly: boolean;
   required: boolean;
   description: string;
+  descriptionPart: Part;
   clearable: boolean;
   hidelabel: boolean;
+  hidedescription: boolean;
   passwordtoggle: boolean;
   passwordvisible: boolean;
   pattern: string;
@@ -73,6 +75,18 @@ const meta = {
       name: 'label',
       type: 'string',
       table: { category: 'attributes', defaultValue: { summary: '' } },
+    },
+    // The manifest lists `description` as an attribute and a CSS part; the
+    // part is mapped last and would otherwise replace the attribute control.
+    description: {
+      type: 'string',
+      control: 'text',
+      table: { category: 'attributes', defaultValue: { summary: '' } },
+    },
+    descriptionPart: {
+      name: 'description',
+      control: { disable: true },
+      table: { category: 'css shadow parts' },
     },
     name: {
       type: 'string',
@@ -150,6 +164,7 @@ export const Main: Story = {
     disabled,
     clearable,
     hidelabel,
+    hidedescription,
     readonly,
     required,
     description,
@@ -172,6 +187,7 @@ export const Main: Story = {
       ?readonly=${readonly}
       ?required=${required}
       ?hideLabel=${hidelabel}
+      ?hidedescription=${hidedescription}
       ?passwordtoggle=${passwordtoggle}
       ?passwordvisible=${passwordvisible}
       invalidmessage=${ifDefined(invalidmessage)}
@@ -473,5 +489,46 @@ export const ClearableWithPasswordToggle: Story = {
     await el.updateComplete;
     await expect(input.type).toBe('text');
     await expect(el.value).toBe('hemmelig1');
+  },
+};
+
+/**
+ * `hidedescription` hides the description visually while leaving the label
+ * visible — the case where a page renders its own visible version of the
+ * requirements but still wants them on the field for screen readers.
+ * `hidelabel` hides both, so it cannot be used for this.
+ */
+export const HideDescription: Story = {
+  args: {
+    labelAttr: 'Nytt passord',
+    description: 'Minst 8 tegn, og både bokstaver og tall',
+    hidedescription: true,
+  },
+  render: ({ labelAttr, description, hidedescription }: TextfieldProps) => html`
+    <mid-textfield
+      label=${ifDefined(labelAttr)}
+      description=${ifDefined(description)}
+      ?hidedescription=${hidedescription}
+    ></mid-textfield>
+  `,
+  play: async ({ canvasElement }) => {
+    const el = canvasElement.querySelector('mid-textfield')!;
+    await el.updateComplete;
+
+    const label = el.shadowRoot!.querySelector('label')!;
+    const desc = el.shadowRoot!.querySelector('[part="description"]')!;
+
+    // The description is clipped away, the label is not.
+    await expect(desc.classList).toContain('sr-only');
+    await expect(label.classList).not.toContain('sr-only');
+    await expect(desc.getBoundingClientRect().height).toBeLessThan(2);
+    await expect(label.getBoundingClientRect().height).toBeGreaterThan(2);
+
+    // Still reachable for screen readers: the input points at it by id.
+    const input = el.shadowRoot!.querySelector('input')!;
+    await expect(input.getAttribute('aria-describedby')).toContain(desc.id);
+    await expect(desc.textContent!.trim()).toBe(
+      'Minst 8 tegn, og både bokstaver og tall'
+    );
   },
 };
