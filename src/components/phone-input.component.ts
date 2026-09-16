@@ -426,6 +426,10 @@ export class MinidPhoneInput extends FormControlMixin(
         .filter(Boolean)
         .join(' ') || undefined;
 
+    // The validation message stays in the DOM and only its text toggles.
+    // Revealing the region from `hidden` at the moment the message arrives is
+    // not reliably announced by WebKit/VoiceOver, so the live region is kept
+    // mounted and empty (same as textfield, code-input and checkbox).
     return html`
       <div part="field" class="text-body-md">
         <label
@@ -517,16 +521,20 @@ export class MinidPhoneInput extends FormControlMixin(
           />
         </div>
         <div
-          class="text-danger-subtle mt-2 flex gap-1"
+          class="${this.invalidmessage
+            ? 'text-danger-subtle mt-2 flex gap-1'
+            : ''}"
+          part="validation-message"
           id="${this.validationId}"
           aria-live="polite"
-          ?hidden=${!this.invalidmessage}
         >
-          <mid-icon
-            name="xmark-octagon-fill"
-            class="mt-1 min-h-5 min-w-5"
-          ></mid-icon>
-          ${this.invalidmessage}
+          ${this.invalidmessage
+            ? html`<mid-icon
+                  name="xmark-octagon-fill"
+                  class="mt-1 min-h-5 min-w-5"
+                ></mid-icon>
+                ${this.invalidmessage}`
+            : nothing}
         </div>
       </div>
     `;
