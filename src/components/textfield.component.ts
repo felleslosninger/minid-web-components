@@ -170,6 +170,7 @@ let nextUniqueId = 0;
  * @csspart base - The input's wrapper that has the input field styling.
  * @csspart input - The internal `<input>` element.
  * @csspart field - The element that wraps the label, input, and help text.
+ * @csspart description - The description shown between the label and the input.
  * @csspart clear-button - The clear button
  * @csspart password-toggle-button - The button for toggling password visibility
  * @csspart validation-message - The error message shown by `invalidmessage`.
@@ -315,6 +316,14 @@ export class MinidTextfield extends FormControlMixin(styled(LitElement, styles))
    */
   @property({ type: Boolean })
   hidelabel = false;
+
+  /**
+   * Visually hides `description` while leaving `label` visible. The description
+   * keeps its id and is still announced through `aria-describedby`.
+   * `hidelabel` continues to hide both label and description.
+   */
+  @property({ type: Boolean })
+  hidedescription = false;
 
   /**
    * Modify input value based on mask e.g:  `"##:##"` = 12:34.
@@ -548,7 +557,7 @@ export class MinidTextfield extends FormControlMixin(styled(LitElement, styles))
                 part="description"
                 aria-hidden="true"
                 class="${classMap({
-                  'sr-only': this.hidelabel,
+                  'sr-only': this.hidelabel || this.hidedescription,
                 })}"
               >
                 ${this.description}

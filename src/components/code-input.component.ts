@@ -367,6 +367,11 @@ export class MinidCodeInput extends FormControlMixin(
   @property({ type: Boolean })
   hidelabel = false;
 
+  /**
+   * Visually hides `description` (still available for screen readers).
+   * Independent of `hidelabel`, so a visible label can be paired with a
+   * screen-reader-only description.
+   */
   @property({ type: Boolean })
   hidedescription = false;
 
