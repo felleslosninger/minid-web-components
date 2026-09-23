@@ -1,5 +1,6 @@
 import { html, LitElement } from 'lit';
-import { customElement, property, query } from 'lit/decorators.js';
+import { customElement, property, query, state } from 'lit/decorators.js';
+import { ifDefined } from 'lit/directives/if-defined.js';
 import { styled } from '../mixins/tailwind.mixin';
 import QRCode from 'qrcode';
 
@@ -13,6 +14,9 @@ declare global {
 export class MinidQrCode extends styled(LitElement) {
   @query('#qr-code')
   private canvas!: HTMLCanvasElement;
+
+  @state()
+  private showFallbackContent = false;
 
   /**
    * Text to encode
@@ -55,6 +59,25 @@ export class MinidQrCode extends styled(LitElement) {
   @property({ type: Number })
   margin = 4;
 
+  /**
+   * Label for the button that reveals the QR content as text or link.
+   */
+  @property({ attribute: 'fallback-button-label' })
+  fallbackButtonLabel = "Can't scan the QR code?";
+
+  private get isUrlContent() {
+    try {
+      const url = new URL(this.content);
+      return ['http:', 'https:'].includes(url.protocol);
+    } catch {
+      return false;
+    }
+  }
+
+  private handleToggleFallbackContent() {
+    this.showFallbackContent = !this.showFallbackContent;
+  }
+
   protected updated() {
     QRCode.toCanvas(this.canvas, this.content, {
       scale: this.scale,
@@ -71,6 +94,34 @@ export class MinidQrCode extends styled(LitElement) {
         role="img"
         id="qr-code"
       ></canvas>
+
+      <mid-button
+        type="button"
+        variant="tertiary"
+        @click=${this.handleToggleFallbackContent}
+        aria-expanded=${this.showFallbackContent}
+        aria-controls="qr-content-fallback"
+      >
+        ${this.fallbackButtonLabel}
+      </mid-button>
+
+      <div
+        id="qr-content-fallback"
+        class="mt-2"
+        ?hidden=${!this.showFallbackContent}
+      >
+        ${
+          this.isUrlContent
+            ? html`<mid-link
+                href=${ifDefined(this.content || undefined)}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                ${this.content}
+              </mid-link>`
+            : html`<p class="text-body-sm text-default break-all">${this.content}</p>`
+        }
+      </div>
     `;
   }
 }
