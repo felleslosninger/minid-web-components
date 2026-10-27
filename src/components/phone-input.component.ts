@@ -227,7 +227,9 @@ export class MinidPhoneInput extends FormControlMixin(
     this.nationalnumber = this.removePhonePrefix(this.value);
     this.setValue(this.value.replaceAll(' ', ''));
 
-    setTimeout(() => {
+    // Right after the render, not in a setTimeout: on a busy page a timer can
+    // fire after typing has started and wipe the selection it replaces.
+    this.updateComplete.then(() => {
       this.input.value = `${this.countrycode} ${this.nationalnumber}`;
     });
   }

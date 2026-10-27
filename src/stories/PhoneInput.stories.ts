@@ -304,3 +304,34 @@ export const HideDescription: Story = {
     );
   },
 };
+
+/**
+ * Text typed over a selection right after the field is created keeps the
+ * number. On a busy page the browser can run other tasks between the field
+ * getting focus and selected and the text arriving (paste over a selection,
+ * autofill, or a test's `fill`). The component's own first write to the input
+ * must already be done by then, or it clears the selection and the field ends
+ * up with only the country code (MIN-3943).
+ */
+export const TypeRightAfterConnect: Story = {
+  render: () => html`<form></form>`,
+  play: async ({ canvasElement }) => {
+    const form = canvasElement.querySelector('form')!;
+    const el = document.createElement('mid-phone-input');
+    el.setAttribute('name', 'mobile');
+    el.setAttribute('country', 'NO');
+    form.append(el);
+    await el.updateComplete;
+    const input = el.shadowRoot!.querySelector('input')!;
+
+    input.focus();
+    input.select();
+    // Let tasks that are already queued run before the text arrives.
+    await new Promise((resolve) => setTimeout(resolve));
+    document.execCommand('insertText', false, '+47 99999999');
+    input.blur();
+
+    await expect(input.value).toBe('+47 99 99 99 99');
+    await expect(new FormData(form).get('mobile')).toBe('+4799999999');
+  },
+};
