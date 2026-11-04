@@ -244,6 +244,8 @@ export class MinidHelptext extends styled(LitElement, styles) {
         <button
           slot="anchor"
           aria-describedby="helptext-body"
+          aria-controls="helptext-body"
+          aria-expanded=${this.open}
           aria-label="Hjelpetekst"
           class="${classMap({
             'text-6': sm,

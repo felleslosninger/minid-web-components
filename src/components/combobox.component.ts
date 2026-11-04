@@ -1,10 +1,5 @@
 import { css, html, LitElement } from 'lit';
-import {
-  customElement,
-  property,
-  query,
-  queryAssignedElements,
-} from 'lit/decorators.js';
+import { customElement, property, query } from 'lit/decorators.js';
 import './popup.component';
 import { styled } from '../mixins/tailwind.mixin.ts';
 import { MinidPopup } from './popup.component';
@@ -18,8 +13,6 @@ import { animateTo, stopAnimations } from '../internal/animate';
 import { getTabbableBoundary } from '../internal/tabbable';
 import { MinidButton } from './button.component';
 import { MinidMenu } from '../components/menu.component';
-import { MinidPhoneInput } from '../components/phone-input.component';
-import { MinidTextfield } from '../components/textfield.component';
 import { MinidMenuItem } from '../components/menu-item.component.ts';
 
 declare global {
@@ -44,7 +37,6 @@ const styles = [
 @customElement('mid-combobox')
 export class MinidCombobox extends styled(LitElement, styles) {
   private closeWatcher?: CloseWatcher;
-  private triggerElement: 'mid-textfield' | 'mid-phone-input' = 'mid-textfield';
 
   @query('#combobox')
   private popup!: MinidPopup;
@@ -54,13 +46,6 @@ export class MinidCombobox extends styled(LitElement, styles) {
 
   @query('.combobox__panel')
   private panel!: HTMLSlotElement;
-
-  @queryAssignedElements({ slot: 'trigger' })
-  private triggerElements!: (
-    | MinidTextfield
-    | MinidPhoneInput
-    | HTMLInputElement
-  )[];
 
   /**
    * By default, the combobox is closed when an item is selected. This attribute will keep it open instead. Useful for
@@ -116,13 +101,6 @@ export class MinidCombobox extends styled(LitElement, styles) {
   }
 
   firstUpdated() {
-    const input = this.triggerElements[0];
-    if (input.tagName.toLowerCase() === 'mid-phone-input') {
-      this.triggerElement = 'mid-phone-input';
-    } else if (input.tagName.toLowerCase() === 'mid-textfield') {
-      this.triggerElement = 'mid-textfield';
-    }
-
     this.panel.hidden = !this.open;
 
     const menu = this.getMenu();
@@ -160,19 +138,6 @@ export class MinidCombobox extends styled(LitElement, styles) {
       | MinidMenu
       | undefined;
   }
-
-  private handleCountryClick = () => {
-    const menu = this.getMenu();
-
-    this.open ? this.hide() : this.show();
-    if (this.open && menu && menu.searchable) {
-      // Delay focus slightly to win the focus battle
-      setTimeout(() => {
-        menu.clearFilter();
-        menu.focusSearchField();
-      }, 1);
-    }
-  };
 
   private handleKeyDown = (event: KeyboardEvent) => {
     // Close when escape is pressed inside an open combobox. We need to listen on the panel itself and stop propagation
@@ -230,15 +195,6 @@ export class MinidCombobox extends styled(LitElement, styles) {
   };
 
   private handlePanelSelect = (event: CustomEvent) => {
-    if (this.triggerElement !== 'mid-phone-input') {
-      return;
-    }
-
-    // Transfer selected country from panel to input field
-    const input = this.triggerElements[0] as MinidPhoneInput;
-    const country = event.detail.item.value;
-    input.country = country;
-
     const target = event.target as HTMLElement;
 
     // Hide the combobox when a menu item is selected
@@ -249,10 +205,6 @@ export class MinidCombobox extends styled(LitElement, styles) {
   };
 
   handleTriggerClick() {
-    if (this.triggerElement === 'mid-phone-input') {
-      return;
-    }
-
     if (this.open) {
       this.hide();
     } else {
@@ -266,9 +218,7 @@ export class MinidCombobox extends styled(LitElement, styles) {
     // key again to hide the menu in case they don't want to make a selection.
     if ([' ', 'Enter'].includes(event.key)) {
       event.preventDefault();
-      if (this.triggerElement === 'mid-textfield') {
-        this.handleTriggerClick();
-      }
+      this.handleTriggerClick();
       return;
     }
 
@@ -298,22 +248,12 @@ export class MinidCombobox extends styled(LitElement, styles) {
           this.updateComplete.then(() => {
             if (event.key === 'ArrowDown' || event.key === 'Home') {
               menu.setCurrentItem(firstMenuItem);
-              if (this.triggerElement === 'mid-textfield') {
-                firstMenuItem.focus();
-              } else {
-                menu.clearFilter();
-                menu.focusSearchField();
-              }
+              firstMenuItem.focus();
             }
 
             if (event.key === 'ArrowUp' || event.key === 'End') {
               menu.setCurrentItem(lastMenuItem);
-              if (this.triggerElement === 'mid-textfield') {
-                lastMenuItem.focus();
-              } else {
-                menu.clearFilter();
-                menu.focusSearchField();
-              }
+              lastMenuItem.focus();
             }
           });
         }
@@ -485,7 +425,6 @@ export class MinidCombobox extends styled(LitElement, styles) {
           @keydown=${this.handleTriggerKeyDown}
           @keyup=${this.handleTriggerKeyUp}
           @slotchange=${this.handleTriggerSlotChange}
-          @mid-country-click=${this.handleCountryClick}
         ></slot>
         <div
           class="bg-accent"

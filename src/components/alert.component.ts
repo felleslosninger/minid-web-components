@@ -10,6 +10,9 @@ import {
 } from '../utilities/animation-registry';
 import { waitForEvent } from '../internal/event';
 import { animateTo, stopAnimations } from '../internal/animate';
+import { getLang } from '../utilities/lang';
+import { getTranslations } from '../utilities/translations';
+import { LangController } from '../controllers/lang.controller';
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -100,6 +103,11 @@ export class MinidAlert extends styled(LitElement) {
     message: string;
     details?: string;
   };
+
+  constructor() {
+    super();
+    new LangController(this);
+  }
 
   firstUpdated() {
     this.base.hidden = !this.open;
@@ -283,6 +291,7 @@ export class MinidAlert extends styled(LitElement) {
     const warning = this.severity === 'warning';
     const info = this.severity === 'info';
     const success = this.severity === 'success';
+    const t = getTranslations(getLang(this));
 
     return html`
       <div
@@ -338,7 +347,7 @@ ${this.notificationContent?.details}</pre
                     'hover:bg-warning-surface-hover': warning,
                   })} flex self-start justify-self-end rounded p-2"
                   @click="${this.hide}"
-                  aria-label="Dismiss alert"
+                  aria-label=${t.dismissAlert}
                 >
                   <mid-icon class="size-6" name="xmark"> </mid-icon>
                 </button>
