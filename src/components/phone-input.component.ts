@@ -19,6 +19,7 @@ import {
   templateParser,
 } from 'input-format';
 import '@digdir/designsystemet-web/ds-suggestion';
+import '@digdir/designsystemet-web/popover';
 import { watch } from '../internal/watch';
 import { HasSlotController } from '../internal/slot';
 import { FormControlMixin } from '../mixins/form-control.mixin';
@@ -300,12 +301,12 @@ export class MinidPhoneInput extends FormControlMixin(
   country: CountryCode = 'NO';
 
   /**
-   * The browser autofill token for the number input. `tel-national` expects
-   * the national number. `tel` expects a full number; a value with a country
-   * code switches the country.
+   * The browser autofill token for the number input. `tel` fills the full
+   * number, so a saved foreign number switches the country. `tel-national`
+   * fills only the national number, which is read as the selected country.
    */
   @property()
-  autocomplete: PhoneAutocomplete = 'tel-national';
+  autocomplete: PhoneAutocomplete = 'tel';
 
   /**
    * Activates invalid styling
@@ -373,7 +374,7 @@ export class MinidPhoneInput extends FormControlMixin(
 
   protected firstUpdated(changed: PropertyValues): void {
     super.firstUpdated(changed);
-    this.input.value = this.formatNational(this.country, this.nationalnumber);
+    this.setNumberText(this.formatNational(this.country, this.nationalnumber));
   }
 
   focus(options?: FocusOptions): void {
@@ -434,8 +435,11 @@ export class MinidPhoneInput extends FormControlMixin(
       const ayt = new AsYouType();
       ayt.input(text);
       const dial = ayt.getCallingCode();
-      if (dial) {
-        iso = ayt.getCountry() ?? this.resolveCountryForDial(dial, iso) ?? iso;
+      const resolved = dial
+        ? (ayt.getCountry() ?? this.resolveCountryForDial(dial, iso))
+        : undefined;
+      if (resolved) {
+        iso = resolved;
         national = ayt.getNationalNumber();
       }
     } else if (text) {
@@ -451,7 +455,7 @@ export class MinidPhoneInput extends FormControlMixin(
     this.syncFormValue(this.value);
 
     if (this.input) {
-      this.input.value = this.formatNational(iso, national);
+      this.setNumberText(this.formatNational(iso, national));
     }
     if (this.countryInput) {
       this.countryInput.value = this.countrycode;
@@ -468,7 +472,7 @@ export class MinidPhoneInput extends FormControlMixin(
     this.setCountry(iso);
 
     if (reformat && this.input) {
-      this.input.value = this.formatNational(iso, this.nationalnumber);
+      this.setNumberText(this.formatNational(iso, this.nationalnumber));
     }
 
     const next = this.nationalnumber
@@ -520,6 +524,22 @@ export class MinidPhoneInput extends FormControlMixin(
     return templateFormatter(this.currentTemplate);
   }
 
+  /**
+   * Every write to the number field goes through here: input-format's
+   * Backspace/Delete parse the text with `currentTemplate`, and a stale or
+   * empty template drops digits.
+   */
+  private setNumberText(text: string) {
+    this.input.value = text;
+    this.updateTemplate(text);
+  }
+
+  private updateTemplate(text: string) {
+    this.formatter.reset();
+    this.formatter.input(text);
+    this.currentTemplate = this.formatter.getTemplate();
+  }
+
   private handleBlur() {
     this.dispatchEvent(
       new Event('mid-blur', { bubbles: true, composed: true })
@@ -567,6 +587,16 @@ export class MinidPhoneInput extends FormControlMixin(
       return;
     }
 
+    // An international prefix is plain text until it resolves to a country;
+    // let the browser edit it so the input event runs it through
+    // adoptInternationalInput
+    if (/^\s*(\+|00)/.test(this.input.value)) return;
+
+    // onKeyDown applies Backspace/Delete itself, and no input event follows
+    this.currentEvent = new Event('mid-input', {
+      composed: true,
+      bubbles: true,
+    });
     onKeyDown(
       event as any,
       this.input,
@@ -584,9 +614,7 @@ export class MinidPhoneInput extends FormControlMixin(
       return;
     }
 
-    this.formatter.reset();
-    this.formatter.input(raw);
-    this.currentTemplate = this.formatter.getTemplate();
+    this.updateTemplate(raw);
 
     onChange(
       event as any,
@@ -605,25 +633,25 @@ export class MinidPhoneInput extends FormControlMixin(
     const ayt = new AsYouType();
     ayt.input(raw.trim().replace(/^00/, '+'));
     const dial = ayt.getCallingCode();
-    if (!dial) {
-      // "+4" so far: wait for more digits
+    const iso = dial
+      ? (ayt.getCountry() ?? this.resolveCountryForDial(dial, this.country))
+      : undefined;
+    if (!iso) {
+      // "+4" so far (wait for more digits) or a code no country in the list
+      // uses (+800, +882): keep the text, but there is no number yet
+      this.valueChangeCallback('');
       return;
     }
 
-    const iso =
-      ayt.getCountry() ?? this.resolveCountryForDial(dial, this.country);
-    if (iso && iso !== this.country) {
+    if (iso !== this.country) {
       this.applyCountry(iso, { userInitiated: false, reformat: false });
       void this.announceCountryChange();
     }
 
     const national = ayt.getNationalNumber();
-    this.input.value = this.formatNational(this.country, national);
+    this.setNumberText(this.formatNational(this.country, national));
     const end = this.input.value.length;
     this.input.setSelectionRange(end, end);
-    this.formatter.reset();
-    this.formatter.input(this.input.value);
-    this.currentTemplate = this.formatter.getTemplate();
     this.valueChangeCallback(national);
   }
 
@@ -781,6 +809,15 @@ export class MinidPhoneInput extends FormControlMixin(
     this.selectOnMouseUp = false;
   };
 
+  /**
+   * Enter in the country control picks a country. u-combobox handles it in a
+   * capture listener but lets it bubble, so stop it here before a page's
+   * Enter-to-submit handler on the host sees it.
+   */
+  private handleCountryKeydown = (event: KeyboardEvent) => {
+    if (event.key === 'Enter') event.stopPropagation();
+  };
+
   override render() {
     const lang = getLang(this);
     const t = getTranslations(lang);
@@ -845,6 +882,7 @@ export class MinidPhoneInput extends FormControlMixin(
               aria-describedby="${this.countryNameId}"
               @focus=${this.handleCountryFocus}
               @mouseup=${this.handleCountryMouseUp}
+              @keydown=${this.handleCountryKeydown}
               @input=${this.handleCountryInput}
               @blur=${this.handleCountryBlur}
             />

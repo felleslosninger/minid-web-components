@@ -68,10 +68,14 @@ export class MinidMenuItem extends styled(LitElement, styles) {
     this.removeEventListener('click', this.handleClick);
   }
 
-  private handleClick = () => {
-    if (this.href) {
-      window.location.assign(this.href);
-    }
+  private handleClick = (event: MouseEvent) => {
+    const href = this.href;
+    if (!href) return;
+    setTimeout(() => {
+      if (!event.defaultPrevented) {
+        window.location.assign(href);
+      }
+    });
   };
 
   setActive(active: boolean) {
