@@ -37,11 +37,11 @@ The stylesheet link in your HTML must have the `data-mid-tailwind` attribute so 
 
 ### CSS entrypoints
 
-| Import path | File | Description |
-|---|---|---|
-| `@felleslosninger/minid-elements/styles` | `dist/styles.css` | Component styles |
-| `@felleslosninger/minid-elements/theme` | `dist/theme.css` | Design tokens / theme |
-| `@felleslosninger/minid-elements/globals` | `dist/index.css` | Global base styles |
+| Import path                               | File              | Description           |
+| ----------------------------------------- | ----------------- | --------------------- |
+| `@felleslosninger/minid-elements/styles`  | `dist/styles.css` | Component styles      |
+| `@felleslosninger/minid-elements/theme`   | `dist/theme.css`  | Design tokens / theme |
+| `@felleslosninger/minid-elements/globals` | `dist/index.css`  | Global base styles    |
 
 ## Usage
 

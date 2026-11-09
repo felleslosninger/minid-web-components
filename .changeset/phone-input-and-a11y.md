@@ -38,6 +38,7 @@ The list is built from `getCountries()` with names that follow the active `lang`
 Breaking details:
 
 - `mid-country-click` is gone, and `mid-combobox` no longer special-cases a `mid-phone-input` trigger.
+- `mid-combobox` now closes and returns focus to the trigger when an item is selected (unless `stayopenonselect`), as documented; it used to stay open for every trigger except a phone input.
 - The `country-button` part is replaced by `country-input`; `country-list` is new. `label` is now the legend.
 - `value` is `''` instead of `"+47"` while no number has been entered, so `required` actually fails on an empty field. `nationalnumber` holds digits only.
 - `mid-input` / `mid-change` also fire when the user changes the country; `mid-focus` / `mid-blur` come from the number input only.
