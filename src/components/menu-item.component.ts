@@ -1,9 +1,6 @@
-import { html, LitElement } from 'lit';
-import { customElement, property, query } from 'lit/decorators.js';
+import { css, html, LitElement } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
 import { styled } from '../mixins/tailwind.mixin.ts';
-import { ifDefined } from 'lit/directives/if-defined.js';
-import './button.component';
-import { MinidButton } from './button.component';
 import { classMap } from 'lit/directives/class-map.js';
 
 declare global {
@@ -12,13 +9,27 @@ declare global {
   }
 }
 
-@customElement('mid-menu-item')
-export class MinidMenuItem extends styled(LitElement) {
-  @query('.button')
-  button!: MinidButton;
+const styles = [
+  css`
+    /* The host is the only focusable element (see the class comment). Draw
+       the ring on the base so it hugs the visible box; these are the same
+       tokens the Tailwind focus-ring utility uses. */
+    :host(:focus-visible) {
+      outline: none;
+    }
 
+    :host(:focus-visible) [part='base'] {
+      outline: 3px solid var(--ds-color-focus-outer);
+      outline-offset: 3px;
+      box-shadow: 0 0 0 3px var(--ds-color-focus-inner);
+    }
+  `,
+];
+
+@customElement('mid-menu-item')
+export class MinidMenuItem extends styled(LitElement, styles) {
   /**
-   * If set, the interactive element will be an anchor element
+   * If set, activating the item navigates to this URL
    */
   @property()
   href: string | undefined;
@@ -44,33 +55,28 @@ export class MinidMenuItem extends styled(LitElement) {
   connectedCallback(): void {
     super.connectedCallback();
     this.setAttribute('role', 'menuitem');
-    this.addEventListener('focus', this.handleHostFocus);
-    this.addEventListener('keydown', this.handleKeyDown);
+    // Focusable for the menu's roving tab index, never a tab stop on its own.
+    // mid-menu sets 0/-1 as the current item changes.
+    if (!this.hasAttribute('tabindex')) {
+      this.setAttribute('tabindex', '-1');
+    }
+    this.addEventListener('click', this.handleClick);
   }
 
   disconnectedCallback(): void {
     super.disconnectedCallback();
-    this.removeEventListener('focus', this.handleHostFocus);
-    this.removeEventListener('keydown', this.handleKeyDown);
+    this.removeEventListener('click', this.handleClick);
   }
 
-  handleKeyDown(event: KeyboardEvent) {
-    if (this.href && event.key === 'Enter') {
-      window.location.href = this.href;
-    }
-  }
-
-  handleHostFocus() {
-    if (this.shadowRoot?.activeElement === this.button) {
-      return;
-    }
-
-    this.focus();
-  }
-
-  focus(): void {
-    this.button.focus();
-  }
+  private handleClick = (event: MouseEvent) => {
+    const href = this.href;
+    if (!href) return;
+    setTimeout(() => {
+      if (!event.defaultPrevented) {
+        window.location.assign(href);
+      }
+    });
+  };
 
   setActive(active: boolean) {
     this.active = active;
@@ -78,28 +84,28 @@ export class MinidMenuItem extends styled(LitElement) {
 
   override render() {
     if (this.variant === 'combobox') {
-      return html` <button
+      return html`<div
+        part="base"
         class="${classMap({
           'border-transparent': !this.active,
           'bg-accent-tinted': this.active,
           'border-accent-base': this.active,
-        })} button block w-full rounded border-l-[5px] px-3 py-2 font-medium"
-        href=${ifDefined(this.href)}
+        })} block w-full cursor-pointer rounded border-l-[5px] px-3 py-2 font-medium"
       >
         <div class="flex items-center gap-2">
           <slot></slot>
         </div>
-      </button>`;
+      </div>`;
     }
 
+    // Same look as a tertiary mid-button, left-aligned
     return html`
-      <mid-button
-        class="button flex w-full [&::part(base)]:justify-start"
-        variant="tertiary"
-        href=${ifDefined(this.href)}
+      <div
+        part="base"
+        class="text-accent-subtle hover:text-accent hover:bg-accent-surface-hover active:bg-accent-surface-active text-body-md leading-sm flex min-h-12 w-full cursor-pointer items-center justify-start gap-2 rounded border border-transparent bg-transparent px-4 py-2 font-medium"
       >
         <slot></slot>
-      </mid-button>
+      </div>
     `;
   }
 }

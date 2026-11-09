@@ -6,44 +6,96 @@ export interface ComponentTranslations {
   clear: string;
   showPassword: string;
   hidePassword: string;
-  openCountrySelector: string;
+  /** Screen-reader label of the country-code control in `mid-phone-input` */
+  countryCode: string;
+  /** Screen-reader label of the number input in `mid-phone-input` */
+  phoneNumber: string;
+  /** Live announcement of the filtered country list, `%d` = count (singular) */
+  countrySuggestionsSingular: string;
+  /** Live announcement of the filtered country list, `%d` = count (plural) */
+  countrySuggestionsPlural: string;
+  /**
+   * Description of the number input in `mid-phone-input`: the selected
+   * country code. `{code}` = dial code, `{country}` = country name.
+   */
+  countryCodeSelected: string;
+  /**
+   * Polite announcement in `mid-phone-input` when an international number
+   * typed into the number field switched the country. Same placeholders.
+   */
+  countryCodeChanged: string;
   close: string;
   loading: string;
+  /** Close button on a closable `mid-alert` / toast */
+  dismissAlert: string;
+  /** The `?` toggle button of `mid-helptext` */
+  helpText: string;
 }
-
 
 const builtins: Record<string, ComponentTranslations> = {
   nb: {
     clear: 'Tøm',
     showPassword: 'Vis passord',
     hidePassword: 'Skjul passord',
-    openCountrySelector: 'Åpne landsvelger',
+    countryCode: 'Landskode',
+    phoneNumber: 'Telefonnummer',
+    countrySuggestionsSingular: '%d land',
+    countrySuggestionsPlural: '%d land',
+    countryCodeSelected:
+      'Landskode {code} ({country}) er valgt i feltet foran.',
+    countryCodeChanged: 'Landskode endret til {code} ({country}).',
     close: 'Lukk',
     loading: 'Laster',
+    dismissAlert: 'Lukk varsel',
+    helpText: 'Hjelpetekst',
   },
   nn: {
     clear: 'Tøm',
     showPassword: 'Vis passord',
     hidePassword: 'Gøym passord',
-    openCountrySelector: 'Opna landsveljar',
+    countryCode: 'Landskode',
+    phoneNumber: 'Telefonnummer',
+    countrySuggestionsSingular: '%d land',
+    countrySuggestionsPlural: '%d land',
+    countryCodeSelected:
+      'Landskode {code} ({country}) er vald i feltet framfor.',
+    countryCodeChanged: 'Landskode endra til {code} ({country}).',
     close: 'Lukk',
     loading: 'Lastar',
+    dismissAlert: 'Lukk varsel',
+    helpText: 'Hjelpetekst',
   },
   se: {
     clear: 'Sihko',
     showPassword: 'Čájet sátnesuodji',
     hidePassword: 'Čiehka sátnesuodji',
-    openCountrySelector: 'Rahpat riikkaválljenjoavkku',
+    countryCode: 'Riikkakoda',
+    phoneNumber: 'Telefovdnanummir',
+    countrySuggestionsSingular: '%d riika',
+    countrySuggestionsPlural: '%d riika',
+    countryCodeSelected:
+      'Riikkakoda {code} ({country}) lea válljejuvvon ovddit gieddis.',
+    countryCodeChanged: 'Riikkakoda rievdaduvvon: {code} ({country}).',
     close: 'Gidde',
     loading: 'Viežžamin',
+    dismissAlert: 'Gidde dieđáhusa',
+    helpText: 'Veahkketeaksta',
   },
   en: {
     clear: 'Clear',
     showPassword: 'Show password',
     hidePassword: 'Hide password',
-    openCountrySelector: 'Open country selector',
+    countryCode: 'Country code',
+    phoneNumber: 'Phone number',
+    countrySuggestionsSingular: '%d country',
+    countrySuggestionsPlural: '%d countries',
+    countryCodeSelected:
+      'Country code {code} ({country}) is selected in the previous field.',
+    countryCodeChanged: 'Country code changed to {code} ({country}).',
     close: 'Close',
     loading: 'Loading',
+    dismissAlert: 'Dismiss alert',
+    helpText: 'Help text',
   },
 };
 
@@ -91,9 +143,7 @@ export function setTranslations(
  */
 export function getTranslations(lang: string): ComponentTranslations {
   return (
-    registry.get(lang) ??
-    registry.get(resolveBaseLang(lang)) ??
-    builtins.nb
+    registry.get(lang) ?? registry.get(resolveBaseLang(lang)) ?? builtins.nb
   );
 }
 

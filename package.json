@@ -160,6 +160,7 @@
   "scripts": {
     "make-icons": "node ./scripts/make-icons.js",
     "make-tailwind": "node ./scripts/make-tailwind-theme.js",
+    "make-country-labels": "node ./scripts/make-country-labels.js",
     "build": "rimraf dist && designsystemet tokens create --config designsystemet.config.json && designsystemet tokens build --config designsystemet.config.json --experimental-tailwind && node ./scripts/make-tailwind-theme.js && tsc && custom-elements-manifest analyze && vite build",
     "build:cdn": "rimraf dist-cdn && tsc && vite build --config vite.cdn.config.js && npx @tailwindcss/cli -i ./src/styles/component-tailwind.css -o ./dist-cdn/index.css ",
     "dev:cdn": "node cdn-dev-server.js",
@@ -172,8 +173,8 @@
     "release": "pnpm build && pnpm exec changeset publish"
   },
   "dependencies": {
-    "@digdir/designsystemet-css": "^1.13.2",
-    "@digdir/designsystemet-web": "^1.13.2",
+    "@digdir/designsystemet-css": "^1.23.0",
+    "@digdir/designsystemet-web": "^1.23.0",
     "@floating-ui/dom": "^1.6.10",
     "@floating-ui/utils": "^0.2.9",
     "composed-offset-position": "^0.0.6",
@@ -187,7 +188,7 @@
   "devDependencies": {
     "@changesets/cli": "^2.30.0",
     "@custom-elements-manifest/analyzer": "^0.10.3",
-    "@digdir/designsystemet": "^1.13.2",
+    "@digdir/designsystemet": "^1.23.0",
     "@eslint/js": "^10.0.1",
     "@floating-ui/dom": "^1.6.10",
     "@navikt/aksel-icons": "^7.1.2",
@@ -202,7 +203,7 @@
     "@types/qrcode": "^1.5.5",
     "@types/react": "^19.1.2",
     "@types/webappsec-credential-management": "^0.6.9",
-    "@u-elements/u-datalist": "^1.0.5",
+    "@u-elements/u-datalist": "^2.0.3",
     "@vitejs/plugin-basic-ssl": "^2.0.0",
     "@vitejs/plugin-legacy": "^6.1.0",
     "@vitest/browser": "^3.2.7",

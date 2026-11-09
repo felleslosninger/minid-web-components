@@ -4,16 +4,7 @@ import '../components/textfield.component.js';
 import '../components/button.component.js';
 import '../components/code-input.component.js';
 import '../components/checkbox.component.js';
-import '../components/combobox.component';
-import '../components/menu.component';
-import '../components/menu-item.component';
 import '../components/phone-input.component';
-import '../components/icon/icon.component';
-import {
-  CountryCode,
-  countryLabelsNo,
-  getCountries,
-} from '../utilities/countries';
 
 export interface FormControlProps {}
 
@@ -182,38 +173,13 @@ export const PhoneInput: Story = {
   args: {},
   render: () =>
     html`<form id="form-4" class="mb-74 flex w-100 flex-col">
-        <mid-combobox>
-          <mid-phone-input
-            id="phone-input-1"
-            name="phone"
-            slot="trigger"
-            class="phone-input w-full"
-            country="NO"
-            label="Telefonnummer"
-          >
-          </mid-phone-input>
-          <mid-menu searchable style="--max-height: 14rem">
-            ${getCountries()
-              .sort((a, b) =>
-                Array<CountryCode>('NO', 'PL', 'DK', 'SE', 'US', 'GB').includes(
-                  a
-                )
-                  ? -1
-                  : a.localeCompare(b)
-              )
-              .slice(0, 10)
-              .map((country) => {
-                return html`<mid-menu-item value=${country}>
-                  <mid-icon
-                    class="h-4 w-6 overflow-hidden rounded"
-                    library="country"
-                    name="${country}"
-                  ></mid-icon>
-                  <span class="truncate">${countryLabelsNo[country]}</span>
-                </mid-menu-item>`;
-              })}
-          </mid-menu>
-        </mid-combobox>
+        <mid-phone-input
+          id="phone-input-1"
+          name="phone"
+          class="w-full"
+          country="NO"
+          label="Telefonnummer"
+        ></mid-phone-input>
         <div class="text-danger-subtle mt-2 flex gap-1" aria-live="polite">
           <span id="invalid-message-1"></span>
         </div>

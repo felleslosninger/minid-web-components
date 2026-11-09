@@ -1,23 +1,27 @@
-import { css, html, LitElement, nothing } from 'lit';
+import { css, html, LitElement, nothing, type PropertyValues } from 'lit';
 import { customElement, property, query, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
+import { repeat } from 'lit/directives/repeat.js';
+import { guard } from 'lit/directives/guard.js';
 import { styled } from '../mixins/tailwind.mixin';
 import {
   AsYouType,
-  formatIncompletePhoneNumber,
+  getCountries,
   getCountryCallingCode,
-  type CountryCode,
+  isSupportedCountry,
   parsePhoneNumberFromString,
-  parsePhoneNumberCharacter,
+  type CountryCode,
 } from 'libphonenumber-js';
-import './icon/icon.component';
 import {
   onChange,
   onKeyDown,
+  parseDigit,
   templateFormatter,
   templateParser,
 } from 'input-format';
+import '@digdir/designsystemet-web/ds-suggestion';
+import '@digdir/designsystemet-web/popover';
 import { watch } from '../internal/watch';
 import { HasSlotController } from '../internal/slot';
 import { FormControlMixin } from '../mixins/form-control.mixin';
@@ -25,6 +29,12 @@ import { requiredValidator } from '../mixins/validators';
 import { LangController } from '../controllers/lang.controller.js';
 import { getLang } from '../utilities/lang';
 import { getTranslations } from '../utilities/translations';
+import {
+  countryLabelsEn,
+  countryLabelsNn,
+  countryLabelsNo,
+  countryLabelsSe,
+} from '../utilities/countries';
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -34,10 +44,195 @@ declare global {
 
 type PhoneAutocomplete = 'tel' | 'tel-national';
 
+type CountryOption = { iso: CountryCode; dial: string; name: string };
+
+/**
+ * Country names per language. Bokmål and English are hand-curated; nynorsk
+ * and Northern Sami are generated from CLDR (`pnpm make-country-labels`).
+ * Any other language falls back to bokmål.
+ */
+const countryLabels: Record<string, Record<CountryCode, string>> = {
+  nb: countryLabelsNo,
+  nn: countryLabelsNn,
+  se: countryLabelsSe,
+  en: countryLabelsEn,
+};
+
+/** Fills `{code}` and `{country}` in a translated string */
+function fillCountry(template: string, code: string, country: string) {
+  return template.replace('{code}', code).replace('{country}', country);
+}
+
+/**
+ * The country list, sorted by localized name. Built once per language and
+ * shared by every instance.
+ */
+const optionCache = new Map<string, CountryOption[]>();
+
+function getCountryOptions(lang: string): CountryOption[] {
+  const base = lang.toLowerCase().split('-')[0];
+  const key = base in countryLabels ? base : 'nb';
+  let list = optionCache.get(key);
+  if (!list) {
+    const labels = countryLabels[key];
+    list = getCountries()
+      .map((iso) => ({
+        iso,
+        dial: getCountryCallingCode(iso),
+        name: labels[iso] ?? iso,
+      }))
+      .sort((a, b) => a.name.localeCompare(b.name, key === 'en' ? 'en' : 'nb'));
+    optionCache.set(key, list);
+  }
+  return list;
+}
+
+/** Country list matching. `query` is trimmed and lower-cased. */
+function matchesCountry(option: CountryOption, query: string) {
+  const digits = query.replace(/^(\+|00)/, '');
+  return (
+    option.name.toLowerCase().includes(query) ||
+    option.iso.toLowerCase() === query ||
+    (/^\d+$/.test(digits) && option.dial.startsWith(digits))
+  );
+}
+
+/**
+ * How well a matching option fits the query: 0 = exact ISO or dial code,
+ * 1 = the name or dial code starts with it, 2 = the name contains it.
+ */
+function matchRank(option: CountryOption, query: string) {
+  const digits = query.replace(/^(\+|00)/, '');
+  const isDial = /^\d+$/.test(digits);
+  if (option.iso.toLowerCase() === query || (isDial && option.dial === digits))
+    return 0;
+  if (
+    option.name.toLowerCase().startsWith(query) ||
+    (isDial && option.dial.startsWith(digits))
+  )
+    return 1;
+  return 2;
+}
+
+/**
+ * The list for a query: matches first, best fit first (alphabetical within
+ * each rank), then the rest, which the caller hides. DOM order is the arrow
+ * key order, so the ranking has to live in the DOM, not in CSS `order`.
+ */
+function rankCountryOptions(options: CountryOption[], query: string) {
+  if (!query) return options.map((option) => ({ option, hidden: false }));
+  const tiers: CountryOption[][] = [[], [], []];
+  const rest: CountryOption[] = [];
+  for (const option of options) {
+    if (matchesCountry(option, query)) {
+      tiers[matchRank(option, query)].push(option);
+    } else {
+      rest.push(option);
+    }
+  }
+  return [
+    ...tiers.flat().map((option) => ({ option, hidden: false })),
+    ...rest.map((option) => ({ option, hidden: true })),
+  ];
+}
+
+/**
+ * Calling codes shared by several countries, and the country a bare code
+ * should resolve to.
+ */
+const MAIN_COUNTRY_FOR_DIAL: Record<string, CountryCode> = {
+  '1': 'US',
+  '7': 'RU',
+  '39': 'IT',
+  '44': 'GB',
+  '47': 'NO',
+  '61': 'AU',
+  '212': 'MA',
+  '262': 'RE',
+  '290': 'SH',
+  '358': 'FI',
+  '590': 'GP',
+  '599': 'CW',
+};
+
 const styles = [
   css`
     :host {
       display: block;
+    }
+
+    .ds-fieldset {
+      --dsc-fieldset-gap: var(--ds-size-2);
+    }
+
+    /* A visually hidden legend or description must not leave its gap behind */
+    .ds-fieldset > .sr-only + * {
+      margin-block-start: 0;
+    }
+
+    /* The two inputs read as one field: no gap, shared radius, one seam */
+    .phone-row {
+      display: flex;
+      align-items: flex-start;
+    }
+
+    .country {
+      display: block;
+      flex: 0 0 auto;
+      inline-size: var(--mid-phone-input-country-width, 7.5rem);
+    }
+
+    .country-input {
+      inline-size: 100%;
+      min-inline-size: 0;
+      border-start-end-radius: 0;
+      border-end-end-radius: 0;
+    }
+
+    /* Designsystemet draws the chevron on the suggestion input; not when read-only */
+    .country-input[readonly] {
+      background-image: none;
+      padding-inline-end: var(--dsc-input-padding-inline, var(--ds-size-3));
+    }
+
+    .number-input {
+      flex: 1 1 auto;
+      /* 100%, not auto: an input's intrinsic width (size=20) would become the
+         component's min-content and overflow a 320px grid column */
+      inline-size: 100%;
+      min-inline-size: 0;
+      border-start-start-radius: 0;
+      border-end-start-radius: 0;
+      /* overlap the neighbour's border so the seam is one stroke wide */
+      margin-inline-start: calc(-1 * var(--dsc-input-border-width));
+    }
+
+    /* The hovered or focused half draws its outline above its neighbour */
+    .phone-row .ds-input:hover,
+    .phone-row .ds-input:focus-visible {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* An error colours the whole field, not only the number half */
+    .phone-row--invalid .country-input {
+      border-color: var(--dsc-input-accent-color--invalid);
+    }
+
+    /* The list floats in the top layer; give it room for the long names */
+    .country-list {
+      min-inline-size: 18rem;
+    }
+
+    .country-dial {
+      white-space: nowrap;
+    }
+
+    /* The validation message stays in the DOM so its text lands in a live region
+       the screen reader is already watching (see textfield). When empty it must
+       paint nothing and take no room. */
+    .ds-fieldset > .validation-message--empty {
+      margin-top: 0;
     }
   `,
 ];
@@ -45,23 +240,29 @@ const styles = [
 let nextUniqueId = 0;
 
 /**
- * @event {Event} mid-country-click - Emitted when the country button is clicked
- * @event {Event} mid-change - Emitted when the value is modified by the user
- * @event {Event} mid-input - Emitted after a new user input
- * @event {Event} mid-blur - Emitted after focus is moved away from input
- * @event {Event} mid-focus - Emitted after input gains focus
+ * A phone number field with a separate country-code control to the left of the
+ * national number. The country list is built in (no flags): type a dial code,
+ * an ISO code or a country name to filter it. Typing or pasting an
+ * international number (`+46…` or `0046…`) into the number field switches the
+ * country and keeps the national part.
+ *
+ * @event {Event} mid-change - Emitted when the number is modified by the user or the country is changed by the user
+ * @event {Event} mid-input - Emitted after a new user input in the number field or a user-driven country change
+ * @event {Event} mid-blur - Emitted after focus is moved away from the number input
+ * @event {Event} mid-focus - Emitted after the number input gains focus
  * @event {detail: { validity: ValidityState }} mid-invalid-show - Emitted when the error message should be shown
  * @event {detail: { validity: ValidityState }} mid-invalid-hide - Emitted when the error message should be hidden
  *
- * @slot label - The input's label. Alternatively, you can use the `label` attribute.
+ * @slot label - The field's label (rendered as the group legend). Alternatively, you can use the `label` attribute.
  * @slot description - The description if you need HTML. Alternatively, you can use the `description` attribute.
  *
- * @part base - Select the container outside the country button and phone number input
- * @part field - Select the container around the label, description, inputs and validation message
- * @part label - Select the label element
- * @part description - Select the description element
- * @part country-button - Select the country button
- * @part phone-number - Select the phone number input
+ * @part field - The `fieldset` around the legend, description, inputs and validation message
+ * @part label - The legend element
+ * @part description - The description element
+ * @part base - The row that holds the country-code control and the number input
+ * @part country-input - The country-code input (a combobox)
+ * @part country-list - The country list
+ * @part phone-number - The phone number input
  * @part validation-message - The error message shown by `invalidmessage`
  */
 @customElement('mid-phone-input')
@@ -69,43 +270,62 @@ export class MinidPhoneInput extends FormControlMixin(
   styled(LitElement, styles)
 ) {
   private readonly inputId: string;
+  private readonly countryInputId: string;
+  private readonly countryNameId: string;
+  private readonly countryHintId: string;
+  private readonly listId: string;
   private readonly descriptionId: string;
   private readonly validationId: string;
-  private formatter = new AsYouType();
-  private skipCountryUpdate = false; // avoids unwanted update loop
+  private formatter = new AsYouType('NO');
   private currentEvent = new Event(''); // the event to be emitted after value is set
   private currentTemplate = '';
+  private appliedCountry?: CountryCode;
+  private internalValue = '';
+  /** What a form reset restores: `value` and `country` at the first render */
+  private initialValue = '';
+  private initialCountry: CountryCode = 'NO';
+  private selectOnMouseUp = false;
+  /** Set by `announceCountryChange`; rendered in a polite status region */
+  @state() private countryAnnouncement = '';
+  /** What the user has typed in the country control; `''` shows the whole list */
+  @state() private countryQuery = '';
   private hasSlotControler = new HasSlotController(
     this,
     'label',
     'description'
   );
 
-  @query('input')
+  @query('.number-input')
   input!: HTMLInputElement;
 
+  @query('.country-input')
+  countryInput!: HTMLInputElement;
+
+  @query('.country-list')
+  countryList!: HTMLElement;
+
   /**
-   * The value of the phone number in E.164 format. Example: `"+4799999999"`
-   *
+   * The phone number in E.164 format, e.g. `"+4799999999"`. Empty when no
+   * national number has been entered. A value without `+` is read as a
+   * national number for the selected country.
    */
   @property({ reflect: true })
   value = '';
 
   /**
-   * The phone number without the country code prefix. Example: `"99999999"`
+   * The national number without the country code, digits only. Example: `"99999999"`
    */
   @property({ reflect: true })
   nationalnumber = '';
 
   /**
-   * The country code of the current phone number value. Example: `"+47"`
+   * The dial code of the selected country. Example: `"+47"`
    */
   @property({ reflect: true })
   countrycode = '';
 
   /**
-   * Label for the phone input.
-   * Passed label will be encapsulated by a label element.
+   * Label for the field, rendered as the group legend.
    */
   @property()
   label = '';
@@ -117,7 +337,7 @@ export class MinidPhoneInput extends FormControlMixin(
   hidelabel = false;
 
   /**
-   * Description shown between the label and the input. Use the `description`
+   * Description shown between the label and the inputs. Use the `description`
    * slot when the text needs HTML.
    */
   @property()
@@ -131,18 +351,17 @@ export class MinidPhoneInput extends FormControlMixin(
   hidedescription = false;
 
   /**
-   * The country selected. A two letter ISO country code like: `"NO"`
+   * The selected country as a two letter ISO code like `"NO"`. Defaults to
+   * Norway unless `value` carries another country code. Lower case is
+   * accepted (`"se"`); an unknown code keeps the current country.
    */
   @property({ reflect: true })
-  country?: CountryCode;
+  country: CountryCode = 'NO';
 
   /**
-   * Controls the native browser autofill token used for the phone number input.
-   *
-   * `tel` expects a full phone number, including country code when available.
-   * If a value without a country code matches the selected country, the country
-   * prefix is added.
-   * `tel-national` expects the national number and prefixes the selected country.
+   * The browser autofill token for the number input. `tel` fills the full
+   * number, so a saved foreign number switches the country. `tel-national`
+   * fills only the national number, which is read as the selected country.
    */
   @property()
   autocomplete: PhoneAutocomplete = 'tel';
@@ -160,19 +379,23 @@ export class MinidPhoneInput extends FormControlMixin(
   invalidmessage = '';
 
   /**
-   * Makes the input required
+   * Makes the number required
    */
   @property({ type: Boolean })
   required = false;
 
   /**
-   * Makes the input read-only, meaning the user cannot change the value.
+   * Makes both inputs read-only, meaning the user cannot change the value.
+   * The country control is then a plain read-only input, not a combobox.
    */
   @property({ type: Boolean })
   readonly = false;
 
-  @state()
-  hasFocus = false;
+  /**
+   * The size of the legend, the description and both inputs (Designsystemet `data-size`)
+   */
+  @property()
+  size: 'sm' | 'md' | 'lg' = 'md';
 
   static get formControlValidators() {
     return [requiredValidator];
@@ -183,6 +406,10 @@ export class MinidPhoneInput extends FormControlMixin(
     new LangController(this);
     nextUniqueId++;
     this.inputId = `mid-phone-input-input-${nextUniqueId}`;
+    this.countryInputId = `mid-phone-input-country-${nextUniqueId}`;
+    this.countryNameId = `mid-phone-input-country-name-${nextUniqueId}`;
+    this.countryHintId = `mid-phone-input-country-hint-${nextUniqueId}`;
+    this.listId = `mid-phone-input-list-${nextUniqueId}`;
     this.descriptionId = `mid-phone-input-description-${nextUniqueId}`;
     this.validationId = `mid-phone-input-validation-${nextUniqueId}`;
   }
@@ -197,53 +424,224 @@ export class MinidPhoneInput extends FormControlMixin(
 
   resetFormControl() {
     this.invalidmessage = '';
-  }
-
-  handleCountryClick() {
-    this.dispatchEvent(
-      new CustomEvent('mid-country-click', { composed: true, bubbles: true })
-    );
-  }
-
-  handleCountryKeyDown(event: KeyboardEvent) {
-    if ([' ', 'Enter'].includes(event.key)) {
-      this.dispatchEvent(
-        new CustomEvent('mid-country-click', { composed: true, bubbles: true })
-      );
-    }
+    // the initial country first: a national initial value is read under it
+    this.setCountry(this.initialCountry);
+    this.applyValue(this.initialValue);
   }
 
   connectedCallback(): void {
     super.connectedCallback();
-
-    this.formatter.input(this.value);
-    this.country = this.formatter.getCountry() ?? this.country;
-    this.countrycode = this.country
-      ? `+${getCountryCallingCode(this.country)}`
-      : '+';
-
-    this.value = formatIncompletePhoneNumber(this.value);
-    this.value ||= this.countrycode;
-    this.nationalnumber = this.removePhonePrefix(this.value);
-    this.setValue(this.value.replaceAll(' ', ''));
-
-    setTimeout(() => {
-      this.input.value = `${this.countrycode} ${this.nationalnumber}`;
-    });
+    // First connect, or props changed while disconnected. A plain DOM move
+    // keeps the state the user has entered.
+    if (
+      this.value !== this.internalValue ||
+      this.country !== this.appliedCountry
+    ) {
+      this.applyValue(this.value);
+    }
   }
 
+  protected firstUpdated(changed: PropertyValues): void {
+    super.firstUpdated(changed);
+    // `value` or `country` set after connectedCallback but before this first
+    // update never reached the watchers (they wait for the first update)
+    if (this.value !== this.internalValue) {
+      this.applyValue(this.value);
+    } else if (this.country !== this.appliedCountry) {
+      this.applyCountry(this.toCountry(this.country), { userInitiated: false });
+    }
+    this.setNumberText(this.formatNational(this.country, this.nationalnumber));
+    this.initialValue = this.value;
+    this.initialCountry = this.country;
+  }
+
+  focus(options?: FocusOptions): void {
+    this.input.focus(options);
+  }
+
+  /* ---------- value model ---------- */
+
+  private get countryOptionEls() {
+    return Array.from(
+      this.countryList?.querySelectorAll<HTMLOptionElement>('u-option') ?? []
+    );
+  }
+
+  /**
+   * The national number as the country writes it, trunk prefix included
+   * (`070-123 45 67` for +46701234567); as-you-type formatting for
+   * incomplete numbers.
+   */
+  private formatNational(iso: CountryCode, national: string) {
+    if (!national) return '';
+    const parsed = parsePhoneNumberFromString(
+      `+${getCountryCallingCode(iso)}${national}`
+    );
+    if (parsed?.isPossible()) return parsed.formatNational();
+    return new AsYouType(iso).input(national);
+  }
+
+  private resolveCountryForDial(dial: string, preferred?: CountryCode) {
+    const same = getCountries().filter(
+      (c) => getCountryCallingCode(c) === dial
+    );
+    if (!same.length) return undefined;
+    return (
+      same.find((c) => c === preferred) ??
+      MAIN_COUNTRY_FOR_DIAL[dial] ??
+      same[0]
+    );
+  }
+
+  /**
+   * A `country` as set from outside, made safe: `"se"` becomes `"SE"`, and an
+   * unknown code keeps the current country (Norway before the first one).
+   * libphonenumber throws on unknown codes, which would leave an empty
+   * component.
+   */
+  private toCountry(code: unknown): CountryCode {
+    const upper = typeof code === 'string' ? code.trim().toUpperCase() : '';
+    return isSupportedCountry(upper) ? upper : (this.appliedCountry ?? 'NO');
+  }
+
+  private setCountry(iso: CountryCode) {
+    this.country = iso;
+    this.appliedCountry = iso;
+    this.countrycode = `+${getCountryCallingCode(iso)}`;
+    this.formatter = new AsYouType(iso);
+    // A "changed to +46" message must not outlive the change it describes:
+    // screen-reader users can still read the region after it was announced.
+    // `announceCountryChange` writes a new one after this.
+    this.countryAnnouncement = '';
+  }
+
+  /**
+   * Splits a programmatic `value` into country and national number. Silent:
+   * the form value is synced without touching the error state.
+   */
+  private applyValue(value: string) {
+    let iso = this.toCountry(this.country);
+    let national = '';
+    const text = (value ?? '').trim().replace(/^00/, '+');
+
+    if (text.startsWith('+')) {
+      const ayt = new AsYouType();
+      ayt.input(text);
+      const dial = ayt.getCallingCode();
+      const resolved = dial
+        ? (ayt.getCountry() ?? this.resolveCountryForDial(dial, iso))
+        : undefined;
+      if (resolved) {
+        iso = resolved;
+        national = ayt.getNationalNumber();
+      }
+    } else if (text) {
+      const ayt = new AsYouType(iso);
+      ayt.input(text);
+      national = ayt.getNationalNumber();
+    }
+
+    this.setCountry(iso);
+    this.nationalnumber = national;
+    this.value = national ? `${this.countrycode}${national}` : '';
+    this.internalValue = this.value;
+    this.syncFormValue(this.value);
+
+    if (this.input) {
+      this.setNumberText(this.formatNational(iso, national));
+    }
+    if (this.countryInput) {
+      this.countryInput.value = this.countrycode;
+    }
+  }
+
+  private applyCountry(
+    iso: CountryCode,
+    {
+      userInitiated,
+      reformat = true,
+    }: { userInitiated: boolean; reformat?: boolean }
+  ) {
+    this.setCountry(iso);
+
+    if (reformat && this.input) {
+      this.setNumberText(this.formatNational(iso, this.nationalnumber));
+    }
+
+    const next = this.nationalnumber
+      ? `${this.countrycode}${this.nationalnumber}`
+      : '';
+    this.value = next;
+    this.internalValue = next;
+
+    if (userInitiated) {
+      this.setValue(next);
+      this.dispatchEvent(
+        new Event('mid-input', { bubbles: true, composed: true })
+      );
+      this.dispatchEvent(
+        new Event('mid-change', { bubbles: true, composed: true })
+      );
+    } else {
+      this.syncFormValue(next);
+    }
+
+    // u-combobox restores the old text when a selection is cancelled; show the
+    // new dial code once the <data> element has been re-rendered.
+    this.updateComplete.then(() => this.restoreCountryText());
+  }
+
+  @watch('country', { waitUntilFirstUpdate: true })
+  handleCountryChange(_old?: unknown, next?: unknown) {
+    if (next !== this.appliedCountry) {
+      // also writes the normalized code back to `country`
+      this.applyCountry(this.toCountry(next), { userInitiated: false });
+    }
+  }
+
+  @watch('value', { waitUntilFirstUpdate: true })
+  handleValueChange(_old?: unknown, next?: unknown) {
+    const value = (next as string | undefined) ?? '';
+    if (value !== this.internalValue) {
+      this.applyValue(value);
+    }
+  }
+
+  /* ---------- number input ---------- */
+
   get parseTemplate() {
-    return templateParser(this.currentTemplate, parsePhoneNumberCharacter);
+    return templateParser(this.currentTemplate, parseDigit);
   }
 
   get formatTemplate() {
     return templateFormatter(this.currentTemplate);
   }
 
+  /**
+   * Every write to the number field goes through here: input-format's
+   * Backspace/Delete parse the text with `currentTemplate`, and a stale or
+   * empty template drops digits.
+   */
+  private setNumberText(text: string) {
+    this.input.value = text;
+    this.updateTemplate(text);
+  }
+
+  private updateTemplate(text: string) {
+    this.formatter.reset();
+    this.formatter.input(text);
+    this.currentTemplate = this.formatter.getTemplate();
+  }
+
   private handleBlur() {
-    this.hasFocus = false;
     this.dispatchEvent(
       new Event('mid-blur', { bubbles: true, composed: true })
+    );
+  }
+
+  private handleFocus() {
+    this.dispatchEvent(
+      new Event('mid-focus', { composed: true, bubbles: true })
     );
   }
 
@@ -253,41 +651,16 @@ export class MinidPhoneInput extends FormControlMixin(
       bubbles: true,
       composed: true,
     });
-
     this.handleNewValue(event);
-  }
 
-  private handleKeydown(event: KeyboardEvent) {
-    if (event.key === 'Backspace' && this.input.selectionStart === 1) {
-      // don't remove '+' symbol which is the first character
-      event.preventDefault();
-      return;
+    // As-you-type formatting cannot add what the user left out (the trunk 0
+    // in a Swedish 70 123 45 67); once they are done, show the number the way
+    // a pasted one is shown. Unresolved `+…` text has no national number and
+    // is left alone.
+    const formatted = this.formatNational(this.country, this.nationalnumber);
+    if (formatted && formatted !== this.input.value) {
+      this.setNumberText(formatted);
     }
-
-    const hasModifier =
-      event.metaKey || event.ctrlKey || event.shiftKey || event.altKey;
-
-    // Pressing enter when focused on an input should submit the form like a native input, but we wait a tick before
-    // submitting to allow users to cancel the keydown event if they need to
-    if (event.key === 'Enter' && !hasModifier) {
-      setTimeout(() => {
-        //
-        // When using an Input Method Editor (IME), pressing enter will cause the form to submit unexpectedly. One way
-        // to check for this is to look at event.isComposing, which will be true when the IME is open.
-        if (!event.defaultPrevented && !event.isComposing) {
-          this.form.requestSubmit();
-        }
-      });
-      return;
-    }
-
-    onKeyDown(
-      event as any,
-      this.input,
-      this.parseTemplate,
-      this.formatTemplate,
-      this.valueChangeCallback
-    );
   }
 
   private handleInput(event: InputEvent) {
@@ -299,43 +672,51 @@ export class MinidPhoneInput extends FormControlMixin(
     this.handleNewValue(event);
   }
 
-  private getCountryCodePrefix() {
-    if (this.country) {
-      return `+${getCountryCallingCode(this.country)}`;
+  private handleKeydown(event: KeyboardEvent) {
+    const hasModifier =
+      event.metaKey || event.ctrlKey || event.shiftKey || event.altKey;
+
+    // Pressing enter when focused on an input should submit the form like a native input, but we wait a tick before
+    // submitting to allow users to cancel the keydown event if they need to
+    if (event.key === 'Enter' && !hasModifier) {
+      setTimeout(() => {
+        // When using an Input Method Editor (IME), pressing enter will cause the form to submit unexpectedly. One way
+        // to check for this is to look at event.isComposing, which will be true when the IME is open.
+        if (!event.defaultPrevented && !event.isComposing) {
+          this.form?.requestSubmit();
+        }
+      });
+      return;
     }
 
-    return this.countrycode;
-  }
+    // An international prefix is plain text until it resolves to a country;
+    // let the browser edit it so the input event runs it through
+    // adoptInternationalInput
+    if (/^\s*(\+|00)/.test(this.input.value)) return;
 
-  private applyAutocompletePrefix(value: string) {
-    if (value.startsWith('+')) {
-      return value;
-    }
-
-    const countryCodePrefix = this.getCountryCodePrefix();
-    if (this.autocomplete === 'tel-national' && countryCodePrefix) {
-      return `${countryCodePrefix}${value}`;
-    }
-
-    if (this.autocomplete === 'tel' && this.country) {
-      const phoneNumber = parsePhoneNumberFromString(value, this.country);
-      const valueWithPlus = `+${value.replaceAll(/\D/g, '')}`;
-
-      if (phoneNumber?.isValid() && phoneNumber.number !== valueWithPlus) {
-        return phoneNumber.number;
-      }
-    }
-
-    return `+${value}`;
+    // onKeyDown applies Backspace/Delete itself, and no input event follows
+    this.currentEvent = new Event('mid-input', {
+      composed: true,
+      bubbles: true,
+    });
+    onKeyDown(
+      event as any,
+      this.input,
+      this.parseTemplate,
+      this.formatTemplate,
+      this.valueChangeCallback
+    );
   }
 
   private handleNewValue(event: Event) {
-    this.formatter.reset();
+    const raw = this.input.value;
 
-    this.input.value = this.applyAutocompletePrefix(this.input.value);
+    if (/^\s*(\+|00)/.test(raw)) {
+      this.adoptInternationalInput(raw);
+      return;
+    }
 
-    this.formatter.input(this.input.value);
-    this.currentTemplate = this.formatter.getTemplate();
+    this.updateTemplate(raw);
 
     onChange(
       event as any,
@@ -346,197 +727,375 @@ export class MinidPhoneInput extends FormControlMixin(
     );
   }
 
-  private valueChangeCallback = (value: string) => {
-    const country =
-      value.length < 2
-        ? undefined
-        : (this.formatter.getCountry() ?? this.country);
-
-    if (country !== this.country) {
-      this.country = country;
-      this.countrycode = this.country
-        ? `+${getCountryCallingCode(this.country)}`
-        : '+';
-      this.skipCountryUpdate = true;
+  /**
+   * A full international number typed, pasted or autofilled into the number
+   * field: move the country code to the country control and keep the rest.
+   */
+  private adoptInternationalInput(raw: string) {
+    const ayt = new AsYouType();
+    ayt.input(raw.trim().replace(/^00/, '+'));
+    const dial = ayt.getCallingCode();
+    const iso = dial
+      ? (ayt.getCountry() ?? this.resolveCountryForDial(dial, this.country))
+      : undefined;
+    if (!iso) {
+      // "+4" so far (wait for more digits) or a code no country in the list
+      // uses (+800, +882): keep the text, but there is no number yet
+      this.valueChangeCallback('');
+      return;
     }
 
-    if (value !== this.value) {
-      this.value = value;
-      this.setValue(this.value.replaceAll(' ', ''));
-      this.nationalnumber = this.removePhonePrefix(value);
+    if (iso !== this.country) {
+      this.applyCountry(iso, { userInitiated: false, reformat: false });
+      void this.announceCountryChange();
+    }
+
+    const national = ayt.getNationalNumber();
+    this.setNumberText(this.formatNational(this.country, national));
+    const end = this.input.value.length;
+    this.input.setSelectionRange(end, end);
+    this.valueChangeCallback(national);
+  }
+
+  private countryName(lang = getLang(this)) {
+    return (
+      getCountryOptions(lang).find((o) => o.iso === this.country)?.name ?? ''
+    );
+  }
+
+  /**
+   * The country moved without the user touching the country control (a
+   * `+46…` typed or pasted into the number field): say so once, politely.
+   */
+  private async announceCountryChange() {
+    const lang = getLang(this);
+    const message = fillCountry(
+      getTranslations(lang).countryCodeChanged,
+      this.countrycode,
+      this.countryName(lang)
+    );
+    // Clear first so the same switch twice in a row is announced again
+    this.countryAnnouncement = '';
+    await this.updateComplete;
+    this.countryAnnouncement = message;
+  }
+
+  private valueChangeCallback = (digits: string) => {
+    const ayt = new AsYouType(this.country);
+    ayt.input(digits);
+    this.nationalnumber = ayt.getNationalNumber();
+
+    const next = this.nationalnumber
+      ? `${this.countrycode}${this.nationalnumber}`
+      : '';
+    if (next !== this.value) {
+      this.value = next;
+      this.internalValue = next;
+      this.setValue(next);
     }
 
     this.dispatchEvent(this.currentEvent);
   };
 
-  private handleFocus() {
-    this.hasFocus = true;
-    this.dispatchEvent(
-      new Event('mid-focus', { composed: true, bubbles: true })
-    );
-  }
+  /* ---------- country control (ds-suggestion / u-combobox) ---------- */
 
-  private removePhonePrefix(value: string) {
-    if (this.countrycode) {
-      value = value.slice(this.countrycode.length);
-      if (value[0] === ' ') {
-        value = value.slice(1);
-      }
+  /**
+   * Resolves free text to a country: a unique match, an exact name, a dial
+   * code (preferring the current country, then the main country for that
+   * code) or an ISO code that is not also the start of a name. `undefined`
+   * keeps the current country.
+   */
+  private resolveCountryQuery(text: string): CountryCode | undefined {
+    const query = text.trim().toLowerCase();
+    if (!query) return undefined;
+
+    const options = getCountryOptions(getLang(this));
+    const hits = options.filter((o) => matchesCountry(o, query));
+    if (hits.length === 1) return hits[0].iso;
+
+    const byName = options.find((o) => o.name.toLowerCase() === query);
+    if (byName) return byName.iso;
+
+    const digits = query.replace(/^(\+|00)/, '');
+    if (/^\d+$/.test(digits)) {
+      return this.resolveCountryForDial(digits, this.country);
     }
-    return value;
+
+    // An ISO code only counts when the text is not also the start of a
+    // country name: "sv" is Sveits/Sverige/Svalbard before it is El Salvador.
+    const startsAName = options.some((o) =>
+      o.name.toLowerCase().startsWith(query)
+    );
+    if (!startsAName) {
+      return options.find((o) => o.iso.toLowerCase() === query)?.iso;
+    }
+
+    return undefined;
   }
 
-  focus(options?: FocusOptions): void {
-    this.input.focus(options);
+  private restoreCountryText() {
+    if (this.countryInput && this.countryInput.value !== this.countrycode) {
+      this.countryInput.value = this.countrycode;
+    }
+    this.countryQuery = '';
   }
 
-  @watch('country', { waitUntilFirstUpdate: true })
-  handleCountryChange() {
-    if (this.skipCountryUpdate) {
-      this.skipCountryUpdate = false;
+  /** Lit owns the `<data>` element; u-combobox must neither insert nor remove one. */
+  private handleCountryBeforeSelect = (event: CustomEvent<HTMLDataElement>) => {
+    event.preventDefault();
+    const data = event.detail;
+
+    if (data.isConnected) {
+      // an attempt to remove the current selection (text cleared and blurred)
+      this.restoreCountryText();
       return;
     }
 
-    this.formatter = new AsYouType(this.country);
-    this.nationalnumber = this.removePhonePrefix(this.input.value);
+    const iso = data.value as CountryCode;
+    if (iso !== this.country) {
+      this.applyCountry(iso, { userInitiated: true });
+    } else {
+      this.restoreCountryText();
+    }
+  };
 
-    this.countrycode = this.country
-      ? `+${getCountryCallingCode(this.country)}`
-      : '+';
-    this.input.value = formatIncompletePhoneNumber(
-      `${this.countrycode}${this.nationalnumber}`
-    );
-    this.input.dispatchEvent(new Event('input', { bubbles: true }));
-    this.input.dispatchEvent(new Event('change', { bubbles: true }));
-  }
+  /** Free text on blur/Enter: pick our own match and let u-combobox select it. */
+  private handleCountryBeforeMatch = (
+    event: CustomEvent<HTMLOptionElement | undefined>
+  ) => {
+    const iso =
+      this.resolveCountryQuery(this.countryInput.value) ?? this.country;
+    for (const option of this.countryOptionEls) {
+      option.selected = option.value === iso;
+    }
+    event.preventDefault();
+  };
+
+  /**
+   * Filters and ranks the list through a re-render; u-datalist picks up the
+   * DOM change with its MutationObserver and announces the new count.
+   */
+  private handleCountryInput = () => {
+    const query = this.countryInput.value.trim().toLowerCase();
+    this.countryQuery = query === this.countrycode.toLowerCase() ? '' : query;
+  };
+
+  private handleCountryFocus = () => {
+    this.countryQuery = '';
+    // Typing replaces the dial code
+    this.selectOnMouseUp = true;
+    this.countryInput.select();
+  };
+
+  private handleCountryMouseUp = (event: MouseEvent) => {
+    // Safari collapses the selection on mouseup after a click-to-focus
+    if (this.selectOnMouseUp) {
+      event.preventDefault();
+      this.selectOnMouseUp = false;
+    }
+  };
+
+  private handleCountryBlur = () => {
+    this.selectOnMouseUp = false;
+  };
+
+  /**
+   * Enter in the country control picks a country. u-combobox handles it in a
+   * capture listener but lets it bubble, so stop it here before a page's
+   * Enter-to-submit handler on the host sees it.
+   *
+   * Escape cancels what was typed: u-datalist closes the list, and the
+   * selected dial code comes back (selected, so typing replaces it again)
+   * instead of the half-typed text lingering until blur.
+   */
+  private handleCountryKeydown = (event: KeyboardEvent) => {
+    if (event.key === 'Enter') event.stopPropagation();
+    if (
+      event.key === 'Escape' &&
+      !event.isComposing &&
+      this.countryInput.value !== this.countrycode
+    ) {
+      this.restoreCountryText();
+      this.countryInput.select();
+    }
+  };
 
   override render() {
     const lang = getLang(this);
     const t = getTranslations(lang);
+    const options = getCountryOptions(lang);
+    const countryName = this.countryName(lang);
+    const countryHint = fillCountry(
+      t.countryCodeSelected,
+      this.countrycode,
+      countryName
+    );
     const hasLabelSlot = this.hasSlotControler.test('label');
     const hasLabel = !!this.label || !!hasLabelSlot;
     const hasDescriptionSlot = this.hasSlotControler.test('description');
     const hasDescription = !!this.description || !!hasDescriptionSlot;
     const hasError = this.invalid || !!this.invalidmessage;
-    const describedBy =
-      [
-        hasDescription ? this.descriptionId : undefined,
-        this.invalidmessage ? this.validationId : undefined,
-      ]
-        .filter(Boolean)
-        .join(' ') || undefined;
+    // The selected country code first (it frames what "Telefonnummer" means
+    // for a user sent straight to the number field), then the description,
+    // then the error.
+    const describedBy = [
+      this.countryHintId,
+      hasDescription ? this.descriptionId : undefined,
+      this.invalidmessage ? this.validationId : undefined,
+    ]
+      .filter(Boolean)
+      .join(' ');
 
-    // The validation message stays in the DOM and only its text toggles.
-    // Revealing the region from `hidden` at the moment the message arrives is
-    // not reliably announced by WebKit/VoiceOver, so the live region is kept
-    // mounted and empty (same as textfield, code-input and checkbox).
+    // Read-only: a plain input. u-datalist would otherwise leave combobox ARIA
+    // attributes on a read-only input it no longer treats as a combobox.
+    const countryControl = this.readonly
+      ? html`
+          <span class="country">
+            <input
+              id="${this.countryInputId}"
+              part="country-input"
+              class="ds-input country-input"
+              type="text"
+              readonly
+              .value=${this.countrycode}
+              aria-describedby="${this.countryNameId}"
+            />
+            <span id="${this.countryNameId}" class="sr-only"
+              >${countryName}</span
+            >
+          </span>
+        `
+      : html`
+          <ds-suggestion
+            class="ds-suggestion country"
+            @comboboxbeforeselect=${this.handleCountryBeforeSelect}
+            @comboboxbeforematch=${this.handleCountryBeforeMatch}
+          >
+            <data value=${this.country}>${this.countrycode}</data>
+            <input
+              id="${this.countryInputId}"
+              part="country-input"
+              class="ds-input country-input"
+              type="text"
+              list="${this.listId}"
+              value=${this.countrycode}
+              autocapitalize="characters"
+              spellcheck="false"
+              aria-describedby="${this.countryNameId}"
+              @focus=${this.handleCountryFocus}
+              @mouseup=${this.handleCountryMouseUp}
+              @keydown=${this.handleCountryKeydown}
+              @input=${this.handleCountryInput}
+              @blur=${this.handleCountryBlur}
+            />
+            <span id="${this.countryNameId}" class="sr-only"
+              >${countryName}</span
+            >
+            <u-datalist
+              id="${this.listId}"
+              part="country-list"
+              class="country-list"
+              data-placement="bottom-start"
+              data-nofilter
+              data-sr-singular=${t.countrySuggestionsSingular}
+              data-sr-plural=${t.countrySuggestionsPlural}
+            >
+              ${guard([options, this.country, this.countryQuery], () =>
+                repeat(
+                  rankCountryOptions(options, this.countryQuery),
+                  ({ option }) => option.iso,
+                  ({ option: o, hidden }) => html`
+                    <u-option
+                      value=${o.iso}
+                      label="${o.name} (+${o.dial})"
+                      ?selected=${o.iso === this.country}
+                      ?hidden=${hidden}
+                    >
+                      ${o.name}
+                      <span class="country-dial">(+${o.dial})</span>
+                    </u-option>
+                  `
+                )
+              )}
+            </u-datalist>
+          </ds-suggestion>
+        `;
+
     return html`
-      <div part="field" class="text-body-md">
-        <label
+      <fieldset part="field" class="ds-fieldset" data-size=${this.size}>
+        <legend
           part="label"
-          for="${this.inputId}"
           class="${classMap({
             'sr-only': this.hidelabel || !hasLabel,
-          })} mb-2 inline-flex items-center gap-1 font-medium"
+          })} ds-label"
         >
-          ${this.readonly
-            ? html`<mid-icon
-                class="size-5"
-                library="system"
-                name="padlock-locked-fill"
-              ></mid-icon>`
-            : nothing}
-          <slot name="label"> ${this.label} </slot>
-        </label>
+          <slot name="label">${this.label}</slot>
+        </legend>
         ${hasDescription
           ? html`
               <div
                 id="${this.descriptionId}"
                 part="description"
+                data-field="description"
                 aria-hidden="true"
                 class="${classMap({
                   'sr-only': this.hidedescription,
-                })} text-neutral-subtle mb-2"
+                })}"
               >
-                <slot name="description"> ${this.description} </slot>
+                <slot name="description">${this.description}</slot>
               </div>
             `
           : nothing}
-        <div part="base" class="flex h-12">
-          <button
-            part="country-button"
-            aria-label=${t.openCountrySelector}
-            class="${classMap({
-              'border-neutral': !this.readonly,
-              'border-neutral-subtle': this.readonly,
-              'bg-neutral-surface-tinted': this.readonly,
-              'bg-neutral-surface': !this.readonly,
-            })} focus-visible:focus-ring flex h-full items-center rounded-l border border-r-0 pl-3"
-            iconstyled
-            variant="tertiary"
-            ?disabled=${this.readonly}
-            @click=${this.handleCountryClick}
-            @keydown=${this.handleCountryKeyDown}
+        <div
+          part="base"
+          class="${classMap({
+            'phone-row': true,
+            'phone-row--invalid': hasError,
+          })}"
+        >
+          <label class="sr-only" for="${this.countryInputId}"
+            >${t.countryCode}</label
           >
-            ${this.country
-              ? html`
-                  <mid-icon
-                    class="h-4 w-6 overflow-hidden rounded"
-                    library="country"
-                    name="${this.country}"
-                  ></mid-icon>
-                `
-              : html`<div
-                  class="bg-neutral-surface-active h-4 w-6 overflow-hidden rounded"
-                ></div>`}
-            <mid-icon name="chevron-down"></mid-icon>
-          </button>
+          ${countryControl}
 
+          <label class="sr-only" for="${this.inputId}">${t.phoneNumber}</label>
           <input
             id="${this.inputId}"
-            class="${classMap({
-              'border-neutral': !hasError && !this.readonly,
-              'border-danger': hasError && !this.readonly,
-              'border-neutral-subtle': this.readonly,
-              'bg-neutral-surface-tinted': this.readonly,
-              'bg-neutral-surface': !this.readonly,
-              'border-2': hasError,
-              border: !hasError,
-            })} focus-visible:focus-ring grow rounded-r px-3"
             part="phone-number"
+            class="ds-input number-input"
             type="tel"
+            inputmode="tel"
             autocomplete=${this.autocomplete}
+            ?required=${this.required}
             ?readonly=${this.readonly}
-            value=${this.value}
-            aria-describedby=${ifDefined(describedBy)}
+            aria-describedby=${describedBy}
             aria-invalid=${hasError ? 'true' : 'false'}
             aria-errormessage=${ifDefined(
               this.invalidmessage ? this.validationId : undefined
             )}
             @input=${this.handleInput}
+            @change=${this.handleChange}
+            @keydown=${this.handleKeydown}
             @focus=${this.handleFocus}
             @blur=${this.handleBlur}
-            @keydown=${this.handleKeydown}
-            @change=${this.handleChange}
           />
+          <span id="${this.countryHintId}" class="sr-only" aria-hidden="true"
+            >${countryHint}</span
+          >
+          <span class="sr-only" role="status">${this.countryAnnouncement}</span>
         </div>
-        <div
-          class="${this.invalidmessage
-            ? 'text-danger-subtle mt-2 flex gap-1'
-            : ''}"
+        <p
+          class="${classMap({
+            'ds-validation-message': !!this.invalidmessage,
+            'validation-message--empty': !this.invalidmessage,
+          })}"
           part="validation-message"
           id="${this.validationId}"
           aria-live="polite"
         >
-          ${this.invalidmessage
-            ? html`<mid-icon
-                  name="xmark-octagon-fill"
-                  class="mt-1 min-h-5 min-w-5"
-                ></mid-icon>
-                ${this.invalidmessage}`
-            : nothing}
-        </div>
-      </div>
+          ${this.invalidmessage}
+        </p>
+      </fieldset>
     `;
   }
 }

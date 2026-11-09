@@ -37,11 +37,11 @@ The stylesheet link in your HTML must have the `data-mid-tailwind` attribute so 
 
 ### CSS entrypoints
 
-| Import path | File | Description |
-|---|---|---|
-| `@felleslosninger/minid-elements/styles` | `dist/styles.css` | Component styles |
-| `@felleslosninger/minid-elements/theme` | `dist/theme.css` | Design tokens / theme |
-| `@felleslosninger/minid-elements/globals` | `dist/index.css` | Global base styles |
+| Import path                               | File              | Description           |
+| ----------------------------------------- | ----------------- | --------------------- |
+| `@felleslosninger/minid-elements/styles`  | `dist/styles.css` | Component styles      |
+| `@felleslosninger/minid-elements/theme`   | `dist/theme.css`  | Design tokens / theme |
+| `@felleslosninger/minid-elements/globals` | `dist/index.css`  | Global base styles    |
 
 ## Usage
 
@@ -57,18 +57,18 @@ import '@felleslosninger/minid-elements/button';
 
 ### Translations
 
-Built-in UI labels (e.g. "Clear", "Show password", "Open country selector") are available in Norwegian Bokmål, Nynorsk, Northern Sami, and English. Components pick up the page language automatically via the `lang` attribute.
+Built-in UI labels (e.g. "Clear", "Show password", "Country code") are available in Norwegian Bokmål, Nynorsk, Northern Sami, and English. Components pick up the page language automatically via the `lang` attribute.
 
-To override or add translations for a language:
+To override or add translations for a language, call `setTranslations` once at app startup. It merges with the existing strings for that language (Bokmål for a new language), so you only pass the keys you want to change. The full list of keys is the `ComponentTranslations` type.
 
 ```ts
-import { registerTranslations } from '@felleslosninger/minid-elements';
+import { setTranslations } from '@felleslosninger/minid-elements';
 
-registerTranslations('en', {
+setTranslations('en', {
   clear: 'Remove',
   showPassword: 'Reveal password',
   hidePassword: 'Conceal password',
-  openCountrySelector: 'Choose country',
+  countryCode: 'Dialling code',
 });
 ```
 
