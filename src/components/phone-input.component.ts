@@ -3,11 +3,13 @@ import { customElement, property, query, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { repeat } from 'lit/directives/repeat.js';
+import { guard } from 'lit/directives/guard.js';
 import { styled } from '../mixins/tailwind.mixin';
 import {
   AsYouType,
   getCountries,
   getCountryCallingCode,
+  isSupportedCountry,
   parsePhoneNumberFromString,
   type CountryCode,
 } from 'libphonenumber-js';
@@ -85,6 +87,55 @@ function getCountryOptions(lang: string): CountryOption[] {
   return list;
 }
 
+/** Country list matching. `query` is trimmed and lower-cased. */
+function matchesCountry(option: CountryOption, query: string) {
+  const digits = query.replace(/^(\+|00)/, '');
+  return (
+    option.name.toLowerCase().includes(query) ||
+    option.iso.toLowerCase() === query ||
+    (/^\d+$/.test(digits) && option.dial.startsWith(digits))
+  );
+}
+
+/**
+ * How well a matching option fits the query: 0 = exact ISO or dial code,
+ * 1 = the name or dial code starts with it, 2 = the name contains it.
+ */
+function matchRank(option: CountryOption, query: string) {
+  const digits = query.replace(/^(\+|00)/, '');
+  const isDial = /^\d+$/.test(digits);
+  if (option.iso.toLowerCase() === query || (isDial && option.dial === digits))
+    return 0;
+  if (
+    option.name.toLowerCase().startsWith(query) ||
+    (isDial && option.dial.startsWith(digits))
+  )
+    return 1;
+  return 2;
+}
+
+/**
+ * The list for a query: matches first, best fit first (alphabetical within
+ * each rank), then the rest, which the caller hides. DOM order is the arrow
+ * key order, so the ranking has to live in the DOM, not in CSS `order`.
+ */
+function rankCountryOptions(options: CountryOption[], query: string) {
+  if (!query) return options.map((option) => ({ option, hidden: false }));
+  const tiers: CountryOption[][] = [[], [], []];
+  const rest: CountryOption[] = [];
+  for (const option of options) {
+    if (matchesCountry(option, query)) {
+      tiers[matchRank(option, query)].push(option);
+    } else {
+      rest.push(option);
+    }
+  }
+  return [
+    ...tiers.flat().map((option) => ({ option, hidden: false })),
+    ...rest.map((option) => ({ option, hidden: true })),
+  ];
+}
+
 /**
  * Calling codes shared by several countries, and the country a bare code
  * should resolve to.
@@ -146,7 +197,9 @@ const styles = [
 
     .number-input {
       flex: 1 1 auto;
-      inline-size: auto;
+      /* 100%, not auto: an input's intrinsic width (size=20) would become the
+         component's min-content and overflow a 320px grid column */
+      inline-size: 100%;
       min-inline-size: 0;
       border-start-start-radius: 0;
       border-end-start-radius: 0;
@@ -228,10 +281,14 @@ export class MinidPhoneInput extends FormControlMixin(
   private currentTemplate = '';
   private appliedCountry?: CountryCode;
   private internalValue = '';
+  /** What a form reset restores: `value` and `country` at the first render */
   private initialValue = '';
+  private initialCountry: CountryCode = 'NO';
   private selectOnMouseUp = false;
   /** Set by `announceCountryChange`; rendered in a polite status region */
   @state() private countryAnnouncement = '';
+  /** What the user has typed in the country control; `''` shows the whole list */
+  @state() private countryQuery = '';
   private hasSlotControler = new HasSlotController(
     this,
     'label',
@@ -295,7 +352,8 @@ export class MinidPhoneInput extends FormControlMixin(
 
   /**
    * The selected country as a two letter ISO code like `"NO"`. Defaults to
-   * Norway unless `value` carries another country code.
+   * Norway unless `value` carries another country code. Lower case is
+   * accepted (`"se"`); an unknown code keeps the current country.
    */
   @property({ reflect: true })
   country: CountryCode = 'NO';
@@ -333,6 +391,9 @@ export class MinidPhoneInput extends FormControlMixin(
   @property({ type: Boolean })
   readonly = false;
 
+  /**
+   * The size of the legend, the description and both inputs (Designsystemet `data-size`)
+   */
   @property()
   size: 'sm' | 'md' | 'lg' = 'md';
 
@@ -363,18 +424,35 @@ export class MinidPhoneInput extends FormControlMixin(
 
   resetFormControl() {
     this.invalidmessage = '';
+    // the initial country first: a national initial value is read under it
+    this.setCountry(this.initialCountry);
     this.applyValue(this.initialValue);
   }
 
   connectedCallback(): void {
     super.connectedCallback();
-    this.applyValue(this.value);
-    this.initialValue = this.value;
+    // First connect, or props changed while disconnected. A plain DOM move
+    // keeps the state the user has entered.
+    if (
+      this.value !== this.internalValue ||
+      this.country !== this.appliedCountry
+    ) {
+      this.applyValue(this.value);
+    }
   }
 
   protected firstUpdated(changed: PropertyValues): void {
     super.firstUpdated(changed);
+    // `value` or `country` set after connectedCallback but before this first
+    // update never reached the watchers (they wait for the first update)
+    if (this.value !== this.internalValue) {
+      this.applyValue(this.value);
+    } else if (this.country !== this.appliedCountry) {
+      this.applyCountry(this.toCountry(this.country), { userInitiated: false });
+    }
     this.setNumberText(this.formatNational(this.country, this.nationalnumber));
+    this.initialValue = this.value;
+    this.initialCountry = this.country;
   }
 
   focus(options?: FocusOptions): void {
@@ -415,11 +493,26 @@ export class MinidPhoneInput extends FormControlMixin(
     );
   }
 
+  /**
+   * A `country` as set from outside, made safe: `"se"` becomes `"SE"`, and an
+   * unknown code keeps the current country (Norway before the first one).
+   * libphonenumber throws on unknown codes, which would leave an empty
+   * component.
+   */
+  private toCountry(code: unknown): CountryCode {
+    const upper = typeof code === 'string' ? code.trim().toUpperCase() : '';
+    return isSupportedCountry(upper) ? upper : (this.appliedCountry ?? 'NO');
+  }
+
   private setCountry(iso: CountryCode) {
     this.country = iso;
     this.appliedCountry = iso;
     this.countrycode = `+${getCountryCallingCode(iso)}`;
     this.formatter = new AsYouType(iso);
+    // A "changed to +46" message must not outlive the change it describes:
+    // screen-reader users can still read the region after it was announced.
+    // `announceCountryChange` writes a new one after this.
+    this.countryAnnouncement = '';
   }
 
   /**
@@ -427,7 +520,7 @@ export class MinidPhoneInput extends FormControlMixin(
    * the form value is synced without touching the error state.
    */
   private applyValue(value: string) {
-    let iso: CountryCode = this.country ?? 'NO';
+    let iso = this.toCountry(this.country);
     let national = '';
     const text = (value ?? '').trim().replace(/^00/, '+');
 
@@ -500,9 +593,9 @@ export class MinidPhoneInput extends FormControlMixin(
 
   @watch('country', { waitUntilFirstUpdate: true })
   handleCountryChange(_old?: unknown, next?: unknown) {
-    const iso = next as CountryCode | undefined;
-    if (iso && iso !== this.appliedCountry) {
-      this.applyCountry(iso, { userInitiated: false });
+    if (next !== this.appliedCountry) {
+      // also writes the normalized code back to `country`
+      this.applyCountry(this.toCountry(next), { userInitiated: false });
     }
   }
 
@@ -559,6 +652,15 @@ export class MinidPhoneInput extends FormControlMixin(
       composed: true,
     });
     this.handleNewValue(event);
+
+    // As-you-type formatting cannot add what the user left out (the trunk 0
+    // in a Swedish 70 123 45 67); once they are done, show the number the way
+    // a pasted one is shown. Unresolved `+…` text has no national number and
+    // is left alone.
+    const formatted = this.formatNational(this.country, this.nationalnumber);
+    if (formatted && formatted !== this.input.value) {
+      this.setNumberText(formatted);
+    }
   }
 
   private handleInput(event: InputEvent) {
@@ -581,7 +683,7 @@ export class MinidPhoneInput extends FormControlMixin(
         // When using an Input Method Editor (IME), pressing enter will cause the form to submit unexpectedly. One way
         // to check for this is to look at event.isComposing, which will be true when the IME is open.
         if (!event.defaultPrevented && !event.isComposing) {
-          this.form.requestSubmit();
+          this.form?.requestSubmit();
         }
       });
       return;
@@ -697,15 +799,6 @@ export class MinidPhoneInput extends FormControlMixin(
 
   /* ---------- country control (ds-suggestion / u-combobox) ---------- */
 
-  private matchesCountry(option: CountryOption, query: string) {
-    const digits = query.replace(/^(\+|00)/, '');
-    return (
-      option.name.toLowerCase().includes(query) ||
-      option.iso.toLowerCase() === query ||
-      (/^\d+$/.test(digits) && option.dial.startsWith(digits))
-    );
-  }
-
   /**
    * Resolves free text to a country: a unique match, an exact name, a dial
    * code (preferring the current country, then the main country for that
@@ -717,7 +810,7 @@ export class MinidPhoneInput extends FormControlMixin(
     if (!query) return undefined;
 
     const options = getCountryOptions(getLang(this));
-    const hits = options.filter((o) => this.matchesCountry(o, query));
+    const hits = options.filter((o) => matchesCountry(o, query));
     if (hits.length === 1) return hits[0].iso;
 
     const byName = options.find((o) => o.name.toLowerCase() === query);
@@ -744,6 +837,7 @@ export class MinidPhoneInput extends FormControlMixin(
     if (this.countryInput && this.countryInput.value !== this.countrycode) {
       this.countryInput.value = this.countrycode;
     }
+    this.countryQuery = '';
   }
 
   /** Lit owns the `<data>` element; u-combobox must neither insert nor remove one. */
@@ -777,21 +871,17 @@ export class MinidPhoneInput extends FormControlMixin(
     event.preventDefault();
   };
 
+  /**
+   * Filters and ranks the list through a re-render; u-datalist picks up the
+   * DOM change with its MutationObserver and announces the new count.
+   */
   private handleCountryInput = () => {
     const query = this.countryInput.value.trim().toLowerCase();
-    const showAll = !query || query === this.countrycode.toLowerCase();
-    const byIso = new Map(
-      getCountryOptions(getLang(this)).map((o) => [o.iso, o])
-    );
-    for (const option of this.countryOptionEls) {
-      const country = byIso.get(option.value as CountryCode);
-      option.hidden =
-        !showAll && !!country && !this.matchesCountry(country, query);
-    }
+    this.countryQuery = query === this.countrycode.toLowerCase() ? '' : query;
   };
 
   private handleCountryFocus = () => {
-    this.handleCountryInput();
+    this.countryQuery = '';
     // Typing replaces the dial code
     this.selectOnMouseUp = true;
     this.countryInput.select();
@@ -813,9 +903,21 @@ export class MinidPhoneInput extends FormControlMixin(
    * Enter in the country control picks a country. u-combobox handles it in a
    * capture listener but lets it bubble, so stop it here before a page's
    * Enter-to-submit handler on the host sees it.
+   *
+   * Escape cancels what was typed: u-datalist closes the list, and the
+   * selected dial code comes back (selected, so typing replaces it again)
+   * instead of the half-typed text lingering until blur.
    */
   private handleCountryKeydown = (event: KeyboardEvent) => {
     if (event.key === 'Enter') event.stopPropagation();
+    if (
+      event.key === 'Escape' &&
+      !event.isComposing &&
+      this.countryInput.value !== this.countrycode
+    ) {
+      this.restoreCountryText();
+      this.countryInput.select();
+    }
   };
 
   override render() {
@@ -898,19 +1000,22 @@ export class MinidPhoneInput extends FormControlMixin(
               data-sr-singular=${t.countrySuggestionsSingular}
               data-sr-plural=${t.countrySuggestionsPlural}
             >
-              ${repeat(
-                options,
-                (o) => o.iso,
-                (o) => html`
-                  <u-option
-                    value=${o.iso}
-                    label="${o.name} (+${o.dial})"
-                    ?selected=${o.iso === this.country}
-                  >
-                    ${o.name}
-                    <span class="country-dial">(+${o.dial})</span>
-                  </u-option>
-                `
+              ${guard([options, this.country, this.countryQuery], () =>
+                repeat(
+                  rankCountryOptions(options, this.countryQuery),
+                  ({ option }) => option.iso,
+                  ({ option: o, hidden }) => html`
+                    <u-option
+                      value=${o.iso}
+                      label="${o.name} (+${o.dial})"
+                      ?selected=${o.iso === this.country}
+                      ?hidden=${hidden}
+                    >
+                      ${o.name}
+                      <span class="country-dial">(+${o.dial})</span>
+                    </u-option>
+                  `
+                )
               )}
             </u-datalist>
           </ds-suggestion>
@@ -961,6 +1066,7 @@ export class MinidPhoneInput extends FormControlMixin(
             type="tel"
             inputmode="tel"
             autocomplete=${this.autocomplete}
+            ?required=${this.required}
             ?readonly=${this.readonly}
             aria-describedby=${describedBy}
             aria-invalid=${hasError ? 'true' : 'false'}

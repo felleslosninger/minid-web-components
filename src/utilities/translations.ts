@@ -28,6 +28,8 @@ export interface ComponentTranslations {
   loading: string;
   /** Close button on a closable `mid-alert` / toast */
   dismissAlert: string;
+  /** The `?` toggle button of `mid-helptext` */
+  helpText: string;
 }
 
 const builtins: Record<string, ComponentTranslations> = {
@@ -45,6 +47,7 @@ const builtins: Record<string, ComponentTranslations> = {
     close: 'Lukk',
     loading: 'Laster',
     dismissAlert: 'Lukk varsel',
+    helpText: 'Hjelpetekst',
   },
   nn: {
     clear: 'Tøm',
@@ -60,6 +63,7 @@ const builtins: Record<string, ComponentTranslations> = {
     close: 'Lukk',
     loading: 'Lastar',
     dismissAlert: 'Lukk varsel',
+    helpText: 'Hjelpetekst',
   },
   se: {
     clear: 'Sihko',
@@ -75,6 +79,7 @@ const builtins: Record<string, ComponentTranslations> = {
     close: 'Gidde',
     loading: 'Viežžamin',
     dismissAlert: 'Gidde dieđáhusa',
+    helpText: 'Veahkketeaksta',
   },
   en: {
     clear: 'Clear',
@@ -90,6 +95,7 @@ const builtins: Record<string, ComponentTranslations> = {
     close: 'Close',
     loading: 'Loading',
     dismissAlert: 'Dismiss alert',
+    helpText: 'Help text',
   },
 };
 

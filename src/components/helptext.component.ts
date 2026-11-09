@@ -13,6 +13,9 @@ import {
   setDefaultAnimation,
 } from '../utilities/animation-registry.js';
 import { stopAnimations, animateTo } from '../internal/animate.js';
+import { LangController } from '../controllers/lang.controller.js';
+import { getLang } from '../utilities/lang.js';
+import { getTranslations } from '../utilities/translations.js';
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -100,6 +103,7 @@ export class MinidHelptext extends styled(LitElement, styles) {
 
   constructor() {
     super();
+    new LangController(this);
     this.addEventListener('blur', this.handleBlur, true);
     this.addEventListener('focus', this.handleFocus, true);
     this.addEventListener('mouseover', this.handleMouseOver);
@@ -227,6 +231,7 @@ export class MinidHelptext extends styled(LitElement, styles) {
     const sm = this.size === 'sm';
     const md = this.size === 'md';
     const lg = this.size === 'lg';
+    const t = getTranslations(getLang(this));
     return html`
       <mid-popup
         class="[--arrow-border-color:var(--border-color-info)] [--arrow-color:var(--background-color-info-tinted)]"
@@ -246,7 +251,7 @@ export class MinidHelptext extends styled(LitElement, styles) {
           aria-describedby="helptext-body"
           aria-controls="helptext-body"
           aria-expanded=${this.open}
-          aria-label="Hjelpetekst"
+          aria-label=${t.helpText}
           class="${classMap({
             'text-6': sm,
             'text-7': md,
